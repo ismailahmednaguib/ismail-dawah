@@ -9,6 +9,7 @@
   const adminEl = document.getElementById('admin');
   const AUTH = 'siteAdminAuth_v1';
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const $ = s => document.querySelector(s);
 
   let tab = 'settings', editId = null;
 
