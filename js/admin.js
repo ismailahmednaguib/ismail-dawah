@@ -8,8 +8,9 @@
   const app = window.SiteApp; if (!app) return;
   const adminEl = document.getElementById('admin');
   const AUTH = 'siteAdminAuth_v1';
-  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const $ = s => document.querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   let tab = 'settings', editId = null;
 
@@ -49,7 +50,6 @@
       { k: 'place', l: 'المكان', t: 'text' } ] }
   };
 
-  /* ---------- فتح/إغلاق ---------- */
   document.addEventListener('click', e => { if (e.target.closest('[data-open-admin]')) location.hash = 'admin'; });
   window.addEventListener('hashchange', syncHash);
   function syncHash() { location.hash === '#admin' ? open() : close(); }
@@ -61,7 +61,6 @@
   }
   function close() { adminEl.hidden = true; document.body.classList.remove('lock'); }
 
-  /* ---------- بوابة كلمة المرور ---------- */
   function gate() {
     adminEl.innerHTML =
       '<div class="gate"><form class="gate-box" data-form="gate">'
@@ -70,10 +69,9 @@
       + '<div style="margin-top:16px;display:flex;gap:10px;justify-content:center">'
       + '<button class="btn-save" type="submit">دخول</button>'
       + '<button class="mini-btn" type="button" data-act="close">رجوع للموقع</button></div></form></div>';
-    const i = adminEl.querySelector('#gatePass'); if (i) i.focus();
+    const i = $('#gatePass'); if (i) i.focus();
   }
 
-  /* ---------- الهيكل ---------- */
   function shell() {
     adminEl.innerHTML =
       '<aside class="admin-side"><div class="admin-brand">لوحة التحكم ✦</div>'
@@ -93,7 +91,6 @@
     return '<label class="fld"><span>' + f.l + (f.req ? ' *' : '') + '</span>' + inner + (f.h ? '<em class="hint">' + f.h + '</em>' : '') + '</label>';
   }
 
-  /* ---------- تبويب الإعدادات ---------- */
   function renderSettings() {
     const s = app.get().settings;
     const simple = [
@@ -118,14 +115,13 @@
       + '<textarea data-p="__quals" rows="4">' + esc((s.quals || []).map(q => q.year + ' | ' + q.title + ' | ' + q.desc).join('\n')) + '</textarea>'
       + '<label class="fld" style="margin-top:14px"><span>ملاحظة المنهج</span><input data-p="aboutNote" value="' + esc(s.aboutNote) + '"></label></div>'
       + '<div class="a-card"><h3>الإحصائيات (كل سطر: الرقم | الوصف — مثال: +10 | سنوات في الدعوة)</h3>'
-      + '<textarea data-p="__stats" rows="4">' + esc((s.stats || []).map(x => x.num + ' | ' + x.label).join('\n')).replace(/&amp;/g, '&') + '</textarea></div>'
+      + '<textarea data-p="__stats" rows="4">' + esc((s.stats || []).map(x => x.num + ' | ' + x.label).join('\n')) + '</textarea></div>'
       + '<div class="a-card"><h3>بيانات التواصل والروابط</h3>'
       + '<div class="frow">' + simple.slice(9).map(x => '<label class="fld"><span>' + x[1] + '</span><input data-p="' + x[0] + '" value="' + esc(s[x[0]]) + '"></label>').join('') + '</div></div>'
       + '<button class="btn-save" type="submit">💾 حفظ الإعدادات</button>'
       + '</form>';
   }
 
-  /* ---------- تبويبات المحتوى ---------- */
   function renderCrud(coll) {
     const S = SCHEMA[coll];
     const items = app.get()[coll] || [];
@@ -147,7 +143,6 @@
       + '</div>';
   }
 
-  /* ---------- تبويب الحفظ والنشر ---------- */
   function renderBackup() {
     $('#adminView').innerHTML =
       '<div class="a-head"><h2>النسخ الاحتياطي والنشر</h2></div>'
@@ -174,7 +169,6 @@
     else renderCrud(tab);
   }
 
-  /* ---------- معالجة النقرات ---------- */
   adminEl.addEventListener('click', e => {
     const b = e.target.closest('[data-act]'); if (!b) return;
     const act = b.dataset.act;
@@ -204,7 +198,6 @@
     }
   });
 
-  /* ---------- معالجة النماذج ---------- */
   adminEl.addEventListener('submit', e => {
     e.preventDefault();
     const f = e.target, type = f.dataset.form;
@@ -246,7 +239,6 @@
     }
   });
 
-  /* ---------- الاستيراد ---------- */
   adminEl.addEventListener('change', e => {
     if (e.target.id !== 'importFile' || !e.target.files[0]) return;
     const r = new FileReader();
