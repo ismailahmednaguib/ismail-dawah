@@ -1,3 +1,4 @@
+.modal[hidden],.admin[hidden],.lightbox[hidden]{display:none !important}
 /* ================= المتغيرات والأساسيات ================= */
 :root{
   --ink:#14231c;
@@ -75,9 +76,8 @@ button{font-family:inherit;cursor:pointer}
 .arch-wrap{position:relative}
 .arch-star{position:absolute;top:-16px;right:50%;transform:translateX(50%);color:var(--gold);font-size:1.5rem;z-index:3;text-shadow:0 0 18px rgba(227,199,102,.8);animation:spinGlow 6s linear infinite}
 .arch{width:clamp(240px,26vw,340px);aspect-ratio:3/4;border-radius:50% 50% 20px 20px/40% 40% 20px 20px;overflow:hidden;border:5px solid var(--gold);box-shadow:0 0 0 10px rgba(201,162,39,.12),0 30px 60px rgba(0,0,0,.45)}
-.arch{position:relative}
-.arch::before{content:"إ";position:absolute;inset:0;display:grid;place-items:center;font-family:'Amiri',serif;font-size:12rem;color:var(--gold-2);background:linear-gradient(135deg,var(--green-800),var(--green-950));z-index:1;text-shadow:0 4px 30px rgba(0,0,0,.5)}
-.arch img{width:100%;height:100%;object-fit:cover;animation:kenburns 16s ease-in-out infinite alternate;position:relative;z-index:2}.arch-cap{font-family:var(--f-disp);color:var(--gold-2);font-size:1.02rem;text-align:center}
+.arch img{width:100%;height:100%;object-fit:cover;animation:kenburns 16s ease-in-out infinite alternate}
+.arch-cap{font-family:var(--f-disp);color:var(--gold-2);font-size:1.02rem;text-align:center}
 
 /* شريط الآيات */
 .ticker{background:linear-gradient(90deg,#a8861d,var(--gold),#a8861d);color:#241c04;overflow:hidden;padding-block:11px;border-block:1px solid #8a6f16}
