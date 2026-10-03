@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الشيخ إسماعيل أحمد نجيب | موقع دعوي</title>
+<meta name="description" content="الموقع الدعوي للشيخ إسماعيل أحمد نجيب — ليسانس كلية الدعوة الإسلامية بجامعة الأزهر الشريف، باحث دراسات عُليا في مقارنة الأديان. دروس ومحاضرات ومرئيات ومقالات.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23c9a227' d='M12 1c-1.2 1.8-3.4 2.9-3.4 5.2 0 1.1.5 2 1.2 2.7H7v12h10V8.9h-2.2c.7-.7 1.2-1.6 1.2-2.7C16 3.9 13.2 2.8 12 1zM4 13v8h1.5v-8H4zm14.5 0v8H20v-8h-1.5z'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="progress" id="progressBar"></div>
+
+<!-- شريط البسملة -->
+<div class="topbar"><span class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span></div>
+
+<!-- الهيدر -->
+<header class="site-header" id="siteHeader">
+  <div class="container nav-wrap">
+    <a href="#home" class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1c-1.2 1.8-3.4 2.9-3.4 5.2 0 1.1.5 2 1.2 2.7H7v12h10V8.9h-2.2c.7-.7 1.2-1.6 1.2-2.7C16 3.9 13.2 2.8 12 1zM4 13v8h1.5v-8H4zm14.5 0v8H20v-8h-1.5z"/></svg>
+      <span class="logo-text"><b id="logoName">إسماعيل أحمد نجيب</b><small id="logoSub">داعية إسلامي</small></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="القائمة"><span></span><span></span><span></span></button>
+    <nav class="main-nav" id="mainNav">
+      <a href="#home">الرئيسية</a>
+      <a href="#about">عن الشيخ</a>
+      <a href="#lessons">الدروس</a>
+      <a href="#videos">المرئيات</a>
+      <a href="#articles">المقالات</a>
+      <a href="#schedule">الجدول</a>
+      <a href="#gallery">الصور</a>
+      <a href="#contact" class="nav-cta">تواصل معي</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- الواجهة الرئيسية -->
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="kicker hero-kicker" id="heroKicker">داعية إسلامي • باحث في مقارنة الأديان</p>
+      <h1 class="hero-name"><span class="hello">فضيلة الشيخ</span><span class="name" id="heroName">إسماعيل أحمد نجيب</span></h1>
+      <p class="hero-title" id="heroTitle">«أَدْعُو إِلَى اللَّهِ عَلَىٰ بَصِيرَةٍ»</p>
+      <p class="hero-text" id="heroText"></p>
+      <div class="cred-row" id="credRow"></div>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#lessons">تصفَّح الدروس</a>
+        <a class="btn btn-line" href="#contact">تواصل معي</a>
+      </div>
+      <figure class="hero-quote">
+        <span class="q-orn">❝</span>
+        <blockquote id="heroQuote"></blockquote>
+        <span class="q-orn">❞</span>
+      </figure>
+    </div>
+    <div class="hero-visual">
+      <div class="arch-wrap">
+        <span class="arch-star">✦</span>
+        <div class="arch"><img id="portrait" src="assets/img/photo.jpg" alt="صورة الشيخ"></div>
+      </div>
+      <p class="arch-cap" id="archCap"></p>
+    </div>
+  </div>
+  <a class="scroll-hint" href="#about" aria-label="انزل للأسفل">▾</a>
+</section>
+
+<!-- شريط الآيات المتحرك -->
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="tickerTrack"></div></div>
+
+<!-- الأرقام -->
+<section class="stats"><div class="container stats-row" id="statsRow"></div></section>
+
+<!-- عن الشيخ -->
+<section class="section" id="about">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">تعرَّف عليه</p>
+      <h2 class="sec-title">عن الشيخ</h2>
+      <div class="orn"><span>✦</span></div>
+    </header>
+    <div class="about-grid">
+      <div class="about-story reveal">
+        <div id="aboutText" class="prose"></div>
+        <div class="chips" id="interestChips"></div>
+      </div>
+      <aside class="about-side reveal">
+        <div class="fact-card">
+          <h3 class="mini-title">المؤهلات العلمية</h3>
+          <ul class="timeline" id="qualList"></ul>
+          <p class="about-note" id="aboutNote"></p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- الدروس -->
+<section class="section band-white" id="lessons">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">العلم النافع</p>
+      <h2 class="sec-title">الدروس والمحاضرات</h2>
+      <div class="orn"><span>✦</span></div>
+      <p class="sec-sub">سلاسل علمية ودروس منهجية في شتى العلوم الشرعية</p>
+    </header>
+    <div class="chips filters reveal" id="lessonFilters"></div>
+    <div class="cards-grid" id="lessonsGrid"></div>
+  </div>
+</section>
+
+<!-- المرئيات -->
+<section class="section" id="videos">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">مشاهدات</p>
+      <h2 class="sec-title">المرئيات</h2>
+      <div class="orn"><span>✦</span></div>
+    </header>
+    <div class="cards-grid" id="videosGrid"></div>
+  </div>
+</section>
+
+<!-- المقالات -->
+<section class="section band-white" id="articles">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">بقلم الشيخ</p>
+      <h2 class="sec-title">مقالات</h2>
+      <div class="orn"><span>✦</span></div>
+    </header>
+    <div class="cards-grid" id="articlesGrid"></div>
+  </div>
+</section>
+
+<!-- جدول الدروس -->
+<section class="section band-dark" id="schedule">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">مواعيد أسبوعية</p>
+      <h2 class="sec-title">جدول الدروس</h2>
+      <div class="orn"><span>✦</span></div>
+    </header>
+    <div class="schedule-list reveal" id="scheduleList"></div>
+  </div>
+</section>
+
+<!-- معرض الصور -->
+<section class="section" id="gallery">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">لحظات دعوية</p>
+      <h2 class="sec-title">معرض الصور</h2>
+      <div class="orn"><span>✦</span></div>
+    </header>
+    <div id="galleryGrid" class="gallery"></div>
+  </div>
+</section>
+
+<!-- تواصل -->
+<section class="section band-white" id="contact">
+  <div class="container">
+    <header class="sec-head reveal">
+      <p class="kicker">يسعدني تواصلكم</p>
+      <h2 class="sec-title">تواصل معي</h2>
+      <div class="orn"><span>✦</span></div>
+      <p class="sec-sub">لطلب درس، أو محاضرة، أو استضافة، أو سؤال علمي</p>
+    </header>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div id="contactCards"></div>
+        <div class="social-row" id="socialRow"></div>
+      </div>
+      <form class="contact-form reveal" id="contactForm">
+        <h3 class="mini-title">أرسل رسالتك</h3>
+        <label class="fld"><span>الاسم</span><input type="text" id="cName" placeholder="اكتب اسمك الكريم" required></label>
+        <label class="fld"><span>رسالتك</span><textarea id="cMsg" rows="5" placeholder="اكتب رسالتك هنا…" required></textarea></label>
+        <div class="btn-row">
+          <button type="button" class="btn btn-wa" id="sendWa">إرسال عبر واتساب</button>
+          <button type="button" class="btn btn-line-dark" id="sendMail">إرسال عبر البريد</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- الفوتر -->
+<footer class="site-footer">
+  <div class="container foot-grid">
+    <div>
+      <p class="foot-name" id="footName"></p>
+      <p class="foot-bio">موقع دعوي يهدف إلى نشر العلم الشرعي الصحيح بمنهج أزهر وسطي، ودعوة الناس إلى الله بالحكمة والموعظة الحسنة.</p>
+      <div class="social-row small" id="footSocial"></div>
+    </div>
+    <div>
+      <h4 class="foot-title">روابط سريعة</h4>
+      <nav class="foot-links">
+        <a href="#about">عن الشيخ</a><a href="#lessons">الدروس</a><a href="#videos">المرئيات</a>
+        <a href="#articles">المقالات</a><a href="#schedule">الجدول</a><a href="#contact">تواصل</a>
+      </nav>
+    </div>
+    <div>
+      <h4 class="foot-title">إدارة الموقع</h4>
+      <p class="foot-note">مالك الموقع فقط: يمكنك تعديل كل محتوى الموقع من لوحة التحكم دون لمس أي كود.</p>
+      <button class="btn btn-ghost" data-open-admin>🔐 لوحة التحكم</button>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <div class="container"><span id="footCopy"></span> <span class="dua">— اللهم اجعل عملنا صالحًا ولوجهك خالصًا</span></div>
+  </div>
+</footer>
+
+<!-- نافذة منبثقة -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-box"><button class="modal-x" data-close aria-label="إغلاق">✕</button><div class="modal-body" id="modalBody"></div></div>
+</div>
+
+<!-- عارض الصور -->
+<div class="lightbox" id="lightbox" hidden><img id="lbImg" alt=""><p id="lbCap"></p></div>
+
+<div class="toast" id="toast"></div>
+<button class="to-top" id="toTop" aria-label="العودة للأعلى">↑</button>
+
+<!-- لوحة التحكم (تُبنى بالجافاسكريبت) -->
+<div class="admin" id="admin" hidden></div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
