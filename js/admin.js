@@ -14,11 +14,15 @@
 
   let tab = 'settings', editId = null;
 
-  const TABS = [
+    const TABS = [
     { id: 'settings', t: '⚙️ الإعدادات العامة' },
     { id: 'lessons', t: '📖 الدروس' },
     { id: 'videos', t: '🎬 الفيديوهات' },
+    { id: 'audio', t: '🎧 الصوتيات' },
+    { id: 'books', t: '📚 الكتب' },
     { id: 'articles', t: '✍️ المقالات' },
+    { id: 'fatwas', t: '🕌 أسئلة وأجوبة' },
+    { id: 'events', t: '📅 الفعاليات' },
     { id: 'photos', t: '🖼️ الصور' },
     { id: 'schedule', t: '🗓️ الجدول' },
     { id: 'backup', t: '💾 الحفظ والنشر' }
@@ -47,7 +51,24 @@
       { k: 'day', l: 'اليوم', t: 'text', req: 1, h: 'مثال: السبت' },
       { k: 'time', l: 'الوقت', t: 'text', h: 'مثال: بعد صلاة المغرب' },
       { k: 'topic', l: 'موضوع الدرس', t: 'text' },
-      { k: 'place', l: 'المكان', t: 'text' } ] }
+            { k: 'place', l: 'المكان', t: 'text' } ] },
+    audio: { label: 'مقطع صوتي', titleKey: 'title', fields: [
+      { k: 'title', l: 'عنوان المقطع', t: 'text', req: 1 },
+      { k: 'src', l: 'رابط الصوت MP3', t: 'url', h: 'رابط مباشر من archive.org أو جوجل درايف' },
+      { k: 'desc', l: 'وصف مختصر', t: 'textarea' } ] },
+    books: { label: 'كتاب', titleKey: 'title', fields: [
+      { k: 'title', l: 'اسم الكتاب', t: 'text', req: 1 },
+      { k: 'link', l: 'رابط التحميل PDF', t: 'url' },
+      { k: 'desc', l: 'وصف الكتاب', t: 'textarea' } ] },
+    fatwas: { label: 'سؤال', titleKey: 'q', fields: [
+      { k: 'q', l: 'السؤال', t: 'text', req: 1 },
+      { k: 'a', l: 'الإجابة', t: 'textarea', rows: 5, req: 1 } ] },
+    events: { label: 'فعالية', titleKey: 'title', fields: [
+      { k: 'title', l: 'عنوان الفعالية', t: 'text', req: 1 },
+      { k: 'date', l: 'التاريخ بصيغة YYYY-MM-DD', t: 'text', req: 1, h: 'مثال: 2026-12-20' },
+      { k: 'time', l: 'الوقت', t: 'text' },
+      { k: 'place', l: 'المكان', t: 'text' },
+      { k: 'desc', l: 'تفاصيل', t: 'textarea' } ] }
   };
 
   document.addEventListener('click', e => { if (e.target.closest('[data-open-admin]')) location.hash = 'admin'; });
@@ -100,7 +121,9 @@
       ['portraitSrc', 'رابط الصورة الشخصية (اختياري)'],
       ['wa', 'رقم واتساب (بصيغة دولية بدون +)'], ['phone', 'رقم الهاتف'], ['email', 'البريد الإلكتروني'], ['address', 'العنوان / الدولة'],
       ['facebook', 'رابط فيسبوك (اختياري)'], ['youtube', 'رابط قناة يوتيوب (اختياري)'], ['telegram', 'رابط تليجرام (اختياري)'],
-      ['adminPass', 'كلمة مرور لوحة التحكم']
+            ['adminPass', 'كلمة مرور لوحة التحكم'],
+      ['youtubePlaylist', 'رابط قائمة تشغيل يوتيوب (اختياري)'],
+      ['formspree', 'رابط Formspree لاستقبال الرسائل على إيميلك (اختياري)']
     ];
     $('#adminView').innerHTML =
       '<div class="a-head"><h2>الإعدادات العامة</h2></div>'
