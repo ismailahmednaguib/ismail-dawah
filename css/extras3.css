@@ -1,0 +1,37 @@
+/* ================= المرحلة A: مواقيت + تقويم + PWA ================= */
+
+/* ---------- شريط مواقيت الصلاة ---------- */
+.praybar{background:linear-gradient(135deg,var(--green-950),var(--green-900));color:#f3eddb;border-bottom:2px solid var(--gold);padding:8px 16px;font-size:.82rem;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;direction:rtl;position:sticky;top:0;z-index:130}
+.praybar-city{display:inline-flex;align-items:center;gap:6px;color:var(--gold-2);font-weight:900}
+.praybar-list{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.pray-time{display:inline-flex;flex-direction:column;align-items:center;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.05);min-width:64px;transition:.3s}
+.pray-time.active{background:var(--gold);color:#241c04;transform:scale(1.08)}
+.pray-time.next{background:rgba(227,199,102,.2);border:1px solid var(--gold)}
+.pray-time b{font-size:.7rem;font-weight:800;opacity:.85}
+.pray-time span{font-size:.95rem;font-weight:900;font-family:var(--f-disp)}
+.praybar-next{color:var(--gold-2);font-weight:900;font-size:.78rem}
+@media(max-width:640px){.praybar{font-size:.74rem;gap:8px}.pray-time{min-width:54px;padding:3px 6px}.pray-time b{font-size:.64rem}}
+
+/* ---------- صفحة التقويم الهجري ---------- */
+.hijri-cal{max-width:900px;margin-inline:auto}
+.hijri-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.hijri-now{font-family:var(--f-disp);font-size:1.4rem;color:var(--gold)}
+.hijri-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.hijri-month{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;transition:.3s;cursor:pointer;position:relative;overflow:hidden}
+.hijri-month:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:var(--shadow)}
+.hijri-month.current{border-color:var(--gold);border-width:2px}
+.hijri-month.current::before{content:"الشهر الحالي";position:absolute;top:6px;left:6px;font-size:.62rem;background:var(--gold);color:#241c04;padding:2px 8px;border-radius:99px;font-weight:900}
+.hijri-month h4{font-family:var(--f-disp);font-size:1.25rem;color:var(--green-900);margin-bottom:4px}
+.hijri-month small{color:var(--muted);font-size:.82rem;display:block}
+.hijri-month .events{margin-top:8px;display:grid;gap:3px}
+.hijri-month .events span{font-size:.72rem;color:var(--gold);background:var(--gold-soft);padding:2px 6px;border-radius:6px;display:inline-block}
+
+body.night .praybar{background:linear-gradient(135deg,#050d09,#0b1410)}
+body.night .hijri-month{background:#132019;border-color:rgba(227,162,39,.15)}
+body.night .hijri-month h4{color:#f0ead6}
+
+/* ---------- تنبيه PWA ---------- */
+.pwa-prompt{position:fixed;bottom:20px;right:20px;background:var(--green-900);color:#f0ead6;padding:14px 18px;border-radius:14px;border:1.5px solid var(--gold);box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:400;display:flex;align-items:center;gap:12px;max-width:320px;animation:fadeUp .4s}
+.pwa-prompt[hidden]{display:none!important}
+.pwa-prompt button{background:var(--gold);color:#241c04;border:0;padding:8px 16px;border-radius:9px;font-weight:900;cursor:pointer}
+.pwa-prompt .pwa-close{background:transparent;color:#f0ead6;padding:4px 8px}
