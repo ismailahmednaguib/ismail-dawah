@@ -63,7 +63,7 @@
     { t: '«مَنْ لَا يَشْكُرُ النَّاسَ لَا يَشْكُرُ اللَّهَ»', s: 'رواه أبو داود' }
   ];
 
-  function buildQuote() {
+   function buildQuote() {
     const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
     const q = QUOTES[dayOfYear % QUOTES.length];
     const sec = document.createElement('section');
@@ -73,7 +73,7 @@
       + '<span class="quote-src">' + esc(q.s) + '</span>';
     const hero = $('.hero');
     if (hero) hero.insertAdjacentElement('afterend', sec);
-    else document.body.prepend(sec);
+    else { const topbar = $('.topbar'); if (topbar) topbar.insertAdjacentElement('afterend', sec); }
   }
 
   /* ================= 2) الخرائط التفاعلية ================= */
@@ -126,10 +126,31 @@
   }
 
   /* ================= 3) تقييم الدروس ================= */
-  function buildRating() {
+    function buildRating() {
     const KEY = 'siteRatings_v1';
     let R; try { R = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { R = {}; }
     const save = () => localStorage.setItem(KEY, JSON.stringify(R));
+
+    function addStars(card) {
+      const title = card.querySelector('.card-title');
+      if (!title || card.querySelector('.rate-row')) return;
+      const id = 'r_' + title.textContent.trim().slice(0, 30);
+      const avg = R[id] || 0;
+      const row = document.createElement('div');
+      row.className = 'rate-row';
+      row.innerHTML = '<div class="stars">' + [1,2,3,4,5].map(v =>
+        '<button class="star' + (v <= avg ? ' on' : '') + '" data-id="' + id + '" data-v="' + v + '">★</button>'
+      ).join('') + '</div><span class="rate-avg">' + (avg ? 'تقييمك: ' + avg + '/5' : 'قيّم الدرس') + '</span>';
+      const foot = card.querySelector('.card-foot') || card.querySelector('.card-body');
+      if (foot) foot.appendChild(row);
+    }
+
+    // تشغيل فوري على كل الكروت الموجودة
+    $$('.card').forEach(addStars);
+
+    // مراقبة الكروت الجديدة
+    const observer = new MutationObserver(() => { $$('.card').forEach(addStars); });
+    observer.observe(document.body, { childList: true, subtree: true });
 
     document.addEventListener('click', e => {
       const star = e.target.closest('.star'); if (!star) return;
@@ -137,27 +158,10 @@
       R[id] = val; save();
       const row = star.closest('.rate-row');
       $$('.star', row).forEach(s => s.classList.toggle('on', +s.dataset.v <= val));
-      row.querySelector('.rate-avg').textContent = '✓ شكراً لتقييمك';
-      row.querySelector('.rate-avg').classList.add('rate-done');
+      const label = row.querySelector('.rate-avg');
+      label.textContent = '✓ شكراً لتقييمك';
+      label.classList.add('rate-done');
     });
-
-    const observer = new MutationObserver(() => {
-      $$('.card').forEach(card => {
-        const title = card.querySelector('.card-title');
-        if (!title || card.querySelector('.rate-row')) return;
-        const id = 'r_' + title.textContent.trim().slice(0, 30);
-        const avg = R[id] || 0;
-        const row = document.createElement('div');
-        row.className = 'rate-row';
-        row.innerHTML = '<div class="stars">' + [1,2,3,4,5].map(v =>
-          '<button class="star' + (v <= avg ? ' on' : '') + '" data-id="' + id + '" data-v="' + v + '">★</button>'
-        ).join('') + '</div><span class="rate-avg">' + (avg ? 'تقييمك: ' + avg + '/5' : 'قيّم الدرس') + '</span>';
-        const foot = card.querySelector('.card-foot') || card.querySelector('.card-body');
-        if (foot) foot.appendChild(row);
-      });
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    setTimeout(() => observer.takeRecords(), 500);
   }
 
   /* ================= 4) نموذج التسجيل في الدورات ================= */
@@ -229,8 +233,9 @@
   }
 
   /* ================= 6) لوحة إحصائيات الشيخ ================= */
-  function buildStats() {
+    function buildStats() {
     if (sessionStorage.getItem('siteAdminAuth_v1') !== '1') return;
+    if ($('#admin-stats-btn')) return; // منع التكرار
     const KEY = 'siteStats_v1';
     let st; try { st = JSON.parse(localStorage.getItem(KEY)) || { views: 0, days: {}, sections: {} }; } catch (e) { st = { views: 0, days: {}, sections: {} }; }
     const last7 = Object.keys(st.days).sort().slice(-7);
@@ -239,6 +244,7 @@
     const d2 = app.get();
 
     const b = document.createElement('button');
+    b.id = 'admin-stats-btn'; // ← مهم
     b.textContent = '📊'; b.title = 'لوحة الإحصائيات';
     b.style.cssText = 'position:fixed;bottom:84px;left:24px;width:48px;height:48px;border-radius:50%;border:0;background:var(--gold);color:#241c04;font-size:1.2rem;z-index:150;box-shadow:0 10px 24px rgba(201,162,39,.4);cursor:pointer';
     document.body.appendChild(b);
@@ -258,7 +264,6 @@
       $('#modal').hidden = false; document.body.classList.add('lock');
     };
   }
-
   /* ================= تشغيل ================= */
   buildQuote(); buildMap(); buildRating(); buildReg(); buildThemes(); buildStats();
 

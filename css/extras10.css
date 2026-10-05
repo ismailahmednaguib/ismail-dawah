@@ -1,0 +1,70 @@
+/* ============ المرحلة 7: ترجمة ============ */
+.translate-wrap{position:fixed;bottom:20px;left:20px;z-index:300}
+.translate-btn{width:48px;height:48px;border-radius:50%;border:0;background:var(--green-900);color:var(--gold-2);font-size:1.3rem;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:.3s}
+.translate-btn:hover{transform:scale(1.1);background:var(--gold);color:#241c04}
+.translate-panel{position:absolute;bottom:56px;left:0;background:var(--card);border:1.5px solid var(--gold);border-radius:14px;padding:16px;width:280px;box-shadow:0 12px 40px rgba(0,0,0,.3);display:none}
+.translate-panel.open{display:block;animation:popIn .3s}
+.translate-panel select{width:100%;padding:10px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;background:var(--bg)}
+.translate-panel .google-translate{margin-top:10px}
+body.night .translate-panel{background:#132019;border-color:rgba(227,162,39,.3)}
+body.night .translate-panel select{background:#182620;color:#ece7d4;border-color:#2c3b33}
+
+/* ============ المرحلة 7: المسابقات ============ */
+.quiz-wrap{max-width:700px;margin-inline:auto}
+.quiz-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;margin-bottom:16px}
+.quiz-q{font-size:1.15rem;font-weight:900;color:var(--green-900);margin-bottom:16px;line-height:1.8}
+.quiz-options{display:grid;gap:10px}
+.quiz-opt{background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:12px 16px;cursor:pointer;transition:.2s;font-weight:700;text-align:right}
+.quiz-opt:hover{border-color:var(--gold)}
+.quiz-opt.correct{border-color:#27ae60;background:#e8f8f0;color:#1a7a3a}
+.quiz-opt.wrong{border-color:#c0392b;background:#fde8e8;color:#8a2020}
+.quiz-opt.disabled{pointer-events:none;opacity:.7}
+.quiz-progress{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.quiz-bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.quiz-bar-fill{height:100%;background:var(--gold);border-radius:99px;transition:.5s}
+.quiz-score{font-weight:900;color:var(--gold);font-size:1.1rem}
+.quiz-result{text-align:center;padding:30px}
+.quiz-result h3{font-size:2rem;color:var(--gold);margin-bottom:10px}
+.quiz-result .grade{font-size:4rem;margin:16px 0}
+.quiz-btn{background:var(--gold);color:#241c04;border:0;padding:12px 24px;border-radius:10px;font-weight:900;cursor:pointer;font-size:1rem}
+body.night .quiz-card{background:#132019;border-color:rgba(227,162,39,.15)}
+body.night .quiz-q{color:#f0ead6}
+body.night .quiz-opt{background:#182620;border-color:#2c3b33;color:#ece7d4}
+
+/* ============ المرحلة 7: الإشعارات ============ */
+.notif-box{background:linear-gradient(135deg,var(--green-900),var(--green-950));border-radius:16px;padding:20px;color:#f0ead6;text-align:center;margin-top:20px}
+.notif-box h4{font-family:var(--f-disp);font-size:1.3rem;margin-bottom:8px}
+.notif-box p{color:#b9cabb;font-size:.9rem;margin-bottom:14px}
+.notif-btn{background:var(--gold);color:#241c04;border:0;padding:10px 20px;border-radius:10px;font-weight:900;cursor:pointer}
+.notif-btn:disabled{opacity:.5;cursor:not-allowed}
+.notif-schedule{display:grid;gap:8px;margin-top:12px;grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+.notif-item{background:rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;font-size:.82rem;display:flex;align-items:center;gap:6px}
+.notif-item input[type="checkbox"]{accent-color:var(--gold)}
+
+/* ============ المرحلة 7: التفسير ============ */
+.tafsir-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:470;display:flex;align-items:center;justify-content:center;padding:20px}
+.tafsir-overlay[hidden]{display:none!important}
+.tafsir-box{background:var(--card);border-radius:16px;padding:24px;max-width:600px;width:100%;max-height:70vh;overflow:auto;border-top:4px solid var(--gold)}
+.tafsir-box h3{color:var(--gold);margin-bottom:12px;font-family:var(--f-disp)}
+.tafsir-box .ayah-text{font-family:'Amiri',serif;font-size:1.4rem;line-height:2.4;color:var(--green-900);background:var(--gold-soft);padding:14px;border-radius:10px;margin-bottom:14px;text-align:center}
+.tafsir-box .tafsir-text{line-height:2;color:var(--muted)}
+.tafsir-close{position:absolute;top:10px;left:10px;background:var(--gold);color:#241c04;border:0;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem}
+body.night .tafsir-box{background:#132019}
+body.night .tafsir-box .ayah-text{color:#f0ead6}
+
+/* ============ المرحلة 7: متتبع الحفظ ============ */
+.mem-track{max-width:700px;margin-inline:auto}
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+.mem-surah{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:.2s;position:relative}
+.mem-surah:hover{border-color:var(--gold)}
+.mem-surah.memorized{border-color:#27ae60;background:#e8f8f0}
+.mem-surah.memorized::after{content:'✓';position:absolute;top:4px;left:4px;color:#27ae60;font-weight:900}
+.mem-surah b{display:block;font-size:.9rem;color:var(--green-900)}
+.mem-surah small{color:var(--muted);font-size:.72rem}
+.mem-summary{display:flex;gap:16px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.mem-stat{background:var(--gold-soft);border-radius:12px;padding:12px 20px;text-align:center}
+.mem-stat b{font-size:1.6rem;color:var(--green-900);display:block}
+.mem-stat small{color:var(--muted)}
+body.night .mem-surah{background:#132019;border-color:rgba(227,162,39,.15)}
+body.night .mem-surah b{color:#f0ead6}
+body.night .mem-surah.memorized{background:rgba(39,174,96,.1);border-color:#27ae60}

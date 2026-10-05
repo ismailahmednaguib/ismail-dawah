@@ -40,34 +40,58 @@
   }
 
   /* ================= 2) الأذكار ================= */
-  function buildAzkar() {
+   function buildAzkar() {
     const AZKAR = {
       morning: [
         { t: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', c: 1 },
         { t: 'اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ', c: 1 },
         { t: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', c: 100 },
-        { t: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', c: 10 }
+        { t: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', c: 10 },
+        { t: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ', c: 1 },
+        { t: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', c: 7 }
       ],
       evening: [
         { t: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ', c: 1 },
         { t: 'اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ', c: 1 },
-        { t: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', c: 3 }
+        { t: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', c: 3 },
+        { t: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ', c: 1 },
+        { t: 'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا', c: 3 }
       ],
       sleep: [
         { t: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا', c: 1 },
-        { t: 'اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ', c: 3 }
+        { t: 'اللَّهُمَّ قِنِي عَذَابَكَ يَوْمَ تَبْعَثُ عِبَادَكَ', c: 3 },
+        { t: 'سَبِّحِ اسْمَ رَبِّكَ الْأَعْلَى', c: 1 },
+        { t: 'اللَّهُمَّ أَسْلَمْتُ نَفْسِي إِلَيْكَ، وَفَوَّضْتُ أَمْرِي إِلَيْكَ', c: 1 }
+      ],
+      afterPrayer: [
+        { t: 'أَسْتَغْفِرُ اللَّهَ', c: 3 },
+        { t: 'اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ', c: 1 },
+        { t: 'سُبْحَانَ اللَّهِ', c: 33 },
+        { t: 'الْحَمْدُ لِلَّهِ', c: 33 },
+        { t: 'اللَّهُ أَكْبَرُ', c: 34 }
       ]
     };
 
     const sec = document.createElement('section');
     sec.className = 'section'; sec.id = 'azkar';
-    sec.innerHTML = '<div class="container"><header class="sec-head"><p class="kicker">ذكر الله</p><h2 class="sec-title">الأذكار اليومية</h2><div class="orn"><span>✦</span></div></header><div class="azkar-tabs"><button class="azkar-tab active" data-tab="morning">أذكار الصباح</button><button class="azkar-tab" data-tab="evening">أذكار المساء</button><button class="azkar-tab" data-tab="sleep">أذكار النوم</button></div><div id="azkar-list"></div></div>';
+    sec.innerHTML = '<div class="container"><header class="sec-head"><p class="kicker">ذكر الله</p><h2 class="sec-title">الأذكار اليومية</h2><div class="orn"><span>✦</span></div></header>'
+      + '<div class="azkar-tabs">'
+      + '<button class="azkar-tab active" data-tab="morning">☀️ أذكار الصباح</button>'
+      + '<button class="azkar-tab" data-tab="evening">🌙 أذكار المساء</button>'
+      + '<button class="azkar-tab" data-tab="afterPrayer">🕌 بعد الصلاة</button>'
+      + '<button class="azkar-tab" data-tab="sleep">😴 أذكار النوم</button>'
+      + '</div><div id="azkar-list"></div></div>';
     const contact = $('#contact'); if (contact) contact.insertAdjacentElement('beforebegin', sec);
 
     const render = tab => {
       const list = $('#azkar-list');
       list.innerHTML = AZKAR[tab].map((z, i) =>
-        '<div class="azkar-item" data-i="' + i + '"><div class="azkar-text">' + esc(z.t) + '</div><div class="azkar-count"><button data-i="' + i + '">👆</button><span>العدد: <b class="azkar-c">' + z.c + '</b> / ' + z.c + '</span></div></div>'
+        '<div class="azkar-item" data-i="' + i + '" data-total="' + z.c + '">'
+        + '<div class="azkar-text">' + esc(z.t) + '</div>'
+        + '<div class="azkar-count">'
+        + '<button data-i="' + i + '">👆</button>'
+        + '<span>العدد: <b class="azkar-c">0</b> / ' + z.c + '</span>'
+        + '</div></div>'
       ).join('');
     };
     render('morning');
@@ -82,11 +106,14 @@
 
     document.addEventListener('click', e => {
       const btn = e.target.closest('.azkar-count button'); if (!btn) return;
-      const i = +btn.dataset.i;
       const item = btn.closest('.azkar-item');
+      const total = +item.dataset.total;
       const b = item.querySelector('.azkar-c');
       let c = +b.textContent;
-      if (c > 0) { c--; b.textContent = c; if (c === 0) item.classList.add('azkar-done'); }
+      if (c < total) {
+        c++; b.textContent = c;
+        if (c === total) { item.classList.add('azkar-done'); app.toast('ما شاء الله، أتممت الذكر ✔'); }
+      }
     });
   }
 
