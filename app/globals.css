@@ -1,17 +1,21 @@
-/* ========== الوضع الليلي ========== */
-.dark { color-scheme: dark; }
-.dark body { background-color: #0e1613; color: #e6e3d8; }
-.dark .bg-white { background-color: #16211c; }
-.dark .bg-cream { background-color: #0e1613; }
-.dark .bg-cream-dark { background-color: #121b17; }
-.dark .bg-cream\/95 { background-color: rgba(14, 22, 19, 0.95); }
-.dark .text-gray-900 { color: #ece9de; }
-.dark .text-gray-700 { color: #c9c5b8; }
-.dark .text-gray-600 { color: #b4b0a4; }
-.dark .text-gray-500 { color: #9b9789; }
-.dark .text-gray-400 { color: #86827a; }
-.dark .text-primary { color: #eaf2ec; }
-.dark .border-gray-100 { border-color: #26332c; }
-.dark .border-gray-200 { border-color: #2c3a32; }
-.dark .border-gray-300 { border-color: #37453c; }
-.dark input, .dark textarea, .dark select { background-color: #101a15; color: #e6e3d8; border-color: #2c3a32; }
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0b2e22;
+  --color-primary-light: #145c43;
+  --color-gold: #c9a227;
+  --color-gold-light: #e3c766;
+  --color-cream: #fdfbf7;
+  --color-cream-dark: #f4f1ea;
+  --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Amiri", ui-serif, Georgia, serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--color-cream);
+  color: #111827;
+  font-family: var(--font-sans);
+  line-height: 1.7;
+}

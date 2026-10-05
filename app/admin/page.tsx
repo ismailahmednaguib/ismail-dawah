@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { defaultContent, type Content } from "@/lib/content";
-import type { Settings } from "@/lib/data";
+import type { Settings, Photo } from "@/lib/data";
 
 type Tab = "settings" | "appearance" | "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule";
 
@@ -244,7 +244,7 @@ export default function AdminPage() {
                         const files = Array.from(e.target.files || []);
                         if (!files.length) return;
                         setMsg("⏳ جاري رفع " + files.length + " صورة…");
-                        const items = [];
+                        const items: Photo[] = [];
                         for (const f of files) {
                           const u = await uploadFile(f, "image");
                           if (u) items.push({ id: Date.now() + Math.random(), url: u, caption: "" });

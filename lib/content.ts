@@ -1,5 +1,5 @@
-import { settings, stats, lessons, videos, schedule } from "./data";
-import type { Settings, Stat, Lesson, Video, ScheduleItem } from "./data";
+import { settings, stats, lessons, videos, schedule, articles, audio, photos } from "./data";
+import type { Settings, Stat, Lesson, Video, ScheduleItem, Article, AudioItem, Photo } from "./data";
 
 export interface Content {
   settings: Settings;
@@ -7,9 +7,12 @@ export interface Content {
   lessons: Lesson[];
   videos: Video[];
   schedule: ScheduleItem[];
+  articles: Article[];
+  audio: AudioItem[];
+  photos: Photo[];
 }
 
-export const defaultContent: Content = { settings, stats, lessons, videos, schedule };
+export const defaultContent: Content = { settings, stats, lessons, videos, schedule, articles, audio, photos };
 
 export async function getContent(): Promise<Content> {
   const url = process.env.SUPABASE_URL;
@@ -31,6 +34,9 @@ export async function getContent(): Promise<Content> {
       lessons: saved.lessons ?? defaultContent.lessons,
       videos: saved.videos ?? defaultContent.videos,
       schedule: saved.schedule ?? defaultContent.schedule,
+      articles: saved.articles ?? defaultContent.articles,
+      audio: saved.audio ?? defaultContent.audio,
+      photos: saved.photos ?? defaultContent.photos,
     };
   } catch {
     return defaultContent;
