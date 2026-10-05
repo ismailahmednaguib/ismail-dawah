@@ -5,6 +5,10 @@
    ================================================================ */
 (function () {
   'use strict';
+    // نقاط ربط للمرحلة 8 — لا تحذف
+  window.__adminSchema = SCHEMA;
+  window.__adminShell = shell;
+  window.__renderSettings = renderSettings;
   const app = window.SiteApp; if (!app) return;
   const adminEl = document.getElementById('admin');
   const AUTH = 'siteAdminAuth_v1';
