@@ -6,14 +6,17 @@ import Footer from "@/components/Footer";
 import { defaultContent, type Content } from "@/lib/content";
 import type { Settings, Photo } from "@/lib/data";
 
-type Tab = "settings" | "appearance" | "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule";
+type Tab = "settings" | "appearance" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule";
+type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books";
 
 const TABS: [Tab, string][] = [
   ["settings", "⚙️ البيانات"],
-  ["appearance", "🎛️ الأقسام"],
+  ["appearance", "🎛️ الظهور"],
+  ["fields", "🧭 العلوم"],
   ["lessons", "📖 الدروس"],
   ["videos", "🎬 الفيديوهات"],
   ["articles", "📰 المقالات"],
+  ["books", "📚 الكتب"],
   ["audio", "🎧 الصوتيات"],
   ["photos", "🖼️ الصور"],
   ["schedule", "🗓️ الجدول"],
@@ -55,17 +58,17 @@ export default function AdminPage() {
 
   const setS = (k: keyof Settings, v: unknown) => setC({ ...c, settings: { ...c.settings, [k]: v } });
 
-  const upd = (coll: "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule", i: number, patch: Record<string, unknown>) => {
+  const upd = (coll: Coll, i: number, patch: Record<string, unknown>) => {
     const list = (c[coll] as unknown as Record<string, unknown>[]).map((x, xi) => (xi === i ? { ...x, ...patch } : x));
     setC({ ...c, [coll]: list } as Content);
   };
 
-  const del = (coll: "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule", i: number) => {
+  const del = (coll: Coll, i: number) => {
     const list = (c[coll] as unknown as unknown[]).filter((_, xi) => xi !== i);
     setC({ ...c, [coll]: list } as Content);
   };
 
-  const add = (coll: "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule", item: unknown) => {
+  const add = (coll: Coll, item: unknown) => {
     setC({ ...c, [coll]: [item, ...(c[coll] as unknown as unknown[])] } as Content);
   };
 
@@ -79,7 +82,8 @@ export default function AdminPage() {
           const canvas = document.createElement("canvas");
           canvas.width = Math.round(img.width * scale);
           canvas.height = Math.round(img.height * scale);
-          canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const ctx = canvas.getContext("2d");
+          if (ctx) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           canvas.toBlob((b) => b && resolve(new File([b], file.name.replace(/\.\w+$/, "") + ".jpg", { type: "image/jpeg" })), "image/jpeg", 0.85);
         };
         img.src = String(reader.result);
@@ -87,7 +91,7 @@ export default function AdminPage() {
       reader.readAsDataURL(file);
     });
 
-  const uploadFile = async (file: File, kind: "image" | "audio"): Promise<string | null> => {
+  const uploadFile = async (file: File, kind: "image" | "audio" | "doc"): Promise<string | null> => {
     const fd = new FormData();
     fd.append("file", kind === "image" ? await resizeImage(file) : file);
     fd.append("kind", kind);
@@ -101,6 +105,14 @@ export default function AdminPage() {
   const itemBox = "border-2 border-gray-100 rounded-lg p-4 grid gap-3";
   const addBtn = "bg-primary text-gold py-3 rounded-lg font-bold hover:opacity-90 transition";
   const delBtn = "text-red-500 text-xs font-bold hover:underline";
+
+  const fieldSelect = (coll: Coll, i: number, current: string) => (
+    <select className={input} value={current} onChange={(e) => upd(coll, i, { field: e.target.value })}>
+      {c.fields.map((f) => (
+        <option key={f.slug} value={f.slug}>{f.icon} {f.name}</option>
+      ))}
+    </select>
+  );
 
   return (
     <>
@@ -160,14 +172,27 @@ export default function AdminPage() {
                 )}
 
                 {tab === "appearance" && (
+                  <label className="flex items-center justify-between border-2 border-gray-100 rounded-lg p-4 cursor-pointer">
+                    <span className="font-bold text-sm">🕌 شريط مواقيت الصلاة + التاريخ الهجري</span>
+                    <input type="checkbox" checked={Boolean(c.settings.showPrayerBar)} onChange={(e) => setS("showPrayerBar", e.target.checked)} className="w-5 h-5 accent-[#c9a227]" />
+                  </label>
+                )}
+
+                {tab === "fields" && (
                   <>
-                    {([["showPrayerBar", "🕌 شريط مواقيت الصلاة + التاريخ الهجري"], ["showArticles", "📰 قسم المقالات"], ["showAudio", "🎧 المكتبة الصوتية"], ["showGallery", "🖼️ معرض الصور"]] as [keyof Settings, string][]).map(([k, t]) => (
-                      <label key={String(k)} className="flex items-center justify-between border-2 border-gray-100 rounded-lg p-4 cursor-pointer">
-                        <span className="font-bold text-sm">{t}</span>
-                        <input type="checkbox" checked={Boolean(c.settings[k])} onChange={(e) => setS(k, e.target.checked)} className="w-5 h-5 accent-[#c9a227]" />
-                      </label>
+                    {c.fields.map((f, i) => (
+                      <div key={f.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">علم #{i + 1}</b><button onClick={() => del("fields", i)} className={delBtn}>🗑 حذف</button></div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <input className={input} value={f.name} placeholder="الاسم" onChange={(e) => upd("fields", i, { name: e.target.value })} />
+                          <input className={input} value={f.slug} placeholder="slug إنجليزي" onChange={(e) => upd("fields", i, { slug: e.target.value })} />
+                          <input className={input} value={f.icon} placeholder="أيقونة" onChange={(e) => upd("fields", i, { icon: e.target.value })} />
+                        </div>
+                        <input className={input} value={f.desc} placeholder="وصف مختصر" onChange={(e) => upd("fields", i, { desc: e.target.value })} />
+                      </div>
                     ))}
-                    <p className="text-xs text-gray-500">الأقسام دي هتظهر أو تختفي من الموقع كله بضغطة واحدة بعد الحفظ.</p>
+                    <button onClick={() => add("fields", { id: Date.now(), slug: "new-field", name: "علم جديد", icon: "📚", desc: "" })} className={addBtn}>➕ إضافة علم</button>
+                    <button onClick={() => setC({ ...c, fields: defaultContent.fields })} className="border-2 border-gold text-gold py-3 rounded-lg font-bold hover:bg-gold hover:text-gray-900 transition">♻️ استعادة القائمة الكاملة (15 علم)</button>
                   </>
                 )}
 
@@ -179,12 +204,13 @@ export default function AdminPage() {
                         <input className={input} value={l.title} placeholder="العنوان" onChange={(e) => upd("lessons", i, { title: e.target.value })} />
                         <div className="grid grid-cols-2 gap-3">
                           <input className={input} value={l.category} placeholder="التصنيف" onChange={(e) => upd("lessons", i, { category: e.target.value })} />
-                          <input className={input} value={l.link} placeholder="رابط الاستماع" onChange={(e) => upd("lessons", i, { link: e.target.value })} />
+                          {fieldSelect("lessons", i, l.field)}
                         </div>
+                        <input className={input} value={l.link} placeholder="رابط الاستماع" onChange={(e) => upd("lessons", i, { link: e.target.value })} />
                         <textarea rows={2} className={input} value={l.desc} placeholder="الوصف" onChange={(e) => upd("lessons", i, { desc: e.target.value })} />
                       </div>
                     ))}
-                    <button onClick={() => add("lessons", { id: Date.now(), title: "درس جديد", category: "عقيدة", date: String(new Date().getFullYear()), link: "", desc: "" })} className={addBtn}>➕ إضافة درس</button>
+                    <button onClick={() => add("lessons", { id: Date.now(), title: "درس جديد", category: "", date: String(new Date().getFullYear()), link: "", desc: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ إضافة درس</button>
                   </>
                 )}
 
@@ -194,11 +220,14 @@ export default function AdminPage() {
                       <div key={v.id} className={itemBox}>
                         <div className="flex justify-between items-center"><b className="text-sm text-primary">فيديو #{i + 1}</b><button onClick={() => del("videos", i)} className={delBtn}>🗑 حذف</button></div>
                         <input className={input} value={v.title} placeholder="العنوان" onChange={(e) => upd("videos", i, { title: e.target.value })} />
-                        <input className={input} value={v.url} placeholder="رابط يوتيوب" onChange={(e) => upd("videos", i, { url: e.target.value })} />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input className={input} value={v.url} placeholder="رابط يوتيوب" onChange={(e) => upd("videos", i, { url: e.target.value })} />
+                          {fieldSelect("videos", i, v.field)}
+                        </div>
                         <textarea rows={2} className={input} value={v.desc} placeholder="الوصف" onChange={(e) => upd("videos", i, { desc: e.target.value })} />
                       </div>
                     ))}
-                    <button onClick={() => add("videos", { id: Date.now(), title: "فيديو جديد", url: "", desc: "" })} className={addBtn}>➕ إضافة فيديو</button>
+                    <button onClick={() => add("videos", { id: Date.now(), title: "فيديو جديد", url: "", desc: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ إضافة فيديو</button>
                   </>
                 )}
 
@@ -208,12 +237,36 @@ export default function AdminPage() {
                       <div key={a.id} className={itemBox}>
                         <div className="flex justify-between items-center"><b className="text-sm text-primary">مقال #{i + 1}</b><button onClick={() => del("articles", i)} className={delBtn}>🗑 حذف</button></div>
                         <input className={input} value={a.title} placeholder="عنوان المقال" onChange={(e) => upd("articles", i, { title: e.target.value })} />
-                        <input className={input} value={a.date} placeholder="التاريخ (مثال: 15 يناير 2024)" onChange={(e) => upd("articles", i, { date: e.target.value })} />
-                        <textarea rows={2} className={input} value={a.excerpt} placeholder="مقتطف مختصر يظهر في البطاقة" onChange={(e) => upd("articles", i, { excerpt: e.target.value })} />
-                        <textarea rows={6} className={input} value={a.body} placeholder="نص المقال كاملًا (سطر فاضي = فقرة جديدة)" onChange={(e) => upd("articles", i, { body: e.target.value })} />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input className={input} value={a.date} placeholder="التاريخ" onChange={(e) => upd("articles", i, { date: e.target.value })} />
+                          {fieldSelect("articles", i, a.field)}
+                        </div>
+                        <textarea rows={2} className={input} value={a.excerpt} placeholder="مقتطف مختصر" onChange={(e) => upd("articles", i, { excerpt: e.target.value })} />
+                        <textarea rows={6} className={input} value={a.body} placeholder="نص المقال (سطر فاضي = فقرة)" onChange={(e) => upd("articles", i, { body: e.target.value })} />
                       </div>
                     ))}
-                    <button onClick={() => add("articles", { id: Date.now(), title: "مقال جديد", date: new Date().toLocaleDateString("ar-EG"), excerpt: "", body: "" })} className={addBtn}>➕ كتابة مقال</button>
+                    <button onClick={() => add("articles", { id: Date.now(), title: "مقال جديد", date: new Date().toLocaleDateString("ar-EG"), excerpt: "", body: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ كتابة مقال</button>
+                  </>
+                )}
+
+                {tab === "books" && (
+                  <>
+                    {c.books.map((b, i) => (
+                      <div key={b.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">كتاب #{i + 1}</b><button onClick={() => del("books", i)} className={delBtn}>🗑 حذف</button></div>
+                        <input className={input} value={b.title} placeholder="اسم الكتاب" onChange={(e) => upd("books", i, { title: e.target.value })} />
+                        <div className="grid grid-cols-2 gap-3">
+                          {fieldSelect("books", i, b.field)}
+                          <input className={input} value={b.url} placeholder="رابط PDF خارجي (اختياري)" onChange={(e) => upd("books", i, { url: e.target.value })} />
+                        </div>
+                        <div>
+                          <span className={label}>أو ارفع PDF من جهازك</span>
+                          <input type="file" accept="application/pdf" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري رفع الكتاب…"); const u = await uploadFile(f, "doc"); if (u) { upd("books", i, { url: u }); setMsg("✅ الكتاب اترفع — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
+                        </div>
+                        <textarea rows={2} className={input} value={b.desc} placeholder="وصف الكتاب" onChange={(e) => upd("books", i, { desc: e.target.value })} />
+                      </div>
+                    ))}
+                    <button onClick={() => add("books", { id: Date.now(), title: "كتاب جديد", field: c.fields[0]?.slug || "", url: "", desc: "" })} className={addBtn}>➕ إضافة كتاب</button>
                   </>
                 )}
 
@@ -222,7 +275,10 @@ export default function AdminPage() {
                     {c.audio.map((a, i) => (
                       <div key={a.id} className={itemBox}>
                         <div className="flex justify-between items-center"><b className="text-sm text-primary">مقطع #{i + 1}</b><button onClick={() => del("audio", i)} className={delBtn}>🗑 حذف</button></div>
-                        <input className={input} value={a.title} placeholder="العنوان" onChange={(e) => upd("audio", i, { title: e.target.value })} />
+                        <div className="grid grid-cols-2 gap-3">
+                          <input className={input} value={a.title} placeholder="العنوان" onChange={(e) => upd("audio", i, { title: e.target.value })} />
+                          {fieldSelect("audio", i, a.field)}
+                        </div>
                         <div>
                           <span className={label}>رفع MP3 من جهازك</span>
                           <input type="file" accept="audio/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري رفع المقطع…"); const u = await uploadFile(f, "audio"); if (u) { upd("audio", i, { url: u }); setMsg("✅ المقطع اترفع — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
@@ -231,15 +287,14 @@ export default function AdminPage() {
                         <textarea rows={2} className={input} value={a.desc} placeholder="الوصف" onChange={(e) => upd("audio", i, { desc: e.target.value })} />
                       </div>
                     ))}
-                    <button onClick={() => add("audio", { id: Date.now(), title: "مقطع جديد", url: "", desc: "" })} className={addBtn}>➕ إضافة مقطع</button>
-                    <p className="text-xs text-gray-500">💡 للصوتيات الكبيرة (فوق 4MB) ارفعها على archive.org وحط الرابط مباشرة في حقل الرابط بعد ما نضيفه، أو اصغر حجم الملف.</p>
+                    <button onClick={() => add("audio", { id: Date.now(), title: "مقطع جديد", url: "", desc: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ إضافة مقطع</button>
                   </>
                 )}
 
                 {tab === "photos" && (
                   <>
                     <div>
-                      <span className={label}>رفع صور جديدة (ممكن أكتر من واحدة مرة واحدة)</span>
+                      <span className={label}>رفع صور جديدة + اختيار العلم التابعين ليه</span>
                       <input type="file" accept="image/*" multiple onChange={async (e) => {
                         const files = Array.from(e.target.files || []);
                         if (!files.length) return;
@@ -247,10 +302,10 @@ export default function AdminPage() {
                         const items: Photo[] = [];
                         for (const f of files) {
                           const u = await uploadFile(f, "image");
-                          if (u) items.push({ id: Date.now() + Math.random(), url: u, caption: "" });
+                          if (u) items.push({ id: Date.now() + Math.random(), url: u, caption: "", field: c.fields[0]?.slug || "" });
                         }
                         setC((prev) => ({ ...prev, photos: [...items, ...prev.photos] } as Content));
-                        setMsg("✅ اترفعت الصور — اضغط حفظ ونشر");
+                        setMsg("✅ اترفعت الصور — حدد العلم لكل صورة واضغط حفظ");
                       }} className="text-sm" />
                     </div>
                     <div className="grid sm:grid-cols-2 gap-3">
@@ -258,6 +313,7 @@ export default function AdminPage() {
                         <div key={p.id} className="border-2 border-gray-100 rounded-lg p-3 grid gap-2">
                           <img src={p.url} alt={p.caption} className="w-full h-40 object-cover rounded-lg" />
                           <input className={input} value={p.caption} placeholder="تعليق الصورة" onChange={(e) => upd("photos", i, { caption: e.target.value })} />
+                          {fieldSelect("photos", i, p.field)}
                           <button onClick={() => del("photos", i)} className={delBtn}>🗑 حذف</button>
                         </div>
                       ))}
