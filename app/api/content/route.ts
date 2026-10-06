@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getContent } from "@/lib/content";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const hasDb = !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY);
   const content = await getContent();
@@ -18,30 +20,30 @@ export async function POST(req: Request) {
   if (!url || !serviceKey) {
     return NextResponse.json({ error: "db not configured" }, { status: 500 });
   }
-  
+
   const body = await req.json();
-  
+
   if (!body.content) {
     return NextResponse.json({ error: "no content provided" }, { status: 400 });
   }
-  
+
   const supabase = createClient(url, serviceKey);
-  
-  // حذف أي قيم undefined أو null
+
+  // تنظيف البيانات من أي قيم undefined
   const cleanContent = JSON.parse(JSON.stringify(body.content));
-  
+
   const { error } = await supabase
     .from("site_content")
-    .upsert({ 
-      id: 1, 
-      data: cleanContent, 
-      updated_at: new Date().toISOString() 
+    .upsert({
+      id: 1,
+      data: cleanContent,
+      updated_at: new Date().toISOString(),
     });
-    
+
   if (error) {
     console.error("Supabase save error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-  
+
   return NextResponse.json({ ok: true, saved_at: new Date().toISOString() });
 }
