@@ -21,22 +21,25 @@ export async function POST(req: Request) {
   
   const body = await req.json();
   
-  // التحقق من أن البيانات موجودة
   if (!body.content) {
     return NextResponse.json({ error: "no content provided" }, { status: 400 });
   }
   
   const supabase = createClient(url, serviceKey);
+  
+  // حذف أي قيم undefined أو null
+  const cleanContent = JSON.parse(JSON.stringify(body.content));
+  
   const { error } = await supabase
     .from("site_content")
     .upsert({ 
       id: 1, 
-      data: body.content, 
+      data: cleanContent, 
       updated_at: new Date().toISOString() 
     });
     
   if (error) {
-    console.error("Supabase error:", error);
+    console.error("Supabase save error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   

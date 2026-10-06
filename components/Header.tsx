@@ -41,6 +41,8 @@ export default function Header({ settings, lang = "ar" }: { settings: Settings; 
           <button onClick={toggleDark} aria-label="Toggle theme" className="text-xl w-9 h-9 rounded-lg bg-white dark:bg-gray-800 border border-gold/30 grid place-items-center">
             {dark ? "☀️" : "🌙"}
           </button>
+          {/* لينك مخفي للـ admin - يظهر بس لما تعمل hover على النقطة */}
+          <Link href="/admin" title="لوحة التحكم" className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 hover:bg-gold hover:w-6 hover:h-6 transition-all duration-300 opacity-50 hover:opacity-100"></Link>
         </div>
       </div>
     </header>
