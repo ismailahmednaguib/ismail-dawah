@@ -332,6 +332,7 @@ export default function AdminPage() {
                         setMsg("✅ اترفعت الصور — حدد العلم لكل صورة واضغط حفظ");
                       }} className="text-sm" />
                     </div>
+                                        <div><span className={label}>رابط تحميل تطبيق الموبايل (APK)</span><input className={input} value={c.settings.appUrl} onChange={(e) => setS("appUrl", e.target.value)} placeholder="https://....supabase.co/.../ismail-dawah.apk" /></div>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {c.photos.map((p, i) => (
                         <div key={p.id} className="border-2 border-gray-100 rounded-lg p-3 grid gap-2">

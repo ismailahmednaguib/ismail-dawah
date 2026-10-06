@@ -1,9 +1,9 @@
 export interface Settings {
   ownerName: string; shortName: string; jobTitle: string; kicker: string; motto: string;
   bio: string[]; cred1: string; cred2: string; interests: string[];
-  wa: string; email: string; address: string; portraitSrc: string; ogImage: string;
+  wa: string; email: string; address: string; portraitSrc: string; ogImage: string;   appUrl: string;
   showPrayerBar: boolean;
-  liveUrl: string; liveTitle: string; meetingDay: string; meetingTime: string; meetingPlace: string; meetingLink: string;
+  liveUrl: string; liveTitle: string; meetingDay: string; meetingTime: string; meetingPlace: string; meetingLink: string; 
 }
 export interface Field { id: number; slug: string; name: string; icon: string; desc: string; }
 export interface Stat { num: string; label: string; }
@@ -38,6 +38,7 @@ export const settings: Settings = {
   address: "جمهورية مصر العربية",
   portraitSrc: "",
   ogImage: "",
+    appUrl: "",
   showPrayerBar: true,
   liveUrl: "",
   liveTitle: "البث المباشر للمجلس الأسبوعي",

@@ -30,6 +30,13 @@ export default function Footer({ settings }: { settings: Settings }) {
           <p>📍 {settings.address}</p>
         </div>
       </div>
+      {settings.appUrl && (
+        <div className="text-center pb-6">
+          <a href={settings.appUrl} download className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition">
+            📱 حمّل تطبيق الموبايل (APK)
+          </a>
+        </div>
+      )}
       <div className="border-t border-white/10 py-4 text-center text-xs">
         © {new Date().getFullYear()} {settings.ownerName} — جميع الحقوق محفوظة
       </div>
