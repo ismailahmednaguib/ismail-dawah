@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ismail.dawah",
+      "sha256_cert_fingerprints": ["8A:A1:1F:8E:7A:51:A3:3B:22:4E:26:EC:FD:F1:86:64:C7:6F:12:E6:C8:54:42:94:80:28:6D:9F:6C:A6:B2:FA"]
+    }
+  }
+]

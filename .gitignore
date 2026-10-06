@@ -3,3 +3,15 @@ node_modules
 out
 .env*.local
 .DS_Store
+
+# Bubblewrap Android
+android/
+*.apk
+*.aab
+*.keystore
+
+# Bubblewrap Android
+android/
+*.apk
+*.aab
+*.keystore
