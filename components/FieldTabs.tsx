@@ -38,69 +38,73 @@ export default function FieldTabs({ lessons, videos, articles, books, audio, pho
 
   return (
     <div>
-      <div className="flex gap-2 flex-wrap justify-center mb-10">
-        {(Object.keys(LABELS) as TabKey[]).map((k) => (
-          <button
-            key={k}
-            onClick={() => setTab(k)}
-            className={`px-4 py-2 rounded-full font-bold text-sm transition ${tab === k ? "bg-primary text-gold" : "bg-white text-gray-600 hover:bg-cream-dark"} ${counts[k] === 0 ? "opacity-40" : ""}`}
-          >
-            {LABELS[k]} ({counts[k]})
-          </button>
-        ))}
+      <div className="sticky top-16 z-40 bg-cream-dark/90 backdrop-blur py-3 mb-10 -mx-4 px-4">
+        <div className="flex gap-2 flex-wrap justify-center">
+          {(Object.keys(LABELS) as TabKey[]).map((k) => (
+            <button
+              key={k}
+              onClick={() => setTab(k)}
+              className={`px-4 py-2 rounded-full font-bold text-sm transition shadow-sm ${tab === k ? "bg-primary text-gold ring-2 ring-gold/50" : "bg-white text-gray-600 hover:bg-cream"} ${counts[k] === 0 ? "opacity-40" : ""}`}
+            >
+              {LABELS[k]} ({counts[k]})
+            </button>
+          ))}
+        </div>
       </div>
 
-      {tab === "lessons" && (lessons.length ? (
-        <div className="grid md:grid-cols-3 gap-6">{lessons.map((l) => <LessonCard key={l.id} lesson={l} />)}</div>
-      ) : <Empty />)}
+      <div className="fade-up" key={tab}>
+        {tab === "lessons" && (lessons.length ? (
+          <div className="grid md:grid-cols-3 gap-6">{lessons.map((l) => <LessonCard key={l.id} lesson={l} />)}</div>
+        ) : <Empty />)}
 
-      {tab === "videos" && (videos.length ? (
-        <div className="grid md:grid-cols-3 gap-6">{videos.map((v) => <VideoCard key={v.id} video={v} />)}</div>
-      ) : <Empty />)}
+        {tab === "videos" && (videos.length ? (
+          <div className="grid md:grid-cols-3 gap-6">{videos.map((v) => <VideoCard key={v.id} video={v} />)}</div>
+        ) : <Empty />)}
 
-      {tab === "articles" && (articles.length ? (
-        <div className="grid gap-5 max-w-3xl mx-auto">
-          {articles.map((a) => (
-            <Link key={a.id} href={`/articles/${a.id}`} className="bg-white rounded-xl p-6 shadow-md border-t-4 border-gold block hover:-translate-y-1 transition">
-              <div className="text-xs text-gray-400 mb-2">📅 {a.date}</div>
-              <h3 className="font-serif text-xl text-primary mb-2">{a.title}</h3>
-              <p className="text-sm text-gray-600">{a.excerpt}</p>
-            </Link>
-          ))}
-        </div>
-      ) : <Empty />)}
+        {tab === "articles" && (articles.length ? (
+          <div className="grid gap-5 max-w-3xl mx-auto">
+            {articles.map((a) => (
+              <Link key={a.id} href={`/articles/${a.id}`} className="bg-white rounded-xl p-6 shadow-md border-t-4 border-gold block hover:-translate-y-1 transition">
+                <div className="text-xs text-gray-400 mb-2">📅 {a.date}</div>
+                <h3 className="font-serif text-xl text-primary mb-2">{a.title}</h3>
+                <p className="text-sm text-gray-600">{a.excerpt}</p>
+              </Link>
+            ))}
+          </div>
+        ) : <Empty />)}
 
-      {tab === "books" && (books.length ? (
-        <div className="grid md:grid-cols-3 gap-6">
-          {books.map((b) => (
-            <div key={b.id} className="bg-white rounded-xl p-6 shadow-md border-t-4 border-gold">
-              <h3 className="font-serif text-lg text-primary mb-2">📚 {b.title}</h3>
-              <p className="text-sm text-gray-600 mb-4">{b.desc}</p>
-              {b.url && <a href={b.url} target="_blank" rel="noopener" className="text-gold font-bold text-sm">تحميل / قراءة ←</a>}
-            </div>
-          ))}
-        </div>
-      ) : <Empty />)}
+        {tab === "books" && (books.length ? (
+          <div className="grid md:grid-cols-3 gap-6">
+            {books.map((b) => (
+              <div key={b.id} className="bg-white rounded-xl p-6 shadow-md border-t-4 border-gold">
+                <h3 className="font-serif text-lg text-primary mb-2">📚 {b.title}</h3>
+                <p className="text-sm text-gray-600 mb-4">{b.desc}</p>
+                {b.url && <a href={b.url} target="_blank" rel="noopener" className="text-gold font-bold text-sm">تحميل / قراءة ←</a>}
+              </div>
+            ))}
+          </div>
+        ) : <Empty />)}
 
-      {tab === "audio" && (audio.length ? (
-        <div className="grid gap-4 max-w-3xl mx-auto">
-          {audio.map((a) => (
-            <div key={a.id} className="bg-white rounded-xl p-5 shadow-md">
-              <h3 className="font-bold text-primary mb-2">🎧 {a.title}</h3>
-              <p className="text-sm text-gray-500 mb-3">{a.desc}</p>
-              <audio src={a.url} controls className="w-full" />
-            </div>
-          ))}
-        </div>
-      ) : <Empty />)}
+        {tab === "audio" && (audio.length ? (
+          <div className="grid gap-4 max-w-3xl mx-auto">
+            {audio.map((a) => (
+              <div key={a.id} className="bg-white rounded-xl p-5 shadow-md">
+                <h3 className="font-bold text-primary mb-2">🎧 {a.title}</h3>
+                <p className="text-sm text-gray-500 mb-3">{a.desc}</p>
+                <audio src={a.url} controls className="w-full" />
+              </div>
+            ))}
+          </div>
+        ) : <Empty />)}
 
-      {tab === "photos" && (photos.length ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {photos.map((p) => (
-            <img key={p.id} src={p.url} alt={p.caption} className="w-full h-48 object-cover rounded-xl shadow-md" />
-          ))}
-        </div>
-      ) : <Empty />)}
+        {tab === "photos" && (photos.length ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {photos.map((p) => (
+              <img key={p.id} src={p.url} alt={p.caption} className="w-full h-48 object-cover rounded-xl shadow-md hover:scale-[1.02] transition" />
+            ))}
+          </div>
+        ) : <Empty />)}
+      </div>
     </div>
   );
 }

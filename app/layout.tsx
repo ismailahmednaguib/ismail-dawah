@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import TopBar from "@/components/TopBar";
+import BackTop from "@/components/BackTop";
 
 export const metadata: Metadata = {
   title: {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <TopBar />
         {children}
+        <BackTop />
       </body>
     </html>
   );

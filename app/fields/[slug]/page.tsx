@@ -27,23 +27,29 @@ export default async function FieldPage({ params }: { params: Promise<{ slug: st
   return (
     <>
       <Header settings={c.settings} />
-      <main className="py-16 bg-cream-dark min-h-screen">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-10">
-            <div className="text-5xl mb-3">{f.icon}</div>
-            <h1 className="font-serif text-4xl text-primary mb-2">{f.name}</h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">{f.desc}</p>
-            <a href="/" className="inline-block mt-4 text-sm text-gold font-bold hover:underline">→ كل العلوم</a>
+      <main className="min-h-screen bg-cream-dark">
+        <section className="relative bg-primary text-white py-14 overflow-hidden pattern-light">
+          <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-[11rem] opacity-10 select-none">{f.icon}</span>
+          <div className="relative max-w-4xl mx-auto px-4 text-center fade-up">
+            <a href="/" className="text-gold-light text-sm font-bold hover:underline">→ كل العلوم</a>
+            <h1 className="font-serif text-4xl md:text-5xl mt-3 mb-1">{f.name}</h1>
+            <div className="ornament my-3"><span className="text-xl">✦</span></div>
+            <p className="text-white/80 max-w-2xl mx-auto">{f.desc}</p>
           </div>
-          <FieldTabs
-            lessons={byField(c.lessons)}
-            videos={byField(c.videos)}
-            articles={byField(c.articles)}
-            books={byField(c.books)}
-            audio={byField(c.audio)}
-            photos={byField(c.photos)}
-          />
-        </div>
+        </section>
+
+        <section className="py-12">
+          <div className="max-w-6xl mx-auto px-4">
+            <FieldTabs
+              lessons={byField(c.lessons)}
+              videos={byField(c.videos)}
+              articles={byField(c.articles)}
+              books={byField(c.books)}
+              audio={byField(c.audio)}
+              photos={byField(c.photos)}
+            />
+          </div>
+        </section>
       </main>
       <Footer settings={c.settings} />
     </>

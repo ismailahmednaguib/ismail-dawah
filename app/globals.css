@@ -19,3 +19,48 @@ body {
   font-family: var(--font-sans);
   line-height: 1.7;
 }
+
+::selection { background: var(--color-gold); color: #1a1a1a; }
+
+/* زخرفة إسلامية ذهبية */
+.pattern-gold {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 0l8 24 24 8-24 8-8 24-8-24-24-8 24-8z' fill='%23c9a227' fill-opacity='0.08'/%3E%3C/svg%3E");
+}
+.pattern-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 0l8 24 24 8-24 8-8 24-8-24-24-8 24-8z' fill='%23ffffff' fill-opacity='0.06'/%3E%3C/svg%3E");
+}
+
+/* فاصل زخرفي */
+.ornament { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--color-gold); }
+.ornament::before, .ornament::after { content: ""; height: 1px; width: 70px; }
+.ornament::before { background: linear-gradient(to left, transparent, var(--color-gold)); }
+.ornament::after { background: linear-gradient(to right, transparent, var(--color-gold)); }
+
+/* ظهور متدرج */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp .7s ease both; }
+
+/* شريط تمرير أنيق */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-cream-dark); }
+::-webkit-scrollbar-thumb { background: var(--color-primary-light); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+
+/* الوضع الليلي */
+.dark { color-scheme: dark; }
+.dark body { background-color: #0e1613; color: #e6e3d8; }
+.dark .bg-white { background-color: #16211c; }
+.dark .bg-cream { background-color: #0e1613; }
+.dark .bg-cream-dark { background-color: #121b17; }
+.dark .bg-cream\/95 { background-color: rgba(14,22,19,.95); }
+.dark .bg-cream-dark\/90 { background-color: rgba(18,27,23,.9); }
+.dark .text-gray-900 { color: #ece9de; }
+.dark .text-gray-700 { color: #c9c5b8; }
+.dark .text-gray-600 { color: #b4b0a4; }
+.dark .text-gray-500 { color: #9b9789; }
+.dark .text-gray-400 { color: #86827a; }
+.dark .text-primary { color: #eaf2ec; }
+.dark .border-gray-100 { border-color: #26332c; }
+.dark .border-gray-200 { border-color: #2c3a32; }
+.dark .border-gray-300 { border-color: #37453c; }
+.dark input, .dark textarea, .dark select { background-color: #101a15; color: #e6e3d8; border-color: #2c3a32; }
