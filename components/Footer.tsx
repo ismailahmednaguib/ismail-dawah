@@ -1,9 +1,8 @@
 import Link from "next/link";
 import type { Settings } from "@/lib/data";
-import type { Lang } from "@/lib/i18n";
-import { t } from "@/lib/i18n";
+import { t, type Lang } from "@/lib/i18n";
 
-export default function Footer({ settings, lang }: { settings: Settings; lang: Lang }) {
+export default function Footer({ settings, lang = "ar" }: { settings: Settings; lang?: Lang }) {
   const tr = t(lang);
   return (
     <footer className="bg-primary text-white/70 text-sm relative">
