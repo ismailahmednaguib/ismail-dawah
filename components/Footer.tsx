@@ -20,7 +20,6 @@ export default function Footer({ settings }: { settings: Settings }) {
             <Link href="/" className="hover:text-gold transition">الرئيسية</Link>
             <Link href="/about" className="hover:text-gold transition">عن الشيخ</Link>
             <Link href="/contact" className="hover:text-gold transition">تواصل معي</Link>
-            <Link href="/admin" className="hover:text-gold transition">لوحة التحكم</Link>
           </div>
         </div>
         <div>

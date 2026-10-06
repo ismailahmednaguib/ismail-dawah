@@ -32,7 +32,6 @@ export default function Header({ settings }: { settings: Settings }) {
         </Link>
         <div className="flex items-center gap-3">
           <button onClick={toggleDark} aria-label="الوضع الليلي" className="text-xl">{dark ? "☀️" : "🌙"}</button>
-          <Link href="/admin" title="لوحة التحكم" className="text-xl">⚙️</Link>
         </div>
       </div>
     </header>

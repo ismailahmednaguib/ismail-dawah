@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BackButton from "@/components/BackButton";
 import { SectionTitle } from "@/components/Cards";
 import { getContent } from "@/lib/content";
 
@@ -13,6 +14,7 @@ export default async function FatwaPage() {
       <Header settings={c.settings} />
       <main className="py-16 bg-cream-dark min-h-screen">
         <div className="max-w-3xl mx-auto px-4">
+          <BackButton href="/" label="العودة للرئيسية" />
           <SectionTitle>فتاوى وأسئلة الزوار</SectionTitle>
           {c.fatwas.length === 0 ? (
             <p className="text-center text-gray-500">لا توجد فتاوى بعد — تُضاف من لوحة التحكم.</p>

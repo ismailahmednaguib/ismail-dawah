@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BackButton from "@/components/BackButton";
 import { SectionTitle } from "@/components/Cards";
 import { getContent } from "@/lib/content";
 
@@ -14,12 +15,13 @@ export default async function LivePage() {
   return (
     <>
       <Header settings={c.settings} />
-      <main className="py-16 bg-cream-dark min-h-screen">
+      <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
         <div className="max-w-4xl mx-auto px-4">
+          <BackButton href="/" label="العودة للرئيسية" />
           <SectionTitle>البث والمجالس</SectionTitle>
 
-          <div className="bg-white rounded-2xl p-6 shadow-md border-t-4 border-gold mb-6 text-center">
-            <h3 className="font-serif text-2xl text-primary mb-4">📡 {s.liveTitle || "البث المباشر"}</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md border-t-4 border-gold mb-6 text-center">
+            <h3 className="font-serif text-2xl text-primary dark:text-gold mb-4">📡 {s.liveTitle || "البث المباشر"}</h3>
             {yt ? (
               <div className="aspect-video rounded-xl overflow-hidden">
                 <iframe src={`https://www.youtube.com/embed/${yt}`} className="w-full h-full" allowFullScreen title="البث المباشر" />
@@ -27,7 +29,7 @@ export default async function LivePage() {
             ) : s.liveUrl ? (
               <a href={s.liveUrl} target="_blank" rel="noopener" className="inline-block bg-gold text-gray-900 px-8 py-3 rounded-lg font-bold hover:bg-gold-light transition">افتح البث على يوتيوب</a>
             ) : (
-              <p className="text-gray-500">لا يوجد بث حاليًا — يُعلن عن البث عبر صفحات الشيخ.</p>
+              <p className="text-gray-500 dark:text-gray-400">لا يوجد بث حاليًا — يُعلن عن البث عبر صفحات الشيخ.</p>
             )}
           </div>
 
