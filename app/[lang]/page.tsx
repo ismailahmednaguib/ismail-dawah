@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getContent } from "@/lib/content";
 import { t, type Lang } from "@/lib/i18n";
+import { getFieldTranslation } from "@/lib/translations";
 
 export const dynamic = "force-dynamic";
 
@@ -51,9 +52,12 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         <section className="py-14">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {c.fields.map((f) => (
-                <Box key={f.id} href={`/${lang}/fields/${f.slug}`} icon={f.icon} title={f.name} desc={f.desc} badge={`${count(f.slug)} ${tr.item}`} delay={next()} />
-              ))}
+              {c.fields.map((f) => {
+                const ft = getFieldTranslation(f.slug, lang as Lang, { name: f.name, desc: f.desc }, c.fieldTranslations);
+                return (
+                  <Box key={f.id} href={`/${lang}/fields/${f.slug}`} icon={f.icon} title={ft.name} desc={ft.desc} badge={`${count(f.slug)} ${tr.item}`} delay={next()} />
+                );
+              })}
               <Box href={`/${lang}/fatwa`} icon="❓" title={tr.boxFatwaTitle} desc={tr.boxFatwaDesc} badge={`${c.fatwas.length} ${tr.fatwa}`} delay={next()} />
               <Box href={`/${lang}/live`} icon="📡" title={tr.boxLiveTitle} desc={tr.boxLiveDesc} badge={tr.followUs} delay={next()} />
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />

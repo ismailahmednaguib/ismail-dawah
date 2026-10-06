@@ -5,8 +5,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { defaultContent, type Content } from "@/lib/content";
 import type { Settings, Photo } from "@/lib/data";
+import { languages, type Lang } from "@/lib/i18n";
+import { defaultFieldTranslations } from "@/lib/translations";
 
-type Tab = "settings" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar";
+type Tab = "settings" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations";
 type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
@@ -26,6 +28,7 @@ const TABS: [Tab, string][] = [
   ["news", "🗞️ الأخبار"],
   ["places", "🗺️ الأماكن"],
   ["adhkar", "🤲 الأذكار"],
+  ["translations", "🌍 الترجمات"],
 ];
 
 export default function AdminPage() {
@@ -76,6 +79,26 @@ export default function AdminPage() {
 
   const add = (coll: Coll, item: unknown) => {
     setC({ ...c, [coll]: [item, ...(c[coll] as unknown as unknown[])] } as Content);
+  };
+
+  // دوال الترججمات
+  const setTranslation = (slug: string, lang: Lang, field: "name" | "desc", value: string) => {
+    const current = c.fieldTranslations || {};
+    const updated = {
+      ...current,
+      [slug]: {
+        ...(current[slug] || {}),
+        [lang]: {
+          ...(current[slug]?.[lang] || defaultFieldTranslations[slug]?.[lang] || { name: "", desc: "" }),
+          [field]: value,
+        },
+      },
+    };
+    setC({ ...c, fieldTranslations: updated });
+  };
+
+  const getTranslationValue = (slug: string, lang: Lang, field: "name" | "desc"): string => {
+    return c.fieldTranslations?.[slug]?.[lang]?.[field] ?? defaultFieldTranslations[slug]?.[lang]?.[field] ?? "";
   };
 
   const resizeImage = (file: File, max = 1400): Promise<File> =>
@@ -332,7 +355,7 @@ export default function AdminPage() {
                         setMsg("✅ اترفعت الصور — حدد العلم لكل صورة واضغط حفظ");
                       }} className="text-sm" />
                     </div>
-                                        <div><span className={label}>رابط تحميل تطبيق الموبايل (APK)</span><input className={input} value={c.settings.appUrl} onChange={(e) => setS("appUrl", e.target.value)} placeholder="https://....supabase.co/.../ismail-dawah.apk" /></div>
+                    <div><span className={label}>رابط تحميل تطبيق الموبايل (APK)</span><input className={input} value={c.settings.appUrl} onChange={(e) => setS("appUrl", e.target.value)} placeholder="https://....supabase.co/.../ismail-dawah.apk" /></div>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {c.photos.map((p, i) => (
                         <div key={p.id} className="border-2 border-gray-100 rounded-lg p-3 grid gap-2">
@@ -431,6 +454,73 @@ export default function AdminPage() {
                       </div>
                     ))}
                     <button onClick={() => add("adhkar", { id: Date.now(), category: "أذكار الصباح", text: "", repeat: 1 })} className={addBtn}>➕ إضافة ذكر</button>
+                  </>
+                )}
+
+                {tab === "translations" && (
+                  <>
+                    <div className="bg-amber-50 border-r-4 border-amber-500 p-4 rounded mb-2">
+                      <h2 className="font-bold text-lg text-primary mb-1">🌍 إدارة الترجمات</h2>
+                      <p className="text-sm text-gray-600">
+                        هنا تتحكم في ترجمة <b>أسماء العلوم ووصفها</b> في كل لغة. أي تغيير هنا يظهر فورًا بعد الحفظ.
+                        <br />
+                        <span className="text-xs text-gray-500">💡 الحقول الفاضية = الترجمة الافتراضية (لو ملأتها، هتظهر بدلا منها)</span>
+                      </p>
+                    </div>
+
+                    <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-4">
+                      <h3 className="font-bold text-sm text-primary mb-2">🌐 اللغات المتاحة ({languages.length} لغة):</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {languages.map((l) => (
+                          <span key={l.code} className="bg-white border border-gold/40 px-3 py-1 rounded-full text-xs font-bold">
+                            {l.flag} {l.name} <span className="text-gray-400">({l.code})</span>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {c.fields.map((f) => (
+                      <details key={f.id} className="bg-gray-50 rounded-lg p-4 border-2 border-gray-100">
+                        <summary className="cursor-pointer font-bold flex items-center gap-2">
+                          <span className="text-2xl">{f.icon}</span>
+                          <span className="text-primary">{f.name}</span>
+                          <span className="text-xs text-gray-500 font-normal">({f.slug})</span>
+                        </summary>
+                        <div className="mt-4 space-y-3">
+                          {languages.map((l) => (
+                            <div key={l.code} className="bg-white rounded-lg p-3 border border-gray-200">
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-lg">{l.flag}</span>
+                                <span className="font-bold text-sm text-primary">{l.name}</span>
+                                <span className="text-xs text-gray-400">({l.code.toUpperCase()})</span>
+                              </div>
+                              <div className="grid gap-2">
+                                <div>
+                                  <span className="text-xs text-gray-500">اسم العلم:</span>
+                                  <input
+                                    className={input}
+                                    value={getTranslationValue(f.slug, l.code, "name")}
+                                    placeholder={defaultFieldTranslations[f.slug]?.[l.code]?.name || "(افتراضي)"}
+                                    onChange={(e) => setTranslation(f.slug, l.code, "name", e.target.value)}
+                                  />
+                                </div>
+                                <div>
+                                  <span className="text-xs text-gray-500">الوصف:</span>
+                                  <input
+                                    className={input}
+                                    value={getTranslationValue(f.slug, l.code, "desc")}
+                                    placeholder={defaultFieldTranslations[f.slug]?.[l.code]?.desc || "(افتراضي)"}
+                                    onChange={(e) => setTranslation(f.slug, l.code, "desc", e.target.value)}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+                    ))}
+
+                    <button onClick={save} className={addBtn + " w-full"}>💾 حفظ كل الترجمات</button>
                   </>
                 )}
               </div>

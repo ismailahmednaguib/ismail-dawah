@@ -4,6 +4,7 @@ import BackButton from "@/components/BackButton";
 import FieldTabs from "@/components/FieldTabs";
 import { getContent } from "@/lib/content";
 import { t, type Lang } from "@/lib/i18n";
+import { getFieldTranslation } from "@/lib/translations";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -14,10 +15,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const c = await getContent();
   const f = c.fields.find((x) => x.slug === slug);
   if (!f) return { title: "404" };
+  const ft = getFieldTranslation(slug, lang as Lang, { name: f.name, desc: f.desc }, c.fieldTranslations);
   return {
-    title: f.name,
-    description: f.desc,
-    openGraph: { title: `${f.name} | ${c.settings.shortName}`, description: f.desc },
+    title: ft.name,
+    description: ft.desc,
+    openGraph: { title: `${ft.name} | ${c.settings.shortName}`, description: ft.desc },
   };
 }
 
@@ -29,6 +31,7 @@ export default async function FieldPage({ params }: { params: Promise<{ lang: st
 
   if (!f) notFound();
 
+  const ft = getFieldTranslation(slug, lang as Lang, { name: f.name, desc: f.desc }, c.fieldTranslations);
   const byField = <T extends { field: string }>(arr: T[]) => arr.filter((x) => x.field === slug);
 
   return (
@@ -38,9 +41,9 @@ export default async function FieldPage({ params }: { params: Promise<{ lang: st
         <section className="relative bg-primary text-white py-14 overflow-hidden pattern-light">
           <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-[11rem] opacity-10 select-none">{f.icon}</span>
           <div className="relative max-w-4xl mx-auto px-4 text-center fade-up">
-            <h1 className="font-serif text-4xl md:text-5xl mb-1">{f.name}</h1>
+            <h1 className="font-serif text-4xl md:text-5xl mb-1">{ft.name}</h1>
             <div className="ornament my-3"><span className="text-xl">✦</span></div>
-            <p className="text-white/80 max-w-2xl mx-auto">{f.desc}</p>
+            <p className="text-white/80 max-w-2xl mx-auto">{ft.desc}</p>
           </div>
         </section>
 
