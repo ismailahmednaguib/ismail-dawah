@@ -29,6 +29,9 @@ export default async function Home() {
     c.audio.filter((x) => x.field === slug).length +
     c.photos.filter((x) => x.field === slug).length;
 
+  let d = 0;
+  const next = () => (d++ * 50);
+
   return (
     <>
       <Header settings={c.settings} />
@@ -45,11 +48,17 @@ export default async function Home() {
         <section className="py-14">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {c.fields.map((f, i) => (
-                <Box key={f.id} href={`/fields/${f.slug}`} icon={f.icon} title={f.name} desc={f.desc} badge={`${count(f.slug)} مادة`} delay={i * 60} />
+              {c.fields.map((f) => (
+                <Box key={f.id} href={`/fields/${f.slug}`} icon={f.icon} title={f.name} desc={f.desc} badge={`${count(f.slug)} مادة`} delay={next()} />
               ))}
-              <Box href="/about" icon="👤" title="عن الشيخ" desc="السيرة والمؤهلات والمنهج الدعوي" badge="تعرف عليّ" delay={c.fields.length * 60} />
-              <Box href="/contact" icon="💬" title="تواصل معي" desc="واتساب وبريد وجدول الدروس" badge="راسلني" delay={(c.fields.length + 1) * 60} />
+              <Box href="/fatwa" icon="❓" title="فتاوى وأسئلة" desc="بنك أسئلة الزوار بأجوبة الشيخ" badge={`${c.fatwas.length} فتوى`} delay={next()} />
+              <Box href="/live" icon="📡" title="البث والمجالس" desc="البث المباشر وموعد المجلس الأسبوعي" badge="تابعنا" delay={next()} />
+              <Box href="/projects" icon="🤝" title="مشاريع دعوية" desc="شارك في الأجر ودعم الدعوة" badge={`${c.projects.length} مشروع`} delay={next()} />
+              <Box href="/news" icon="📰" title="أخبار ونشاطات" desc="آخر الدورات والمؤتمرات والفعاليات" badge={`${c.news.length} خبر`} delay={next()} />
+              <Box href="/map" icon="🗺️" title="خريطة الدروس" desc="أماكن المساجد والمراكز على الخريطة" badge={`${c.places.length} مكان`} delay={next()} />
+              <Box href="/adhkar" icon="🤲" title="الأذكار والورد" desc="أذكار الصباح والمساء بعداد تفاعلي" badge="وردك اليومي" delay={next()} />
+              <Box href="/about" icon="👤" title="عن الشيخ" desc="السيرة والمؤهلات والمنهج الدعوي" badge="تعرف عليّ" delay={next()} />
+              <Box href="/contact" icon="💬" title="تواصل معي" desc="واتساب وبريد وجدول الدروس" badge="راسلني" delay={next()} />
             </div>
           </div>
         </section>

@@ -5,6 +5,19 @@ import { getContent } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const c = await getContent();
+  const a = c.articles.find((x) => String(x.id) === id);
+  if (!a) return { title: "المقال غير موجود" };
+  return {
+    title: a.title,
+    description: a.excerpt,
+    openGraph: { title: a.title, description: a.excerpt, type: "article" },
+  };
+}
 export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const c = await getContent();

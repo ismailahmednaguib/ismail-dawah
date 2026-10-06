@@ -1,5 +1,5 @@
-import { settings, fields, stats, lessons, videos, articles, books, audio, photos, schedule } from "./data";
-import type { Settings, Field, Stat, Lesson, Video, Article, Book, AudioItem, Photo, ScheduleItem } from "./data";
+import { settings, fields, stats, lessons, videos, articles, books, audio, photos, schedule, fatwas, projects, news, places, adhkar } from "./data";
+import type { Settings, Field, Stat, Lesson, Video, Article, Book, AudioItem, Photo, ScheduleItem, Fatwa, Project, NewsItem, Place, Dhikr } from "./data";
 
 export interface Content {
   settings: Settings;
@@ -12,9 +12,14 @@ export interface Content {
   audio: AudioItem[];
   photos: Photo[];
   schedule: ScheduleItem[];
+  fatwas: Fatwa[];
+  projects: Project[];
+  news: NewsItem[];
+  places: Place[];
+  adhkar: Dhikr[];
 }
 
-export const defaultContent: Content = { settings, fields, stats, lessons, videos, articles, books, audio, photos, schedule };
+export const defaultContent: Content = { settings, fields, stats, lessons, videos, articles, books, audio, photos, schedule, fatwas, projects, news, places, adhkar };
 
 export async function getContent(): Promise<Content> {
   const url = process.env.SUPABASE_URL;
@@ -37,6 +42,11 @@ export async function getContent(): Promise<Content> {
       audio: saved.audio ?? defaultContent.audio,
       photos: saved.photos ?? defaultContent.photos,
       schedule: saved.schedule ?? defaultContent.schedule,
+      fatwas: saved.fatwas ?? defaultContent.fatwas,
+      projects: saved.projects ?? defaultContent.projects,
+      news: saved.news ?? defaultContent.news,
+      places: saved.places ?? defaultContent.places,
+      adhkar: saved.adhkar ?? defaultContent.adhkar,
     };
   } catch {
     return defaultContent;

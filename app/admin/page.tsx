@@ -6,20 +6,26 @@ import Footer from "@/components/Footer";
 import { defaultContent, type Content } from "@/lib/content";
 import type { Settings, Photo } from "@/lib/data";
 
-type Tab = "settings" | "appearance" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule";
-type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books";
+type Tab = "settings" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar";
+type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
   ["settings", "⚙️ البيانات"],
   ["appearance", "🎛️ الظهور"],
+  ["live", "📡 البث والمجلس"],
   ["fields", "🧭 العلوم"],
   ["lessons", "📖 الدروس"],
   ["videos", "🎬 الفيديوهات"],
-  ["articles", "📰 المقالات"],
+  ["articles", "✍️ المقالات"],
   ["books", "📚 الكتب"],
   ["audio", "🎧 الصوتيات"],
   ["photos", "🖼️ الصور"],
   ["schedule", "🗓️ الجدول"],
+  ["fatwas", "❓ الفتاوى"],
+  ["projects", "🤝 المشاريع"],
+  ["news", "🗞️ الأخبار"],
+  ["places", "🗺️ الأماكن"],
+  ["adhkar", "🤲 الأذكار"],
 ];
 
 export default function AdminPage() {
@@ -168,6 +174,11 @@ export default function AdminPage() {
                       <input type="file" accept="image/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "image"); if (u) { setS("portraitSrc", u); setMsg("✅ اترفعت — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
                       {c.settings.portraitSrc && <img src={c.settings.portraitSrc} alt="معاينة" className="w-24 h-24 object-cover rounded-lg mt-2 border-2 border-gold" />}
                     </div>
+                    <div>
+                      <span className={label}>صورة مشاركة الموقع (واتساب وفيسبوك)</span>
+                      <input type="file" accept="image/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "image"); if (u) { setS("ogImage", u); setMsg("✅ اترفعت — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
+                      {c.settings.ogImage && <img src={c.settings.ogImage} alt="معاينة" className="w-40 h-24 object-cover rounded-lg mt-2 border-2 border-gold" />}
+                    </div>
                   </>
                 )}
 
@@ -176,6 +187,19 @@ export default function AdminPage() {
                     <span className="font-bold text-sm">🕌 شريط مواقيت الصلاة + التاريخ الهجري</span>
                     <input type="checkbox" checked={Boolean(c.settings.showPrayerBar)} onChange={(e) => setS("showPrayerBar", e.target.checked)} className="w-5 h-5 accent-[#c9a227]" />
                   </label>
+                )}
+
+                {tab === "live" && (
+                  <>
+                    <div><span className={label}>عنوان البث</span><input className={input} value={c.settings.liveTitle} onChange={(e) => setS("liveTitle", e.target.value)} /></div>
+                    <div><span className={label}>رابط البث (يوتيوب أو أي رابط)</span><input className={input} value={c.settings.liveUrl} onChange={(e) => setS("liveUrl", e.target.value)} placeholder="https://youtube.com/watch?v=..." /></div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div><span className={label}>يوم المجلس</span><input className={input} value={c.settings.meetingDay} onChange={(e) => setS("meetingDay", e.target.value)} /></div>
+                      <div><span className={label}>وقت المجلس</span><input className={input} value={c.settings.meetingTime} onChange={(e) => setS("meetingTime", e.target.value)} /></div>
+                    </div>
+                    <div><span className={label}>مكان المجلس</span><input className={input} value={c.settings.meetingPlace} onChange={(e) => setS("meetingPlace", e.target.value)} /></div>
+                    <div><span className={label}>رابط مكان المجلس على الخريطة (اختياري)</span><input className={input} value={c.settings.meetingLink} onChange={(e) => setS("meetingLink", e.target.value)} /></div>
+                  </>
                 )}
 
                 {tab === "fields" && (
@@ -192,7 +216,7 @@ export default function AdminPage() {
                       </div>
                     ))}
                     <button onClick={() => add("fields", { id: Date.now(), slug: "new-field", name: "علم جديد", icon: "📚", desc: "" })} className={addBtn}>➕ إضافة علم</button>
-                    <button onClick={() => setC({ ...c, fields: defaultContent.fields })} className="border-2 border-gold text-gold py-3 rounded-lg font-bold hover:bg-gold hover:text-gray-900 transition">♻️ استعادة القائمة الكاملة (15 علم)</button>
+                    <button onClick={() => setC({ ...c, fields: defaultContent.fields })} className="border-2 border-gold text-gold py-3 rounded-lg font-bold hover:bg-gold hover:text-gray-900 transition">♻️ استعادة القائمة الكاملة (17 علم)</button>
                   </>
                 )}
 
@@ -333,6 +357,79 @@ export default function AdminPage() {
                       </div>
                     ))}
                     <button onClick={() => add("schedule", { id: Date.now(), day: "السبت", time: "", topic: "", place: "" })} className={addBtn}>➕ إضافة موعد</button>
+                  </>
+                )}
+
+                {tab === "fatwas" && (
+                  <>
+                    {c.fatwas.map((f, i) => (
+                      <div key={f.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">فتوى #{i + 1}</b><button onClick={() => del("fatwas", i)} className={delBtn}>🗑 حذف</button></div>
+                        <textarea rows={2} className={input} value={f.q} placeholder="السؤال" onChange={(e) => upd("fatwas", i, { q: e.target.value })} />
+                        <textarea rows={4} className={input} value={f.a} placeholder="الإجابة" onChange={(e) => upd("fatwas", i, { a: e.target.value })} />
+                      </div>
+                    ))}
+                    <button onClick={() => add("fatwas", { id: Date.now(), q: "", a: "" })} className={addBtn}>➕ إضافة فتوى</button>
+                  </>
+                )}
+
+                {tab === "projects" && (
+                  <>
+                    {c.projects.map((p, i) => (
+                      <div key={p.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">مشروع #{i + 1}</b><button onClick={() => del("projects", i)} className={delBtn}>🗑 حذف</button></div>
+                        <input className={input} value={p.title} placeholder="اسم المشروع" onChange={(e) => upd("projects", i, { title: e.target.value })} />
+                        <textarea rows={2} className={input} value={p.desc} placeholder="وصف المشروع" onChange={(e) => upd("projects", i, { desc: e.target.value })} />
+                        <input className={input} value={p.goal} placeholder="الهدف (مثال: 50,000 جنيه)" onChange={(e) => upd("projects", i, { goal: e.target.value })} />
+                      </div>
+                    ))}
+                    <button onClick={() => add("projects", { id: Date.now(), title: "", desc: "", goal: "" })} className={addBtn}>➕ إضافة مشروع</button>
+                  </>
+                )}
+
+                {tab === "news" && (
+                  <>
+                    {c.news.map((n, i) => (
+                      <div key={n.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">خبر #{i + 1}</b><button onClick={() => del("news", i)} className={delBtn}>🗑 حذف</button></div>
+                        <input className={input} value={n.title} placeholder="عنوان الخبر" onChange={(e) => upd("news", i, { title: e.target.value })} />
+                        <input className={input} value={n.date} placeholder="التاريخ" onChange={(e) => upd("news", i, { date: e.target.value })} />
+                        <textarea rows={4} className={input} value={n.body} placeholder="نص الخبر" onChange={(e) => upd("news", i, { body: e.target.value })} />
+                      </div>
+                    ))}
+                    <button onClick={() => add("news", { id: Date.now(), title: "", date: new Date().toLocaleDateString("ar-EG"), body: "" })} className={addBtn}>➕ إضافة خبر</button>
+                  </>
+                )}
+
+                {tab === "places" && (
+                  <>
+                    {c.places.map((p, i) => (
+                      <div key={p.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">مكان #{i + 1}</b><button onClick={() => del("places", i)} className={delBtn}>🗑 حذف</button></div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <input className={input} value={p.name} placeholder="اسم المسجد/المركز" onChange={(e) => upd("places", i, { name: e.target.value })} />
+                          <input className={input} value={p.area} placeholder="المنطقة" onChange={(e) => upd("places", i, { area: e.target.value })} />
+                        </div>
+                        <input className={input} value={p.note} placeholder="ملاحظة (موعد الدرس مثلًا)" onChange={(e) => upd("places", i, { note: e.target.value })} />
+                      </div>
+                    ))}
+                    <button onClick={() => add("places", { id: Date.now(), name: "", area: "", note: "" })} className={addBtn}>➕ إضافة مكان</button>
+                  </>
+                )}
+
+                {tab === "adhkar" && (
+                  <>
+                    {c.adhkar.map((a, i) => (
+                      <div key={a.id} className={itemBox}>
+                        <div className="flex justify-between items-center"><b className="text-sm text-primary">ذكر #{i + 1}</b><button onClick={() => del("adhkar", i)} className={delBtn}>🗑 حذف</button></div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <input className={input} value={a.category} placeholder="التصنيف (صباح/مساء/نوم…)" onChange={(e) => upd("adhkar", i, { category: e.target.value })} />
+                          <input type="number" min={1} className={input} value={a.repeat} placeholder="عدد التكرار" onChange={(e) => upd("adhkar", i, { repeat: Number(e.target.value) || 1 })} />
+                        </div>
+                        <textarea rows={3} className={input} value={a.text} placeholder="نص الذكر" onChange={(e) => upd("adhkar", i, { text: e.target.value })} />
+                      </div>
+                    ))}
+                    <button onClick={() => add("adhkar", { id: Date.now(), category: "أذكار الصباح", text: "", repeat: 1 })} className={addBtn}>➕ إضافة ذكر</button>
                   </>
                 )}
               </div>

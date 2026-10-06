@@ -2,14 +2,33 @@ import type { Metadata } from "next";
 import "./globals.css";
 import TopBar from "@/components/TopBar";
 import BackTop from "@/components/BackTop";
+import { getContent } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: {
-    default: "الشيخ إسماعيل أحمد نجيب | موقع دعوي",
-    template: "%s | الشيخ إسماعيل أحمد نجيب",
-  },
-  description: "داعية إسلامي وباحث في مقارنة الأديان — علوم شرعية ودروس ومرئيات ومقالات وكتب.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const c = await getContent();
+  const images = c.settings.ogImage ? [c.settings.ogImage] : [];
+  return {
+    title: {
+      default: `${c.settings.ownerName} | موقع دعوي`,
+      template: `%s | ${c.settings.shortName}`,
+    },
+    description: `${c.settings.jobTitle} — دروس ومرئيات ومقالات وكتب في العلوم الشرعية.`,
+    openGraph: {
+      type: "website",
+      locale: "ar_EG",
+      siteName: c.settings.ownerName,
+      title: c.settings.ownerName,
+      description: c.settings.motto,
+      images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: c.settings.ownerName,
+      description: c.settings.motto,
+      images,
+    },
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

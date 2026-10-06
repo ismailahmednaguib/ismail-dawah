@@ -1,20 +1,10 @@
 export interface Settings {
-  ownerName: string;
-  shortName: string;
-  jobTitle: string;
-  kicker: string;
-  motto: string;
-  bio: string[];
-  cred1: string;
-  cred2: string;
-  interests: string[];
-  wa: string;
-  email: string;
-  address: string;
-  portraitSrc: string;
+  ownerName: string; shortName: string; jobTitle: string; kicker: string; motto: string;
+  bio: string[]; cred1: string; cred2: string; interests: string[];
+  wa: string; email: string; address: string; portraitSrc: string; ogImage: string;
   showPrayerBar: boolean;
+  liveUrl: string; liveTitle: string; meetingDay: string; meetingTime: string; meetingPlace: string; meetingLink: string;
 }
-
 export interface Field { id: number; slug: string; name: string; icon: string; desc: string; }
 export interface Stat { num: string; label: string; }
 export interface Lesson { id: number; title: string; category: string; date: string; link: string; desc: string; field: string; }
@@ -24,6 +14,11 @@ export interface Book { id: number; title: string; field: string; url: string; d
 export interface AudioItem { id: number; title: string; url: string; desc: string; field: string; }
 export interface Photo { id: number; url: string; caption: string; field: string; }
 export interface ScheduleItem { id: number; day: string; time: string; topic: string; place: string; }
+export interface Fatwa { id: number; q: string; a: string; }
+export interface Project { id: number; title: string; desc: string; goal: string; }
+export interface NewsItem { id: number; title: string; date: string; body: string; }
+export interface Place { id: number; name: string; area: string; note: string; }
+export interface Dhikr { id: number; category: string; text: string; repeat: number; }
 
 export const settings: Settings = {
   ownerName: "فضيلة الشيخ إسماعيل أحمد نجيب",
@@ -42,7 +37,14 @@ export const settings: Settings = {
   email: "example@email.com",
   address: "جمهورية مصر العربية",
   portraitSrc: "",
+  ogImage: "",
   showPrayerBar: true,
+  liveUrl: "",
+  liveTitle: "البث المباشر للمجلس الأسبوعي",
+  meetingDay: "الخميس",
+  meetingTime: "بعد صلاة العشاء",
+  meetingPlace: "مسجد النور — قاعة المحاضرات",
+  meetingLink: "",
 };
 
 export const fields: Field[] = [
@@ -61,6 +63,8 @@ export const fields: Field[] = [
   { id: 13, slug: "tajweed", name: "التجويد والقراءات", icon: "🎙️", desc: "حُسن تلاوة كتاب الله" },
   { id: 14, slug: "economics", name: "الاقتصاد الإسلامي", icon: "💰", desc: "المعاملات المالية المعاصرة" },
   { id: 15, slug: "faraaid", name: "الفرائض والمواريث", icon: "🧮", desc: "قسمة التركات وفق الكتاب والسنة" },
+  { id: 16, slug: "family", name: "ركن الأسرة", icon: "👨‍👩‍👧", desc: "تربية وأزواج وبيوت مسلمة" },
+  { id: 17, slug: "youth", name: "ركن الشباب", icon: "🧑", desc: "قضايا معاصرة بلسان شاب" },
 ];
 
 export const stats: Stat[] = [
@@ -85,4 +89,31 @@ export const photos: Photo[] = [];
 
 export const schedule: ScheduleItem[] = [
   { id: 1, day: "السبت", time: "بعد صلاة المغرب", topic: "شرح كتاب التوحيد", place: "مسجد النور" },
+];
+
+export const fatwas: Fatwa[] = [
+  { id: 1, q: "هل يجوز الدعاء بغير العربية في الصلاة؟", a: "الدعاء بغير العربية خارج الصلاة جائز عند الحاجة، وأما داخل الصلاة فالأحوط الاقتصار على المأثور بالعربية لمن قدر عليها، والله تعالى يعلم قصد الداعي قبل لسانه." },
+  { id: 2, q: "كيف أحافظ على صلاة الفجر في جماعة؟", a: "النوم المبكر، وترك المنبهات ليلًا، ونية صادقة قبل النوم مع دعاء: «اللهم أعني على ذكرك وشكرك»، واتخاذ صاحب صالح يوقظك، وأهم من ذلك: صدق اللجاء إلى الله أن يثبتك." },
+];
+
+export const projects: Project[] = [
+  { id: 1, title: "طباعة وتوزيع جزء عمّ", desc: "توزيع 1000 نسخة على طلاب الكتاتيب والمساجد في القرى.", goal: "50,000 جنيه" },
+  { id: 2, title: "تجهيز قاعة الدروس الدعوية", desc: "فرش وتجهيز قاعة تتسع لـ 200 طالب علم بمركز الدعوة.", goal: "120,000 جنيه" },
+];
+
+export const news: NewsItem[] = [
+  { id: 1, title: "انطلاق دورة شرح العقيدة الطحاوية", date: "1 مارس 2025", body: "بحمد الله انطلقت دورة شرح العقيدة الطحاوية بمركز الدعوة، بحضور أكثر من 150 طالبًا، وتستمر كل خميس بعد العشاء." },
+  { id: 2, title: "مشاركة في مؤتمر حوار الأديان بالقاهرة", date: "12 فبراير 2025", body: "شارك الشيخ في مؤتمر حوار الأديان بورقة بحثية بعنوان: «منهج الأزهر في الحوار — أصالة وانفتاح»." },
+];
+
+export const places: Place[] = [
+  { id: 1, name: "مسجد النور", area: "وسط المدينة", note: "درس السبت بعد المغرب — شرح كتاب التوحيد" },
+  { id: 2, name: "المسجد الكبير", area: "الحي الغربي", note: "درس الاثنين بعد العشاء — فقه السيرة" },
+];
+
+export const adhkar: Dhikr[] = [
+  { id: 1, category: "أذكار الصباح", text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ.", repeat: 1 },
+  { id: 2, category: "أذكار الصباح", text: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ.", repeat: 3 },
+  { id: 3, category: "أذكار المساء", text: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ.", repeat: 1 },
+  { id: 4, category: "أذكار المساء", text: "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", repeat: 3 },
 ];

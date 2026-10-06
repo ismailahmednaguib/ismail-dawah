@@ -5,6 +5,19 @@ import { getContent } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const c = await getContent();
+  const f = c.fields.find((x) => x.slug === slug);
+  if (!f) return { title: "العلم غير موجود" };
+  return {
+    title: f.name,
+    description: f.desc,
+    openGraph: { title: `${f.name} | ${c.settings.shortName}`, description: f.desc },
+  };
+}
 export default async function FieldPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const c = await getContent();
