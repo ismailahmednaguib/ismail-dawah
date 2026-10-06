@@ -1,4 +1,4 @@
-import type { Settings, Field, Lesson, Video, Article, Book, AudioItem, Photo, Schedule, Fatwa, Project, NewsItem, Place, AdhkarItem } from "./data";
+import type { Settings, Field, Stat, Lesson, Video, Article, Book, AudioItem, Photo, ScheduleItem, Fatwa, Project, NewsItem, Place, Dhikr } from "./data";
 
 export interface Content {
   settings: Settings;
@@ -9,12 +9,13 @@ export interface Content {
   books: Book[];
   audio: AudioItem[];
   photos: Photo[];
-  schedule: Schedule[];
+  schedule: ScheduleItem[];
   fatwas: Fatwa[];
   projects: Project[];
   news: NewsItem[];
   places: Place[];
-  adhkar: AdhkarItem[];
+  adhkar: Dhikr[];
+  stats: Stat[];
   fieldTranslations?: Record<string, Record<string, { name: string; desc: string }>>;
 }
 
@@ -77,6 +78,7 @@ export const defaultContent: Content = {
   news: [],
   places: [],
   adhkar: [],
+  stats: [],
   fieldTranslations: {},
 };
 
