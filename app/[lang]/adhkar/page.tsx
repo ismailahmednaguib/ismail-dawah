@@ -6,14 +6,24 @@ import Footer from "@/components/Footer";
 import BackButton from "@/components/BackButton";
 import { SectionTitle } from "@/components/Cards";
 import { defaultContent, type Content } from "@/lib/content";
+import { t, type Lang } from "@/lib/i18n";
+import { useParams } from "next/navigation";
 
 export default function AdhkarPage() {
+  const params = useParams();
+  const lang = (params?.lang as string) || "ar";
   const [c, setC] = useState<Content>(defaultContent);
-  const [cat, setCat] = useState("أذكار الصباح");
+  const [cat, setCat] = useState(c.adhkar[0]?.category || "");
   const [counts, setCounts] = useState<Record<number, number>>({});
+  const tr = t(lang as Lang);
 
   useEffect(() => {
-    fetch("/api/content").then((r) => r.json()).then((j) => j.content && setC(j.content)).catch(() => {});
+    fetch("/api/content").then((r) => r.json()).then((j) => {
+      if (j.content) {
+        setC(j.content);
+        if (j.content.adhkar[0]) setCat(j.content.adhkar[0].category);
+      }
+    }).catch(() => {});
   }, []);
 
   const cats = Array.from(new Set(c.adhkar.map((a) => a.category)));
@@ -21,11 +31,11 @@ export default function AdhkarPage() {
 
   return (
     <>
-      <Header settings={c.settings} />
+      <Header settings={c.settings} lang={lang as Lang} />
       <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
         <div className="max-w-3xl mx-auto px-4">
-          <BackButton href="/" label="العودة للرئيسية" />
-          <SectionTitle>الأذكار والورد اليومي</SectionTitle>
+          <BackButton href={`/${lang}`} label={tr.backHome} />
+          <SectionTitle>{tr.adhkarTitle}</SectionTitle>
 
           <div className="flex gap-2 justify-center flex-wrap mb-8">
             {cats.map((k) => (
@@ -50,18 +60,18 @@ export default function AdhkarPage() {
                     <span className="font-bold text-primary dark:text-gold">{done} / {a.repeat}</span>
                     {done > 0 && (
                       <button onClick={() => setCounts({ ...counts, [a.id]: 0 })} className="text-xs text-red-400 font-bold">
-                        تصفير
+                        0
                       </button>
                     )}
                   </div>
-                  {done >= a.repeat && <p className="mt-3 text-sm text-green-600 font-bold">✅ تقبّل الله — أتممت هذا الذكر</p>}
+                  {done >= a.repeat && <p className="mt-3 text-sm text-green-600 font-bold">✅</p>}
                 </div>
               );
             })}
           </div>
         </div>
       </main>
-      <Footer settings={c.settings} />
+      <Footer settings={c.settings} lang={lang as Lang} />
     </>
   );
 }

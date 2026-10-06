@@ -1,0 +1,111 @@
+export type Lang = "ar" | "en" | "fr" | "ur" | "tr" | "id";
+
+export const defaultLang: Lang = "ar";
+
+export const languages: { code: Lang; name: string; flag: string; dir: "rtl" | "ltr" }[] = [
+  { code: "ar", name: "العربية", flag: "🇪🇬", dir: "rtl" },
+  { code: "en", name: "English", flag: "🇬🇧", dir: "ltr" },
+  { code: "fr", name: "Français", flag: "🇫🇷", dir: "ltr" },
+  { code: "ur", name: "اردو", flag: "🇵🇰", dir: "rtl" },
+  { code: "tr", name: "Türkçe", flag: "🇹🇷", dir: "ltr" },
+  { code: "id", name: "Bahasa Indonesia", flag: "🇮🇩", dir: "ltr" },
+];
+
+export const isLang = (x: string): x is Lang => languages.some((l) => l.code === x);
+export const getDir = (lang: Lang) => languages.find((l) => l.code === lang)?.dir ?? "rtl";
+
+export const dict = {
+  ar: {
+    home: "الرئيسية", about: "عن الشيخ", contact: "تواصل معي",
+    back: "العودة", backHome: "العودة للرئيسية", allFields: "كل العلوم",
+    readMore: "اقرأ المزيد", share: "مشاركة", language: "اللغة",
+    lessons: "دروس", videos: "فيديوهات", articles: "مقالات", books: "كتب", audio: "صوتيات", photos: "صور",
+    fatwaTitle: "فتاوى وأسئلة الزوار", liveTitle: "البث والمجالس",
+    projectsTitle: "مشاريع دعوية — شارك في الأجر", newsTitle: "أخبار ونشاطات الشيخ",
+    mapTitle: "خريطة الدروس والمجالس", adhkarTitle: "الأذكار والورد اليومي",
+    fieldsTitle: "العلوم الشرعية",
+    downloadApp: "حمّل تطبيق الموبايل", quickLinks: "روابط سريعة", contactUs: "تواصل",
+    rights: "جميع الحقوق محفوظة", noData: "لا توجد بيانات بعد",
+    date: "التاريخ", category: "التصنيف", goal: "الهدف",
+    participate: "شارك في الأجر", openMaps: "افتح على خرائط جوجل",
+    askPrivate: "سؤالك خاص؟ راسل الشيخ مباشرة",
+  },
+  en: {
+    home: "Home", about: "About", contact: "Contact",
+    back: "Back", backHome: "Back to Home", allFields: "All Fields",
+    readMore: "Read More", share: "Share", language: "Language",
+    lessons: "Lessons", videos: "Videos", articles: "Articles", books: "Books", audio: "Audio", photos: "Photos",
+    fatwaTitle: "Fatwas & Visitors' Questions", liveTitle: "Live Broadcast & Sessions",
+    projectsTitle: "Da'wah Projects — Share the Reward", newsTitle: "Sheikh's News & Activities",
+    mapTitle: "Map of Lessons & Sessions", adhkarTitle: "Adhkar & Daily Wird",
+    fieldsTitle: "Islamic Sciences",
+    downloadApp: "Download the App", quickLinks: "Quick Links", contactUs: "Contact",
+    rights: "All rights reserved", noData: "No data yet",
+    date: "Date", category: "Category", goal: "Goal",
+    participate: "Share the Reward", openMaps: "Open in Google Maps",
+    askPrivate: "Private question? Message the Sheikh directly",
+  },
+  fr: {
+    home: "Accueil", about: "À propos", contact: "Contact",
+    back: "Retour", backHome: "Retour à l'accueil", allFields: "Tous les domaines",
+    readMore: "Lire la suite", share: "Partager", language: "Langue",
+    lessons: "Cours", videos: "Vidéos", articles: "Articles", books: "Livres", audio: "Audio", photos: "Photos",
+    fatwaTitle: "Fatwas et questions des visiteurs", liveTitle: "Diffusion en direct et sessions",
+    projectsTitle: "Projets de da'wa — Partagez la récompense", newsTitle: "Actualités et activités du Cheikh",
+    mapTitle: "Carte des cours et sessions", adhkarTitle: "Adhkar et wird quotidien",
+    fieldsTitle: "Sciences islamiques",
+    downloadApp: "Télécharger l'application", quickLinks: "Liens rapides", contactUs: "Contact",
+    rights: "Tous droits réservés", noData: "Pas encore de données",
+    date: "Date", category: "Catégorie", goal: "Objectif",
+    participate: "Partagez la récompense", openMaps: "Ouvrir dans Google Maps",
+    askPrivate: "Question privée ? Contactez le Cheikh directement",
+  },
+  ur: {
+    home: "ہوم", about: "شیخ کے بارے میں", contact: "رابطہ",
+    back: "واپس", backHome: "ہوم پر واپس", allFields: "تمام علوم",
+    readMore: "مزید پڑھیں", share: "شیئر کریں", language: "زبان",
+    lessons: "اسباق", videos: "ویڈیوز", articles: "مضامین", books: "کتابیں", audio: "آڈیو", photos: "تصاویر",
+    fatwaTitle: "فتاویٰ اور زائرین کے سوالات", liveTitle: "براہ راست نشریات اور مجالس",
+    projectsTitle: "دعوتی منصوبے — اجر میں شریک ہوں", newsTitle: "شیخ کی خبریں اور سرگرمیاں",
+    mapTitle: "اسباق اور مجالس کا نقشہ", adhkarTitle: "اذکار اور روزانہ ورد",
+    fieldsTitle: "اسلامی علوم",
+    downloadApp: "ایپ ڈاؤن لوڈ کریں", quickLinks: "فوری لنکس", contactUs: "رابطہ",
+    rights: "جملہ حقوق محفوظ ہیں", noData: "ابھی کوئی ڈیٹا نہیں",
+    date: "تاریخ", category: "زمرہ", goal: "ہدف",
+    participate: "اجر میں شریک ہوں", openMaps: "گوگل میپس میں کھولیں",
+    askPrivate: "ذاتی سوال؟ شیخ کو براہ راست پیغام بھیجیں",
+  },
+  tr: {
+    home: "Ana Sayfa", about: "Hakkında", contact: "İletişim",
+    back: "Geri", backHome: "Ana Sayfaya Dön", allFields: "Tüm İlimler",
+    readMore: "Devamını Oku", share: "Paylaş", language: "Dil",
+    lessons: "Dersler", videos: "Videolar", articles: "Makaleler", books: "Kitaplar", audio: "Ses Kayıtları", photos: "Fotoğraflar",
+    fatwaTitle: "Fetvalar ve Ziyaretçi Soruları", liveTitle: "Canlı Yayın ve Meclisler",
+    projectsTitle: "Davet Projeleri — Sevaba Ortak Olun", newsTitle: "Hocanın Haberleri ve Etkinlikleri",
+    mapTitle: "Ders ve Meclis Haritası", adhkarTitle: "Zikirler ve Günlük Vird",
+    fieldsTitle: "İslami İlimler",
+    downloadApp: "Uygulamayı İndir", quickLinks: "Hızlı Bağlantılar", contactUs: "İletişim",
+    rights: "Tüm hakları saklıdır", noData: "Henüz veri yok",
+    date: "Tarih", category: "Kategori", goal: "Hedef",
+    participate: "Sevaba Ortak Olun", openMaps: "Google Haritalar'da Aç",
+    askPrivate: "Özel soru mu? Hocaya doğrudan mesaj gönderin",
+  },
+  id: {
+    home: "Beranda", about: "Tentang", contact: "Kontak",
+    back: "Kembali", backHome: "Kembali ke Beranda", allFields: "Semua Ilmu",
+    readMore: "Baca Selengkapnya", share: "Bagikan", language: "Bahasa",
+    lessons: "Pelajaran", videos: "Video", articles: "Artikel", books: "Buku", audio: "Audio", photos: "Foto",
+    fatwaTitle: "Fatwa dan Pertanyaan Pengunjung", liveTitle: "Siaran Langsung dan Majelis",
+    projectsTitle: "Proyek Dakwah — Berbagi Pahala", newsTitle: "Berita dan Kegiatan Syekh",
+    mapTitle: "Peta Pelajaran dan Majelis", adhkarTitle: "Zikir dan Wirid Harian",
+    fieldsTitle: "Ilmu-ilmu Islam",
+    downloadApp: "Unduh Aplikasi", quickLinks: "Tautan Cepat", contactUs: "Kontak",
+    rights: "Hak cipta dilindungi", noData: "Belum ada data",
+    date: "Tanggal", category: "Kategori", goal: "Target",
+    participate: "Berbagi Pahala", openMaps: "Buka di Google Maps",
+    askPrivate: "Pertanyaan pribadi? Kirim pesan langsung ke Syekh",
+  },
+};
+
+export type Dict = typeof dict.ar;
+export const t = (lang: Lang): Dict => dict[lang] ?? dict.ar;

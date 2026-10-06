@@ -1,51 +1,44 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import BackButton from "@/components/BackButton";
 import FieldTabs from "@/components/FieldTabs";
 import { getContent } from "@/lib/content";
+import { t, type Lang } from "@/lib/i18n";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
-import type { Metadata } from "next";
-
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ lang: string; slug: string }> }): Promise<Metadata> {
+  const { lang, slug } = await params;
   const c = await getContent();
   const f = c.fields.find((x) => x.slug === slug);
-  if (!f) return { title: "العلم غير موجود" };
+  if (!f) return { title: "404" };
   return {
     title: f.name,
     description: f.desc,
     openGraph: { title: `${f.name} | ${c.settings.shortName}`, description: f.desc },
   };
 }
-export default async function FieldPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+
+export default async function FieldPage({ params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params;
   const c = await getContent();
+  const tr = t(lang as Lang);
   const f = c.fields.find((x) => x.slug === slug);
 
-  if (!f) {
-    return (
-      <>
-        <Header settings={c.settings} />
-        <main className="py-24 text-center text-gray-500">
-          هذا العلم غير موجود — <a href="/" className="text-gold font-bold">الرئيسية</a>
-        </main>
-        <Footer settings={c.settings} />
-      </>
-    );
-  }
+  if (!f) notFound();
 
   const byField = <T extends { field: string }>(arr: T[]) => arr.filter((x) => x.field === slug);
 
   return (
     <>
-      <Header settings={c.settings} />
-      <main className="min-h-screen bg-cream-dark">
+      <Header settings={c.settings} lang={lang as Lang} />
+      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
         <section className="relative bg-primary text-white py-14 overflow-hidden pattern-light">
           <span className="absolute -left-8 top-1/2 -translate-y-1/2 text-[11rem] opacity-10 select-none">{f.icon}</span>
           <div className="relative max-w-4xl mx-auto px-4 text-center fade-up">
-            <a href="/" className="text-gold-light text-sm font-bold hover:underline">→ كل العلوم</a>
-            <h1 className="font-serif text-4xl md:text-5xl mt-3 mb-1">{f.name}</h1>
+            <h1 className="font-serif text-4xl md:text-5xl mb-1">{f.name}</h1>
             <div className="ornament my-3"><span className="text-xl">✦</span></div>
             <p className="text-white/80 max-w-2xl mx-auto">{f.desc}</p>
           </div>
@@ -53,6 +46,7 @@ export default async function FieldPage({ params }: { params: Promise<{ slug: st
 
         <section className="py-12">
           <div className="max-w-6xl mx-auto px-4">
+            <BackButton href={`/${lang}`} label={tr.backHome} />
             <FieldTabs
               lessons={byField(c.lessons)}
               videos={byField(c.videos)}
@@ -60,11 +54,12 @@ export default async function FieldPage({ params }: { params: Promise<{ slug: st
               books={byField(c.books)}
               audio={byField(c.audio)}
               photos={byField(c.photos)}
+              lang={lang as Lang}
             />
           </div>
         </section>
       </main>
-      <Footer settings={c.settings} />
+      <Footer settings={c.settings} lang={lang as Lang} />
     </>
   );
 }

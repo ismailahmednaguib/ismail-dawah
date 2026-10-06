@@ -3,21 +3,23 @@ import Footer from "@/components/Footer";
 import BackButton from "@/components/BackButton";
 import { SectionTitle } from "@/components/Cards";
 import { getContent } from "@/lib/content";
+import { t, type Lang } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "خريطة الدروس" };
 
-export default async function MapPage() {
+export default async function MapPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const c = await getContent();
+  const tr = t(lang as Lang);
   return (
     <>
-      <Header settings={c.settings} />
+      <Header settings={c.settings} lang={lang as Lang} />
       <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
         <div className="max-w-5xl mx-auto px-4">
-          <BackButton href="/" label="العودة للرئيسية" />
-          <SectionTitle>خريطة الدروس والمجالس</SectionTitle>
+          <BackButton href={`/${lang}`} label={tr.backHome} />
+          <SectionTitle>{tr.mapTitle}</SectionTitle>
           {c.places.length === 0 ? (
-            <p className="text-center text-gray-500 dark:text-gray-400">لا توجد أماكن مضافة بعد.</p>
+            <p className="text-center text-gray-500 dark:text-gray-400">{tr.noData}</p>
           ) : (
             <div className="grid md:grid-cols-2 gap-6">
               {c.places.map((p) => (
@@ -30,7 +32,7 @@ export default async function MapPage() {
                     target="_blank" rel="noopener"
                     className="text-gold font-bold text-sm hover:underline"
                   >
-                    افتح على خرائط جوجل ←
+                    {tr.openMaps} ←
                   </a>
                 </div>
               ))}
@@ -38,7 +40,7 @@ export default async function MapPage() {
           )}
         </div>
       </main>
-      <Footer settings={c.settings} />
+      <Footer settings={c.settings} lang={lang as Lang} />
     </>
   );
 }

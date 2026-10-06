@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export default function BackButton({ href = "/", label = "العودة للرئيسية" }: { href?: string; label?: string }) {
+export default function BackButton({ href = "/", label }: { href?: string; label?: string }) {
   return (
     <Link
       href={href}
