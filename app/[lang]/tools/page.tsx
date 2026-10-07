@@ -14,6 +14,9 @@ const tools = [
   { slug: "qibla", icon: "🧭", ar: "تحديد القبلة", en: "Qibla Direction" },
   { slug: "calendar", icon: "📅", ar: "التقويم الهجري والميلادي", en: "Hijri & Gregorian Calendar" },
   { slug: "khatm-dua", icon: "✨", ar: "أدعية ختم القرآن", en: "Quran Completion Duas" },
+  { slug: "zakat", icon: "🧮", ar: "حاسبة الزكاة", en: "Zakat Calculator" },
+  { slug: "inheritance", icon: "📊", ar: "حاسبة المواريث", en: "Inheritance Calculator" },
+  { slug: "daily-wird", icon: "📖", ar: "الورد اليومي للقرآن", en: "Daily Quran Wird" },
 ];
 
 export default async function ToolsPage({ params }: { params: Promise<{ lang: string }> }) {
