@@ -5,6 +5,11 @@ import { languages, defaultLang } from '@/lib/i18n';
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   
+  // استثناء ملفات التحقق من جوجل
+  if (pathname.startsWith('/google') && pathname.endsWith('.html')) {
+    return NextResponse.next();
+  }
+  
   // Security Headers
   const response = NextResponse.next();
   response.headers.set('X-DNS-Prefetch-Control', 'on');
