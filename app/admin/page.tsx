@@ -47,6 +47,7 @@ export default function AdminPage() {
   const [adminQuestions, setAdminQuestions] = useState<any[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [stats, setStats] = useState<any>(null);
+  const [advancedStats, setAdvancedStats] = useState<any>(null);
   const [notifTitle, setNotifTitle] = useState("");
   const [notifBody, setNotifBody] = useState("");
   const [notifUrl, setNotifUrl] = useState("/ar");
@@ -78,6 +79,10 @@ export default function AdminPage() {
       fetch("/api/stats", { credentials: "include" })
         .then((r) => r.json())
         .then((j) => setStats(j))
+        .catch(() => {});
+      fetch("/api/stats/advanced", { credentials: "include" })
+        .then((r) => r.json())
+        .then((j) => setAdvancedStats(j))
         .catch(() => {});
     }
   }, [authed]);
@@ -648,84 +653,110 @@ export default function AdminPage() {
               </>
             )}
 
-            {tab === "stats" && stats && (
-              <>
-                <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-2xl p-6 mb-6">
-                  <h2 className="font-serif text-2xl text-gold mb-2">📊 نظرة عامة على الموقع</h2>
-                  <p className="text-white/80 text-sm">إحصائيات شاملة عن محتوى ونشاط الموقع</p>
-                </div>
+            {tab === "stats" && (
+  <>
+    <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-2xl p-6 mb-6">
+      <h2 className="font-serif text-2xl text-gold mb-2">📊 إحصائيات متقدمة</h2>
+      <p className="text-white/80 text-sm">تحليل شامل لأداء الموقع</p>
+    </div>
 
-                <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-green-500">
-                    <p className="text-sm text-gray-500 mb-1">👥 إجمالي المستخدمين</p>
-                    <p className="text-3xl font-bold text-green-600">{stats.users.total}</p>
-                  </div>
-                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-amber-500">
-                    <p className="text-sm text-gray-500 mb-1">❓ أسئلة في الانتظار</p>
-                    <p className="text-3xl font-bold text-amber-600">{stats.questions.pending}</p>
-                  </div>
-                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-blue-500">
-                    <p className="text-sm text-gray-500 mb-1">✅ أسئلة تمت الإجابة عليها</p>
-                    <p className="text-3xl font-bold text-blue-600">{stats.questions.answered}</p>
-                  </div>
-                </div>
+    {/* إحصائيات سريعة */}
+    <div className="grid sm:grid-cols-4 gap-4 mb-6">
+      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-blue-500">
+        <p className="text-sm text-gray-500 mb-1">👁️ زيارات اليوم</p>
+        <p className="text-3xl font-bold text-blue-600">{advancedStats?.todayViews || 0}</p>
+      </div>
+      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-green-500">
+        <p className="text-sm text-gray-500 mb-1">📧 مشتركين النشرة</p>
+        <p className="text-3xl font-bold text-green-600">{advancedStats?.subscribers || 0}</p>
+      </div>
+      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-amber-500">
+        <p className="text-sm text-gray-500 mb-1">❓ أسئلة في الانتظار</p>
+        <p className="text-3xl font-bold text-amber-600">{stats?.questions?.pending || 0}</p>
+      </div>
+      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-purple-500">
+        <p className="text-sm text-gray-500 mb-1">👥 إجمالي المستخدمين</p>
+        <p className="text-3xl font-bold text-purple-600">{stats?.users?.total || 0}</p>
+      </div>
+    </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-md mb-6">
-                  <h3 className="font-bold text-primary text-lg mb-4">📚 إحصائيات المحتوى</h3>
-                  <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">🧭 العلوم</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.fields}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">📖 الدروس</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.lessons}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">🎬 الفيديوهات</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.videos}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">✍️ المقالات</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.articles}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">📚 الكتب</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.books}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">🎧 الصوتيات</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.audio}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">❓ الفتاوى</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.fatwas}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">⚔️ الشبهات</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.doubts}</span>
-                    </div>
-                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-                      <span className="text-sm font-bold">🤲 الأذكار</span>
-                      <span className="text-xl font-bold text-gold">{stats.content.adhkar}</span>
-                    </div>
-                  </div>
-                </div>
+    {/* أكثر الصفحات زيارة */}
+    <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+      <h3 className="font-bold text-primary text-lg mb-4">🔥 أكثر الصفحات زيارة (آخر 7 أيام)</h3>
+      {advancedStats?.topPages && advancedStats.topPages.length > 0 ? (
+        <div className="space-y-2">
+          {advancedStats.topPages.map((p: any, i: number) => (
+            <div key={i} className="flex items-center justify-between p-3 bg-cream-dark rounded-lg">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 bg-gold text-gray-900 rounded-full grid place-items-center font-bold text-sm">
+                  {i + 1}
+                </span>
+                <span className="font-mono text-sm">{p.page}</span>
+              </div>
+              <span className="bg-primary text-gold px-3 py-1 rounded-full text-sm font-bold">
+                {p.count} زيارة
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-500 py-4">لا توجد بيانات بعد</p>
+      )}
+    </div>
 
-                <div className="bg-white rounded-xl p-6 shadow-md">
-                  <h3 className="font-bold text-primary text-lg mb-4">🌍 اللغات المتاحة</h3>
-                  <div className="bg-gold/10 border-2 border-gold rounded-xl p-4 text-center">
-                    <p className="text-5xl font-bold text-gold mb-2">{stats.languages}</p>
-                    <p className="text-sm text-gray-600">لغة متاحة للموقع</p>
-                  </div>
-                </div>
-              </>
-            )}
+    {/* أكثر اللغات */}
+    <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+      <h3 className="font-bold text-primary text-lg mb-4">🌍 أكثر اللغات استخداماً (آخر 30 يوم)</h3>
+      {advancedStats?.topLanguages && advancedStats.topLanguages.length > 0 ? (
+        <div className="grid sm:grid-cols-2 gap-3">
+          {advancedStats.topLanguages.map((l: any, i: number) => (
+            <div key={i} className="flex items-center justify-between p-3 bg-cream-dark rounded-lg">
+              <span className="font-bold">{l.lang?.toUpperCase()}</span>
+              <span className="bg-gold/20 text-gold px-3 py-1 rounded-full text-sm font-bold">
+                {l.count} زيارة
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-center text-gray-500 py-4">لا توجد بيانات بعد</p>
+      )}
+    </div>
 
-            {tab === "stats" && !stats && (
-              <p className="text-center text-gray-500 py-10">⏳ جاري تحميل الإحصائيات...</p>
-            )}
-
+    {/* إحصائيات المحتوى */}
+    {stats && (
+      <div className="bg-white rounded-xl p-6 shadow-md">
+        <h3 className="font-bold text-primary text-lg mb-4">📚 إحصائيات المحتوى</h3>
+        <div className="grid sm:grid-cols-3 gap-3">
+          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+            <span className="text-sm font-bold">🧭 العلوم</span>
+            <span className="text-xl font-bold text-gold">{stats.content?.fields || 0}</span>
+          </div>
+          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+            <span className="text-sm font-bold">📖 الدروس</span>
+            <span className="text-xl font-bold text-gold">{stats.content?.lessons || 0}</span>
+          </div>
+          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+            <span className="text-sm font-bold">🎬 الفيديوهات</span>
+            <span className="text-xl font-bold text-gold">{stats.content?.videos || 0}</span>
+          </div>
+          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+            <span className="text-sm font-bold">✍️ المقالات</span>
+            <span className="text-xl font-bold text-gold">{stats.content?.articles || 0}</span>
+          </div>
+          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+            <span className="text-sm font-bold">📚 الكتب</span>
+            <span className="text-xl font-bold text-gold">{stats.content?.books || 0}</span>
+          </div>
+          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+            <span className="text-sm font-bold">❓ الفتاوى</span>
+            <span className="text-xl font-bold text-gold">{stats.content?.fatwas || 0}</span>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+)}
             {tab === "notifications" && (
               <>
                 <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl p-6 mb-6">

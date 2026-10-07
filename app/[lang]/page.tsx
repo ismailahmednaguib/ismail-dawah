@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Newsletter from "@/components/Newsletter";
 import { getContent } from "@/lib/content";
 import { t, type Lang } from "@/lib/i18n";
 
@@ -64,7 +65,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             {/* 📢 الأقسام الدعوية */}
             <SectionTitle>📢 {tr.dawahSections}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {/* الأقسام الأساسية */}
               <Box href={`/${lang}/fatwa`} icon="❓" title={tr.boxFatwaTitle} desc={tr.boxFatwaDesc} badge={`${c.fatwas.length} ${tr.fatwa}`} delay={next()} />
               <Box href={`/${lang}/doubts`} icon="⚔️" title={tr.doubts} desc={tr.doubtsDesc} badge={`${c.doubts.length}`} delay={next()} />
               <Box href={`/${lang}/prayer-guide`} icon="🕌" title={lang === "ar" ? "تعلم الصلاة" : "Learn Prayer"} desc={lang === "ar" ? "دليل خطوة بخطوة" : "Step by step"} badge="" delay={next()} />
@@ -73,8 +73,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />
               <Box href={`/${lang}/news`} icon="📰" title={tr.boxNewsTitle} desc={tr.boxNewsDesc} badge={`${c.news.length} ${tr.newsItem}`} delay={next()} />
               <Box href={`/${lang}/map`} icon="🗺️" title={tr.boxMapTitle} desc={tr.boxMapDesc} badge={`${c.places.length} ${tr.place}`} delay={next()} />
-              
-              {/* الأقسام الدعوية الجديدة */}
               <Box href={`/${lang}/dawah-guide`} icon="📢" title={lang === "ar" ? "دليل الدعاة" : "Da'wah Guide"} desc={lang === "ar" ? "كيف تدعو إلى الله" : "How to call to Allah"} badge="" delay={next()} />
               <Box href={`/${lang}/prophets-stories`} icon="📖" title={lang === "ar" ? "قصص الأنبياء" : "Prophets Stories"} desc={lang === "ar" ? "من آدم إلى محمد ﷺ" : "From Adam to Muhammad ﷺ"} badge="" delay={next()} />
               <Box href={`/${lang}/atheism-response`} icon="⚔️" title={lang === "ar" ? "الرد على الإلحاد" : "Atheism Response"} desc={lang === "ar" ? "شبهات وردود" : "Doubts & answers"} badge="" delay={next()} />
@@ -107,6 +105,13 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <Box href={`/${lang}/contact`} icon="💬" title={tr.boxContactTitle} desc={tr.boxContactDesc} badge={tr.messageMe} delay={next()} />
             </div>
 
+          </div>
+        </section>
+
+        {/* 📧 النشرة البريدية */}
+        <section className="py-14 bg-cream-dark dark:bg-gray-900">
+          <div className="max-w-4xl mx-auto px-4">
+            <Newsletter />
           </div>
         </section>
       </main>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import TopBar from "@/components/TopBar";
 import JsonLd from "@/components/JsonLd";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 import { getDir, type Lang } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
 import { generateJsonLd } from "@/lib/seo";
@@ -104,8 +105,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       },
     },
     verification: {
-  google: "4W49aXhP1rd36urlMh93CbGtqdZwHw39_mBvIDb1ENE",
-},
+      google: "4W49aXhP1rd36urlMh93CbGtqdZwHw39_mBvIDb1ENE",
+    },
     category: "religion",
   };
 }
@@ -175,6 +176,7 @@ export default async function LangLayout({
       <body className="bg-cream-dark dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
         <JsonLd data={websiteJsonLd} />
         <JsonLd data={personJsonLd} />
+        <AnalyticsTracker />
         <TopBar />
         {children}
       </body>
