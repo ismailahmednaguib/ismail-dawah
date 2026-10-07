@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import type { Settings } from "@/lib/data";
 import { t, languages, type Lang } from "@/lib/i18n";
 
-export default function Header({ lang }: { lang?: Lang }) {
+export default function Header({ settings, lang }: { settings?: Settings; lang?: Lang }) {
   const params = useParams();
   const L = (lang || params?.lang || "ar") as Lang;
   const tr = t(L);
@@ -28,13 +29,19 @@ export default function Header({ lang }: { lang?: Lang }) {
     localStorage.setItem("theme", next ? "dark" : "light");
   };
 
+  const shortName = settings?.shortName || "الشيخ إسماعيل";
+  const jobTitle = settings?.jobTitle ? settings.jobTitle.split("•")[0] : "";
+
   return (
     <header className="sticky top-0 z-50 bg-cream/95 dark:bg-gray-900/95 backdrop-blur border-b border-black/5 dark:border-white/10">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
         {/* اللوجو */}
         <Link href={`/${L}`} className="flex items-center gap-2">
           <span className="w-10 h-10 bg-primary text-gold rounded-full grid place-items-center font-serif text-xl font-bold">إ</span>
-          <span className="font-serif font-bold text-primary dark:text-gold hidden sm:block">الشيخ إسماعيل</span>
+          <span className="hidden sm:block">
+            <span className="block font-bold text-primary dark:text-gold text-sm leading-tight">{shortName}</span>
+            {jobTitle && <span className="block text-xs text-gray-500 dark:text-gray-400">{jobTitle}</span>}
+          </span>
         </Link>
 
         {/* الروابط - ديسكتوب */}
