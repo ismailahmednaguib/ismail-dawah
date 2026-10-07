@@ -23,9 +23,60 @@ export const languages: { code: Lang; name: string; flag: string; dir: "rtl" | "
 export const isLang = (x: string): x is Lang => languages.some((l) => l.code === x);
 export const getDir = (lang: Lang) => languages.find((l) => l.code === lang)?.dir ?? "rtl";
 
-type Entry = { name: string; desc: string };
+type Dict = {
+  home: string; about: string; contact: string;
+  back: string; backHome: string; allFields: string;
+  readMore: string; share: string; language: string;
+  lessons: string; videos: string; articles: string;
+  books: string; audio: string; photos: string;
+  fatwaTitle: string; liveTitle: string;
+  projectsTitle: string; newsTitle: string;
+  mapTitle: string; adhkarTitle: string;
+  fieldsTitle: string;
+  downloadApp: string; quickLinks: string; contactUs: string;
+  rights: string; noData: string;
+  date: string; category: string; goal: string;
+  participate: string; openMaps: string;
+  askPrivate: string;
+  boxFatwaTitle: string; boxFatwaDesc: string;
+  boxLiveTitle: string; boxLiveDesc: string;
+  boxProjectsTitle: string; boxProjectsDesc: string;
+  boxNewsTitle: string; boxNewsDesc: string;
+  boxMapTitle: string; boxMapDesc: string;
+  boxAdhkarTitle: string; boxAdhkarDesc: string;
+  boxAboutTitle: string; boxAboutDesc: string;
+  boxContactTitle: string; boxContactDesc: string;
+  item: string; fatwa: string; project: string; newsItem: string; place: string;
+  followUs: string; yourDailyWird: string; knowMe: string; messageMe: string;
+  formName: string; formMessage: string;
+  formPlaceholderName: string; formPlaceholderMessage: string;
+  sendWa: string; sendMail: string;
+  sendRequired: string;
+  scheduleTitle: string;
+  wa: string; email: string; location: string;
+  greetings: string; iam: string; from: string;
+  aboutMe: string; myInterests: string;
+  doubts: string; doubtsDesc: string;
+  learn: string; learnDesc: string;
+  search: string; searchDesc: string;
+  searchPlaceholder: string; noResults: string;
+  relatedContent: string; shareNow: string; copyLink: string; copied: string;
+  account: string; login: string;
+  sciences: string; dawahSections: string; services: string;
+  allSciences: string; allSciencesDesc: string;
+  quran: string; quranDesc: string;
+  calendar: string; calendarDesc: string;
+  khatmDua: string; khatmDuaDesc: string;
+  qibla: string; qiblaDesc: string;
+  prayerTimes: string; prayerTimesDesc: string;
+  selectCountry: string; selectCity: string;
+  fajr: string; dhuhr: string; asr: string; maghrib: string; isha: string;
+  sunrise: string; sunset: string;
+  hijriDate: string; gregorianDate: string;
+  morningAdhkar: string; eveningAdhkar: string;
+};
 
-const base = {
+export const dict: Record<Lang, Dict> = {
   ar: {
     home: "الرئيسية", about: "عن الشيخ", contact: "تواصل معي",
     back: "العودة", backHome: "العودة للرئيسية", allFields: "كل العلوم",
@@ -64,6 +115,19 @@ const base = {
     search: "بحث", searchDesc: "ابحث في الدروس والفتاوى والمقالات",
     searchPlaceholder: "ابحث هنا…", noResults: "لا توجد نتائج",
     relatedContent: "محتوى مرتبط", shareNow: "شارك الآن", copyLink: "نسخ الرابط", copied: "تم النسخ ✓",
+    account: "حسابي", login: "دخول",
+    sciences: "العلوم الشرعية", dawahSections: "الأقسام الدعوية", services: "الخدمات",
+    allSciences: "كل العلوم الشرعية", allSciencesDesc: "17 علمًا شرعيًا مع دروسها وفتاواها",
+    quran: "القرآن الكريم", quranDesc: "اقرأ القرآن الكريم كاملاً",
+    calendar: "التقويم", calendarDesc: "التقويم الهجري والميلادي",
+    khatmDua: "أدعية ختم القرآن", khatmDuaDesc: "الأدعية المأثورة عند ختم القرآن",
+    qibla: "تحديد القبلة", qiblaDesc: "اعرف اتجاه القبلة من أي مكان",
+    prayerTimes: "مواقيت الصلاة", prayerTimesDesc: "مواقيت الصلاة لكل دول العالم",
+    selectCountry: "اختر الدولة", selectCity: "اختر المدينة",
+    fajr: "الفجر", dhuhr: "الظهر", asr: "العصر", maghrib: "المغرب", isha: "العشاء",
+    sunrise: "الشروق", sunset: "الغروب",
+    hijriDate: "التاريخ الهجري", gregorianDate: "التاريخ الميلادي",
+    morningAdhkar: "أذكار الصباح", eveningAdhkar: "أذكار المساء",
   },
   en: {
     home: "Home", about: "About", contact: "Contact",
@@ -103,6 +167,19 @@ const base = {
     search: "Search", searchDesc: "Search lessons, fatwas and articles",
     searchPlaceholder: "Search here…", noResults: "No results found",
     relatedContent: "Related Content", shareNow: "Share now", copyLink: "Copy link", copied: "Copied ✓",
+    account: "My Account", login: "Login",
+    sciences: "Islamic Sciences", dawahSections: "Da'wah Sections", services: "Services",
+    allSciences: "All Islamic Sciences", allSciencesDesc: "17 Islamic sciences with their lessons and fatwas",
+    quran: "The Holy Quran", quranDesc: "Read the complete Holy Quran",
+    calendar: "Calendar", calendarDesc: "Hijri and Gregorian calendar",
+    khatmDua: "Quran Completion Duas", khatmDuaDesc: "Supplications upon completing the Quran",
+    qibla: "Qibla Direction", qiblaDesc: "Find the direction of the Qibla from anywhere",
+    prayerTimes: "Prayer Times", prayerTimesDesc: "Prayer times for all countries",
+    selectCountry: "Select Country", selectCity: "Select City",
+    fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
+    sunrise: "Sunrise", sunset: "Sunset",
+    hijriDate: "Hijri Date", gregorianDate: "Gregorian Date",
+    morningAdhkar: "Morning Adhkar", eveningAdhkar: "Evening Adhkar",
   },
   fr: {
     home: "Accueil", about: "À propos", contact: "Contact",
@@ -142,6 +219,19 @@ const base = {
     search: "Recherche", searchDesc: "Rechercher cours, fatwas et articles",
     searchPlaceholder: "Rechercher…", noResults: "Aucun résultat",
     relatedContent: "Contenu lié", shareNow: "Partager", copyLink: "Copier le lien", copied: "Copié ✓",
+    account: "Mon compte", login: "Connexion",
+    sciences: "Sciences islamiques", dawahSections: "Sections de da'wa", services: "Services",
+    allSciences: "Toutes les sciences islamiques", allSciencesDesc: "17 sciences avec leurs cours et fatwas",
+    quran: "Le Saint Coran", quranDesc: "Lisez le Coran complet",
+    calendar: "Calendrier", calendarDesc: "Calendrier hégirien et grégorien",
+    khatmDua: "Invocations de fin du Coran", khatmDuaDesc: "Invocations à la fin de la lecture du Coran",
+    qibla: "Direction de la Qibla", qiblaDesc: "Trouvez la direction de la Qibla",
+    prayerTimes: "Horaires de prière", prayerTimesDesc: "Horaires de prière pour tous les pays",
+    selectCountry: "Sélectionner le pays", selectCity: "Sélectionner la ville",
+    fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
+    sunrise: "Lever du soleil", sunset: "Coucher du soleil",
+    hijriDate: "Date hégirienne", gregorianDate: "Date grégorienne",
+    morningAdhkar: "Adhkar du matin", eveningAdhkar: "Adhkar du soir",
   },
   ur: {
     home: "ہوم", about: "شیخ کے بارے میں", contact: "رابطہ",
@@ -181,6 +271,19 @@ const base = {
     search: "تلاش", searchDesc: "اسباق اور فتاویٰ میں تلاش کریں",
     searchPlaceholder: "یہاں تلاش کریں…", noResults: "کوئی نتیجہ نہیں",
     relatedContent: "متعلقہ مواد", shareNow: "شیئر کریں", copyLink: "لنک کاپی کریں", copied: "کاپی ہو گیا ✓",
+    account: "میرا اکاؤنٹ", login: "لاگ ان",
+    sciences: "اسلامی علوم", dawahSections: "دعوتی حصے", services: "خدمات",
+    allSciences: "تمام اسلامی علوم", allSciencesDesc: "17 علوم ان کے اسباق اور فتاویٰ کے ساتھ",
+    quran: "قرآن مجید", quranDesc: "مکمل قرآن مجید پڑھیں",
+    calendar: "کیلنڈر", calendarDesc: "ہجری اور عیسوی کیلنڈر",
+    khatmDua: "ختم قرآن کی دعائیں", khatmDuaDesc: "قرآن ختم کرنے پر مأثور دعائیں",
+    qibla: "قبلہ کی سمت", qiblaDesc: "کہیں سے بھی قبلہ کی سمت جانیں",
+    prayerTimes: "نماز کے اوقات", prayerTimesDesc: "تمام ممالک کے لیے نماز کے اوقات",
+    selectCountry: "ملک منتخب کریں", selectCity: "شہر منتخب کریں",
+    fajr: "فجر", dhuhr: "ظہر", asr: "عصر", maghrib: "مغرب", isha: "عشاء",
+    sunrise: "طلوع آفتاب", sunset: "غروب آفتاب",
+    hijriDate: "ہجری تاریخ", gregorianDate: "عیسوی تاریخ",
+    morningAdhkar: "صبح کے اذکار", eveningAdhkar: "شام کے اذکار",
   },
   tr: {
     home: "Ana Sayfa", about: "Hakkında", contact: "İletişim",
@@ -220,6 +323,19 @@ const base = {
     search: "Arama", searchDesc: "Derslerde ve fetvalarda arayın",
     searchPlaceholder: "Burada arayın…", noResults: "Sonuç bulunamadı",
     relatedContent: "İlgili İçerik", shareNow: "Şimdi paylaş", copyLink: "Bağlantıyı kopyala", copied: "Kopyalandı ✓",
+    account: "Hesabım", login: "Giriş",
+    sciences: "İslami İlimler", dawahSections: "Davet Bölümleri", services: "Hizmetler",
+    allSciences: "Tüm İslami İlimler", allSciencesDesc: "17 ilim dersleri ve fetvalarıyla",
+    quran: "Kur'an-ı Kerim", quranDesc: "Kur'an-ı Kerim'in tamamını okuyun",
+    calendar: "Takvim", calendarDesc: "Hicri ve Miladi takvim",
+    khatmDua: "Hatim Duaları", khatmDuaDesc: "Kur'an'ı bitirince okunan dualar",
+    qibla: "Kıble Yönü", qiblaDesc: "Her yerden kıble yönünü bulun",
+    prayerTimes: "Namaz Vakitleri", prayerTimesDesc: "Tüm ülkeler için namaz vakitleri",
+    selectCountry: "Ülke Seçin", selectCity: "Şehir Seçin",
+    fajr: "İmsak", dhuhr: "Öğle", asr: "İkindi", maghrib: "Akşam", isha: "Yatsı",
+    sunrise: "Güneş", sunset: "Güneş Batışı",
+    hijriDate: "Hicri Tarih", gregorianDate: "Miladi Tarih",
+    morningAdhkar: "Sabah Zikirleri", eveningAdhkar: "Akşam Zikirleri",
   },
   id: {
     home: "Beranda", about: "Tentang", contact: "Kontak",
@@ -259,6 +375,19 @@ const base = {
     search: "Cari", searchDesc: "Cari pelajaran, fatwa, dan artikel",
     searchPlaceholder: "Cari di sini…", noResults: "Tidak ada hasil",
     relatedContent: "Konten Terkait", shareNow: "Bagikan sekarang", copyLink: "Salin tautan", copied: "Disalin ✓",
+    account: "Akun Saya", login: "Masuk",
+    sciences: "Ilmu-ilmu Islam", dawahSections: "Bagian Dakwah", services: "Layanan",
+    allSciences: "Semua Ilmu Islam", allSciencesDesc: "17 ilmu dengan pelajaran dan fatwanya",
+    quran: "Al-Qur'an", quranDesc: "Baca Al-Qur'an lengkap",
+    calendar: "Kalender", calendarDesc: "Kalender Hijriah dan Masehi",
+    khatmDua: "Doa Khatam Al-Qur'an", khatmDuaDesc: "Doa saat menyelesaikan Al-Qur'an",
+    qibla: "Arah Kiblat", qiblaDesc: "Temukan arah kiblat dari mana saja",
+    prayerTimes: "Waktu Shalat", prayerTimesDesc: "Waktu shalat untuk semua negara",
+    selectCountry: "Pilih Negara", selectCity: "Pilih Kota",
+    fajr: "Subuh", dhuhr: "Dzuhur", asr: "Ashar", maghrib: "Maghrib", isha: "Isya",
+    sunrise: "Terbit", sunset: "Terbenam",
+    hijriDate: "Tanggal Hijriah", gregorianDate: "Tanggal Masehi",
+    morningAdhkar: "Dzikir Pagi", eveningAdhkar: "Dzikir Petang",
   },
   ha: {
     home: "Gida", about: "Game da Sheikh", contact: "Tuntuɓa",
@@ -298,6 +427,19 @@ const base = {
     search: "Bincike", searchDesc: "Bincika darussa da fatwa",
     searchPlaceholder: "Bincika a nan…", noResults: "Babu sakamako",
     relatedContent: "Abubuwa Masu Alaƙa", shareNow: "Raba yanzu", copyLink: "Kwafi hanyar", copied: "An kwafa ✓",
+    account: "Asusuna", login: "Shiga",
+    sciences: "Kimiyar Musulunci", dawahSections: "Sassan Daw'a", services: "Ayyuka",
+    allSciences: "Duk Kimiyar Musulunci", allSciencesDesc: "Kimiyoyi 17 tare da darussan su da fatwa",
+    quran: "Alqur'ani Mai Girma", quranDesc: "Karanta cikakken Alqur'ani",
+    calendar: "Kalanda", calendarDesc: "Kalandar Hijira da Miladiyya",
+    khatmDua: "Addu'ar Khatam Alqur'ani", khatmDuaDesc: "Addu'o'i lokacin kammala Alqur'ani",
+    qibla: "Alkiblar Qibla", qiblaDesc: "Samo alkiblar Qibla daga ko'ina",
+    prayerTimes: "Lokutan Salla", prayerTimesDesc: "Lokutan salla ga duk ƙasashe",
+    selectCountry: "Zaɓi Ƙasa", selectCity: "Zaɓi Birni",
+    fajr: "Fajir", dhuhr: "Zuhur", asr: "Asar", maghrib: "Magrib", isha: "Isha",
+    sunrise: "Fitar Rana", sunset: "Faɗuwar Rana",
+    hijriDate: "Kwanan Hijira", gregorianDate: "Kwanan Miladiyya",
+    morningAdhkar: "Azikar Safe", eveningAdhkar: "Azikar Maraice",
   },
   bn: {
     home: "হোম", about: "শেখ সম্পর্কে", contact: "যোগাযোগ",
@@ -337,6 +479,19 @@ const base = {
     search: "খুঁজুন", searchDesc: "পাঠ ও ফতোওয়ায় খুঁজুন",
     searchPlaceholder: "এখানে খুঁজুন…", noResults: "কোনো ফলাফল নেই",
     relatedContent: "সম্পর্কিত বিষয়বস্তু", shareNow: "এখনই শেয়ার করুন", copyLink: "লিংক কপি করুন", copied: "কপি হয়েছে ✓",
+    account: "আমার অ্যাকাউন্ট", login: "লগইন",
+    sciences: "ইসলামী বিজ্ঞান", dawahSections: "দাওয়াত বিভাগ", services: "সেবা",
+    allSciences: "সব ইসলামী বিজ্ঞান", allSciencesDesc: "১৭টি বিজ্ঞান তাদের পাঠ ও ফতোয়া সহ",
+    quran: "পবিত্র কুরআন", quranDesc: "সম্পূর্ণ কুরআন পড়ুন",
+    calendar: "ক্যালেন্ডার", calendarDesc: "হিজরি ও খ্রিস্টাব্দ ক্যালেন্ডার",
+    khatmDua: "খতমে কুরআনের দোয়া", khatmDuaDesc: "কুরআন শেষ করার সময় পড়ার দোয়া",
+    qibla: "কিবলার দিক", qiblaDesc: "যেখান থেকে কিবলার দিক জানুন",
+    prayerTimes: "নামাজের সময়", prayerTimesDesc: "সব দেশের জন্য নামাজের সময়",
+    selectCountry: "দেশ নির্বাচন করুন", selectCity: "শহর নির্বাচন করুন",
+    fajr: "ফজর", dhuhr: "যোহর", asr: "আসর", maghrib: "মাগরিব", isha: "এশা",
+    sunrise: "সূর্যোদয়", sunset: "সূর্যাস্ত",
+    hijriDate: "হিজরি তারিখ", gregorianDate: "খ্রিস্টাব্দ তারিখ",
+    morningAdhkar: "সকালের আযকার", eveningAdhkar: "সন্ধ্যার আযকার",
   },
   so: {
     home: "Bogga Hore", about: "Ku Saabsan Sheekha", contact: "La Xiriir",
@@ -376,6 +531,19 @@ const base = {
     search: "Raadi", searchDesc: "Ka raadi duruusta iyo fatwooyinka",
     searchPlaceholder: "Halkan ka raadi…", noResults: "Natiijo ma jirto",
     relatedContent: "Waxyaabaha La Xiriira", shareNow: "Hadda la wadaag", copyLink: "Koobiyee linkiga", copied: "Waa la koobiyey ✓",
+    account: "Xisaabteyda", login: "Gal",
+    sciences: "Culuumta Islaamka", dawahSections: "Qaybaha Dacwada", services: "Adeegyada",
+    allSciences: "Dhammaan Culuumta Islaamka", allSciencesDesc: "17 culuum oo ay weheliyaan duruustooda iyo fatwooyinkooda",
+    quran: "Quraanka Kariimka", quranDesc: "Akhri Quraanka oo dhan",
+    calendar: "Taariikhye", calendarDesc: "Taariikhda Hijriga iyo Miilaadiga",
+    khatmDua: "Ducada Khatmiga Quraanka", khatmDuaDesc: "Ducada la akhriyo marka la dhammaystiro Quraanka",
+    qibla: "Jihada Qiblada", qiblaDesc: "Ka ogow jihada Qiblada meel kasta",
+    prayerTimes: "Waqtiyada Salaadda", prayerTimesDesc: "Waqtiyada salaadda ee dhammaan waddamada",
+    selectCountry: "Dooro Waddanka", selectCity: "Dooro Magaalada",
+    fajr: "Fajr", dhuhr: "Duhur", asr: "Casar", maghrib: "Maqrib", isha: "Cisha",
+    sunrise: "Qorrax-soo-baxa", sunset: "Qorrax-dhaca",
+    hijriDate: "Taariikhda Hijriga", gregorianDate: "Taariikhda Miilaadiga",
+    morningAdhkar: "Adkaarta Subaxda", eveningAdhkar: "Adkaarta Fiidkii",
   },
   fa: {
     home: "خانه", about: "درباره شیخ", contact: "تماس",
@@ -415,6 +583,19 @@ const base = {
     search: "جستجو", searchDesc: "جستجو در درس‌ها و فتواها",
     searchPlaceholder: "اینجا جستجو کنید…", noResults: "نتیجه‌ای یافت نشد",
     relatedContent: "محتوای مرتبط", shareNow: "همین حالا به اشتراک بگذارید", copyLink: "کپی لینک", copied: "کپی شد ✓",
+    account: "حساب من", login: "ورود",
+    sciences: "علوم اسلامی", dawahSections: "بخش‌های دعوت", services: "خدمات",
+    allSciences: "همه علوم اسلامی", allSciencesDesc: "۱۷ علم با درس‌ها و فتواهایشان",
+    quran: "قرآن کریم", quranDesc: "قرآن کریم را کامل بخوانید",
+    calendar: "تقویم", calendarDesc: "تقویم هجری و میلادی",
+    khatmDua: "ادعیه ختم قرآن", khatmDuaDesc: "ادعیه مأثور هنگام ختم قرآن",
+    qibla: "جهت قبله", qiblaDesc: "جهت قبله را از هر جایی پیدا کنید",
+    prayerTimes: "اوقات شرعی", prayerTimesDesc: "اوقات شرعی برای همه کشورها",
+    selectCountry: "کشور را انتخاب کنید", selectCity: "شهر را انتخاب کنید",
+    fajr: "فجر", dhuhr: "ظهر", asr: "عصر", maghrib: "مغرب", isha: "عشاء",
+    sunrise: "طلوع", sunset: "غروب",
+    hijriDate: "تاریخ هجری", gregorianDate: "تاریخ میلادی",
+    morningAdhkar: "اذکار صبح", eveningAdhkar: "اذکار شام",
   },
   es: {
     home: "Inicio", about: "Acerca de", contact: "Contacto",
@@ -435,7 +616,7 @@ const base = {
     boxLiveTitle: "En vivo", boxLiveDesc: "Transmisión y sesiones semanales",
     boxProjectsTitle: "Proyectos de da'wah", boxProjectsDesc: "Apoya la da'wah",
     boxNewsTitle: "Noticias", boxNewsDesc: "Últimos cursos y eventos",
-    boxMapTitle: "Mapa de lecciones", boxMaps: "Mezquitas en el mapa", boxMapDesc: "Mezquitas en el mapa",
+    boxMapTitle: "Mapa de lecciones", boxMapDesc: "Mezquitas en el mapa",
     boxAdhkarTitle: "Adhkar", boxAdhkarDesc: "Adhkar de mañana y tarde",
     boxAboutTitle: "Acerca del Sheij", boxAboutDesc: "Biografía y metodología",
     boxContactTitle: "Contáctame", boxContactDesc: "WhatsApp y correo",
@@ -454,6 +635,19 @@ const base = {
     search: "Buscar", searchDesc: "Busca lecciones, fatwas y artículos",
     searchPlaceholder: "Busca aquí…", noResults: "Sin resultados",
     relatedContent: "Contenido relacionado", shareNow: "Compartir ahora", copyLink: "Copiar enlace", copied: "Copiado ✓",
+    account: "Mi cuenta", login: "Iniciar sesión",
+    sciences: "Ciencias islámicas", dawahSections: "Secciones de da'wah", services: "Servicios",
+    allSciences: "Todas las ciencias islámicas", allSciencesDesc: "17 ciencias con sus lecciones y fatwas",
+    quran: "El Sagrado Corán", quranDesc: "Lee el Corán completo",
+    calendar: "Calendario", calendarDesc: "Calendario hijri y gregoriano",
+    khatmDua: "Súplicas de finalización del Corán", khatmDuaDesc: "Súplicas al completar el Corán",
+    qibla: "Dirección de la Qibla", qiblaDesc: "Encuentra la dirección de la Qibla desde cualquier lugar",
+    prayerTimes: "Horarios de oración", prayerTimesDesc: "Horarios de oración para todos los países",
+    selectCountry: "Seleccionar país", selectCity: "Seleccionar ciudad",
+    fajr: "Fajr", dhuhr: "Dhuhr", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
+    sunrise: "Amanecer", sunset: "Atardecer",
+    hijriDate: "Fecha hijri", gregorianDate: "Fecha gregoriana",
+    morningAdhkar: "Adhkar de la mañana", eveningAdhkar: "Adhkar de la tarde",
   },
   ru: {
     home: "Главная", about: "О шейхе", contact: "Контакты",
@@ -493,6 +687,19 @@ const base = {
     search: "Поиск", searchDesc: "Поиск уроков, фетв и статей",
     searchPlaceholder: "Ищите здесь…", noResults: "Ничего не найдено",
     relatedContent: "Похожие материалы", shareNow: "Поделиться сейчас", copyLink: "Копировать ссылку", copied: "Скопировано ✓",
+    account: "Мой аккаунт", login: "Вход",
+    sciences: "Исламские науки", dawahSections: "Разделы даавата", services: "Сервисы",
+    allSciences: "Все исламские науки", allSciencesDesc: "17 наук с их уроками и фетвами",
+    quran: "Священный Коран", quranDesc: "Читайте полный Коран",
+    calendar: "Календарь", calendarDesc: "Хиджри и григорианский календарь",
+    khatmDua: "Дуа завершения Корана", khatmDuaDesc: "Дуа при завершении чтения Корана",
+    qibla: "Направление Киблы", qiblaDesc: "Найдите направление Киблы откуда угодно",
+    prayerTimes: "Времена намаза", prayerTimesDesc: "Времена намаза для всех стран",
+    selectCountry: "Выберите страну", selectCity: "Выберите город",
+    fajr: "Фаджр", dhuhr: "Зухр", asr: "Аср", maghrib: "Магриб", isha: "Иша",
+    sunrise: "Восход", sunset: "Закат",
+    hijriDate: "Дата хиджри", gregorianDate: "Григорианская дата",
+    morningAdhkar: "Утренние азкары", eveningAdhkar: "Вечерние азкары",
   },
   sw: {
     home: "Nyumbani", about: "Kuhusu Shehe", contact: "Mawasiliano",
@@ -532,9 +739,20 @@ const base = {
     search: "Tafuta", searchDesc: "Tafuta masomo na fatwa",
     searchPlaceholder: "Tafuta hapa…", noResults: "Hakuna matokeo",
     relatedContent: "Maudhui Yanayohusiana", shareNow: "Shiriki sasa", copyLink: "Nakili kiungo", copied: "Imenakiliwa ✓",
+    account: "Akaunti Yangu", login: "Ingia",
+    sciences: "Sayansi za Kiislamu", dawahSections: "Sehemu za Da'awa", services: "Huduma",
+    allSciences: "Sayansi Zote za Kiislamu", allSciencesDesc: "Sayansi 17 na masomo na fatwa zao",
+    quran: "Qurani Tukufu", quranDesc: "Soma Qurani nzima",
+    calendar: "Kalenda", calendarDesc: "Kalenda ya Hijria na Gregori",
+    khatmDua: "Dua za Khatimu ya Qurani", khatmDuaDesc: "Dua zinazosomwa wakati wa kumaliza Qurani",
+    qibla: "Mwelekeo wa Qibla", qiblaDesc: "Pata mwelekeo wa Qibla kutoka mahali popote",
+    prayerTimes: "Nyakati za Sala", prayerTimesDesc: "Nyakati za sala kwa nchi zote",
+    selectCountry: "Chagua Nchi", selectCity: "Chagua Jiji",
+    fajr: "Fajr", dhuhr: "Dhuhur", asr: "Asr", maghrib: "Maghrib", isha: "Isha",
+    sunrise: "Kuchomoza Jua", sunset: "Kuzama kwa Jua",
+    hijriDate: "Tarehe ya Hijria", gregorianDate: "Tarehe ya Gregori",
+    morningAdhkar: "Adhkari za Asubuhi", eveningAdhkar: "Adhkari za Jioni",
   },
 };
 
-export const dict = base;
-export type Dict = typeof base.ar;
-export const t = (lang: Lang): Dict => (dict[lang] ?? dict.ar) as Dict;
+export const t = (lang: Lang): Dict => dict[lang] ?? dict.ar;

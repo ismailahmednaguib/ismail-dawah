@@ -15,8 +15,18 @@ function Box({ href, icon, title, desc, badge, delay }: { href: string; icon: st
       <span className="relative inline-grid place-items-center w-16 h-16 rounded-full bg-cream-dark dark:bg-gray-700 border-2 border-gold/50 text-3xl mb-3 group-hover:scale-110 transition">{icon}</span>
       <h2 className="relative font-serif text-xl text-primary dark:text-gold font-bold mb-1">{title}</h2>
       <p className="relative text-xs text-gray-500 dark:text-gray-400 mb-3 min-h-8">{desc}</p>
-      <span className="relative inline-block bg-primary text-gold-light text-xs font-bold px-3 py-1 rounded-full">{badge}</span>
+      {badge && <span className="relative inline-block bg-primary text-gold-light text-xs font-bold px-3 py-1 rounded-full">{badge}</span>}
     </Link>
+  );
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 mb-6 mt-12 first:mt-0">
+      <div className="h-px flex-1 bg-gold/30" />
+      <h2 className="font-serif text-2xl text-primary dark:text-gold font-bold whitespace-nowrap">{children}</h2>
+      <div className="h-px flex-1 bg-gold/30" />
+    </div>
   );
 }
 
@@ -39,8 +49,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   return (
     <>
-      <Header settings={c.settings} lang={L} />
+      <Header lang={L} />
       <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
+        {/* البطل */}
         <section className="relative bg-primary text-white py-16 text-center overflow-hidden pattern-light">
           <div className="relative max-w-3xl mx-auto px-4 fade-up">
             <p className="font-serif text-gold-light text-xl mb-3">{c.settings.kicker}</p>
@@ -52,6 +63,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
         <section className="py-14">
           <div className="max-w-6xl mx-auto px-4">
+
+            {/* العلوم الشرعية */}
+            <SectionTitle>📚 {tr.sciences}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {c.fields.map((f) => {
                 const ft = getFieldTranslation(f.slug, L, { name: f.name, desc: f.desc }, c.fieldTranslations);
@@ -59,21 +73,31 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
                   <Box key={f.id} href={`/${lang}/fields/${f.slug}`} icon={f.icon} title={ft.name} desc={ft.desc} badge={`${count(f.slug)} ${tr.item}`} delay={next()} />
                 );
               })}
+            </div>
+
+            {/* الأقسام الدعوية */}
+            <SectionTitle>📢 {tr.dawahSections}</SectionTitle>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               <Box href={`/${lang}/fatwa`} icon="❓" title={tr.boxFatwaTitle} desc={tr.boxFatwaDesc} badge={`${c.fatwas.length} ${tr.fatwa}`} delay={next()} />
               <Box href={`/${lang}/doubts`} icon="⚔️" title={tr.doubts} desc={tr.doubtsDesc} badge={`${c.doubts.length}`} delay={next()} />
-              <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
-              <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
               <Box href={`/${lang}/prayer-guide`} icon="🕌" title="تعلم الصلاة" desc="دليل خطوة بخطوة" badge="" delay={next()} />
               <Box href={`/${lang}/embrace-islam`} icon="🌟" title="اعتنق الإسلام" desc="رحلتك نحو الهداية" badge="" delay={next()} />
-              <Box href={`/${lang}/account`} icon="👤" title="حسابي" desc="اسأل الشيخ خصوصيًا" badge="" delay={next()} />
               <Box href={`/${lang}/live`} icon="📡" title={tr.boxLiveTitle} desc={tr.boxLiveDesc} badge={tr.followUs} delay={next()} />
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />
               <Box href={`/${lang}/news`} icon="📰" title={tr.boxNewsTitle} desc={tr.boxNewsDesc} badge={`${c.news.length} ${tr.newsItem}`} delay={next()} />
               <Box href={`/${lang}/map`} icon="🗺️" title={tr.boxMapTitle} desc={tr.boxMapDesc} badge={`${c.places.length} ${tr.place}`} delay={next()} />
               <Box href={`/${lang}/adhkar`} icon="🤲" title={tr.boxAdhkarTitle} desc={tr.boxAdhkarDesc} badge={tr.yourDailyWird} delay={next()} />
+            </div>
+
+            {/* الخدمات */}
+            <SectionTitle>⚙️ {tr.services}</SectionTitle>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
+              <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
               <Box href={`/${lang}/about`} icon="👤" title={tr.boxAboutTitle} desc={tr.boxAboutDesc} badge={tr.knowMe} delay={next()} />
               <Box href={`/${lang}/contact`} icon="💬" title={tr.boxContactTitle} desc={tr.boxContactDesc} badge={tr.messageMe} delay={next()} />
             </div>
+
           </div>
         </section>
       </main>
