@@ -5,10 +5,11 @@ import { useParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackButton from "@/components/BackButton";
-import { SectionTitle } from "@/components/Cards";
+import PageHero from "@/components/PageHero";
+import IslamicSection from "@/components/IslamicSection";
 import { t, type Lang } from "@/lib/i18n";
 
-type IslamicEvent = { title: string; hijri: string; gregorian: string; icon: string };
+type IslamicEvent = { title: string; hijri: string; icon: string; desc: string };
 
 export default function CalendarPage() {
   const params = useParams();
@@ -26,80 +27,93 @@ export default function CalendarPage() {
     const m = today.getMonth() + 1;
     const y = today.getFullYear();
 
-    Promise.all([
-      fetch(`https://api.aladhan.com/v1/gpirayerToHijri/${d}-${m}-${y}`).catch(() => null),
-      fetch(`https://api.aladhan.com/v1/hijriToGpirayer/1447-03-15`).catch(() => null),
-    ]).then(async ([hijriRes]) => {
-      if (hijriRes) {
-        const j = await hijriRes.json();
-        setHijriDate(j.data?.hijri);
-        setGregorianDate(j.data?.gregorian);
-      }
-      setLoading(false);
-    });
+    fetch(`https://api.aladhan.com/v1/gToH/${d}-${m}-${y}`)
+      .then(r => r.json())
+      .then(j => {
+        if (j.data) {
+          setHijriDate(j.data.hijri);
+          setGregorianDate(j.data.gregorian);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   const events: IslamicEvent[] = [
-    { title: "رأس السنة الهجرية", hijri: "1 محرم", gregorian: "يختلف سنويًا", icon: "🌙" },
-    { title: "المولد النبوي الشريف", hijri: "12 ربيع الأول", gregorian: "يختلف سنويًا", icon: "🌟" },
-    { title: "الإسراء والمعراج", hijri: "27 رجب", gregorian: "يختلف سنويًا", icon: "✨" },
-    { title: "بداية شهر رمضان", hijri: "1 رمضان", gregorian: "يختلف سنويًا", icon: "🌙" },
-    { title: "ليلة القدر", hijri: "27 رمضان (تقريبًا)", gregorian: "يختلف سنويًا", icon: "⭐" },
-    { title: "عيد الفطر", hijri: "1 شوال", gregorian: "يختلف سنويًا", icon: "🎉" },
-    { title: "يوم عرفة", hijri: "9 ذو الحجة", gregorian: "يختلف سنويًا", icon: "🕋" },
-    { title: "عيد الأضحى", hijri: "10 ذو الحجة", gregorian: "يختلف سنويًا", icon: "🐑" },
+    { title: "رأس السنة الهجرية", hijri: "1 محرم", icon: "🌙", desc: "بداية عام هجري جديد" },
+    { title: "المولد النبوي الشريف", hijri: "12 ربيع الأول", icon: "🌟", desc: "ذكرى مولد النبي ﷺ" },
+    { title: "الإسراء والمعراج", hijri: "27 رجب", icon: "✨", desc: "رحلة النبي ﷺ الليلية" },
+    { title: "بداية شهر رمضان", hijri: "1 رمضان", icon: "🌙", desc: "شهر الصيام والقيام" },
+    { title: "ليلة القدر", hijri: "27 رمضان", icon: "⭐", desc: "خير من ألف شهر" },
+    { title: "عيد الفطر", hijri: "1 شوال", icon: "🎉", desc: "فرحة المسلمين بإتمام الصيام" },
+    { title: "يوم عرفة", hijri: "9 ذو الحجة", icon: "🕋", desc: "أفضل أيام السنة" },
+    { title: "عيد الأضحى", hijri: "10 ذو الحجة", icon: "🐑", desc: "عيد النحر والتضحية" },
   ];
 
   return (
     <>
       <Header lang={L} />
-      <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
-        <div className="max-w-3xl mx-auto px-4">
-          <BackButton href={`/${lang}/tools`} label={tr.back} />
-          <SectionTitle>📅 التقويم الهجري والميلادي</SectionTitle>
+      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
+        <PageHero
+          icon="📅"
+          title="التقويم الهجري والميلادي"
+          subtitle="تابع التاريخ الهجري والمناسبات الإسلامية"
+          verse="إِنَّ عِدَّةَ الشُّهُورِ عِندَ اللَّهِ اثْنَا عَشَرَ شَهْرًا"
+          verseSource="سورة التوبة - الآية 36"
+          gradient="from-indigo-600 via-indigo-700 to-indigo-800"
+        />
 
-          {loading ? (
-            <p className="text-center text-gray-500 py-10">⏳ جاري التحميل...</p>
-          ) : (
-            <>
-              {/* التواريخ الحالية */}
-              <div className="grid sm:grid-cols-2 gap-4 mb-8">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md text-center">
-                  <p className="text-sm text-gray-500 mb-2">{tr.hijriDate}</p>
-                  <p className="font-serif text-3xl text-primary dark:text-gold mb-1">
-                    {hijriDate?.day} {hijriDate?.month?.ar} {hijriDate?.year}
-                  </p>
-                  <p className="text-sm text-gray-400">{hijriDate?.weekday?.ar}</p>
-                </div>
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md text-center">
-                  <p className="text-sm text-gray-500 mb-2">{tr.gregorianDate}</p>
-                  <p className="font-serif text-3xl text-primary dark:text-gold mb-1">
-                    {gregorianDate?.day} {gregorianDate?.month?.en} {gregorianDate?.year}
-                  </p>
-                  <p className="text-sm text-gray-400">{gregorianDate?.weekday?.en}</p>
-                </div>
-              </div>
+        <section className="py-10">
+          <div className="max-w-5xl mx-auto px-4">
+            <BackButton href={`/${lang}`} label={tr.back} />
 
-              {/* الأحداث الإسلامية */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-                <h2 className="font-serif text-2xl text-primary dark:text-gold mb-4 text-center">
-                  🌟 المناسبات الإسلامية
-                </h2>
-                <div className="space-y-3">
-                  {events.map((e, i) => (
-                    <div key={i} className="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 pb-3 last:border-0">
-                      <span className="text-2xl">{e.icon}</span>
-                      <div className="flex-1">
-                        <p className="font-bold text-primary dark:text-white">{e.title}</p>
-                        <p className="text-xs text-gray-500">📅 {e.hijri}</p>
+            {loading ? (
+              <p className="text-center text-gray-500 py-10">⏳ جاري التحميل...</p>
+            ) : (
+              <>
+                {/* التواريخ الحالية */}
+                <div className="grid md:grid-cols-2 gap-6 mb-10">
+                  <div className="bg-gradient-to-br from-primary to-primary/90 text-white rounded-2xl p-8 shadow-lg">
+                    <p className="text-white/80 mb-2">📅 التاريخ الهجري</p>
+                    <p className="font-serif text-4xl text-gold mb-2">
+                      {hijriDate?.day} {hijriDate?.month?.ar}
+                    </p>
+                    <p className="text-2xl text-white/90">{hijriDate?.year} هـ</p>
+                    <p className="text-sm text-white/70 mt-2">{hijriDate?.weekday?.ar}</p>
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border-r-4 border-gold">
+                    <p className="text-gray-500 mb-2">📆 التاريخ الميلادي</p>
+                    <p className="font-serif text-4xl text-primary dark:text-gold mb-2">
+                      {gregorianDate?.day} {gregorianDate?.month?.en}
+                    </p>
+                    <p className="text-2xl text-gray-700 dark:text-gray-300">{gregorianDate?.year}</p>
+                    <p className="text-sm text-gray-500 mt-2">{gregorianDate?.weekday?.en}</p>
+                  </div>
+                </div>
+
+                {/* المناسبات الإسلامية */}
+                <IslamicSection title="المناسبات الإسلامية" icon="🌟" subtitle="أهم الأحداث في التاريخ الهجري">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {events.map((e, i) => (
+                      <div key={i} className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-md hover:shadow-xl transition border-r-4 border-gold">
+                        <div className="flex items-start gap-4">
+                          <div className="text-4xl">{e.icon}</div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-primary dark:text-gold text-lg mb-1">{e.title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{e.desc}</p>
+                            <span className="inline-block bg-gold/20 text-gold text-xs px-3 py-1 rounded-full font-bold">
+                              📅 {e.hijri}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+                    ))}
+                  </div>
+                </IslamicSection>
+              </>
+            )}
+          </div>
+        </section>
       </main>
       <Footer lang={L} />
     </>
