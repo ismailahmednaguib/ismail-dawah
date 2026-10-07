@@ -45,33 +45,37 @@ export default function AdminPage() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
   useEffect(() => {
-    // التحقق من إن المستخدم آدمن
-    fetch("/api/admin/me")
+    fetch("/api/admin/me", { credentials: "include" })
       .then((r) => r.json())
       .then((j) => {
         if (j.user && j.user.role === "admin") {
           setAuthed(true);
           setLoading(false);
-          // جلب المحتوى
-          fetch("/api/content").then((r) => r.json()).then((j) => { setC(j.content); setLive(j.live); }).catch(() => setLive(false));
-          // جلب الأسئلة
-          fetch("/api/questions/admin").then((r) => r.json()).then((j) => setAdminQuestions(j.questions || [])).catch(() => {});
+          fetch("/api/content", { credentials: "include" })
+            .then((r) => r.json())
+            .then((j) => { setC(j.content); setLive(j.live); })
+            .catch(() => setLive(false));
+          fetch("/api/questions/admin", { credentials: "include" })
+            .then((r) => r.json())
+            .then((j) => setAdminQuestions(j.questions || []))
+            .catch(() => {});
         } else {
-          router.push("/admin/login");
+          router.push("/ar/login");
         }
       })
-      .catch(() => router.push("/admin/login"));
+      .catch(() => router.push("/ar/login"));
   }, [router]);
 
   const logout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" });
-    router.push("/admin/login");
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    router.push("/ar/login");
   };
 
   const save = async () => {
     setMsg("⏳ جاري الحفظ…");
     const r = await fetch("/api/content", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: c }),
     });
@@ -101,6 +105,7 @@ export default function AdminPage() {
     setMsg("⏳ جاري إرسال الإجابة…");
     const r = await fetch("/api/questions/admin", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, answer }),
     });
@@ -138,7 +143,7 @@ export default function AdminPage() {
     const fd = new FormData();
     fd.append("file", kind === "image" ? await resizeImage(file) : file);
     fd.append("kind", kind);
-    const r = await fetch("/api/upload", { method: "POST", body: fd });
+    const r = await fetch("/api/upload", { method: "POST", credentials: "include", body: fd });
     const j = await r.json();
     return j.url || null;
   };
