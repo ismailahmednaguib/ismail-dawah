@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getAdminFromCookie } from "@/lib/auth";
 
 export async function GET(req: Request) {
-  const key = req.headers.get("x-admin-key");
-  if (key !== process.env.ADMIN_KEY) {
+  const adminId = getAdminFromCookie(req.headers.get("cookie"));
+  if (!adminId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
@@ -22,8 +23,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const key = req.headers.get("x-admin-key");
-  if (key !== process.env.ADMIN_KEY) {
+  const adminId = getAdminFromCookie(req.headers.get("cookie"));
+  if (!adminId) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

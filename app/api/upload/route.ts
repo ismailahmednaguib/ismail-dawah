@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getAdminFromCookie } from "@/lib/auth";
 
 const BUCKET = "site";
 
@@ -12,9 +13,12 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const key = req.headers.get("x-admin-key");
-  if (key !== process.env.ADMIN_KEY) return NextResponse.json({ error: "كلمة المرور غير صحيحة" }, { status: 401 });
+  
 
+const adminId = getAdminFromCookie(req.headers.get("cookie"));
+if (!adminId) {
+  return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+}
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
   if (!url || !serviceKey) return NextResponse.json({ error: "متغيرات البيئة ناقصة" }, { status: 500 });

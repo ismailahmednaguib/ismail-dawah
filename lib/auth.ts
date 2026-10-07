@@ -41,3 +41,15 @@ export function getSessionFromCookie(cookieHeader: string | null): number | null
   if (!match) return null;
   return verifySession(match[1]);
 }
+export function getAdminFromCookie(cookieHeader: string | null): number | null {
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(/admin_session=([^;]+)/);
+  if (!match) return null;
+  try {
+    const data = JSON.parse(Buffer.from(match[1], "base64").toString());
+    if (data.role !== "admin") return null;
+    return data.userId;
+  } catch {
+    return null;
+  }
+}

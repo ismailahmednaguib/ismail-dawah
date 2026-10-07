@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { defaultContent } from "@/lib/content";
@@ -23,7 +24,7 @@ export default function AccountPage() {
   const tr = t(L);
   const c = defaultContent;
 
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ id: number; name: string; email: string; role?: string } | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [newQ, setNewQ] = useState("");
   const [msg, setMsg] = useState("");
@@ -83,30 +84,51 @@ export default function AccountPage() {
   if (loading) {
     return (
       <>
-        <Header settings={c.settings} lang={L} />
+        <Header lang={L} />
         <main className="py-24 text-center text-gray-500">⏳ جاري التحميل…</main>
-        <Footer settings={c.settings} lang={L} />
+        <Footer lang={L} />
       </>
     );
   }
 
+  if (!user) return null;
+
+  const isAdmin = user.role === "admin";
+
   return (
     <>
-      <Header settings={c.settings} lang={L} />
+      <Header lang={L} />
       <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
         <div className="max-w-3xl mx-auto px-4">
           {/* رأس الحساب */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md mb-6 flex items-center justify-between">
-            <div>
-              <h1 className="font-serif text-2xl text-primary dark:text-gold">👤 {user?.name}</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{user?.email}</p>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md mb-6">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h1 className="font-serif text-2xl text-primary dark:text-gold">👤 {user.name}</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                {isAdmin && (
+                  <span className="inline-block mt-1 bg-gold text-gray-900 text-xs font-bold px-2 py-0.5 rounded-full">
+                    ⭐ آدمن
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="bg-primary text-gold px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary-light transition"
+                  >
+                    ⚙️ لوحة التحكم
+                  </Link>
+                )}
+                <button
+                  onClick={logout}
+                  className="border-2 border-red-200 text-red-500 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                >
+                  خروج
+                </button>
+              </div>
             </div>
-            <button
-              onClick={logout}
-              className="border-2 border-red-200 text-red-500 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-            >
-              خروج
-            </button>
           </div>
 
           {/* إرسال سؤال */}
@@ -119,7 +141,7 @@ export default function AccountPage() {
               placeholder="اكتب سؤالك هنا… (يظهر لك أنت فقط)"
               className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2 focus:border-gold focus:outline-none mb-3"
             />
-            {msg && <p className="text-sm mb-2">{msg}</p>}
+            {msg && <p className="text-sm mb-2 text-gray-700 dark:text-gray-300">{msg}</p>}
             <button
               onClick={sendQuestion}
               disabled={sending || !newQ.trim()}
@@ -163,7 +185,7 @@ export default function AccountPage() {
           </div>
         </div>
       </main>
-      <Footer settings={c.settings} lang={L} />
+      <Footer lang={L} />
     </>
   );
 }
