@@ -42,6 +42,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
     <>
       <Header settings={c.settings} lang={L} />
       <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
+        {/* قسم البطل */}
         <section className="relative bg-primary text-white py-16 text-center overflow-hidden pattern-light">
           <div className="relative max-w-3xl mx-auto px-4 fade-up">
             <p className="font-serif text-gold-light text-xl mb-3">{c.settings.kicker}</p>
@@ -54,15 +55,16 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         <section className="py-14">
           <div className="max-w-6xl mx-auto px-4">
 
-            {/* مربع واحد للعلوم */}
+            {/* 📚 مربع واحد للعلوم الشرعية */}
             <SectionTitle>📚 {tr.sciences}</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
               <Box href={`/${lang}/fields`} icon="📚" title={tr.allSciences} desc={tr.allSciencesDesc} badge={`${c.fields.length} ${tr.item}`} delay={next()} />
             </div>
 
-            {/* الأقسام الدعوية */}
+            {/* 📢 الأقسام الدعوية */}
             <SectionTitle>📢 {tr.dawahSections}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {/* الأقسام الأساسية */}
               <Box href={`/${lang}/fatwa`} icon="❓" title={tr.boxFatwaTitle} desc={tr.boxFatwaDesc} badge={`${c.fatwas.length} ${tr.fatwa}`} delay={next()} />
               <Box href={`/${lang}/doubts`} icon="⚔️" title={tr.doubts} desc={tr.doubtsDesc} badge={`${c.doubts.length}`} delay={next()} />
               <Box href={`/${lang}/prayer-guide`} icon="🕌" title={lang === "ar" ? "تعلم الصلاة" : "Learn Prayer"} desc={lang === "ar" ? "دليل خطوة بخطوة" : "Step by step"} badge="" delay={next()} />
@@ -71,18 +73,33 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />
               <Box href={`/${lang}/news`} icon="📰" title={tr.boxNewsTitle} desc={tr.boxNewsDesc} badge={`${c.news.length} ${tr.newsItem}`} delay={next()} />
               <Box href={`/${lang}/map`} icon="🗺️" title={tr.boxMapTitle} desc={tr.boxMapDesc} badge={`${c.places.length} ${tr.place}`} delay={next()} />
+              
+              {/* الأقسام الدعوية الجديدة */}
+              <Box href={`/${lang}/dawah-guide`} icon="📢" title={lang === "ar" ? "دليل الدعاة" : "Da'wah Guide"} desc={lang === "ar" ? "كيف تدعو إلى الله" : "How to call to Allah"} badge="" delay={next()} />
+              <Box href={`/${lang}/prophets-stories`} icon="📖" title={lang === "ar" ? "قصص الأنبياء" : "Prophets Stories"} desc={lang === "ar" ? "من آدم إلى محمد ﷺ" : "From Adam to Muhammad ﷺ"} badge="" delay={next()} />
+              <Box href={`/${lang}/atheism-response`} icon="⚔️" title={lang === "ar" ? "الرد على الإلحاد" : "Atheism Response"} desc={lang === "ar" ? "شبهات وردود" : "Doubts & answers"} badge="" delay={next()} />
+              <Box href={`/${lang}/youth-issues`} icon="🧑" title={lang === "ar" ? "قضايا الشباب" : "Youth Issues"} desc={lang === "ar" ? "مشاكل وحلول" : "Problems & solutions"} badge="" delay={next()} />
+              <Box href={`/${lang}/khutab`} icon="🎤" title={lang === "ar" ? "مكتبة الخطب" : "Khutab Library"} desc={lang === "ar" ? "خطب جمعة جاهزة" : "Friday sermons"} badge="" delay={next()} />
+              <Box href={`/${lang}/quran-memorization`} icon="📚" title={lang === "ar" ? "كيف تحفظ القرآن" : "Memorize Quran"} desc={lang === "ar" ? "منهج عملي" : "Practical method"} badge="" delay={next()} />
+              <Box href={`/${lang}/ruqyah`} icon="🕯️" title={lang === "ar" ? "الرقية الشرعية" : "Ruqyah"} desc={lang === "ar" ? "آيات وأدعية" : "Verses & duas"} badge="" delay={next()} />
+              <Box href={`/${lang}/hajj-guide`} icon="🕋" title={lang === "ar" ? "دليل الحج والعمرة" : "Hajj Guide"} desc={lang === "ar" ? "خطوة بخطوة" : "Step by step"} badge="" delay={next()} />
+              <Box href={`/${lang}/women-fatwas`} icon="👩" title={lang === "ar" ? "فتاوى المرأة" : "Women Fatwas"} desc={lang === "ar" ? "قضايا المرأة" : "Women's issues"} badge="" delay={next()} />
             </div>
 
-            {/* الأدوات الإسلامية */}
+            {/* 🛠️ الأدوات الإسلامية */}
             <SectionTitle>🛠️ {lang === "ar" ? "الأدوات الإسلامية" : "Islamic Tools"}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               <Box href={`/${lang}/tools`} icon="🛠️" title={lang === "ar" ? "الأدوات الإسلامية" : "Islamic Tools"} desc={lang === "ar" ? "مصحف + مواقيت + قبلة + تقويم" : "Quran + Times + Qibla + Calendar"} badge="" delay={next()} />
               <Box href={`/${lang}/adhkar`} icon="🤲" title={tr.boxAdhkarTitle} desc={tr.boxAdhkarDesc} badge={tr.yourDailyWird} delay={next()} />
               <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
               <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
+              <Box href={`/${lang}/quran`} icon="📖" title={lang === "ar" ? "المصحف الكريم" : "Holy Quran"} desc={lang === "ar" ? "اقرأ القرآن كاملاً" : "Read the complete Quran"} badge="" delay={next()} />
+              <Box href={`/${lang}/prayer-times`} icon="🕌" title={lang === "ar" ? "مواقيت الصلاة" : "Prayer Times"} desc={lang === "ar" ? "لكل دول العالم" : "For all countries"} badge="" delay={next()} />
+              <Box href={`/${lang}/qibla`} icon="🧭" title={lang === "ar" ? "تحديد القبلة" : "Qibla Direction"} desc={lang === "ar" ? "من أي مكان" : "From anywhere"} badge="" delay={next()} />
+              <Box href={`/${lang}/zakat`} icon="🧮" title={lang === "ar" ? "حاسبة الزكاة" : "Zakat Calculator"} desc={lang === "ar" ? "احسب زكاتك" : "Calculate your zakat"} badge="" delay={next()} />
             </div>
 
-            {/* الخدمات */}
+            {/* ⚙️ الخدمات */}
             <SectionTitle>⚙️ {tr.services}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               <Box href={`/${lang}/account`} icon="👤" title={tr.account} desc={lang === "ar" ? "اسأل الشيخ خصوصيًا" : "Ask the Sheikh privately"} badge="" delay={next()} />
