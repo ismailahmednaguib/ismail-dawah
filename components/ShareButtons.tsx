@@ -1,24 +1,62 @@
 "use client";
 
-export default function ShareButtons({ title }: { title: string }) {
-  const share = (net: string) => {
-    const u = encodeURIComponent(window.location.href);
-    const t = encodeURIComponent(title);
-    if (net === "copy") { navigator.clipboard.writeText(window.location.href); alert("تم نسخ الرابط ✅"); return; }
-    const links: Record<string, string> = {
-      wa: `https://wa.me/?text=${t}%20${u}`,
-      fb: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
-      x: `https://twitter.com/intent/tweet?url=${u}&text=${t}`,
-    };
-    window.open(links[net], "_blank");
+import { useState, useEffect } from "react";
+import { t, type Lang } from "@/lib/i18n";
+import { useParams } from "next/navigation";
+
+export default function ShareButtons({ title, lang: langProp }: { title: string; lang?: Lang }) {
+  const params = useParams();
+  const lang = (langProp || params?.lang || "ar") as Lang;
+  const tr = t(lang);
+  const [url, setUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setUrl(window.location.href);
+  }, []);
+
+  if (!url) return null;
+
+  const encodedTitle = encodeURIComponent(title);
+  const encodedUrl = encodeURIComponent(url);
+
+  const links = [
+    { name: "WhatsApp", icon: "💬", href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`, color: "bg-green-500" },
+    { name: "Facebook", icon: "📘", href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, color: "bg-blue-600" },
+    { name: "Twitter", icon: "🐦", href: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`, color: "bg-sky-500" },
+    { name: "Telegram", icon: "✈️", href: `https://t.me/share/url?url=${encodedUrl}&text=${encodedTitle}`, color: "bg-cyan-600" },
+  ];
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
   };
 
   return (
-    <div className="flex gap-2 flex-wrap justify-center">
-      <button onClick={() => share("wa")} className="px-4 py-2 rounded-lg bg-[#25D366] text-white text-sm font-bold">واتساب</button>
-      <button onClick={() => share("fb")} className="px-4 py-2 rounded-lg bg-[#1877F2] text-white text-sm font-bold">فيسبوك</button>
-      <button onClick={() => share("x")} className="px-4 py-2 rounded-lg bg-black text-white text-sm font-bold">إكس</button>
-      <button onClick={() => share("copy")} className="px-4 py-2 rounded-lg border-2 border-gold text-gold text-sm font-bold">نسخ الرابط</button>
+    <div className="flex items-center gap-2 flex-wrap">
+      <span className="text-xs font-bold text-gray-500 dark:text-gray-400">{tr.shareNow}:</span>
+      {links.map((l) => (
+        <a
+          key={l.name}
+          href={l.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={l.name}
+          className={`w-8 h-8 ${l.color} text-white rounded-full grid place-items-center text-sm hover:opacity-80 transition`}
+        >
+          {l.icon}
+        </a>
+      ))}
+      <button
+        onClick={copyLink}
+        title={tr.copyLink}
+        className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-gold px-2"
+      >
+        {copied ? tr.copied : "🔗 " + tr.copyLink}
+      </button>
     </div>
   );
 }

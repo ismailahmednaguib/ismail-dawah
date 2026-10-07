@@ -8,18 +8,50 @@ export interface Settings {
 }
 export interface Field { id: number; slug: string; name: string; icon: string; desc: string; }
 export interface Stat { num: string; label: string; }
-export interface Lesson { id: number; title: string; category: string; date: string; link: string; desc: string; field: string; }
-export interface Video { id: number; title: string; url: string; desc: string; field: string; }
-export interface Article { id: number; title: string; date: string; excerpt: string; body: string; field: string; }
-export interface Book { id: number; title: string; field: string; url: string; desc: string; }
-export interface AudioItem { id: number; title: string; url: string; desc: string; field: string; }
+export interface Lesson {
+  id: number; title: string; category: string; date: string; link: string; desc: string; field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+export interface Video {
+  id: number; title: string; url: string; desc: string; field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+export interface Article {
+  id: number; title: string; date: string; excerpt: string; body: string; field: string;
+  t?: Record<string, { title?: string; excerpt?: string; body?: string }>;
+}
+export interface Book {
+  id: number; title: string; field: string; url: string; desc: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+export interface AudioItem {
+  id: number; title: string; url: string; desc: string; field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
 export interface Photo { id: number; url: string; caption: string; field: string; }
 export interface ScheduleItem { id: number; day: string; time: string; topic: string; place: string; }
-export interface Fatwa { id: number; q: string; a: string; }
-export interface Project { id: number; title: string; desc: string; goal: string; }
-export interface NewsItem { id: number; title: string; date: string; body: string; }
+export interface Fatwa {
+  id: number; q: string; a: string;
+  t?: Record<string, { q?: string; a?: string }>;
+}
+export interface Project {
+  id: number; title: string; desc: string; goal: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+export interface NewsItem {
+  id: number; title: string; date: string; body: string;
+  t?: Record<string, { title?: string; body?: string }>;
+}
 export interface Place { id: number; name: string; area: string; note: string; }
 export interface Dhikr { id: number; category: string; text: string; repeat: number; }
+export interface Doubt {
+  id: number; category: string; q: string; a: string;
+  t?: Record<string, { q?: string; a?: string }>;
+}
+export interface LearnStep {
+  id: number; order: number; title: string; desc: string; field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
 
 export const settings: Settings = {
   ownerName: "فضيلة الشيخ إسماعيل أحمد نجيب",
@@ -118,4 +150,33 @@ export const adhkar: Dhikr[] = [
   { id: 2, category: "أذكار الصباح", text: "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ.", repeat: 3 },
   { id: 3, category: "أذكار المساء", text: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ.", repeat: 1 },
   { id: 4, category: "أذكار المساء", text: "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ.", repeat: 3 },
+];
+
+export const doubts: Doubt[] = [
+  {
+    id: 1,
+    category: "العقيدة",
+    q: "لماذا خلقنا الله إذا كان يعلم من سيطيعه ومن سيعصيه؟",
+    a: "علم الله السابق لا يُبطل الاختيار، فالله يعلم لكن العبد يختار ويحاسب على اختياره. والابتلاء سنة إلهية ليميز الله الخبيث من الطيب، ولتظهر حكمة الثواب والعقاب.",
+  },
+  {
+    id: 2,
+    category: "القرآن",
+    q: "هل القرآن محرَّف كما يُشاع؟",
+    a: "القرآن محفوظ بحفظ الله: «إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ». وقد نُقل بالتواتر جيلًا بعد جيل، وتحدَّى الله البشر أن يأتوا بمثله فعجزوا.",
+  },
+  {
+    id: 3,
+    category: "المرأة",
+    q: "هل الإسلام يظلم المرأة؟",
+    a: "الإسلام كرَّم المرأة وجعل لها ذمة مالية مستقلة، وحق التعليم والعمل، وأوصى بها أمًا وزوجة وبنتًا. وما يُشاع من ظلم مخالف لتعاليم الإسلام الصحيحة.",
+  },
+];
+
+export const learnSteps: LearnStep[] = [
+  { id: 1, order: 1, title: "ابدأ بالعقيدة الصحيحة", desc: "تعلم أركان الإيمان والتوحيد قبل كل شيء.", field: "aqeedah" },
+  { id: 2, order: 2, title: "تعلم أحكام الطهارة والصلاة", desc: "حتى تعبد الله على بصيرة.", field: "fiqh" },
+  { id: 3, order: 3, title: "اقرأ القرآن بتدبر", desc: "ورد يومي مع فهم المعاني.", field: "tafsir" },
+  { id: 4, order: 4, title: "تعلم السيرة النبوية", desc: "لتقتدي بالنبي ﷺ في حياتك.", field: "seerah" },
+  { id: 5, order: 5, title: "زكِّ نفسك بالأخلاق", desc: "العلم بلا عمل كالشجرة بلا ثمر.", field: "akhlaq" },
 ];

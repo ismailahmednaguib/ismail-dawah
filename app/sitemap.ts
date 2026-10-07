@@ -1,24 +1,32 @@
 import type { MetadataRoute } from "next";
-import { getContent } from "@/lib/content";
-import { SITE_URL } from "@/lib/site";
+import { languages } from "@/lib/i18n";
+import { fields } from "@/lib/data";
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const c = await getContent();
-  const now = new Date();
+const BASE = "https://ismailahmednaguib.vercel.app";
 
-  const base = [
-    { url: SITE_URL, lastModified: now, changeFrequency: "daily", priority: 1 },
-    { url: `${SITE_URL}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${SITE_URL}/contact`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-  ];
+export default function sitemap(): MetadataRoute.Sitemap {
+  const pages = ["", "/about", "/contact", "/fatwa", "/live", "/projects", "/news", "/map", "/adhkar", "/doubts", "/learn", "/search"];
 
-  const fields = c.fields.map((f) => ({
-    url: `${SITE_URL}/fields/${f.slug}`, lastModified: now, changeFrequency: "weekly", priority: 0.9,
-  }));
+  const entries: MetadataRoute.Sitemap = [];
 
-  const articles = c.articles.map((a) => ({
-    url: `${SITE_URL}/articles/${a.id}`, lastModified: now, changeFrequency: "monthly", priority: 0.7,
-  }));
+  for (const lang of languages) {
+    for (const page of pages) {
+      entries.push({
+        url: `${BASE}/${lang.code}${page}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: page === "" ? 1 : 0.7,
+      });
+    }
+    for (const field of fields) {
+      entries.push({
+        url: `${BASE}/${lang.code}/fields/${field.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
+  }
 
-  return [...base, ...fields, ...articles] as MetadataRoute.Sitemap;
+  return entries;
 }

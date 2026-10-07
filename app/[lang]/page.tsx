@@ -24,6 +24,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const { lang } = await params;
   const c = await getContent();
   const tr = t(lang as Lang);
+  const L = lang as Lang;
 
   const count = (slug: string) =>
     c.lessons.filter((x) => x.field === slug).length +
@@ -38,7 +39,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
 
   return (
     <>
-      <Header settings={c.settings} lang={lang as Lang} />
+      <Header settings={c.settings} lang={L} />
       <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
         <section className="relative bg-primary text-white py-16 text-center overflow-hidden pattern-light">
           <div className="relative max-w-3xl mx-auto px-4 fade-up">
@@ -53,12 +54,15 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               {c.fields.map((f) => {
-                const ft = getFieldTranslation(f.slug, lang as Lang, { name: f.name, desc: f.desc }, c.fieldTranslations);
+                const ft = getFieldTranslation(f.slug, L, { name: f.name, desc: f.desc }, c.fieldTranslations);
                 return (
                   <Box key={f.id} href={`/${lang}/fields/${f.slug}`} icon={f.icon} title={ft.name} desc={ft.desc} badge={`${count(f.slug)} ${tr.item}`} delay={next()} />
                 );
               })}
               <Box href={`/${lang}/fatwa`} icon="❓" title={tr.boxFatwaTitle} desc={tr.boxFatwaDesc} badge={`${c.fatwas.length} ${tr.fatwa}`} delay={next()} />
+              <Box href={`/${lang}/doubts`} icon="⚔️" title={tr.doubts} desc={tr.doubtsDesc} badge={`${c.doubts.length}`} delay={next()} />
+              <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
+              <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
               <Box href={`/${lang}/live`} icon="📡" title={tr.boxLiveTitle} desc={tr.boxLiveDesc} badge={tr.followUs} delay={next()} />
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />
               <Box href={`/${lang}/news`} icon="📰" title={tr.boxNewsTitle} desc={tr.boxNewsDesc} badge={`${c.news.length} ${tr.newsItem}`} delay={next()} />
@@ -70,7 +74,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
           </div>
         </section>
       </main>
-      <Footer settings={c.settings} lang={lang as Lang} />
+      <Footer settings={c.settings} lang={L} />
     </>
   );
 }

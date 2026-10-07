@@ -1,6 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
-import { settings, fields, stats, lessons, videos, articles, books, audio, photos, schedule, fatwas, projects, news, places, adhkar } from "./data";
-import type { Settings, Field, Stat, Lesson, Video, Article, Book, AudioItem, Photo, ScheduleItem, Fatwa, Project, NewsItem, Place, Dhikr } from "./data";
+import {
+  settings, fields, stats, lessons, videos, articles, books, audio, photos,
+  schedule, fatwas, projects, news, places, adhkar, doubts, learnSteps,
+} from "./data";
+import type {
+  Settings, Field, Stat, Lesson, Video, Article, Book, AudioItem, Photo,
+  ScheduleItem, Fatwa, Project, NewsItem, Place, Dhikr, Doubt, LearnStep,
+} from "./data";
 
 export interface Content {
   settings: Settings;
@@ -18,6 +24,8 @@ export interface Content {
   places: Place[];
   adhkar: Dhikr[];
   stats: Stat[];
+  doubts: Doubt[];
+  learnSteps: LearnStep[];
   fieldTranslations?: Record<string, Record<string, { name: string; desc: string }>>;
 }
 
@@ -37,6 +45,8 @@ export const defaultContent: Content = {
   places,
   adhkar,
   stats,
+  doubts,
+  learnSteps,
   fieldTranslations: {},
 };
 
@@ -44,7 +54,6 @@ export async function getContent(): Promise<Content> {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
 
-  // لو فيه اتصال بـ Supabase، اقرا مباشرة منه
   if (url && serviceKey) {
     try {
       const supabase = createClient(url, serviceKey);
