@@ -9,7 +9,7 @@ import type { Settings, Photo } from "@/lib/data";
 import { languages, type Lang } from "@/lib/i18n";
 import { defaultFieldTranslations } from "@/lib/translations";
 
-type Tab = "settings" | "general" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions" | "stats";
+type Tab = "settings" | "general" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions" | "stats" | "notifications";
 type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
@@ -33,6 +33,7 @@ const TABS: [Tab, string][] = [
   ["translations", "🌍 الترجمات"],
   ["questions", "💬 أسئلة الحسابات"],
   ["stats", "📊 الإحصائيات"],
+  ["notifications", "🔔 إشعارات"],
 ];
 
 export default function AdminPage() {
@@ -46,6 +47,9 @@ export default function AdminPage() {
   const [adminQuestions, setAdminQuestions] = useState<any[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [stats, setStats] = useState<any>(null);
+  const [notifTitle, setNotifTitle] = useState("");
+  const [notifBody, setNotifBody] = useState("");
+  const [notifUrl, setNotifUrl] = useState("/ar");
 
   useEffect(() => {
     fetch("/api/admin/me", { credentials: "include" })
@@ -720,6 +724,86 @@ export default function AdminPage() {
 
             {tab === "stats" && !stats && (
               <p className="text-center text-gray-500 py-10">⏳ جاري تحميل الإحصائيات...</p>
+            )}
+
+            {tab === "notifications" && (
+              <>
+                <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl p-6 mb-6">
+                  <h2 className="font-serif text-2xl mb-2">🔔 إرسال إشعار للمستخدمين</h2>
+                  <p className="text-white/80 text-sm">أرسل إشعاراً لكل المستخدمين عند نزول درس جديد أو فتوى مهمة</p>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-md space-y-4">
+                  <div>
+                    <span className={label}>عنوان الإشعار</span>
+                    <input
+                      className={input}
+                      value={notifTitle}
+                      onChange={(e) => setNotifTitle(e.target.value)}
+                      placeholder="مثال: درس جديد في العقيدة"
+                    />
+                  </div>
+                  <div>
+                    <span className={label}>نص الإشعار</span>
+                    <textarea
+                      rows={3}
+                      className={input}
+                      value={notifBody}
+                      onChange={(e) => setNotifBody(e.target.value)}
+                      placeholder="شرح مختصر للدرس أو الفتوى..."
+                    />
+                  </div>
+                  <div>
+                    <span className={label}>رابط الصفحة (اختياري)</span>
+                    <input
+                      className={input}
+                      value={notifUrl}
+                      onChange={(e) => setNotifUrl(e.target.value)}
+                      placeholder="/ar/fields/aqeedah"
+                    />
+                  </div>
+
+                  <div className="bg-amber-50 border-r-4 border-amber-500 p-4 rounded">
+                    <p className="text-sm text-amber-800">
+                      💡 <strong>أمثلة للعناوين:</strong>
+                    </p>
+                    <ul className="text-sm text-amber-900 mt-2 space-y-1 list-disc list-inside">
+                      <li>📖 درس جديد: شرح كتاب التوحيد</li>
+                      <li>❓ فتوى مهمة: حكم صلاة الجمعة للمسافر</li>
+                      <li>🎥 فيديو جديد: رد على شبهة</li>
+                      <li>📰 خبر: دورة علمية جديدة</li>
+                    </ul>
+                  </div>
+
+                  <button
+                    onClick={async () => {
+                      if (!notifTitle || !notifBody) {
+                        setMsg("❌ اكتب العنوان والنص");
+                        return;
+                      }
+                      setMsg("⏳ جاري إرسال الإشعار...");
+                      const r = await fetch("/api/notifications/send", {
+                        method: "POST",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ title: notifTitle, body: notifBody, url: notifUrl }),
+                      });
+                      const j = await r.json();
+                      if (j.ok) {
+                        setMsg("✅ تم إرسال الإشعار بنجاح");
+                        setNotifTitle("");
+                        setNotifBody("");
+                        setNotifUrl("/ar");
+                      } else {
+                        setMsg("❌ " + (j.error || "فشل الإرسال"));
+                      }
+                    }}
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+                  >
+                    🔔 إرسال الإشعار الآن
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>

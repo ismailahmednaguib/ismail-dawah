@@ -12,8 +12,10 @@ const tools = [
   { slug: "quran", icon: "📖", ar: "المصحف الكريم", en: "Holy Quran" },
   { slug: "prayer-times", icon: "🕌", ar: "مواقيت الصلاة", en: "Prayer Times" },
   { slug: "qibla", icon: "🧭", ar: "تحديد القبلة", en: "Qibla Direction" },
-  { slug: "calendar", icon: "📅", ar: "التقويم الهجري والميلادي", en: "Calendar" },
+  { slug: "calendar", icon: "📅", ar: "التقويم", en: "Calendar" },
   { slug: "khatm-dua", icon: "✨", ar: "أدعية ختم القرآن", en: "Completion Duas" },
+  { slug: "tasbih", icon: "📿", ar: "التسبيح الرقمي", en: "Digital Tasbih" },
+  { slug: "bookmarks", icon: "⭐", ar: "المفضلة", en: "Bookmarks" },
   { slug: "zakat", icon: "🧮", ar: "حاسبة الزكاة", en: "Zakat Calculator" },
   { slug: "inheritance", icon: "📊", ar: "حاسبة المواريث", en: "Inheritance" },
   { slug: "daily-wird", icon: "📖", ar: "الورد اليومي", en: "Daily Wird" },
@@ -24,7 +26,7 @@ const tools = [
   { slug: "khutab", icon: "🎤", ar: "مكتبة الخطب", en: "Khutab Library" },
   { slug: "quran-memorization", icon: "📚", ar: "كيف تحفظ القرآن", en: "Memorize Quran" },
   { slug: "ruqyah", icon: "🕯️", ar: "الرقية الشرعية", en: "Ruqyah" },
-  { slug: "hajj-guide", icon: "🕋", ar: "دليل الحج والعمرة", en: "Hajj Guide" },
+  { slug: "hajj-guide", icon: "🕋", ar: "دليل الحج", en: "Hajj Guide" },
   { slug: "women-fatwas", icon: "👩", ar: "فتاوى المرأة", en: "Women Fatwas" },
 ];
 
