@@ -63,6 +63,10 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <Box href={`/${lang}/doubts`} icon="⚔️" title={tr.doubts} desc={tr.doubtsDesc} badge={`${c.doubts.length}`} delay={next()} />
               <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
               <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
+              <Box href={`/${lang}/prayer-guide`} icon="🕌" title="تعلم الصلاة" desc="دليل خطوة بخطوة" badge="" delay={next()} />
+              <Box href={`/${lang}/names-of-allah`} icon="✨" title="أسماء الله الحسنى" desc="الـ 99 اسم" badge="" delay={next()} />
+              <Box href={`/${lang}/embrace-islam`} icon="🌟" title="اعتنق الإسلام" desc="رحلتك نحو الهداية" badge="" delay={next()} />
+              <Box href={`/${lang}/account`} icon="👤" title="حسابي" desc="اسأل الشيخ خصوصيًا" badge="" delay={next()} />
               <Box href={`/${lang}/live`} icon="📡" title={tr.boxLiveTitle} desc={tr.boxLiveDesc} badge={tr.followUs} delay={next()} />
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />
               <Box href={`/${lang}/news`} icon="📰" title={tr.boxNewsTitle} desc={tr.boxNewsDesc} badge={`${c.news.length} ${tr.newsItem}`} delay={next()} />

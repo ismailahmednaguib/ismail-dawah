@@ -8,7 +8,7 @@ import type { Settings, Photo } from "@/lib/data";
 import { languages, type Lang } from "@/lib/i18n";
 import { defaultFieldTranslations } from "@/lib/translations";
 
-type Tab = "settings" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations";
+type Tab = "settings" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions";
 type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
@@ -29,6 +29,7 @@ const TABS: [Tab, string][] = [
   ["places", "🗺️ الأماكن"],
   ["adhkar", "🤲 الأذكار"],
   ["translations", "🌍 الترجمات"],
+  ["questions", "💬 أسئلة الحسابات"],
 ];
 
 export default function AdminPage() {
@@ -38,12 +39,23 @@ export default function AdminPage() {
   const [c, setC] = useState<Content>(defaultContent);
   const [tab, setTab] = useState<Tab>("settings");
   const [msg, setMsg] = useState("");
+  const [adminQuestions, setAdminQuestions] = useState<any[]>([]);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
 
   useEffect(() => {
     fetch("/api/content").then((r) => r.json()).then((j) => { setC(j.content); setLive(j.live); }).catch(() => setLive(false));
     const saved = sessionStorage.getItem("adminKey");
     if (saved) { setKey(saved); setAuthed(true); }
   }, []);
+
+  useEffect(() => {
+    if (authed) {
+      fetch("/api/questions/admin", { headers: { "x-admin-key": key } })
+        .then((r) => r.json())
+        .then((j) => setAdminQuestions(j.questions || []))
+        .catch(() => {});
+    }
+  }, [authed, key]);
 
   const login = async () => {
     const r = await fetch("/api/verify?key=" + encodeURIComponent(key));
@@ -81,24 +93,24 @@ export default function AdminPage() {
     setC({ ...c, [coll]: [item, ...(c[coll] as unknown as unknown[])] } as Content);
   };
 
-  // دوال الترججمات
-  const setTranslation = (slug: string, lang: Lang, field: "name" | "desc", value: string) => {
-    const current = c.fieldTranslations || {};
-    const updated = {
-      ...current,
-      [slug]: {
-        ...(current[slug] || {}),
-        [lang]: {
-          ...(current[slug]?.[lang] || defaultFieldTranslations[slug]?.[lang] || { name: "", desc: "" }),
-          [field]: value,
-        },
-      },
-    };
-    setC({ ...c, fieldTranslations: updated });
-  };
-
-  const getTranslationValue = (slug: string, lang: Lang, field: "name" | "desc"): string => {
-    return c.fieldTranslations?.[slug]?.[lang]?.[field] ?? defaultFieldTranslations[slug]?.[lang]?.[field] ?? "";
+  const answerQuestion = async (id: number) => {
+    const answer = answers[id];
+    if (!answer?.trim()) return;
+    setMsg("⏳ جاري إرسال الإجابة…");
+    const r = await fetch("/api/questions/admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-key": key },
+      body: JSON.stringify({ id, answer }),
+    });
+    const j = await r.json();
+    if (j.ok) {
+      setMsg("✅ تم إرسال الإجابة — هتظهر للمستخدم في حسابه");
+      setAdminQuestions((prev) =>
+        prev.map((q) => (q.id === id ? { ...q, answer, status: "answered" } : q))
+      );
+    } else {
+      setMsg("❌ " + (j.error || "فشل إرسال الإجابة"));
+    }
   };
 
   const resizeImage = (file: File, max = 1400): Promise<File> =>
@@ -127,6 +139,25 @@ export default function AdminPage() {
     const r = await fetch("/api/upload", { method: "POST", headers: { "x-admin-key": key }, body: fd });
     const j = await r.json();
     return j.url || null;
+  };
+
+  const setTranslation = (slug: string, lang: Lang, field: "name" | "desc", value: string) => {
+    const current = c.fieldTranslations || {};
+    const updated = {
+      ...current,
+      [slug]: {
+        ...(current[slug] || {}),
+        [lang]: {
+          ...(current[slug]?.[lang] || defaultFieldTranslations[slug]?.[lang] || { name: "", desc: "" }),
+          [field]: value,
+        },
+      },
+    };
+    setC({ ...c, fieldTranslations: updated });
+  };
+
+  const getTranslationValue = (slug: string, lang: Lang, field: "name" | "desc"): string => {
+    return c.fieldTranslations?.[slug]?.[lang]?.[field] ?? defaultFieldTranslations[slug]?.[lang]?.[field] ?? "";
   };
 
   const input = "w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-gold focus:outline-none text-sm";
@@ -459,7 +490,7 @@ export default function AdminPage() {
 
                 {tab === "translations" && (
                   <>
-                    <div className="bg-amber-50 border-r-4 border-amber-500 p-4 rounded mb-2">
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border-r-4 border-amber-500 p-4 rounded mb-2">
                       <h2 className="font-bold text-lg text-primary mb-1">🌍 إدارة الترجمات</h2>
                       <p className="text-sm text-gray-600">
                         هنا تتحكم في ترجمة <b>أسماء العلوم ووصفها</b> في كل لغة. أي تغيير هنا يظهر فورًا بعد الحفظ.
@@ -521,6 +552,57 @@ export default function AdminPage() {
                     ))}
 
                     <button onClick={save} className={addBtn + " w-full"}>💾 حفظ كل الترجمات</button>
+                  </>
+                )}
+
+                {tab === "questions" && (
+                  <>
+                    <div className="bg-amber-50 dark:bg-amber-900/20 border-r-4 border-amber-500 p-4 rounded mb-4">
+                      <p className="text-sm text-amber-800 dark:text-amber-200">
+                        💬 دي الأسئلة الخاصة من المستخدمين المسجلين. كل مستخدم بيشوف إجابته في حسابه بس.
+                      </p>
+                    </div>
+                    {adminQuestions.length === 0 ? (
+                      <p className="text-center text-gray-500 py-8">لا توجد أسئلة بعد</p>
+                    ) : (
+                      adminQuestions.map((q) => (
+                        <div key={q.id} className={itemBox}>
+                          <div className="flex justify-between items-center flex-wrap gap-2">
+                            <b className="text-sm text-primary">سؤال #{q.id}</b>
+                            <span className={`text-xs px-2 py-1 rounded-full font-bold ${q.status === "answered" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
+                              {q.status === "answered" ? "✅ تمت الإجابة" : "⏳ في الانتظار"}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500">
+                            👤 {q.users?.name} — {q.users?.email} — {new Date(q.created_at).toLocaleDateString("ar-EG")}
+                          </p>
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <p className="font-bold text-primary">❓ {q.question}</p>
+                          </div>
+                          {q.status === "answered" ? (
+                            <div className="bg-green-50 rounded-lg p-3">
+                              <p className="text-sm text-green-800 whitespace-pre-line">{q.answer}</p>
+                            </div>
+                          ) : (
+                            <>
+                              <textarea
+                                rows={3}
+                                className={input}
+                                placeholder="اكتب الإجابة…"
+                                value={answers[q.id] || ""}
+                                onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
+                              />
+                              <button
+                                onClick={() => answerQuestion(q.id)}
+                                className="bg-gold text-gray-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gold-light transition"
+                              >
+                                إرسال الإجابة
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      ))
+                    )}
                   </>
                 )}
               </div>
