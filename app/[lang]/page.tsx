@@ -3,7 +3,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getContent } from "@/lib/content";
 import { t, type Lang } from "@/lib/i18n";
-import { getFieldTranslation } from "@/lib/translations";
 
 export const dynamic = "force-dynamic";
 
@@ -36,22 +35,13 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   const tr = t(lang as Lang);
   const L = lang as Lang;
 
-  const count = (slug: string) =>
-    c.lessons.filter((x) => x.field === slug).length +
-    c.videos.filter((x) => x.field === slug).length +
-    c.articles.filter((x) => x.field === slug).length +
-    c.books.filter((x) => x.field === slug).length +
-    c.audio.filter((x) => x.field === slug).length +
-    c.photos.filter((x) => x.field === slug).length;
-
   let d = 0;
   const next = () => (d++ * 50);
 
   return (
     <>
-      <Header lang={L} />
+      <Header settings={c.settings} lang={L} />
       <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        {/* البطل */}
         <section className="relative bg-primary text-white py-16 text-center overflow-hidden pattern-light">
           <div className="relative max-w-3xl mx-auto px-4 fade-up">
             <p className="font-serif text-gold-light text-xl mb-3">{c.settings.kicker}</p>
@@ -64,15 +54,10 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         <section className="py-14">
           <div className="max-w-6xl mx-auto px-4">
 
-            {/* العلوم الشرعية */}
+            {/* مربع واحد للعلوم */}
             <SectionTitle>📚 {tr.sciences}</SectionTitle>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              {c.fields.map((f) => {
-                const ft = getFieldTranslation(f.slug, L, { name: f.name, desc: f.desc }, c.fieldTranslations);
-                return (
-                  <Box key={f.id} href={`/${lang}/fields/${f.slug}`} icon={f.icon} title={ft.name} desc={ft.desc} badge={`${count(f.slug)} ${tr.item}`} delay={next()} />
-                );
-              })}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+              <Box href={`/${lang}/fields`} icon="📚" title={tr.allSciences} desc={tr.allSciencesDesc} badge={`${c.fields.length} ${tr.item}`} delay={next()} />
             </div>
 
             {/* الأقسام الدعوية */}
@@ -80,20 +65,27 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
               <Box href={`/${lang}/fatwa`} icon="❓" title={tr.boxFatwaTitle} desc={tr.boxFatwaDesc} badge={`${c.fatwas.length} ${tr.fatwa}`} delay={next()} />
               <Box href={`/${lang}/doubts`} icon="⚔️" title={tr.doubts} desc={tr.doubtsDesc} badge={`${c.doubts.length}`} delay={next()} />
-              <Box href={`/${lang}/prayer-guide`} icon="🕌" title="تعلم الصلاة" desc="دليل خطوة بخطوة" badge="" delay={next()} />
-              <Box href={`/${lang}/embrace-islam`} icon="🌟" title="اعتنق الإسلام" desc="رحلتك نحو الهداية" badge="" delay={next()} />
+              <Box href={`/${lang}/prayer-guide`} icon="🕌" title={lang === "ar" ? "تعلم الصلاة" : "Learn Prayer"} desc={lang === "ar" ? "دليل خطوة بخطوة" : "Step by step"} badge="" delay={next()} />
+              <Box href={`/${lang}/embrace-islam`} icon="🌟" title={lang === "ar" ? "اعتنق الإسلام" : "Embrace Islam"} desc={lang === "ar" ? "رحلتك نحو الهداية" : "Your journey"} badge="" delay={next()} />
               <Box href={`/${lang}/live`} icon="📡" title={tr.boxLiveTitle} desc={tr.boxLiveDesc} badge={tr.followUs} delay={next()} />
               <Box href={`/${lang}/projects`} icon="🤝" title={tr.boxProjectsTitle} desc={tr.boxProjectsDesc} badge={`${c.projects.length} ${tr.project}`} delay={next()} />
               <Box href={`/${lang}/news`} icon="📰" title={tr.boxNewsTitle} desc={tr.boxNewsDesc} badge={`${c.news.length} ${tr.newsItem}`} delay={next()} />
               <Box href={`/${lang}/map`} icon="🗺️" title={tr.boxMapTitle} desc={tr.boxMapDesc} badge={`${c.places.length} ${tr.place}`} delay={next()} />
+            </div>
+
+            {/* الأدوات الإسلامية */}
+            <SectionTitle>🛠️ {lang === "ar" ? "الأدوات الإسلامية" : "Islamic Tools"}</SectionTitle>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              <Box href={`/${lang}/tools`} icon="🛠️" title={lang === "ar" ? "الأدوات الإسلامية" : "Islamic Tools"} desc={lang === "ar" ? "مصحف + مواقيت + قبلة + تقويم" : "Quran + Times + Qibla + Calendar"} badge="" delay={next()} />
               <Box href={`/${lang}/adhkar`} icon="🤲" title={tr.boxAdhkarTitle} desc={tr.boxAdhkarDesc} badge={tr.yourDailyWird} delay={next()} />
+              <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
+              <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
             </div>
 
             {/* الخدمات */}
             <SectionTitle>⚙️ {tr.services}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-              <Box href={`/${lang}/learn`} icon="🎓" title={tr.learn} desc={tr.learnDesc} badge={`${c.learnSteps.length}`} delay={next()} />
-              <Box href={`/${lang}/search`} icon="🔍" title={tr.search} desc={tr.searchDesc} badge="" delay={next()} />
+              <Box href={`/${lang}/account`} icon="👤" title={tr.account} desc={lang === "ar" ? "اسأل الشيخ خصوصيًا" : "Ask the Sheikh privately"} badge="" delay={next()} />
               <Box href={`/${lang}/about`} icon="👤" title={tr.boxAboutTitle} desc={tr.boxAboutDesc} badge={tr.knowMe} delay={next()} />
               <Box href={`/${lang}/contact`} icon="💬" title={tr.boxContactTitle} desc={tr.boxContactDesc} badge={tr.messageMe} delay={next()} />
             </div>

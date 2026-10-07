@@ -1,66 +1,140 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Settings } from "@/lib/data";
+import { useParams } from "next/navigation";
+import { t, type Lang } from "@/lib/i18n";
 
-export default function PrayerBar({ settings }: { settings: Settings }) {
-  const [times, setTimes] = useState<Record<string, string> | null>(null);
-  const [city, setCity] = useState("…");
-  const [hijri, setHijri] = useState("");
+type PrayerTimes = {
+  Fajr: string;
+  Sunrise: string;
+  Dhuhr: string;
+  Asr: string;
+  Maghrib: string;
+  Isha: string;
+};
+
+type HijriDate = {
+  day: string;
+  month: { ar: string; en: string; number: number };
+  year: string;
+  weekday: { ar: string; en: string };
+};
+
+export default function PrayerBar() {
+  const params = useParams();
+  const L = (params?.lang || "ar") as Lang;
+  const tr = t(L);
+  const [times, setTimes] = useState<PrayerTimes | null>(null);
+  const [hijri, setHijri] = useState<HijriDate | null>(null);
+  const [city, setCity] = useState<string>("");
+  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; remaining: string } | null>(null);
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    try {
-      setHijri(new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", { day: "numeric", month: "long", year: "numeric" }).format(new Date()));
-    } catch {}
+    const savedCity = localStorage.getItem("prayerCity") || "Cairo";
+    const savedCountry = localStorage.getItem("prayerCountry") || "Egypt";
+    setCity(savedCity);
 
-    const load = async (lat: number, lon: number, cityName: string) => {
-      try {
-        const r = await fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=5`);
-        const j = await r.json();
-        if (j.code === 200) {
-          const t = j.data.timings;
-          setTimes({ الفجر: t.Fajr.slice(0, 5), الشروق: t.Sunrise.slice(0, 5), الظهر: t.Dhuhr.slice(0, 5), العصر: t.Asr.slice(0, 5), المغرب: t.Maghrib.slice(0, 5), العشاء: t.Isha.slice(0, 5) });
-          setCity(cityName);
+    // جلب المواقيت
+    fetch(`https://api.aladhan.com/v1/timingsByCity?city=${savedCity}&country=${savedCountry}&method=5`)
+      .then(r => r.json())
+      .then(j => {
+        if (j.data) {
+          setTimes({
+            Fajr: j.data.timings.Fajr,
+            Sunrise: j.data.timings.Sunrise,
+            Dhuhr: j.data.timings.Dhuhr,
+            Asr: j.data.timings.Asr,
+            Maghrib: j.data.timings.Maghrib,
+            Isha: j.data.timings.Isha,
+          });
+          setHijri(j.data.date.hijri);
         }
-      } catch {}
-    };
-
-    const cached = localStorage.getItem("pb-loc");
-    if (cached) { const p = JSON.parse(cached); load(p.lat, p.lon, p.city); return; }
-    if (!navigator.geolocation) { load(30.04, 31.24, "القاهرة"); return; }
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude, longitude } = pos.coords;
-      let name = "موقعك";
-      try {
-        const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=ar`);
-        const j = await r.json();
-        name = j.address?.city || j.address?.town || j.address?.state || "موقعك";
-      } catch {}
-      localStorage.setItem("pb-loc", JSON.stringify({ lat: latitude, lon: longitude, city: name }));
-      load(latitude, longitude, name);
-    }, () => load(30.04, 31.24, "القاهرة"), { timeout: 8000 });
+      })
+      .catch(() => {});
   }, []);
 
-  if (!settings.showPrayerBar) return null;
+  // تحديث الساعة كل ثانية
+  useEffect(() => {
+    const interval = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
-  let nextName = "";
-  if (times) {
-    for (const [name, val] of Object.entries(times)) {
-      const [h, m] = val.split(":").map(Number);
-      if (h * 60 + m > nowMin) { nextName = name; break; }
-    }
-  }
+  // حساب الصلاة القادمة
+  useEffect(() => {
+    if (!times) return;
+    const interval = setInterval(() => {
+      const now = new Date();
+      const prayers = [
+        { name: tr.fajr, time: times.Fajr },
+        { name: tr.sunrise, time: times.Sunrise },
+        { name: tr.dhuhr, time: times.Dhuhr },
+        { name: tr.asr, time: times.Asr },
+        { name: tr.maghrib, time: times.Maghrib },
+        { name: tr.isha, time: times.Isha },
+      ];
+
+      let next = prayers[0];
+      for (const p of prayers) {
+        const [h, m] = p.time.split(":").map(Number);
+        const prayerTime = new Date();
+        prayerTime.setHours(h, m, 0, 0);
+        if (prayerTime > now) {
+          next = p;
+          break;
+        }
+        next = prayers[0]; // لو فاتوا كلهم، الصلاة الجاية فجر بكرة
+      }
+
+      const [h, m] = next.time.split(":").map(Number);
+      const prayerTime = new Date();
+      prayerTime.setHours(h, m, 0, 0);
+      if (prayerTime < now) prayerTime.setDate(prayerTime.getDate() + 1);
+
+      const diff = prayerTime.getTime() - now.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setNextPrayer({
+        name: next.name,
+        time: next.time,
+        remaining: `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`,
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [times, tr]);
+
+  if (!times || !hijri) return null;
+
+  const timeStr = now.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const dateStr = now.toLocaleDateString(L === "ar" ? "ar-EG" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <div className="bg-primary-light text-white text-xs md:text-sm py-2 px-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-      <span className="font-bold text-gold-light">📅 {hijri}</span>
-      <span className="opacity-80">🕌 {city}</span>
-      {times && Object.entries(times).map(([name, val]) => (
-        <span key={name} className={name === nextName ? "bg-gold text-gray-900 font-bold px-2 py-0.5 rounded-full" : "opacity-90"}>
-          {name} {val}
-        </span>
-      ))}
+    <div className="sticky top-0 z-40 bg-primary text-white text-xs shadow-md border-b-2 border-gold">
+      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between flex-wrap gap-2">
+        {/* التاريخ الهجري + الميلادي */}
+        <div className="flex items-center gap-3">
+          <span className="font-bold">📅 {hijri.weekday[L === "ar" ? "ar" : "en"]} {hijri.day} {hijri.month[L === "ar" ? "ar" : "en"]} {hijri.year}هـ</span>
+          <span className="hidden sm:inline text-white/60">|</span>
+          <span className="hidden sm:inline text-white/80">{dateStr}</span>
+        </div>
+
+        {/* الساعة + المدينة */}
+        <div className="flex items-center gap-3">
+          <span className="text-white/80">📍 {city}</span>
+          <span className="font-mono font-bold text-gold" dir="ltr">{timeStr}</span>
+        </div>
+
+        {/* الصلاة القادمة */}
+        {nextPrayer && (
+          <div className="flex items-center gap-2 bg-gold/20 px-3 py-1 rounded-full">
+            <span className="font-bold">🕌 {nextPrayer.name}</span>
+            <span dir="ltr" className="text-gold-light font-mono">{nextPrayer.time}</span>
+            <span className="text-xs opacity-80" dir="ltr">⏱ {nextPrayer.remaining}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
