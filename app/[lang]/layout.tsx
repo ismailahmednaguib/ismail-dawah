@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import PrayerBar from "@/components/PrayerBar";
+import TopBar from "@/components/TopBar";
 import { getDir, type Lang } from "@/lib/i18n";
 import "@/app/globals.css";
 
@@ -48,19 +48,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     alternates: {
       canonical: `/${lang}`,
       languages: {
-        ar: "/ar",
-        en: "/en",
-        fr: "/fr",
-        ur: "/ur",
-        tr: "/tr",
-        id: "/id",
-        ha: "/ha",
-        bn: "/bn",
-        so: "/so",
-        fa: "/fa",
-        es: "/es",
-        ru: "/ru",
-        sw: "/sw",
+        ar: "/ar", en: "/en", fr: "/fr", ur: "/ur", tr: "/tr",
+        id: "/id", ha: "/ha", bn: "/bn", so: "/so", fa: "/fa",
+        es: "/es", ru: "/ru", sw: "/sw",
       },
     },
   };
@@ -88,11 +78,10 @@ export default async function LangLayout({
           href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&family=Noto+Naskh+Arabic:wght@400;700&display=swap"
           rel="stylesheet"
         />
-        {/* Plausible Analytics */}
         <script defer data-domain="ismailahmednaguib.vercel.app" src="https://plausible.io/js/script.js"></script>
       </head>
       <body className="bg-cream-dark dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
-        <PrayerBar />
+        <TopBar />
         <Header lang={L} />
         {children}
         <Footer lang={L} />
