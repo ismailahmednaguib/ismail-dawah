@@ -1,3 +1,5 @@
+/* خطوط المصحف الشريف */
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Scheherazade+New:wght@400;700&family=Reem+Kufi:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -64,3 +66,215 @@ body {
 .dark .border-gray-200 { border-color: #2c3a32; }
 .dark .border-gray-300 { border-color: #37453c; }
 .dark input, .dark textarea, .dark select { background-color: #101a15; color: #e6e3d8; border-color: #2c3a32; }
+
+/* تنسيق المصحف الشريف */
+.quran-page {
+  font-family: 'Amiri Quran', 'Scheherazade New', 'Traditional Arabic', serif;
+  background: linear-gradient(to bottom, #fdf9f0 0%, #f8f3e3 100%);
+  border: 3px double #8b6914;
+  border-radius: 8px;
+  box-shadow: 
+    inset 0 0 20px rgba(139, 105, 20, 0.1),
+    0 10px 40px rgba(0, 0, 0, 0.15);
+  position: relative;
+  padding: 2rem;
+}
+
+.quran-page::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.quran-page::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(139, 105, 20, 0.15);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* رأس السورة المزخرف */
+.surah-header {
+  background: linear-gradient(135deg, #8b6914 0%, #c9a227 50%, #8b6914 100%);
+  color: white;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  margin: -2rem -2rem 2rem -2rem;
+  border-bottom: 3px double #fff;
+  position: relative;
+}
+
+.surah-header::before,
+.surah-header::after {
+  content: '۞';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.surah-header::before { left: 1.5rem; }
+.surah-header::after { right: 1.5rem; }
+
+.surah-name {
+  font-family: 'Amiri Quran', serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.surah-info {
+  font-size: 0.9rem;
+  opacity: 0.95;
+  font-family: 'Reem Kufi', sans-serif;
+}
+
+/* البسملة */
+.basmala {
+  font-family: 'Amiri Quran', serif;
+  font-size: 2.2rem;
+  text-align: center;
+  color: #8b6914;
+  margin: 2rem 0;
+  padding: 1rem;
+  border-top: 1px solid rgba(139, 105, 20, 0.3);
+  border-bottom: 1px solid rgba(139, 105, 20, 0.3);
+}
+
+/* نص الآيات */
+.quran-text {
+  font-family: 'Amiri Quran', 'Scheherazade New', serif;
+  font-size: 28px;
+  line-height: 3;
+  color: #1a1a1a;
+  text-align: justify;
+  text-align-last: center;
+  direction: rtl;
+  padding: 1rem 0;
+}
+
+/* رقم الآية */
+.ayah-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: radial-gradient(circle, #fdf9f0 0%, #f8f3e3 100%);
+  border: 2px solid #8b6914;
+  border-radius: 50%;
+  font-family: 'Amiri Quran', serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #8b6914;
+  margin: 0 4px;
+  vertical-align: middle;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(139, 105, 20, 0.2);
+}
+
+.ayah-number::before {
+  content: '۝';
+  position: absolute;
+  font-size: 42px;
+  color: #8b6914;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* علامة السجدة */
+.sajda-mark {
+  display: inline-block;
+  color: #8b0000;
+  font-size: 32px;
+  margin: 0 8px;
+  vertical-align: middle;
+}
+
+/* علامة الجزء */
+.juz-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.1), transparent);
+  border-top: 1px solid rgba(139, 105, 20, 0.3);
+  border-bottom: 1px solid rgba(139, 105, 20, 0.3);
+  font-family: 'Reem Kufi', sans-serif;
+  color: #8b6914;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.juz-marker::before,
+.juz-marker::after {
+  content: '۞';
+  font-size: 1.5rem;
+}
+
+/* الآية المحددة */
+.ayah-highlighted {
+  background: rgba(201, 162, 39, 0.15);
+  border-radius: 4px;
+  padding: 0.5rem;
+  transition: all 0.3s;
+}
+
+.ayah-playing {
+  background: rgba(201, 162, 39, 0.25);
+  border-right: 4px solid #c9a227;
+  animation: pulse-ayah 2s ease-in-out infinite;
+}
+
+@keyframes pulse-ayah {
+  0%, 100% { background: rgba(201, 162, 39, 0.25); }
+  50% { background: rgba(201, 162, 39, 0.4); }
+}
+
+/* التحكم في حجم الخط */
+.quran-text.size-small { font-size: 22px; line-height: 2.5; }
+.quran-text.size-medium { font-size: 28px; line-height: 3; }
+.quran-text.size-large { font-size: 34px; line-height: 3.2; }
+.quran-text.size-xlarge { font-size: 40px; line-height: 3.5; }
+
+/* الوضع الليلي */
+.dark .quran-page {
+  background: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
+  border-color: #c9a227;
+}
+
+.dark .quran-text {
+  color: #f3f4f6;
+}
+
+.dark .basmala {
+  color: #c9a227;
+  border-color: rgba(201, 162, 39, 0.3);
+}
+
+.dark .ayah-number {
+  background: radial-gradient(circle, #1f2937 0%, #111827 100%);
+  border-color: #c9a227;
+  color: #c9a227;
+}
+
+.dark .ayah-number::before {
+  color: #c9a227;
+}
+
+.dark .juz-marker {
+  color: #c9a227;
+  background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.1), transparent);
+  border-color: rgba(201, 162, 39, 0.3);
+}
