@@ -2,8 +2,17 @@ import Link from "next/link";
 import type { Settings } from "@/lib/data";
 import { t, type Lang } from "@/lib/i18n";
 
-export default function Footer({ settings, lang = "ar" }: { settings: Settings; lang?: Lang }) {
+export default function Footer({ settings, lang = "ar" }: { settings?: Settings; lang?: Lang }) {
   const tr = t(lang);
+  const shortName = settings?.shortName || "الشيخ إسماعيل";
+  const motto = settings?.motto || "العلم نور والدعوة أمانة";
+  const jobTitle = settings?.jobTitle || "";
+  const wa = settings?.wa || "";
+  const email = settings?.email || "";
+  const address = settings?.address || "";
+  const appUrl = settings?.appUrl || "";
+  const ownerName = settings?.ownerName || "الشيخ إسماعيل";
+
   return (
     <footer className="bg-primary text-white/70 text-sm relative">
       <div className="h-1.5 bg-gold/70" />
@@ -11,10 +20,10 @@ export default function Footer({ settings, lang = "ar" }: { settings: Settings; 
         <div>
           <div className="flex items-center gap-3 mb-4">
             <span className="w-10 h-10 bg-gold text-primary rounded-full grid place-items-center font-serif text-xl font-bold">إ</span>
-            <span className="font-bold text-white">{settings.shortName}</span>
+            <span className="font-bold text-white">{shortName}</span>
           </div>
-          <p className="font-serif text-gold-light text-lg mb-2">{settings.motto}</p>
-          <p className="text-white/60">{settings.jobTitle}</p>
+          <p className="font-serif text-gold-light text-lg mb-2">{motto}</p>
+          <p className="text-white/60">{jobTitle}</p>
         </div>
         <div>
           <h3 className="text-white font-bold mb-4">{tr.quickLinks}</h3>
@@ -26,20 +35,20 @@ export default function Footer({ settings, lang = "ar" }: { settings: Settings; 
         </div>
         <div>
           <h3 className="text-white font-bold mb-4">{tr.contactUs}</h3>
-          <p className="mb-2">💬 <span dir="ltr">+{settings.wa}</span></p>
-          <p className="mb-2">✉️ {settings.email}</p>
-          <p>📍 {settings.address}</p>
+          {wa && <p className="mb-2">💬 <span dir="ltr">+{wa}</span></p>}
+          {email && <p className="mb-2">✉️ {email}</p>}
+          {address && <p>📍 {address}</p>}
         </div>
       </div>
-      {settings.appUrl && (
+      {appUrl && (
         <div className="text-center pb-6">
-          <a href={settings.appUrl} download className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition">
+          <a href={appUrl} download className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition">
             📱 {tr.downloadApp}
           </a>
         </div>
       )}
       <div className="border-t border-white/10 py-4 text-center text-xs">
-        © {new Date().getFullYear()} {settings.ownerName} — {tr.rights}
+        © {new Date().getFullYear()} {ownerName} — {tr.rights}
       </div>
     </footer>
   );

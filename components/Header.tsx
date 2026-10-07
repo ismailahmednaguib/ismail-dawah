@@ -74,7 +74,9 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
             value={L}
             onChange={(e) => {
               const newLang = e.target.value;
-              window.location.href = window.location.pathname.replace(`/${L}`, `/${newLang}`);
+              const path = window.location.pathname;
+              const newPath = path.replace(/^\/[a-z]{2}/, `/${newLang}`);
+              window.location.href = newPath;
             }}
             className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm font-bold text-gray-600 dark:text-gray-300 focus:border-gold focus:outline-none cursor-pointer"
           >
