@@ -1,87 +1,120 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import type { Settings } from "@/lib/data";
-import { t, languages, type Lang } from "@/lib/i18n";
 
-export default function TopBar({ settings }: { settings?: Settings }) {
-  const params = useParams();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
-  const tr = t(L);
+type PrayerTimes = {
+  Fajr: string; Sunrise: string; Dhuhr: string;
+  Asr: string; Maghrib: string; Isha: string;
+};
 
-  const [currentPrayer, setCurrentPrayer] = useState("");
-  const [prayerTime, setPrayerTime] = useState("");
-  const [countdown, setCountdown] = useState("");
+export default function TopBar() {
+  const [times, setTimes] = useState<PrayerTimes | null>(null);
+  const [hijriDate, setHijriDate] = useState("");
+  const [gregDate, setGregDate] = useState("");
+  const [city, setCity] = useState("القاهرة");
+  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string } | null>(null);
+  const [countdown, setCountdown] = useState("--:--:--");
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    const city = localStorage.getItem("prayerCity") || "Cairo";
-    const country = localStorage.getItem("prayerCountry") || "Egypt";
+    const savedCity = localStorage.getItem("prayerCity") || "Cairo";
+    const savedCountry = localStorage.getItem("prayerCountry") || "Egypt";
+    const savedCityAr = localStorage.getItem("prayerCityAr") || "القاهرة";
+    setCity(savedCityAr);
 
-    fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=5`)
+    fetch(`https://api.aladhan.com/v1/timingsByCity?city=${savedCity}&country=${savedCountry}&method=5`)
       .then(r => r.json())
       .then(j => {
-        if (!j.data) return;
-        const timings = j.data.timings;
-        const prayers = [
-          { name: tr.fajr, time: timings.Fajr },
-          { name: tr.sunrise, time: timings.Sunrise },
-          { name: tr.dhuhr, time: timings.Dhuhr },
-          { name: tr.asr, time: timings.Asr },
-          { name: tr.maghrib, time: timings.Maghrib },
-          { name: tr.isha, time: timings.Isha },
-        ];
-
-        const updateCountdown = () => {
-          const now = new Date();
-          let nextPrayer = prayers[0];
-          for (const p of prayers) {
-            const [h, m] = p.time.split(" ")[0].split(":").map(Number);
-            const pt = new Date();
-            pt.setHours(h, m, 0, 0);
-            if (pt > now) {
-              nextPrayer = p;
-              break;
-            }
-          }
-          setCurrentPrayer(nextPrayer.name);
-          setPrayerTime(nextPrayer.time);
-          const [h, m] = nextPrayer.time.split(" ")[0].split(":").map(Number);
-          const pt = new Date();
-          pt.setHours(h, m, 0, 0);
-          if (pt < now) pt.setDate(pt.getDate() + 1);
-          const diff = pt.getTime() - now.getTime();
-          const hours = Math.floor(diff / 3600000);
-          const minutes = Math.floor((diff % 3600000) / 60000);
-          setCountdown(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`);
-        };
-
-        updateCountdown();
-        const interval = setInterval(updateCountdown, 60000);
-        return () => clearInterval(interval);
+        if (j.data) {
+          setTimes({
+            Fajr: j.data.timings.Fajr,
+            Sunrise: j.data.timings.Sunrise,
+            Dhuhr: j.data.timings.Dhuhr,
+            Asr: j.data.timings.Asr,
+            Maghrib: j.data.timings.Maghrib,
+            Isha: j.data.timings.Isha,
+          });
+          setHijriDate(`${j.data.date.hijri.day} ${j.data.date.hijri.month.ar} ${j.data.date.hijri.year}هـ`);
+          setGregDate(`${j.data.date.gregorian.day} ${j.data.date.gregorian.month.en} ${j.data.date.gregorian.year}`);
+        }
       })
       .catch(() => {});
-  }, [tr]);
+  }, []);
+
+  // تحديث الساعة كل ثانية
+  useEffect(() => {
+    const i = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(i);
+  }, []);
+
+  // حساب الصلاة القادمة والعداد
+  useEffect(() => {
+    if (!times) return;
+    const prayers = [
+      { name: "الفجر", time: times.Fajr },
+      { name: "الشروق", time: times.Sunrise },
+      { name: "الظهر", time: times.Dhuhr },
+      { name: "العصر", time: times.Asr },
+      { name: "المغرب", time: times.Maghrib },
+      { name: "العشاء", time: times.Isha },
+    ];
+
+    const update = () => {
+      const now = new Date();
+      let next = prayers[0];
+      for (const p of prayers) {
+        const [h, m] = p.time.split(" ")[0].split(":").map(Number);
+        const pt = new Date();
+        pt.setHours(h, m, 0, 0);
+        if (pt > now) { next = p; break; }
+      }
+      setNextPrayer(next);
+
+      const [h, m] = next.time.split(" ")[0].split(":").map(Number);
+      const pt = new Date();
+      pt.setHours(h, m, 0, 0);
+      if (pt <= now) pt.setDate(pt.getDate() + 1);
+
+      const diff = pt.getTime() - now.getTime();
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      setCountdown(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+    };
+
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
+  }, [times]);
+
+  const timeStr = now.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   return (
-    <div className="bg-primary text-white text-xs py-1.5 border-b border-gold/30">
+    <div className="bg-primary text-white text-xs py-2 border-b-2 border-gold/50">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3">
-          <span className="font-bold text-gold">🕌 {currentPrayer}</span>
-          <span className="font-mono" dir="ltr">{prayerTime}</span>
-          <span className="text-gold-light" dir="ltr">⏱ {countdown}</span>
+        {/* التاريخ الهجري + الميلادي */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="bg-gold/20 text-gold-light px-2 py-0.5 rounded font-bold">📅 {hijriDate}</span>
+          <span className="hidden sm:inline text-white/60">|</span>
+          <span className="hidden sm:inline text-white/80">{gregDate}</span>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href={`/${lang}/prayer-times`} className="hover:text-gold transition">
-            {tr.prayerTimes}
-          </Link>
-          <span className="text-white/30">|</span>
-          <Link href={`/${lang}/calendar`} className="hover:text-gold transition">
-            📅 {tr.calendar}
-          </Link>
+
+        {/* الساعة + المدينة */}
+        <div className="flex items-center gap-2">
+          <span className="text-white/80">📍 {city}</span>
+          <span className="font-mono font-bold text-gold bg-black/20 px-2 py-0.5 rounded" dir="ltr">🕐 {timeStr}</span>
         </div>
+
+        {/* الصلاة القادمة + العداد */}
+        {nextPrayer && (
+          <div className="flex items-center gap-2 bg-gold text-gray-900 px-3 py-1 rounded-full font-bold">
+            <span>🕌 {nextPrayer.name}</span>
+            <span className="font-mono" dir="ltr">{nextPrayer.time}</span>
+            <span className="bg-gray-900 text-gold px-2 py-0.5 rounded-full text-xs font-mono" dir="ltr">
+              ⏱ {countdown}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

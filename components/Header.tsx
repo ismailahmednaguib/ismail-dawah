@@ -16,7 +16,7 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
-    fetch("/api/auth/me")
+    fetch("/api/auth/me", { credentials: "include" })
       .then((r) => r.json())
       .then((j) => setLoggedIn(!!j.user))
       .catch(() => {});
@@ -33,9 +33,8 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
   const jobTitle = settings?.jobTitle ? settings.jobTitle.split("•")[0] : "";
 
   return (
-    <header className="sticky top-0 z-50 bg-cream/95 dark:bg-gray-900/95 backdrop-blur border-b border-black/5 dark:border-white/10">
+    <header className="sticky top-0 z-40 bg-cream/95 dark:bg-gray-900/95 backdrop-blur border-b border-black/5 dark:border-white/10">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
-        {/* اللوجو */}
         <Link href={`/${L}`} className="flex items-center gap-2">
           <span className="w-10 h-10 bg-primary text-gold rounded-full grid place-items-center font-serif text-xl font-bold">إ</span>
           <span className="hidden sm:block">
@@ -44,7 +43,6 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
           </span>
         </Link>
 
-        {/* الروابط - ديسكتوب */}
         <nav className="hidden md:flex items-center gap-1">
           <Link href={`/${L}`} className="px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary dark:hover:text-gold transition">
             {tr.home}
@@ -52,24 +50,23 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
           <Link href={`/${L}/about`} className="px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary dark:hover:text-gold transition">
             {tr.about}
           </Link>
+          <Link href={`/${L}/tools`} className="px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary dark:hover:text-gold transition">
+            🛠️ الأدوات
+          </Link>
           <Link href={`/${L}/contact`} className="px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary dark:hover:text-gold transition">
             {tr.contact}
           </Link>
           <Link
             href={`/${L}/account`}
             className={`px-3 py-2 rounded-lg text-sm font-bold transition ${
-              loggedIn
-                ? "bg-gold/20 text-gold border border-gold/40"
-                : "bg-primary/10 text-primary dark:text-gold hover:bg-primary/20"
+              loggedIn ? "bg-gold/20 text-gold border border-gold/40" : "bg-primary/10 text-primary dark:text-gold hover:bg-primary/20"
             }`}
           >
             👤 {loggedIn ? tr.account : tr.login}
           </Link>
         </nav>
 
-        {/* الأزرار */}
         <div className="flex items-center gap-2">
-          {/* اختيار اللغة */}
           <select
             value={L}
             onChange={(e) => {
@@ -87,27 +84,22 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
             ))}
           </select>
 
-          {/* الوضع الليلي */}
           <button
             onClick={toggleDark}
             className="w-9 h-9 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 grid place-items-center text-lg hover:border-gold transition"
-            aria-label="الوضع الليلي"
           >
             {dark ? "☀️" : "🌙"}
           </button>
 
-          {/* زرار القائمة - موبايل */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden w-9 h-9 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 grid place-items-center text-lg"
-            aria-label="القائمة"
           >
             {menuOpen ? "✕" : "☰"}
           </button>
         </div>
       </div>
 
-      {/* القائمة - موبايل */}
       {menuOpen && (
         <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 px-4 py-3 space-y-1">
           <Link href={`/${L}`} onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10">
@@ -115,6 +107,9 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
           </Link>
           <Link href={`/${L}/about`} onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10">
             {tr.about}
+          </Link>
+          <Link href={`/${L}/tools`} onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10">
+            🛠️ الأدوات الإسلامية
           </Link>
           <Link href={`/${L}/contact`} onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10">
             {tr.contact}
