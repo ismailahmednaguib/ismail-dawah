@@ -5,7 +5,17 @@ import { languages, defaultLang } from '@/lib/i18n';
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   
-  // المسارات اللي مش محتاجة redirect إطلاقاً
+  // Security Headers
+  const response = NextResponse.next();
+  response.headers.set('X-DNS-Prefetch-Control', 'on');
+  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('Referrer-Policy', 'origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  
+  // المسارات اللي مش محتاجة redirect
   if (
     pathname.startsWith('/api') ||
     pathname.startsWith('/admin') ||
@@ -21,12 +31,12 @@ export function middleware(req: NextRequest) {
     pathname === '/robots.txt' ||
     pathname.includes('.')
   ) {
-    return NextResponse.next();
+    return response;
   }
   
   // لو المسار فيه لغة بالفعل، كمّل
   const hasLang = languages.some(l => pathname.startsWith(`/${l.code}/`) || pathname === `/${l.code}`);
-  if (hasLang) return NextResponse.next();
+  if (hasLang) return response;
   
   // غير كده، اعمل redirect للغة الافتراضية
   const saved = req.cookies.get('lang')?.value || defaultLang;

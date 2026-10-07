@@ -1,47 +1,65 @@
 import type { Metadata } from "next";
 import TopBar from "@/components/TopBar";
+import JsonLd from "@/components/JsonLd";
 import { getDir, type Lang } from "@/lib/i18n";
+import { getContent } from "@/lib/content";
+import { generateJsonLd } from "@/lib/seo";
 import "@/app/globals.css";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const L = lang as Lang;
+  const c = await getContent();
 
   const titles: Record<string, string> = {
-    ar: "الشيخ إسماعيل أحمد نجيب — موقع دعوي",
-    en: "Sheikh Ismail Ahmed Naguib - Dawah Website",
-    fr: "Cheikh Ismail Ahmed Naguib - Site de Da'wa",
-    ur: "شیخ اسماعیل احمد نجیب — دعوتی ویب سائٹ",
-    tr: "Şeyh İsmail Ahmed Necaib - Davet Sitesi",
-    id: "Syekh Ismail Ahmed Naguib - Situs Dakwah",
-    ha: "Sheikh Ismail Ahmed Naguib - Shafin Daw'a",
-    bn: "শেখ ইসমাইল আহমেদ নাগুইব — দাওয়াত ওয়েবসাইট",
-    so: "Sheikh Ismail Ahmed Naguib - Bogga Dacwada",
-    fa: "شیخ اسماعیل احمد نجیب — سایت دعوت",
-    es: "Sheij Ismail Ahmed Naguib - Sitio de Da'wah",
-    ru: "Шейх Исмаил Ахмед Нагиб — сайт даавата",
-    sw: "Sheikh Ismail Ahmed Naguib - Tovuti ya Da'awa",
+    ar: `${c.settings.ownerName} — موقع دعوي شامل | دروس وفتاوى ومقالات`,
+    en: `${c.settings.ownerName} - Islamic Dawah Website | Lessons & Fatwas`,
+    fr: `${c.settings.ownerName} - Site de Da'wa Islamique`,
+    ur: `${c.settings.ownerName} — دعوتی ویب سائٹ`,
+    tr: `${c.settings.ownerName} - İslami Davet Sitesi`,
+    id: `${c.settings.ownerName} - Situs Dakwah Islam`,
+    ha: `${c.settings.ownerName} - Shafin Daw'a`,
+    bn: `${c.settings.ownerName} — ইসলামী দাওয়াত ওয়েবসাইট`,
+    so: `${c.settings.ownerName} - Bogga Dacwada Islaamka`,
+    fa: `${c.settings.ownerName} — سایت دعوت اسلامی`,
+    es: `${c.settings.ownerName} - Sitio Islámico de Da'wah`,
+    ru: `${c.settings.ownerName} — исламский сайт даавата`,
+    sw: `${c.settings.ownerName} - Tovuti ya Da'awa ya Kiislamu`,
   };
 
   const descriptions: Record<string, string> = {
-    ar: "موقع فضيلة الشيخ إسماعيل أحمد نجيب — دروس وفتاوى ومقالات في العلوم الشرعية",
-    en: "Official website of Sheikh Ismail Ahmed Naguib — lessons, fatwas and articles in Islamic sciences",
-    fr: "Site officiel du Cheikh Ismail Ahmed Naguib — cours, fatwas et articles en sciences islamiques",
-    ur: "فضیلۃ الشیخ اسماعیل احمد نجیب کی آفیشل ویب سائٹ — اسلامی علوم میں اسباق، فتاویٰ اور مضامین",
-    tr: "Şeyh İsmail Ahmed Necaib'in resmi web sitesi — İslami ilimlerde dersler, fetvalar ve makaleler",
-    id: "Situs resmi Syekh Ismail Ahmed Naguib — pelajaran, fatwa, dan artikel dalam ilmu-ilmu Islam",
-    ha: "Shafin hukuma na Sheikh Ismail Ahmed Naguib — darussa, fatwa da labarai a kimiyyar Musulunci",
-    bn: "শেখ ইসমাইল আহমেদ নাগুইব-এর অফিসিয়াল ওয়েবসাইট — ইসলামী বিজ্ঞানে পাঠ, ফতোয়া ও প্রবন্ধ",
-    so: "Bogga rasmiga ah ee Sheikh Ismail Ahmed Naguib — duruus, fatwooyin iyo maqaallo culuumta islaamka",
-    fa: "سایت رسمی شیخ اسماعیل احمد نجیب — درس‌ها، فتواها و مقالات در علوم اسلامی",
-    es: "Sitio oficial del Sheij Ismail Ahmed Naguib — lecciones, fatwas y artículos en ciencias islámicas",
-    ru: "Официальный сайт шейха Исмаила Ахмеда Нагиба — уроки, фетвы и статьи по исламским наукам",
-    sw: "Tovuti rasmi ya Sheikh Ismail Ahmed Naguib — masomo, fatwa na makala katika sayansi za Kiislamu",
+    ar: `موقع فضيلة ${c.settings.ownerName} — منصة دعوية شاملة تحتوي على دروس وفتاوى ومقالات في ${c.fields.length} علماً شرعياً، المصحف الكريم، مواقيت الصلاة، حاسبة الزكاة والمواريث، وقصص الأنبياء. متوفر بـ 13 لغة.`,
+    en: `Official website of Sheikh ${c.settings.ownerName} — comprehensive Islamic platform with lessons, fatwas, and articles in ${c.fields.length} Islamic sciences, Holy Quran, prayer times, Zakat calculator, and prophets' stories. Available in 13 languages.`,
+    fr: `Site officiel du Cheikh ${c.settings.ownerName} — plateforme islamique complète`,
+    ur: `فضیلۃ الشیخ ${c.settings.ownerName} کی آفیشل ویب سائٹ`,
+    tr: `Şeyh ${c.settings.ownerName} resmi İslami platformu`,
+    id: `Situs resmi Syekh ${c.settings.ownerName} - platform dakwah Islam`,
+    ha: `Shafin hukuma na Sheikh ${c.settings.ownerName}`,
+    bn: `শেখ ${c.settings.ownerName}-এর অফিসিয়াল ওয়েবসাইট`,
+    so: `Bogga rasmiga ah ee Sheikh ${c.settings.ownerName}`,
+    fa: `سایت رسمی شیخ ${c.settings.ownerName}`,
+    es: `Sitio oficial del Sheij ${c.settings.ownerName}`,
+    ru: `Официальный сайт шейха ${c.settings.ownerName}`,
+    sw: `Tovuti rasmi ya Sheikh ${c.settings.ownerName}`,
   };
 
+  const keywords = [
+    "الشيخ إسماعيل", "دروس إسلامية", "فتاوى", "المصحف الكريم",
+    "مواقيت الصلاة", "حاسبة الزكاة", "قصص الأنبياء", "الرقية الشرعية",
+    "Islamic scholar", "Quran", "prayer times", "fatwa", "Islamic lessons",
+    "Sheikh Ismail", "da'wah", "Islamic website"
+  ];
+
   return {
-    title: titles[L] || titles.ar,
+    title: {
+      default: titles[L] || titles.ar,
+      template: `%s | ${c.settings.shortName}`,
+    },
     description: descriptions[L] || descriptions.ar,
+    keywords,
+    authors: [{ name: c.settings.ownerName, url: "https://ismailahmednaguib.vercel.app" }],
+    creator: c.settings.ownerName,
+    publisher: c.settings.shortName,
     metadataBase: new URL("https://ismailahmednaguib.vercel.app"),
     alternates: {
       canonical: `/${lang}`,
@@ -51,6 +69,44 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         es: "/es", ru: "/ru", sw: "/sw",
       },
     },
+    openGraph: {
+      type: "website",
+      locale: L === "ar" ? "ar_EG" : L === "en" ? "en_US" : L,
+      url: `https://ismailahmednaguib.vercel.app/${lang}`,
+      siteName: c.settings.shortName,
+      title: titles[L] || titles.ar,
+      description: descriptions[L] || descriptions.ar,
+      images: [
+        {
+          url: c.settings.ogImage || "/og-default.jpg",
+          width: 1200,
+          height: 630,
+          alt: c.settings.ownerName,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: titles[L] || titles.ar,
+      description: descriptions[L] || descriptions.ar,
+      images: [c.settings.ogImage || "/og-default.jpg"],
+      creator: "@sheikh_ismail",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
+    verification: {
+      google: "your-google-verification-code", // هتضيفه بعدين
+    },
+    category: "religion",
   };
 }
 
@@ -62,22 +118,63 @@ export default async function LangLayout({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const dir = getDir(lang as Lang);
+  const L = lang as Lang;
+  const dir = getDir(L);
+  const c = await getContent();
+
+  // JSON-LD للموقع
+  const websiteJsonLd = generateJsonLd("website", {
+    name: c.settings.ownerName,
+    description: c.settings.bio[0],
+    url: `https://ismailahmednaguib.vercel.app/${lang}`,
+    lang,
+  });
+
+  // JSON-LD للشخص (الشيخ)
+  const personJsonLd = generateJsonLd("person", {
+    name: c.settings.ownerName,
+    jobTitle: c.settings.jobTitle,
+    description: c.settings.bio.join(" "),
+    image: c.settings.portraitSrc,
+    url: `https://ismailahmednaguib.vercel.app/${lang}/about`,
+    interests: c.settings.interests,
+    socialLinks: [
+      c.settings.facebookUrl,
+      c.settings.youtubeUrl,
+      c.settings.twitterUrl,
+    ].filter(Boolean),
+  });
 
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning>
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#0b2e22" />
+        
+        {/* Preload critical resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://api.aladhan.com" />
+        <link rel="preconnect" href="https://api.alquran.cloud" />
+        
         <link
           href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&family=Noto+Naskh+Arabic:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        
+        {/* PWA */}
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        
+        {/* Plausible Analytics */}
         <script defer data-domain="ismailahmednaguib.vercel.app" src="https://plausible.io/js/script.js"></script>
       </head>
       <body className="bg-cream-dark dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
+        <JsonLd data={websiteJsonLd} />
+        <JsonLd data={personJsonLd} />
         <TopBar />
         {children}
       </body>

@@ -9,7 +9,7 @@ import type { Settings, Photo } from "@/lib/data";
 import { languages, type Lang } from "@/lib/i18n";
 import { defaultFieldTranslations } from "@/lib/translations";
 
-type Tab = "settings" | "general" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions";
+type Tab = "settings" | "general" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions" | "stats";
 type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
@@ -32,6 +32,7 @@ const TABS: [Tab, string][] = [
   ["adhkar", "🤲 الأذكار"],
   ["translations", "🌍 الترجمات"],
   ["questions", "💬 أسئلة الحسابات"],
+  ["stats", "📊 الإحصائيات"],
 ];
 
 export default function AdminPage() {
@@ -44,6 +45,7 @@ export default function AdminPage() {
   const [msg, setMsg] = useState("");
   const [adminQuestions, setAdminQuestions] = useState<any[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [stats, setStats] = useState<any>(null);
 
   useEffect(() => {
     fetch("/api/admin/me", { credentials: "include" })
@@ -66,6 +68,15 @@ export default function AdminPage() {
       })
       .catch(() => router.push("/ar/login"));
   }, [router]);
+
+  useEffect(() => {
+    if (authed) {
+      fetch("/api/stats", { credentials: "include" })
+        .then((r) => r.json())
+        .then((j) => setStats(j))
+        .catch(() => {});
+    }
+  }, [authed]);
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
@@ -183,7 +194,8 @@ export default function AdminPage() {
   }
 
   if (!authed) return null;
-    return (
+
+  return (
     <div dir="rtl" className="font-sans">
       <Header />
       <main className="py-12 bg-cream-dark min-h-screen">
@@ -630,6 +642,84 @@ export default function AdminPage() {
                   ))
                 )}
               </>
+            )}
+
+            {tab === "stats" && stats && (
+              <>
+                <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-2xl p-6 mb-6">
+                  <h2 className="font-serif text-2xl text-gold mb-2">📊 نظرة عامة على الموقع</h2>
+                  <p className="text-white/80 text-sm">إحصائيات شاملة عن محتوى ونشاط الموقع</p>
+                </div>
+
+                <div className="grid sm:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-green-500">
+                    <p className="text-sm text-gray-500 mb-1">👥 إجمالي المستخدمين</p>
+                    <p className="text-3xl font-bold text-green-600">{stats.users.total}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-amber-500">
+                    <p className="text-sm text-gray-500 mb-1">❓ أسئلة في الانتظار</p>
+                    <p className="text-3xl font-bold text-amber-600">{stats.questions.pending}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-blue-500">
+                    <p className="text-sm text-gray-500 mb-1">✅ أسئلة تمت الإجابة عليها</p>
+                    <p className="text-3xl font-bold text-blue-600">{stats.questions.answered}</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+                  <h3 className="font-bold text-primary text-lg mb-4">📚 إحصائيات المحتوى</h3>
+                  <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">🧭 العلوم</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.fields}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">📖 الدروس</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.lessons}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">🎬 الفيديوهات</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.videos}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">✍️ المقالات</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.articles}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">📚 الكتب</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.books}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">🎧 الصوتيات</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.audio}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">❓ الفتاوى</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.fatwas}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">⚔️ الشبهات</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.doubts}</span>
+                    </div>
+                    <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                      <span className="text-sm font-bold">🤲 الأذكار</span>
+                      <span className="text-xl font-bold text-gold">{stats.content.adhkar}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-md">
+                  <h3 className="font-bold text-primary text-lg mb-4">🌍 اللغات المتاحة</h3>
+                  <div className="bg-gold/10 border-2 border-gold rounded-xl p-4 text-center">
+                    <p className="text-5xl font-bold text-gold mb-2">{stats.languages}</p>
+                    <p className="text-sm text-gray-600">لغة متاحة للموقع</p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {tab === "stats" && !stats && (
+              <p className="text-center text-gray-500 py-10">⏳ جاري تحميل الإحصائيات...</p>
             )}
           </div>
         </div>
