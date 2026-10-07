@@ -1,7 +1,4 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import TopBar from "@/components/TopBar";
 import { getDir, type Lang } from "@/lib/i18n";
 import "@/app/globals.css";
 
@@ -64,8 +61,7 @@ export default async function LangLayout({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const L = lang as Lang;
-  const dir = getDir(L);
+  const dir = getDir(lang as Lang);
 
   return (
     <html lang={lang} dir={dir} suppressHydrationWarning>
@@ -81,10 +77,7 @@ export default async function LangLayout({
         <script defer data-domain="ismailahmednaguib.vercel.app" src="https://plausible.io/js/script.js"></script>
       </head>
       <body className="bg-cream-dark dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans antialiased">
-        <TopBar />
-        <Header lang={L} />
         {children}
-        <Footer lang={L} />
       </body>
     </html>
   );
