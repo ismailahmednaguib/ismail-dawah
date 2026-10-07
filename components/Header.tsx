@@ -50,8 +50,6 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
           <Link href={`/${L}/about`} className="px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary dark:hover:text-gold transition">
             {tr.about}
           </Link>
-            🛠️ الأدوات
-          </Link>
           <Link href={`/${L}/contact`} className="px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10 hover:text-primary dark:hover:text-gold transition">
             {tr.contact}
           </Link>
@@ -106,8 +104,6 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
           </Link>
           <Link href={`/${L}/about`} onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10">
             {tr.about}
-          </Link>
-            🛠️ الأدوات الإسلامية
           </Link>
           <Link href={`/${L}/contact`} onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-primary/10">
             {tr.contact}

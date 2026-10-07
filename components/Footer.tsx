@@ -13,7 +13,6 @@ export default function Footer({ settings, lang = "ar" }: { settings?: Settings;
   const appUrl = settings?.appUrl || "";
   const ownerName = settings?.ownerName || "الشيخ إسماعيل";
   
-  // روابط السوشيال ميديا
   const facebookUrl = settings?.facebookUrl || "";
   const youtubeUrl = settings?.youtubeUrl || "";
   const telegramUrl = settings?.telegramUrl || "";
@@ -23,7 +22,7 @@ export default function Footer({ settings, lang = "ar" }: { settings?: Settings;
   return (
     <footer className="bg-primary text-white/70 text-sm relative">
       <div className="h-1.5 bg-gold/70" />
-      <div className="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-4 gap-8">
+      <div className="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
         {/* العمود 1: اللوجو والنبذة */}
         <div>
           <div className="flex items-center gap-3 mb-4">
@@ -45,19 +44,7 @@ export default function Footer({ settings, lang = "ar" }: { settings?: Settings;
           </div>
         </div>
 
-        {/* العمود 3: الأدوات */}
-        <div>
-          <h3 className="text-white font-bold mb-4">🛠️ أدوات إسلامية</h3>
-          <div className="grid grid-cols-1 gap-2">
-            <Link href={`/${lang}/quran`} className="hover:text-gold transition">📖 المصحف الكريم</Link>
-            <Link href={`/${lang}/prayer-times`} className="hover:text-gold transition">🕌 مواقيت الصلاة</Link>
-            <Link href={`/${lang}/qibla`} className="hover:text-gold transition">🧭 تحديد القبلة</Link>
-            <Link href={`/${lang}/calendar`} className="hover:text-gold transition">📅 التقويم الهجري</Link>
-            <Link href={`/${lang}/adhkar`} className="hover:text-gold transition">🤲 الأذكار</Link>
-          </div>
-        </div>
-
-        {/* العمود 4: التواصل */}
+        {/* العمود 3: التواصل */}
         <div>
           <h3 className="text-white font-bold mb-4">{tr.contactUs}</h3>
           <div className="space-y-2 mb-4">
@@ -66,7 +53,6 @@ export default function Footer({ settings, lang = "ar" }: { settings?: Settings;
             {address && <p>📍 {address}</p>}
           </div>
 
-          {/* السوشيال ميديا */}
           {(facebookUrl || youtubeUrl || telegramUrl || twitterUrl || instagramUrl) && (
             <div className="flex gap-2 flex-wrap">
               {facebookUrl && (
@@ -99,20 +85,14 @@ export default function Footer({ settings, lang = "ar" }: { settings?: Settings;
         </div>
       </div>
 
-      {/* تحميل التطبيق */}
-{appUrl && (
-  <div className="text-center pb-6">
-    <a 
-      href={appUrl} 
-      download 
-      className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition"
-    >
-      📱 تحميل التطبيق
-    </a>
-  </div>
-)}
+      {appUrl && (
+        <div className="text-center pb-6">
+          <a href={appUrl} download className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition">
+            📱 {tr.downloadApp}
+          </a>
+        </div>
+      )}
 
-      {/* حقوق الملكية */}
       <div className="border-t border-white/10 py-4 text-center text-xs">
         © {new Date().getFullYear()} {ownerName} — {tr.rights}
       </div>
