@@ -1,11 +1,24 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { getSessionFromCookie } from "@/lib/auth";
+
+function getUserIdFromCookie(cookieHeader: string | null): { userId: number; role: string } | null {
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(/user_session=([^;]+)/);
+  if (!match) return null;
+  try {
+    const data = JSON.parse(Buffer.from(match[1], "base64").toString());
+    return { userId: data.userId, role: data.role };
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(req: Request) {
   try {
-    const userId = getSessionFromCookie(req.headers.get("cookie"));
-    if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    const session = getUserIdFromCookie(req.headers.get("cookie"));
+    if (!session || session.role !== "user") {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
 
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_KEY;
@@ -15,7 +28,7 @@ export async function GET(req: Request) {
     const { data, error } = await supabase
       .from("user_questions")
       .select("*")
-      .eq("user_id", userId)
+      .eq("user_id", session.userId)
       .order("created_at", { ascending: false });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -27,8 +40,10 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const userId = getSessionFromCookie(req.headers.get("cookie"));
-    if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    const session = getUserIdFromCookie(req.headers.get("cookie"));
+    if (!session || session.role !== "user") {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
 
     const { question } = await req.json();
     if (!question || !question.trim()) {
@@ -42,7 +57,7 @@ export async function POST(req: Request) {
     const supabase = createClient(url, key);
     const { data, error } = await supabase
       .from("user_questions")
-      .insert({ user_id: userId, question: question.trim(), status: "pending" })
+      .insert({ user_id: session.userId, question: question.trim(), status: "pending" })
       .select()
       .single();
 

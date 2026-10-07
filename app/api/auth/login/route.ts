@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { verifyPassword, createSession } from "@/lib/auth";
+import { verifyPassword } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
@@ -15,28 +15,72 @@ export async function POST(req: Request) {
     if (!url || !key) return NextResponse.json({ error: "db not configured" }, { status: 500 });
 
     const supabase = createClient(url, key);
+    const cleanEmail = email.toLowerCase().trim();
 
-    const { data, error } = await supabase
-      .from("users")
+    // أولاً: حاول تلقى الحساب في admin_users
+    const { data: adminUser } = await supabase
+      .from("admin_users")
       .select("*")
-      .eq("email", email.toLowerCase().trim())
+      .eq("email", cleanEmail)
       .maybeSingle();
 
-    if (error || !data) {
+    if (adminUser) {
+      const valid = verifyPassword(password, adminUser.password_hash, adminUser.salt);
+      if (!valid) {
+        return NextResponse.json({ error: "الإيميل أو كلمة المرور غلط" }, { status: 401 });
+      }
+
+      // أنشئ session خاص بالآدمن
+      const sessionData = JSON.stringify({ userId: adminUser.id, role: "admin" });
+      const session = Buffer.from(sessionData).toString("base64");
+
+      const res = NextResponse.json({
+        ok: true,
+        user: { id: adminUser.id, email: adminUser.email, name: adminUser.name, role: "admin" },
+      });
+      res.cookies.set("admin_session", session, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+      // نضيف cookie للـ auth/me عشان يشتغل
+      res.cookies.set("user_session", session, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7,
+        path: "/",
+      });
+      return res;
+    }
+
+    // ثانياً: دور في users (الحسابات العادية)
+    const { data: regularUser, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("email", cleanEmail)
+      .maybeSingle();
+
+    if (error || !regularUser) {
       return NextResponse.json({ error: "الإيميل أو كلمة المرور غلط" }, { status: 401 });
     }
 
-    const valid = verifyPassword(password, data.password_hash, data.salt);
+    const valid = verifyPassword(password, regularUser.password_hash, regularUser.salt);
     if (!valid) {
       return NextResponse.json({ error: "الإيميل أو كلمة المرور غلط" }, { status: 401 });
     }
 
-    const session = createSession(data.id);
+    // أنشئ session للمستخدم العادي
+    const sessionData = JSON.stringify({ userId: regularUser.id, role: "user" });
+    const session = Buffer.from(sessionData).toString("base64");
+
     const res = NextResponse.json({
       ok: true,
-      user: { id: data.id, email: data.email, name: data.name },
+      user: { id: regularUser.id, email: regularUser.email, name: regularUser.name, role: "user" },
     });
-    res.cookies.set("session", session, {
+    res.cookies.set("user_session", session, {
       httpOnly: true,
       secure: true,
       sameSite: "lax",

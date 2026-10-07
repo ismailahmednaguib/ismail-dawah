@@ -13,7 +13,6 @@ export default function LoginPage() {
   const router = useRouter();
   const lang = (params?.lang as string) || "ar";
   const L = lang as Lang;
-  const tr = t(L);
   const c = defaultContent;
 
   const [email, setEmail] = useState("");
@@ -36,7 +35,12 @@ export default function LoginPage() {
       });
       const j = await r.json();
       if (j.ok) {
-        router.push(`/${lang}/account`);
+        // حسب الـ role، نوجه المستخدم للمكان الصح
+        if (j.user.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push(`/${lang}/account`);
+        }
       } else {
         setMsg("❌ " + (j.error || "خطأ في الدخول"));
       }
@@ -48,7 +52,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Header settings={c.settings} lang={L} />
+      <Header lang={L} />
       <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen flex items-center">
         <div className="max-w-md mx-auto px-4 w-full">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md border-t-4 border-gold">
@@ -101,7 +105,7 @@ export default function LoginPage() {
           </div>
         </div>
       </main>
-      <Footer settings={c.settings} lang={L} />
+      <Footer lang={L} />
     </>
   );
 }
