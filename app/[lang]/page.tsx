@@ -97,6 +97,59 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
               <Box href={`/${lang}/zakat`} icon="🧮" title={lang === "ar" ? "حاسبة الزكاة" : "Zakat Calculator"} desc={lang === "ar" ? "احسب زكاتك" : "Calculate your zakat"} badge="" delay={next()} />
             </div>
 
+            {/* 📱 تحميل التطبيق */}
+{c.settings.appUrl && (
+  <section className="py-10 mb-10">
+    <div className="max-w-4xl mx-auto px-4">
+      <div className="bg-gradient-to-br from-primary via-primary to-primary/90 rounded-3xl p-8 md:p-12 text-center text-white shadow-2xl relative overflow-hidden">
+        {/* زخرفة خلفية */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gold/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold/10 rounded-full blur-3xl"></div>
+        
+        <div className="relative">
+          <div className="inline-block bg-gold/20 rounded-full p-4 mb-4">
+            <span className="text-6xl">📱</span>
+          </div>
+          <h2 className="font-serif text-3xl md:text-4xl text-gold mb-3">
+            حمّل التطبيق على موبايلك
+          </h2>
+          <p className="text-white/90 text-lg mb-6 max-w-2xl mx-auto">
+            استمتع بكل محتوى الموقع في تطبيق واحد — المصحف، المواقيت، الأذكار، والدروس
+          </p>
+          
+          <div className="flex flex-wrap gap-4 justify-center mb-6">
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-2 rounded-full">
+              <span className="text-gold">✓</span>
+              <span className="text-sm">يعمل بدون إنترنت</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-2 rounded-full">
+              <span className="text-gold">✓</span>
+              <span className="text-sm">إشعارات فورية</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-2 rounded-full">
+              <span className="text-gold">✓</span>
+              <span className="text-sm">مجاني تماماً</span>
+            </div>
+          </div>
+
+          <a
+            href={c.settings.appUrl}
+            download
+            className="inline-flex items-center gap-3 bg-gold text-gray-900 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gold-light hover:scale-105 transition shadow-xl"
+          >
+            <span className="text-2xl">⬇️</span>
+            <span>تحميل التطبيق الآن</span>
+          </a>
+
+          <p className="text-white/60 text-xs mt-4">
+            📦 ملف APK — متوافق مع جميع أجهزة أندرويد
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
             {/* ⚙️ الخدمات */}
             <SectionTitle>⚙️ {tr.services}</SectionTitle>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">

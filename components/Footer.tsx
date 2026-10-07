@@ -101,13 +101,17 @@ export default function Footer({ settings, lang = "ar" }: { settings?: Settings;
       </div>
 
       {/* تحميل التطبيق */}
-      {appUrl && (
-        <div className="text-center pb-6">
-          <a href={appUrl} download className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition">
-            📱 {tr.downloadApp}
-          </a>
-        </div>
-      )}
+{appUrl && (
+  <div className="text-center pb-6">
+    <a 
+      href={appUrl} 
+      download 
+      className="inline-flex items-center gap-2 bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition"
+    >
+      📱 تحميل التطبيق
+    </a>
+  </div>
+)}
 
       {/* حقوق الملكية */}
       <div className="border-t border-white/10 py-4 text-center text-xs">
