@@ -2,19 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { defaultContent } from "@/lib/content";
+import BackButton from "@/components/BackButton";
+import PageHero from "@/components/PageHero";
+import IslamicSection from "@/components/IslamicSection";
 import { t, type Lang } from "@/lib/i18n";
-
-type Question = {
-  id: number;
-  question: string;
-  answer: string | null;
-  status: string;
-  created_at: string;
-};
 
 export default function AccountPage() {
   const params = useParams();
@@ -22,53 +15,54 @@ export default function AccountPage() {
   const lang = (params?.lang as string) || "ar";
   const L = lang as Lang;
   const tr = t(L);
-  const c = defaultContent;
 
-  const [user, setUser] = useState<{ id: number; name: string; email: string; role?: string } | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [newQ, setNewQ] = useState("");
-  const [msg, setMsg] = useState("");
+  const [user, setUser] = useState<any>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [newQuestion, setNewQuestion] = useState("");
   const [sending, setSending] = useState(false);
+  const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    fetch("/api/auth/me")
+    fetch("/api/auth/me", { credentials: "include" })
       .then((r) => r.json())
       .then((j) => {
-        if (j.user) {
-          setUser(j.user);
-          loadQuestions();
-        } else {
+        if (!j.user) {
           router.push(`/${lang}/login`);
+          return;
         }
+        setUser(j.user);
+        return fetch("/api/questions/my", { credentials: "include" });
       })
-      .catch(() => router.push(`/${lang}/login`));
+      .then((r) => r?.json())
+      .then((j) => {
+        if (j) setQuestions(j.questions || []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        router.push(`/${lang}/login`);
+      });
   }, [lang, router]);
 
-  const loadQuestions = () => {
-    fetch("/api/questions")
-      .then((r) => r.json())
-      .then((j) => setQuestions(j.questions || []))
-      .finally(() => setLoading(false));
-  };
-
   const sendQuestion = async () => {
-    if (!newQ.trim()) return;
+    if (!newQuestion.trim()) return;
     setSending(true);
     setMsg("");
     try {
-      const r = await fetch("/api/questions", {
+      const r = await fetch("/api/questions/ask", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: newQ }),
+        body: JSON.stringify({ question: newQuestion }),
       });
       const j = await r.json();
       if (j.ok) {
-        setNewQ("");
-        setMsg("✅ تم إرسال سؤالك للشيخ. ستظهر الإجابة هنا.");
-        loadQuestions();
+        setMsg("✅ تم إرسال سؤالك بنجاح");
+        setNewQuestion("");
+        setQuestions([{ id: j.id, question: newQuestion, status: "pending", created_at: new Date().toISOString() }, ...questions]);
       } else {
-        setMsg("❌ " + (j.error || "خطأ"));
+        setMsg("❌ " + (j.error || "فشل الإرسال"));
       }
     } catch {
       setMsg("❌ خطأ في الاتصال");
@@ -77,113 +71,140 @@ export default function AccountPage() {
   };
 
   const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push(`/${lang}`);
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+    router.push(`/${lang}/login`);
   };
 
   if (loading) {
     return (
       <>
         <Header lang={L} />
-        <main className="py-24 text-center text-gray-500">⏳ جاري التحميل…</main>
+        <main className="py-24 text-center text-gray-500">⏳ جاري التحميل...</main>
         <Footer lang={L} />
       </>
     );
   }
 
-  if (!user) return null;
-
-  const isAdmin = user.role === "admin";
-
   return (
     <>
       <Header lang={L} />
-      <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
-        <div className="max-w-3xl mx-auto px-4">
-          {/* رأس الحساب */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md mb-6">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <h1 className="font-serif text-2xl text-primary dark:text-gold">👤 {user.name}</h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
-                {isAdmin && (
-                  <span className="inline-block mt-1 bg-gold text-gray-900 text-xs font-bold px-2 py-0.5 rounded-full">
-                    ⭐ آدمن
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {isAdmin && (
-                  <Link
-                    href="/admin"
-                    className="bg-primary text-gold px-4 py-2 rounded-lg font-bold text-sm hover:bg-primary-light transition"
-                  >
-                    ⚙️ لوحة التحكم
-                  </Link>
-                )}
+      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
+        <PageHero
+          icon="👤"
+          title={`مرحباً، ${user?.name || "زائر"}`}
+          subtitle="حسابك الشخصي وأسئلتك الخاصة"
+          verse="وَقُل رَّبِّ زِدْنِي عِلْمًا"
+          verseSource="سورة طه - الآية 114"
+          gradient="from-violet-600 via-violet-700 to-violet-800"
+        />
+
+        <section className="py-10">
+          <div className="max-w-5xl mx-auto px-4">
+            <BackButton href={`/${lang}`} label={tr.back} />
+
+            {/* معلومات الحساب */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg mb-8">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-full grid place-items-center text-gold text-2xl font-bold">
+                    {user?.name?.charAt(0) || "👤"}
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-xl text-primary dark:text-gold">{user?.name}</h2>
+                    <p className="text-sm text-gray-500">{user?.email}</p>
+                  </div>
+                </div>
                 <button
                   onClick={logout}
-                  className="border-2 border-red-200 text-red-500 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                  className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 px-5 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition"
                 >
-                  خروج
+                  🚪 تسجيل خروج
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* إرسال سؤال */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md mb-6 border-r-4 border-gold">
-            <h2 className="font-bold text-primary dark:text-gold mb-3">❓ اسأل الشيخ خصوصيًا</h2>
-            <textarea
-              value={newQ}
-              onChange={(e) => setNewQ(e.target.value)}
-              rows={3}
-              placeholder="اكتب سؤالك هنا… (يظهر لك أنت فقط)"
-              className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg px-4 py-2 focus:border-gold focus:outline-none mb-3"
-            />
-            {msg && <p className="text-sm mb-2 text-gray-700 dark:text-gray-300">{msg}</p>}
-            <button
-              onClick={sendQuestion}
-              disabled={sending || !newQ.trim()}
-              className="bg-gold text-gray-900 px-6 py-2 rounded-lg font-bold hover:bg-gold-light transition disabled:opacity-50"
-            >
-              {sending ? "⏳ جاري الإرسال…" : "إرسال السؤال"}
-            </button>
-          </div>
-
-          {/* أسئلتي */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-            <h2 className="font-bold text-primary dark:text-gold mb-4">📋 أسئلتي وإجاباتها</h2>
-            {questions.length === 0 ? (
-              <p className="text-center text-gray-500 dark:text-gray-400 py-6">
-                لسه ما سألتش أي سؤال. اسأل الشيخ من فوق 👆
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {questions.map((q) => (
-                  <div key={q.id} className="border-2 border-gray-100 dark:border-gray-700 rounded-xl p-4">
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="text-gold font-black">❓</span>
-                      <p className="font-bold text-primary dark:text-white">{q.question}</p>
-                    </div>
-                    {q.answer ? (
-                      <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 mt-2">
-                        <p className="text-sm text-green-800 dark:text-green-200 whitespace-pre-line">{q.answer}</p>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                        ⏳ في انتظار إجابة الشيخ…
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-400 mt-2">
-                      📅 {new Date(q.created_at).toLocaleDateString("ar-EG")}
-                    </p>
-                  </div>
-                ))}
+            {/* إحصائيات سريعة */}
+            <div className="grid sm:grid-cols-3 gap-4 mb-8">
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 text-center shadow-md">
+                <p className="text-4xl font-bold text-gold mb-1">{questions.length}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">إجمالي الأسئلة</p>
               </div>
-            )}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 text-center shadow-md">
+                <p className="text-4xl font-bold text-amber-600 mb-1">
+                  {questions.filter(q => q.status === "pending").length}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">في الانتظار</p>
+              </div>
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 text-center shadow-md">
+                <p className="text-4xl font-bold text-green-600 mb-1">
+                  {questions.filter(q => q.status === "answered").length}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">تمت الإجابة</p>
+              </div>
+            </div>
+
+            {/* طرح سؤال جديد */}
+            <IslamicSection title="اطرح سؤالك الخاص" icon="❓" subtitle="الشيخ سيرد عليك شخصياً">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+                <textarea
+                  rows={4}
+                  value={newQuestion}
+                  onChange={(e) => setNewQuestion(e.target.value)}
+                  placeholder="اكتب سؤالك هنا بوضوح وتفصيل..."
+                  className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold focus:outline-none mb-3"
+                />
+                {msg && (
+                  <p className={`text-sm font-bold mb-3 ${msg.startsWith("✅") ? "text-green-600" : "text-red-600"}`}>
+                    {msg}
+                  </p>
+                )}
+                <button
+                  onClick={sendQuestion}
+                  disabled={sending || !newQuestion.trim()}
+                  className="w-full bg-gold text-gray-900 py-3 rounded-lg font-bold hover:bg-gold-light transition disabled:opacity-50"
+                >
+                  {sending ? "⏳ جاري الإرسال..." : "📨 إرسال السؤال"}
+                </button>
+              </div>
+            </IslamicSection>
+
+            {/* أسئلتك السابقة */}
+            <IslamicSection title="أسئلتك السابقة" icon="📜">
+              {questions.length === 0 ? (
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-10 text-center shadow-md">
+                  <span className="text-6xl mb-4 block">📭</span>
+                  <p className="text-gray-500">لم تطرح أي أسئلة بعد</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {questions.map((q) => (
+                    <div key={q.id} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
+                      <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
+                        <span className={`text-xs px-3 py-1 rounded-full font-bold ${
+                          q.status === "answered"
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+                            : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
+                        }`}>
+                          {q.status === "answered" ? "✅ تمت الإجابة" : "⏳ في الانتظار"}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(q.created_at).toLocaleDateString("ar-EG")}
+                        </span>
+                      </div>
+                      <p className="font-bold text-primary dark:text-gold mb-2">❓ {q.question}</p>
+                      {q.answer && (
+                        <div className="bg-green-50 dark:bg-green-900/20 border-r-4 border-green-500 rounded-lg p-4 mt-3">
+                          <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-1">💡 إجابة الشيخ:</p>
+                          <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{q.answer}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </IslamicSection>
           </div>
-        </div>
+        </section>
       </main>
       <Footer lang={L} />
     </>
