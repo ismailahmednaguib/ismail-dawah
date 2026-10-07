@@ -5,29 +5,22 @@ import { languages, defaultLang } from '@/lib/i18n';
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   
-  // المسارات اللي مش محتاجة redirect
-  const skipRedirect = [
-    '/api',
-    '/admin',
-    '/setup-admin',
-    '/_next',
-    '/favicon',
-    '/manifest',
-    '/sw.js',
-    '/.well-known',
-    '/icon',
-    '/apple',
-    '/sitemap.xml',
-    '/robots.txt',
-  ];
-  
-  // لو المسار في قائمة الاستثناءات، كمّل
-  if (skipRedirect.some(path => pathname.startsWith(path))) {
-    return NextResponse.next();
-  }
-  
-  // لو المسار فيه امتداد ملف (image, css, js)، كمّل
-  if (pathname.includes('.')) {
+  // المسارات اللي مش محتاجة redirect إطلاقاً
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/setup-admin') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/manifest') ||
+    pathname.startsWith('/sw.js') ||
+    pathname.startsWith('/.well-known') ||
+    pathname.startsWith('/icon') ||
+    pathname.startsWith('/apple') ||
+    pathname === '/sitemap.xml' ||
+    pathname === '/robots.txt' ||
+    pathname.includes('.')
+  ) {
     return NextResponse.next();
   }
   
@@ -42,5 +35,7 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: '/((?!api|_next|favicon|manifest|sw|\\.well-known|icon|apple|sitemap|robots|.*\\..*).*)',
+  matcher: [
+    '/((?!api|_next|favicon|manifest|sw\\.js|\\.well-known|.*\\..*|admin|setup-admin).*)',
+  ],
 };

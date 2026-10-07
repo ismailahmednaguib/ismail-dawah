@@ -28,15 +28,15 @@ export default function SetupAdminPage() {
       });
       const j = await r.json();
       if (j.ok) {
-        setMsg("✅ تم إنشاء حساب الآدمن بنجاح! اذهب إلى /admin لتسجيل الدخول");
+        setMsg("✅ تم إنشاء حساب الآدمن بنجاح! اذهب إلى /admin/login لتسجيل الدخول");
         setEmail("");
         setPassword("");
         setName("");
       } else {
         setMsg("❌ " + (j.error || "خطأ في الإنشاء"));
       }
-    } catch {
-      setMsg("❌ خطأ في الاتصال");
+    } catch (e) {
+      setMsg("❌ خطأ في الاتصال: " + String(e));
     }
     setLoading(false);
   };
@@ -46,7 +46,7 @@ export default function SetupAdminPage() {
       <div className="max-w-md w-full bg-white rounded-2xl p-8 shadow-lg border-t-4 border-gold">
         <h1 className="font-serif text-3xl text-primary text-center mb-2">🔐 إنشاء حساب الآدمن</h1>
         <p className="text-center text-gray-500 text-sm mb-6">
-          دي صفحة إنشاء حساب الآدمن لأول مرة. بعد الإنشاء، احذف الصفحة أو احميها.
+          دي صفحة إنشاء حساب الآدمن لأول مرة
         </p>
 
         <div className="space-y-4">
@@ -81,7 +81,7 @@ export default function SetupAdminPage() {
             />
           </div>
 
-          {msg && <p className="text-sm text-center">{msg}</p>}
+          {msg && <p className="text-sm text-center font-bold">{msg}</p>}
 
           <button
             onClick={create}
