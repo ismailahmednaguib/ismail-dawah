@@ -1,50 +1,185 @@
 export interface Settings {
-  ownerName: string; shortName: string; jobTitle: string; kicker: string; motto: string;
-  bio: string[]; cred1: string; cred2: string; interests: string[];
-  wa: string; email: string; address: string; portraitSrc: string; ogImage: string;
+  ownerName: string;
+  shortName: string;
+  jobTitle: string;
+  kicker: string;
+  motto: string;
+  bio: string[];
+  cred1: string;
+  cred2: string;
+  interests: string[];
+  wa: string;
+  email: string;
+  address: string;
+  portraitSrc: string;
+  ogImage: string;
   showPrayerBar: boolean;
-  liveUrl: string; liveTitle: string; meetingDay: string; meetingTime: string; meetingPlace: string; meetingLink: string;
+  liveUrl: string;
+  liveTitle: string;
+  meetingDay: string;
+  meetingTime: string;
+  meetingPlace: string;
+  meetingLink: string;
   appUrl: string;
-  // التحكم في نصوص الصفحة الرئيسية
   homeKicker?: string;
   homeHeroText?: string;
-  // التحكم في ألوان الموقع
   primaryColor?: string;
   goldColor?: string;
   creamColor?: string;
-  // التحكم في الفوتر
   footerText?: string;
   copyrightText?: string;
-  // التحكم في صفحات المحتوى
   doubtsIntro?: string;
   learnIntro?: string;
   prayerGuideIntro?: string;
   embraceIslamIntro?: string;
   aboutIntro?: string;
   contactIntro?: string;
-  // روابط السوشيال ميديا
   facebookUrl?: string;
   youtubeUrl?: string;
   telegramUrl?: string;
   twitterUrl?: string;
   instagramUrl?: string;
+  visibleSections?: string[];
+  sectionConfig?: Record<string, {
+    enabled: boolean;
+    showVerse: boolean;
+    showHadith: boolean;
+    icon: string;
+    gradient: string;
+    customTitle?: string;
+    customDesc?: string;
+  }>;
 }
-export interface Field { id: number; slug: string; name: string; icon: string; desc: string; }
-export interface Stat { num: string; label: string; }
-export interface Lesson { id: number; title: string; category: string; date: string; link: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
-export interface Video { id: number; title: string; url: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
-export interface Article { id: number; title: string; date: string; excerpt: string; body: string; field: string; t?: Record<string, { title?: string; excerpt?: string; body?: string }>; }
-export interface Book { id: number; title: string; field: string; url: string; desc: string; t?: Record<string, { title?: string; desc?: string }>; }
-export interface AudioItem { id: number; title: string; url: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
-export interface Photo { id: number; url: string; caption: string; field: string; }
-export interface ScheduleItem { id: number; day: string; time: string; topic: string; place: string; }
-export interface Fatwa { id: number; q: string; a: string; t?: Record<string, { q?: string; a?: string }>; }
-export interface Project { id: number; title: string; desc: string; goal: string; t?: Record<string, { title?: string; desc?: string }>; }
-export interface NewsItem { id: number; title: string; date: string; body: string; t?: Record<string, { title?: string; body?: string }>; }
-export interface Place { id: number; name: string; area: string; note: string; }
-export interface Dhikr { id: number; category: string; text: string; repeat: number; }
-export interface Doubt { id: number; category: string; q: string; a: string; t?: Record<string, { q?: string; a?: string }>; }
-export interface LearnStep { id: number; order: number; title: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
+
+export interface Field {
+  id: number;
+  slug: string;
+  name: string;
+  icon: string;
+  desc: string;
+}
+
+export interface Stat {
+  num: string;
+  label: string;
+}
+
+export interface Lesson {
+  id: number;
+  title: string;
+  category: string;
+  date: string;
+  link: string;
+  desc: string;
+  field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+
+export interface Video {
+  id: number;
+  title: string;
+  url: string;
+  desc: string;
+  field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+
+export interface Article {
+  id: number;
+  title: string;
+  date: string;
+  excerpt: string;
+  body: string;
+  field: string;
+  t?: Record<string, { title?: string; excerpt?: string; body?: string }>;
+}
+
+export interface Book {
+  id: number;
+  title: string;
+  field: string;
+  url: string;
+  desc: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+
+export interface AudioItem {
+  id: number;
+  title: string;
+  url: string;
+  desc: string;
+  field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+
+export interface Photo {
+  id: number;
+  url: string;
+  caption: string;
+  field: string;
+}
+
+export interface ScheduleItem {
+  id: number;
+  day: string;
+  time: string;
+  topic: string;
+  place: string;
+}
+
+export interface Fatwa {
+  id: number;
+  q: string;
+  a: string;
+  t?: Record<string, { q?: string; a?: string }>;
+}
+
+export interface Project {
+  id: number;
+  title: string;
+  desc: string;
+  goal: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
+
+export interface NewsItem {
+  id: number;
+  title: string;
+  date: string;
+  body: string;
+  t?: Record<string, { title?: string; body?: string }>;
+}
+
+export interface Place {
+  id: number;
+  name: string;
+  area: string;
+  note: string;
+}
+
+export interface Dhikr {
+  id: number;
+  category: string;
+  text: string;
+  repeat: number;
+}
+
+export interface Doubt {
+  id: number;
+  category: string;
+  q: string;
+  a: string;
+  t?: Record<string, { q?: string; a?: string }>;
+}
+
+export interface LearnStep {
+  id: number;
+  order: number;
+  title: string;
+  desc: string;
+  field: string;
+  t?: Record<string, { title?: string; desc?: string }>;
+}
 
 export const settings: Settings = {
   ownerName: "فضيلة الشيخ إسماعيل أحمد نجيب",
@@ -90,6 +225,140 @@ export const settings: Settings = {
   telegramUrl: "",
   twitterUrl: "",
   instagramUrl: "",
+  visibleSections: [
+    "fields", "fatwa", "doubts", "prayer-guide", "embrace-islam",
+    "dawah-guide", "prophets-stories", "quran", "prayer-times",
+    "qibla", "zakat", "atheism-response", "youth-issues", "khutab",
+    "quran-memorization", "ruqyah", "hajj-guide", "women-fatwas"
+  ],
+  sectionConfig: {
+    "fields": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "knowledge",
+      gradient: "from-emerald-600 to-emerald-700",
+    },
+    "fatwa": {
+      enabled: true,
+      showVerse: false,
+      showHadith: true,
+      icon: "fatwa",
+      gradient: "from-blue-600 to-blue-700",
+    },
+    "doubts": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "light",
+      gradient: "from-purple-600 to-purple-700",
+    },
+    "prayer-guide": {
+      enabled: true,
+      showVerse: false,
+      showHadith: true,
+      icon: "prayer",
+      gradient: "from-teal-600 to-teal-700",
+    },
+    "embrace-islam": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "heart",
+      gradient: "from-rose-600 to-rose-700",
+    },
+    "dawah-guide": {
+      enabled: true,
+      showVerse: false,
+      showHadith: true,
+      icon: "mosque",
+      gradient: "from-amber-600 to-amber-700",
+    },
+    "prophets-stories": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "star",
+      gradient: "from-indigo-600 to-indigo-700",
+    },
+    "quran": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "quran",
+      gradient: "from-green-600 to-green-700",
+    },
+    "prayer-times": {
+      enabled: true,
+      showVerse: false,
+      showHadith: true,
+      icon: "mosque",
+      gradient: "from-cyan-600 to-cyan-700",
+    },
+    "qibla": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "kaaba",
+      gradient: "from-orange-600 to-orange-700",
+    },
+    "zakat": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "heart",
+      gradient: "from-pink-600 to-pink-700",
+    },
+    "atheism-response": {
+      enabled: true,
+      showVerse: false,
+      showHadith: false,
+      icon: "light",
+      gradient: "from-red-600 to-red-700",
+    },
+    "youth-issues": {
+      enabled: true,
+      showVerse: false,
+      showHadith: false,
+      icon: "heart",
+      gradient: "from-violet-600 to-violet-700",
+    },
+    "khutab": {
+      enabled: true,
+      showVerse: false,
+      showHadith: true,
+      icon: "mosque",
+      gradient: "from-yellow-600 to-yellow-700",
+    },
+    "quran-memorization": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "quran",
+      gradient: "from-lime-600 to-lime-700",
+    },
+    "ruqyah": {
+      enabled: true,
+      showVerse: true,
+      showHadith: false,
+      icon: "heart",
+      gradient: "from-fuchsia-600 to-fuchsia-700",
+    },
+    "hajj-guide": {
+      enabled: true,
+      showVerse: false,
+      showHadith: true,
+      icon: "kaaba",
+      gradient: "from-stone-600 to-stone-700",
+    },
+    "women-fatwas": {
+      enabled: true,
+      showVerse: false,
+      showHadith: false,
+      icon: "heart",
+      gradient: "from-pink-500 to-pink-600",
+    },
+  },
 };
 
 export const fields: Field[] = [

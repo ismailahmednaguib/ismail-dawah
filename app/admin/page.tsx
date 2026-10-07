@@ -9,12 +9,34 @@ import type { Settings, Photo } from "@/lib/data";
 import { languages, type Lang } from "@/lib/i18n";
 import { defaultFieldTranslations } from "@/lib/translations";
 
-type Tab = "settings" | "general" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions" | "stats" | "notifications";
+const sectionsData: Record<string, { slug: string; title: string; description: string }> = {
+  "fields": { slug: "fields", title: "العلوم الشرعية", description: "سبعة عشر علماً شرعياً" },
+  "fatwa": { slug: "fatwa", title: "الفتاوى الشرعية", description: "إجابات فقهية" },
+  "doubts": { slug: "doubts", title: "الرد على الشبهات", description: "ردود علمية" },
+  "prayer-guide": { slug: "prayer-guide", title: "تعلم الصلاة", description: "دليل عملي" },
+  "embrace-islam": { slug: "embrace-islam", title: "اعتنق الإسلام", description: "رحلتك نحو الهداية" },
+  "dawah-guide": { slug: "dawah-guide", title: "دليل الدعاة", description: "كيف تدعو إلى الله" },
+  "prophets-stories": { slug: "prophets-stories", title: "قصص الأنبياء", description: "دروس وعبر" },
+  "quran": { slug: "quran", title: "المصحف الكريم", description: "اقرأ القرآن كاملاً" },
+  "prayer-times": { slug: "prayer-times", title: "مواقيت الصلاة", description: "لكل دول العالم" },
+  "qibla": { slug: "qibla", title: "تحديد القبلة", description: "من أي مكان" },
+  "zakat": { slug: "zakat", title: "حاسبة الزكاة", description: "احسب زكاتك" },
+  "atheism-response": { slug: "atheism-response", title: "الرد على الإلحاد", description: "شبهات وردود" },
+  "youth-issues": { slug: "youth-issues", title: "قضايا الشباب", description: "مشاكل وحلول" },
+  "khutab": { slug: "khutab", title: "مكتبة الخطب", description: "خطب جمعة" },
+  "quran-memorization": { slug: "quran-memorization", title: "كيف تحفظ القرآن", description: "منهج عملي" },
+  "ruqyah": { slug: "ruqyah", title: "الرقية الشرعية", description: "آيات وأدعية" },
+  "hajj-guide": { slug: "hajj-guide", title: "دليل الحج والعمرة", description: "خطوة بخطوة" },
+  "women-fatwas": { slug: "women-fatwas", title: "فتاوى المرأة", description: "قضايا المرأة" },
+};
+
+type Tab = "settings" | "general" | "sections" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions" | "stats" | "notifications";
 type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
   ["settings", "⚙️ بيانات الشيخ"],
   ["general", "🎨 الإعدادات العامة"],
+  ["sections", "🎯 الأقسام"],
   ["appearance", "🎛️ الظهور"],
   ["live", "📡 البث والمجلس"],
   ["fields", "🧭 العلوم"],
@@ -51,6 +73,7 @@ export default function AdminPage() {
   const [notifTitle, setNotifTitle] = useState("");
   const [notifBody, setNotifBody] = useState("");
   const [notifUrl, setNotifUrl] = useState("/ar");
+  const [sectionSearch, setSectionSearch] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/me", { credentials: "include" })
@@ -264,63 +287,202 @@ export default function AdminPage() {
 
             {tab === "general" && (
               <>
-                <h2 className="font-serif text-2xl text-primary border-b-2 border-gold pb-2">🎨 الإعدادات العامة — تحكم في كل نصوص الموقع</h2>
-                
+                <h2 className="font-serif text-2xl text-primary border-b-2 border-gold pb-2">🎨 الإعدادات العامة</h2>
                 <div className="bg-blue-50 border-r-4 border-blue-500 p-4 rounded">
                   <h3 className="font-bold text-blue-900 mb-2">🏠 الصفحة الرئيسية</h3>
                   <div><span className={label}>نص البسملة فوق</span><input className={input} value={c.settings.homeKicker || ""} onChange={(e) => setS("homeKicker", e.target.value)} /></div>
                   <div className="mt-2"><span className={label}>نص الشعار الرئيسي</span><input className={input} value={c.settings.homeHeroText || ""} onChange={(e) => setS("homeHeroText", e.target.value)} /></div>
                 </div>
-
                 <div className="bg-purple-50 border-r-4 border-purple-500 p-4 rounded">
-                  <h3 className="font-bold text-purple-900 mb-2">🎨 ألوان الموقع (Hex)</h3>
+                  <h3 className="font-bold text-purple-900 mb-2">🎨 ألوان الموقع</h3>
                   <div className="grid sm:grid-cols-3 gap-3">
                     <div>
                       <span className={label}>اللون الأساسي</span>
                       <input type="color" value={c.settings.primaryColor || "#0b2e22"} onChange={(e) => setS("primaryColor", e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-                      <input className={input + " mt-1"} value={c.settings.primaryColor || ""} onChange={(e) => setS("primaryColor", e.target.value)} placeholder="#0b2e22" />
                     </div>
                     <div>
                       <span className={label}>اللون الذهبي</span>
                       <input type="color" value={c.settings.goldColor || "#c9a227"} onChange={(e) => setS("goldColor", e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-                      <input className={input + " mt-1"} value={c.settings.goldColor || ""} onChange={(e) => setS("goldColor", e.target.value)} placeholder="#c9a227" />
                     </div>
                     <div>
                       <span className={label}>لون الخلفية</span>
                       <input type="color" value={c.settings.creamColor || "#f5f1e8"} onChange={(e) => setS("creamColor", e.target.value)} className="w-full h-10 rounded cursor-pointer" />
-                      <input className={input + " mt-1"} value={c.settings.creamColor || ""} onChange={(e) => setS("creamColor", e.target.value)} placeholder="#f5f1e8" />
                     </div>
                   </div>
                 </div>
-
-                <div className="bg-green-50 border-r-4 border-green-500 p-4 rounded">
-                  <h3 className="font-bold text-green-900 mb-2">📄 نصوص صفحات المحتوى</h3>
-                  <div><span className={label}>مقدمة صفحة الشبهات</span><textarea rows={2} className={input} value={c.settings.doubtsIntro || ""} onChange={(e) => setS("doubtsIntro", e.target.value)} /></div>
-                  <div className="mt-2"><span className={label}>مقدمة صفحة مسار التعلم</span><textarea rows={2} className={input} value={c.settings.learnIntro || ""} onChange={(e) => setS("learnIntro", e.target.value)} /></div>
-                  <div className="mt-2"><span className={label}>مقدمة صفحة تعلم الصلاة</span><textarea rows={2} className={input} value={c.settings.prayerGuideIntro || ""} onChange={(e) => setS("prayerGuideIntro", e.target.value)} /></div>
-                  <div className="mt-2"><span className={label}>مقدمة صفحة اعتنق الإسلام</span><textarea rows={2} className={input} value={c.settings.embraceIslamIntro || ""} onChange={(e) => setS("embraceIslamIntro", e.target.value)} /></div>
-                  <div className="mt-2"><span className={label}>مقدمة صفحة عن الشيخ</span><textarea rows={2} className={input} value={c.settings.aboutIntro || ""} onChange={(e) => setS("aboutIntro", e.target.value)} /></div>
-                  <div className="mt-2"><span className={label}>مقدمة صفحة تواصل</span><textarea rows={2} className={input} value={c.settings.contactIntro || ""} onChange={(e) => setS("contactIntro", e.target.value)} /></div>
-                </div>
-
                 <div className="bg-yellow-50 border-r-4 border-yellow-500 p-4 rounded">
-                  <h3 className="font-bold text-yellow-900 mb-2">🔗 روابط السوشيال ميديا</h3>
+                  <h3 className="font-bold text-yellow-900 mb-2">🔗 السوشيال ميديا</h3>
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <div><span className={label}>📘 فيسبوك</span><input className={input} value={c.settings.facebookUrl || ""} onChange={(e) => setS("facebookUrl", e.target.value)} placeholder="https://facebook.com/..." /></div>
-                    <div><span className={label}>📺 يوتيوب</span><input className={input} value={c.settings.youtubeUrl || ""} onChange={(e) => setS("youtubeUrl", e.target.value)} placeholder="https://youtube.com/..." /></div>
-                    <div><span className={label}>✈️ تيليجرام</span><input className={input} value={c.settings.telegramUrl || ""} onChange={(e) => setS("telegramUrl", e.target.value)} placeholder="https://t.me/..." /></div>
-                    <div><span className={label}>🐦 تويتر/X</span><input className={input} value={c.settings.twitterUrl || ""} onChange={(e) => setS("twitterUrl", e.target.value)} placeholder="https://twitter.com/..." /></div>
-                    <div><span className={label}>📷 إنستجرام</span><input className={input} value={c.settings.instagramUrl || ""} onChange={(e) => setS("instagramUrl", e.target.value)} placeholder="https://instagram.com/..." /></div>
+                    <div><span className={label}>📘 فيسبوك</span><input className={input} value={c.settings.facebookUrl || ""} onChange={(e) => setS("facebookUrl", e.target.value)} /></div>
+                    <div><span className={label}>📺 يوتيوب</span><input className={input} value={c.settings.youtubeUrl || ""} onChange={(e) => setS("youtubeUrl", e.target.value)} /></div>
+                    <div><span className={label}>✈️ تيليجرام</span><input className={input} value={c.settings.telegramUrl || ""} onChange={(e) => setS("telegramUrl", e.target.value)} /></div>
+                    <div><span className={label}>🐦 تويتر/X</span><input className={input} value={c.settings.twitterUrl || ""} onChange={(e) => setS("twitterUrl", e.target.value)} /></div>
+                    <div><span className={label}>📷 إنستجرام</span><input className={input} value={c.settings.instagramUrl || ""} onChange={(e) => setS("instagramUrl", e.target.value)} /></div>
                   </div>
                 </div>
+                <button onClick={save} className={addBtn + " w-full"}>💾 حفظ كل الإعدادات العامة</button>
+              </>
+            )}
 
-                <div className="bg-pink-50 border-r-4 border-pink-500 p-4 rounded">
-                  <h3 className="font-bold text-pink-900 mb-2">🦶 الفوتر</h3>
-                  <div><span className={label}>نص الفوتر</span><input className={input} value={c.settings.footerText || ""} onChange={(e) => setS("footerText", e.target.value)} /></div>
-                  <div className="mt-2"><span className={label}>نص حقوق الملكية</span><input className={input} value={c.settings.copyrightText || ""} onChange={(e) => setS("copyrightText", e.target.value)} /></div>
+            {tab === "sections" && (
+              <>
+                <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl p-6 mb-6">
+                  <h2 className="font-serif text-2xl mb-2">🎯 التحكم في الأقسام الظاهرة</h2>
+                  <p className="text-white/80 text-sm">تحكم في الأقسام اللي تظهر في الصفحة الرئيسية + تخصيص الأيقونات والآيات</p>
                 </div>
 
-                <button onClick={save} className={addBtn + " w-full"}>💾 حفظ كل الإعدادات العامة</button>
+                <div className="mb-4">
+                  <input
+                    className={input}
+                    placeholder="🔍 ابحث عن قسم..."
+                    value={sectionSearch}
+                    onChange={(e) => setSectionSearch(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  {Object.keys(sectionsData)
+                    .filter(slug => 
+                      sectionsData[slug].title.includes(sectionSearch) ||
+                      slug.includes(sectionSearch.toLowerCase())
+                    )
+                    .map(slug => {
+                      const data = sectionsData[slug];
+                      const config = c.settings.sectionConfig?.[slug] || {
+                        enabled: true,
+                        showVerse: true,
+                        showHadith: false,
+                        icon: "star",
+                        gradient: "from-primary to-primary/80",
+                      };
+
+                      const updateConfig = (key: string, value: any) => {
+                        const current = c.settings.sectionConfig || {};
+                        setS("sectionConfig", {
+                          ...current,
+                          [slug]: { ...config, [key]: value },
+                        });
+                      };
+
+                      const toggleEnabled = () => {
+                        const current = c.settings.visibleSections || [];
+                        if (config.enabled) {
+                          setS("visibleSections", current.filter(s => s !== slug));
+                        } else {
+                          setS("visibleSections", [...current, slug]);
+                        }
+                        updateConfig("enabled", !config.enabled);
+                      };
+
+                      return (
+                        <div key={slug} className={`border-2 rounded-xl p-4 transition ${
+                          config.enabled ? "border-green-300 bg-green-50" : "border-gray-200 bg-gray-50"
+                        }`}>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <span className="text-3xl">
+                                {config.icon === "mosque" ? "🕌" : 
+                                 config.icon === "quran" ? "📖" :
+                                 config.icon === "prayer" ? "🤲" :
+                                 config.icon === "knowledge" ? "📚" :
+                                 config.icon === "fatwa" ? "❓" :
+                                 config.icon === "heart" ? "❤️" :
+                                 config.icon === "star" ? "⭐" :
+                                 config.icon === "crescent" ? "🌙" :
+                                 config.icon === "kaaba" ? "🕋" :
+                                 config.icon === "light" ? "💡" : "✨"}
+                              </span>
+                              <div>
+                                <h3 className="font-bold text-primary">{data.title}</h3>
+                                <p className="text-xs text-gray-500">{data.description}</p>
+                              </div>
+                            </div>
+                            <label className="flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={config.enabled}
+                                onChange={toggleEnabled}
+                                className="w-5 h-5 accent-gold"
+                              />
+                              <span className="mr-2 text-sm font-bold">{config.enabled ? "ظاهر" : "مخفي"}</span>
+                            </label>
+                          </div>
+
+                          {config.enabled && (
+                            <div className="grid sm:grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-200">
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={config.showVerse}
+                                  onChange={(e) => updateConfig("showVerse", e.target.checked)}
+                                  className="w-4 h-4 accent-gold"
+                                />
+                                <span className="text-sm">إظهار الآية</span>
+                              </label>
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={config.showHadith}
+                                  onChange={(e) => updateConfig("showHadith", e.target.checked)}
+                                  className="w-4 h-4 accent-gold"
+                                />
+                                <span className="text-sm">إظهار الحديث</span>
+                              </label>
+                              
+                              <div>
+                                <span className={label}>الأيقونة</span>
+                                <select
+                                  className={input}
+                                  value={config.icon}
+                                  onChange={(e) => updateConfig("icon", e.target.value)}
+                                >
+                                  <option value="mosque">🕌 مسجد</option>
+                                  <option value="quran">📖 قرآن</option>
+                                  <option value="prayer">🤲 صلاة</option>
+                                  <option value="knowledge">📚 علم</option>
+                                  <option value="fatwa">❓ فتوى</option>
+                                  <option value="heart">❤️ قلب</option>
+                                  <option value="star">⭐ نجمة</option>
+                                  <option value="crescent">🌙 هلال</option>
+                                  <option value="kaaba">🕋 كعبة</option>
+                                  <option value="light">💡 نور</option>
+                                </select>
+                              </div>
+
+                              <div>
+                                <span className={label}>التدرج اللوني</span>
+                                <select
+                                  className={input}
+                                  value={config.gradient}
+                                  onChange={(e) => updateConfig("gradient", e.target.value)}
+                                >
+                                  <option value="from-emerald-600 to-emerald-700">أخضر زمردي</option>
+                                  <option value="from-blue-600 to-blue-700">أزرق</option>
+                                  <option value="from-purple-600 to-purple-700">بنفسجي</option>
+                                  <option value="from-teal-600 to-teal-700">أزرق مخضر</option>
+                                  <option value="from-rose-600 to-rose-700">وردي</option>
+                                  <option value="from-amber-600 to-amber-700">كهرماني</option>
+                                  <option value="from-indigo-600 to-indigo-700">نيلي</option>
+                                  <option value="from-green-600 to-green-700">أخضر</option>
+                                  <option value="from-cyan-600 to-cyan-700">سماوي</option>
+                                  <option value="from-orange-600 to-orange-700">برتقالي</option>
+                                  <option value="from-pink-600 to-pink-700">زهري</option>
+                                  <option value="from-red-600 to-red-700">أحمر</option>
+                                  <option value="from-violet-600 to-violet-700">بنفسجي فاتح</option>
+                                  <option value="from-yellow-600 to-yellow-700">أصفر</option>
+                                  <option value="from-lime-600 to-lime-700">ليموني</option>
+                                  <option value="from-fuchsia-600 to-fuchsia-700">فوشيا</option>
+                                  <option value="from-stone-600 to-stone-700">حجري</option>
+                                </select>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                </div>
+
+                <button onClick={save} className={addBtn + " w-full mt-6"}>💾 حفظ التغييرات</button>
               </>
             )}
 
@@ -424,10 +586,6 @@ export default function AdminPage() {
                       {fieldSelect("books", i, b.field)}
                       <input className={input} value={b.url} onChange={(e) => upd("books", i, { url: e.target.value })} />
                     </div>
-                    <div>
-                      <span className={label}>أو ارفع PDF من جهازك</span>
-                      <input type="file" accept="application/pdf" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "doc"); if (u) { upd("books", i, { url: u }); setMsg("✅ اترفع"); } else setMsg("❌ فشل"); }} className="text-sm" />
-                    </div>
                     <textarea rows={2} className={input} value={b.desc} onChange={(e) => upd("books", i, { desc: e.target.value })} />
                   </div>
                 ))}
@@ -443,11 +601,6 @@ export default function AdminPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <input className={input} value={a.title} onChange={(e) => upd("audio", i, { title: e.target.value })} />
                       {fieldSelect("audio", i, a.field)}
-                    </div>
-                    <div>
-                      <span className={label}>رفع MP3</span>
-                      <input type="file" accept="audio/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "audio"); if (u) { upd("audio", i, { url: u }); setMsg("✅ اترفع"); } else setMsg("❌ فشل"); }} className="text-sm" />
-                      {a.url && <audio src={a.url} controls className="w-full mt-2" />}
                     </div>
                     <textarea rows={2} className={input} value={a.desc} onChange={(e) => upd("audio", i, { desc: e.target.value })} />
                   </div>
@@ -654,109 +807,106 @@ export default function AdminPage() {
             )}
 
             {tab === "stats" && (
-  <>
-    <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-2xl p-6 mb-6">
-      <h2 className="font-serif text-2xl text-gold mb-2">📊 إحصائيات متقدمة</h2>
-      <p className="text-white/80 text-sm">تحليل شامل لأداء الموقع</p>
-    </div>
+              <>
+                <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-2xl p-6 mb-6">
+                  <h2 className="font-serif text-2xl text-gold mb-2">📊 إحصائيات متقدمة</h2>
+                  <p className="text-white/80 text-sm">تحليل شامل لأداء الموقع</p>
+                </div>
 
-    {/* إحصائيات سريعة */}
-    <div className="grid sm:grid-cols-4 gap-4 mb-6">
-      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-blue-500">
-        <p className="text-sm text-gray-500 mb-1">👁️ زيارات اليوم</p>
-        <p className="text-3xl font-bold text-blue-600">{advancedStats?.todayViews || 0}</p>
-      </div>
-      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-green-500">
-        <p className="text-sm text-gray-500 mb-1">📧 مشتركين النشرة</p>
-        <p className="text-3xl font-bold text-green-600">{advancedStats?.subscribers || 0}</p>
-      </div>
-      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-amber-500">
-        <p className="text-sm text-gray-500 mb-1">❓ أسئلة في الانتظار</p>
-        <p className="text-3xl font-bold text-amber-600">{stats?.questions?.pending || 0}</p>
-      </div>
-      <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-purple-500">
-        <p className="text-sm text-gray-500 mb-1">👥 إجمالي المستخدمين</p>
-        <p className="text-3xl font-bold text-purple-600">{stats?.users?.total || 0}</p>
-      </div>
-    </div>
+                <div className="grid sm:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-blue-500">
+                    <p className="text-sm text-gray-500 mb-1">👁️ زيارات اليوم</p>
+                    <p className="text-3xl font-bold text-blue-600">{advancedStats?.todayViews || 0}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-green-500">
+                    <p className="text-sm text-gray-500 mb-1">📧 مشتركين النشرة</p>
+                    <p className="text-3xl font-bold text-green-600">{advancedStats?.subscribers || 0}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-amber-500">
+                    <p className="text-sm text-gray-500 mb-1">❓ أسئلة في الانتظار</p>
+                    <p className="text-3xl font-bold text-amber-600">{stats?.questions?.pending || 0}</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-md border-t-4 border-purple-500">
+                    <p className="text-sm text-gray-500 mb-1">👥 إجمالي المستخدمين</p>
+                    <p className="text-3xl font-bold text-purple-600">{stats?.users?.total || 0}</p>
+                  </div>
+                </div>
 
-    {/* أكثر الصفحات زيارة */}
-    <div className="bg-white rounded-xl p-6 shadow-md mb-6">
-      <h3 className="font-bold text-primary text-lg mb-4">🔥 أكثر الصفحات زيارة (آخر 7 أيام)</h3>
-      {advancedStats?.topPages && advancedStats.topPages.length > 0 ? (
-        <div className="space-y-2">
-          {advancedStats.topPages.map((p: any, i: number) => (
-            <div key={i} className="flex items-center justify-between p-3 bg-cream-dark rounded-lg">
-              <div className="flex items-center gap-3">
-                <span className="w-8 h-8 bg-gold text-gray-900 rounded-full grid place-items-center font-bold text-sm">
-                  {i + 1}
-                </span>
-                <span className="font-mono text-sm">{p.page}</span>
-              </div>
-              <span className="bg-primary text-gold px-3 py-1 rounded-full text-sm font-bold">
-                {p.count} زيارة
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 py-4">لا توجد بيانات بعد</p>
-      )}
-    </div>
+                <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+                  <h3 className="font-bold text-primary text-lg mb-4">🔥 أكثر الصفحات زيارة (آخر 7 أيام)</h3>
+                  {advancedStats?.topPages && advancedStats.topPages.length > 0 ? (
+                    <div className="space-y-2">
+                      {advancedStats.topPages.map((p: any, i: number) => (
+                        <div key={i} className="flex items-center justify-between p-3 bg-cream-dark rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <span className="w-8 h-8 bg-gold text-gray-900 rounded-full grid place-items-center font-bold text-sm">
+                              {i + 1}
+                            </span>
+                            <span className="font-mono text-sm">{p.page}</span>
+                          </div>
+                          <span className="bg-primary text-gold px-3 py-1 rounded-full text-sm font-bold">
+                            {p.count} زيارة
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 py-4">لا توجد بيانات بعد</p>
+                  )}
+                </div>
 
-    {/* أكثر اللغات */}
-    <div className="bg-white rounded-xl p-6 shadow-md mb-6">
-      <h3 className="font-bold text-primary text-lg mb-4">🌍 أكثر اللغات استخداماً (آخر 30 يوم)</h3>
-      {advancedStats?.topLanguages && advancedStats.topLanguages.length > 0 ? (
-        <div className="grid sm:grid-cols-2 gap-3">
-          {advancedStats.topLanguages.map((l: any, i: number) => (
-            <div key={i} className="flex items-center justify-between p-3 bg-cream-dark rounded-lg">
-              <span className="font-bold">{l.lang?.toUpperCase()}</span>
-              <span className="bg-gold/20 text-gold px-3 py-1 rounded-full text-sm font-bold">
-                {l.count} زيارة
-              </span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 py-4">لا توجد بيانات بعد</p>
-      )}
-    </div>
+                <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+                  <h3 className="font-bold text-primary text-lg mb-4">🌍 أكثر اللغات استخداماً (آخر 30 يوم)</h3>
+                  {advancedStats?.topLanguages && advancedStats.topLanguages.length > 0 ? (
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {advancedStats.topLanguages.map((l: any, i: number) => (
+                        <div key={i} className="flex items-center justify-between p-3 bg-cream-dark rounded-lg">
+                          <span className="font-bold">{l.lang?.toUpperCase()}</span>
+                          <span className="bg-gold/20 text-gold px-3 py-1 rounded-full text-sm font-bold">
+                            {l.count} زيارة
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 py-4">لا توجد بيانات بعد</p>
+                  )}
+                </div>
 
-    {/* إحصائيات المحتوى */}
-    {stats && (
-      <div className="bg-white rounded-xl p-6 shadow-md">
-        <h3 className="font-bold text-primary text-lg mb-4">📚 إحصائيات المحتوى</h3>
-        <div className="grid sm:grid-cols-3 gap-3">
-          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-            <span className="text-sm font-bold">🧭 العلوم</span>
-            <span className="text-xl font-bold text-gold">{stats.content?.fields || 0}</span>
-          </div>
-          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-            <span className="text-sm font-bold">📖 الدروس</span>
-            <span className="text-xl font-bold text-gold">{stats.content?.lessons || 0}</span>
-          </div>
-          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-            <span className="text-sm font-bold">🎬 الفيديوهات</span>
-            <span className="text-xl font-bold text-gold">{stats.content?.videos || 0}</span>
-          </div>
-          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-            <span className="text-sm font-bold">✍️ المقالات</span>
-            <span className="text-xl font-bold text-gold">{stats.content?.articles || 0}</span>
-          </div>
-          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-            <span className="text-sm font-bold">📚 الكتب</span>
-            <span className="text-xl font-bold text-gold">{stats.content?.books || 0}</span>
-          </div>
-          <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
-            <span className="text-sm font-bold">❓ الفتاوى</span>
-            <span className="text-xl font-bold text-gold">{stats.content?.fatwas || 0}</span>
-          </div>
-        </div>
-      </div>
-    )}
-  </>
-)}
+                {stats && (
+                  <div className="bg-white rounded-xl p-6 shadow-md">
+                    <h3 className="font-bold text-primary text-lg mb-4">📚 إحصائيات المحتوى</h3>
+                    <div className="grid sm:grid-cols-3 gap-3">
+                      <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-sm font-bold">🧭 العلوم</span>
+                        <span className="text-xl font-bold text-gold">{stats.content?.fields || 0}</span>
+                      </div>
+                      <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-sm font-bold">📖 الدروس</span>
+                        <span className="text-xl font-bold text-gold">{stats.content?.lessons || 0}</span>
+                      </div>
+                      <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-sm font-bold">🎬 الفيديوهات</span>
+                        <span className="text-xl font-bold text-gold">{stats.content?.videos || 0}</span>
+                      </div>
+                      <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-sm font-bold">✍️ المقالات</span>
+                        <span className="text-xl font-bold text-gold">{stats.content?.articles || 0}</span>
+                      </div>
+                      <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-sm font-bold">📚 الكتب</span>
+                        <span className="text-xl font-bold text-gold">{stats.content?.books || 0}</span>
+                      </div>
+                      <div className="bg-cream-dark rounded-lg p-3 flex justify-between items-center">
+                        <span className="text-sm font-bold">❓ الفتاوى</span>
+                        <span className="text-xl font-bold text-gold">{stats.content?.fatwas || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
             {tab === "notifications" && (
               <>
                 <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-2xl p-6 mb-6">
@@ -792,18 +942,6 @@ export default function AdminPage() {
                       onChange={(e) => setNotifUrl(e.target.value)}
                       placeholder="/ar/fields/aqeedah"
                     />
-                  </div>
-
-                  <div className="bg-amber-50 border-r-4 border-amber-500 p-4 rounded">
-                    <p className="text-sm text-amber-800">
-                      💡 <strong>أمثلة للعناوين:</strong>
-                    </p>
-                    <ul className="text-sm text-amber-900 mt-2 space-y-1 list-disc list-inside">
-                      <li>📖 درس جديد: شرح كتاب التوحيد</li>
-                      <li>❓ فتوى مهمة: حكم صلاة الجمعة للمسافر</li>
-                      <li>🎥 فيديو جديد: رد على شبهة</li>
-                      <li>📰 خبر: دورة علمية جديدة</li>
-                    </ul>
                   </div>
 
                   <button
