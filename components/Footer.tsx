@@ -4,14 +4,14 @@ import { t, type Lang } from "@/lib/i18n";
 
 export default function Footer({ settings, lang = "ar" }: { settings?: Settings; lang?: Lang }) {
   const tr = t(lang);
-  const shortName = settings?.shortName || "الشيخ إسماعيل";
+  const shortName = settings?.shortName || "ismail-dawah";
   const motto = settings?.motto || "العلم نور والدعوة أمانة";
   const jobTitle = settings?.jobTitle || "";
   const wa = settings?.wa || "";
   const email = settings?.email || "";
   const address = settings?.address || "";
   const appUrl = settings?.appUrl || "";
-  const ownerName = settings?.ownerName || "الشيخ إسماعيل";
+  const ownerName = settings?.ownerName || "ismail-dawah";
   
   const facebookUrl = settings?.facebookUrl || "";
   const youtubeUrl = settings?.youtubeUrl || "";

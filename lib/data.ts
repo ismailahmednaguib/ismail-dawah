@@ -182,8 +182,8 @@ export interface LearnStep {
 }
 
 export const settings: Settings = {
-  ownerName: "فضيلة الشيخ إسماعيل أحمد نجيب",
-  shortName: "الشيخ إسماعيل",
+  ownerName: "الموقع الرسمي إسماعيل أحمد نجيب",
+  shortName: "ismail-dawah",
   jobTitle: "داعية إسلامي • باحث في مقارنة الأديان",
   kicker: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
   motto: "«أَدْعُو إِلَى اللَّهِ عَلَىٰ بَصِيرَةٍ»",

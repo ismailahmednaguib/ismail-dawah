@@ -29,7 +29,7 @@ export default function Header({ settings, lang }: { settings?: Settings; lang?:
     localStorage.setItem("theme", next ? "dark" : "light");
   };
 
-  const shortName = settings?.shortName || "الشيخ إسماعيل";
+  const shortName = settings?.shortName || "ismail-dawah";
   const jobTitle = settings?.jobTitle ? settings.jobTitle.split("•")[0] : "";
 
   return (
