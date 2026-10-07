@@ -2,6 +2,19 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getContent } from "@/lib/content";
 
+function getAdminFromCookie(cookieHeader: string | null): number | null {
+  if (!cookieHeader) return null;
+  const match = cookieHeader.match(/session=([^;]+)/);
+  if (!match) return null;
+  try {
+    const data = JSON.parse(Buffer.from(match[1], "base64").toString());
+    if (data.role !== "admin" && data.type !== "admin") return null;
+    return data.userId;
+  } catch {
+    return null;
+  }
+}
+
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -11,10 +24,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const key = req.headers.get("x-admin-key");
-  if (key !== process.env.ADMIN_KEY) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  const adminId = getAdminFromCookie(req.headers.get("cookie"));
+  if (!adminId) {
+    return NextResponse.json({ error: "unauthorized - سجل دخول الآدمن أولاً" }, { status: 401 });
   }
+
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_KEY;
   if (!url || !serviceKey) {
@@ -22,14 +36,11 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-
   if (!body.content) {
     return NextResponse.json({ error: "no content provided" }, { status: 400 });
   }
 
   const supabase = createClient(url, serviceKey);
-
-  // تنظيف البيانات من أي قيم undefined
   const cleanContent = JSON.parse(JSON.stringify(body.content));
 
   const { error } = await supabase

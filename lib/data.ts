@@ -5,53 +5,46 @@ export interface Settings {
   showPrayerBar: boolean;
   liveUrl: string; liveTitle: string; meetingDay: string; meetingTime: string; meetingPlace: string; meetingLink: string;
   appUrl: string;
+  // التحكم في نصوص الصفحة الرئيسية
+  homeKicker?: string;
+  homeHeroText?: string;
+  // التحكم في ألوان الموقع
+  primaryColor?: string;
+  goldColor?: string;
+  creamColor?: string;
+  // التحكم في الفوتر
+  footerText?: string;
+  copyrightText?: string;
+  // التحكم في صفحات المحتوى
+  doubtsIntro?: string;
+  learnIntro?: string;
+  prayerGuideIntro?: string;
+  embraceIslamIntro?: string;
+  aboutIntro?: string;
+  contactIntro?: string;
+  // روابط السوشيال ميديا
+  facebookUrl?: string;
+  youtubeUrl?: string;
+  telegramUrl?: string;
+  twitterUrl?: string;
+  instagramUrl?: string;
 }
 export interface Field { id: number; slug: string; name: string; icon: string; desc: string; }
 export interface Stat { num: string; label: string; }
-export interface Lesson {
-  id: number; title: string; category: string; date: string; link: string; desc: string; field: string;
-  t?: Record<string, { title?: string; desc?: string }>;
-}
-export interface Video {
-  id: number; title: string; url: string; desc: string; field: string;
-  t?: Record<string, { title?: string; desc?: string }>;
-}
-export interface Article {
-  id: number; title: string; date: string; excerpt: string; body: string; field: string;
-  t?: Record<string, { title?: string; excerpt?: string; body?: string }>;
-}
-export interface Book {
-  id: number; title: string; field: string; url: string; desc: string;
-  t?: Record<string, { title?: string; desc?: string }>;
-}
-export interface AudioItem {
-  id: number; title: string; url: string; desc: string; field: string;
-  t?: Record<string, { title?: string; desc?: string }>;
-}
+export interface Lesson { id: number; title: string; category: string; date: string; link: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
+export interface Video { id: number; title: string; url: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
+export interface Article { id: number; title: string; date: string; excerpt: string; body: string; field: string; t?: Record<string, { title?: string; excerpt?: string; body?: string }>; }
+export interface Book { id: number; title: string; field: string; url: string; desc: string; t?: Record<string, { title?: string; desc?: string }>; }
+export interface AudioItem { id: number; title: string; url: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
 export interface Photo { id: number; url: string; caption: string; field: string; }
 export interface ScheduleItem { id: number; day: string; time: string; topic: string; place: string; }
-export interface Fatwa {
-  id: number; q: string; a: string;
-  t?: Record<string, { q?: string; a?: string }>;
-}
-export interface Project {
-  id: number; title: string; desc: string; goal: string;
-  t?: Record<string, { title?: string; desc?: string }>;
-}
-export interface NewsItem {
-  id: number; title: string; date: string; body: string;
-  t?: Record<string, { title?: string; body?: string }>;
-}
+export interface Fatwa { id: number; q: string; a: string; t?: Record<string, { q?: string; a?: string }>; }
+export interface Project { id: number; title: string; desc: string; goal: string; t?: Record<string, { title?: string; desc?: string }>; }
+export interface NewsItem { id: number; title: string; date: string; body: string; t?: Record<string, { title?: string; body?: string }>; }
 export interface Place { id: number; name: string; area: string; note: string; }
 export interface Dhikr { id: number; category: string; text: string; repeat: number; }
-export interface Doubt {
-  id: number; category: string; q: string; a: string;
-  t?: Record<string, { q?: string; a?: string }>;
-}
-export interface LearnStep {
-  id: number; order: number; title: string; desc: string; field: string;
-  t?: Record<string, { title?: string; desc?: string }>;
-}
+export interface Doubt { id: number; category: string; q: string; a: string; t?: Record<string, { q?: string; a?: string }>; }
+export interface LearnStep { id: number; order: number; title: string; desc: string; field: string; t?: Record<string, { title?: string; desc?: string }>; }
 
 export const settings: Settings = {
   ownerName: "فضيلة الشيخ إسماعيل أحمد نجيب",
@@ -79,6 +72,24 @@ export const settings: Settings = {
   meetingPlace: "مسجد النور — قاعة المحاضرات",
   meetingLink: "",
   appUrl: "",
+  homeKicker: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+  homeHeroText: "العلم نور والدعوة أمانة",
+  primaryColor: "#0b2e22",
+  goldColor: "#c9a227",
+  creamColor: "#f5f1e8",
+  footerText: "العلم نور والدعوة أمانة",
+  copyrightText: "جميع الحقوق محفوظة",
+  doubtsIntro: "ردود علمية على الشبهات المثارة حول الإسلام",
+  learnIntro: "خطة مرتبة لطالب العلم من البداية",
+  prayerGuideIntro: "دليل مبسط خطوة بخطوة لتعلم الصلاة",
+  embraceIslamIntro: "مرحبًا بك في رحلتك نحو الهداية",
+  aboutIntro: "تعرف على الشيخ وسيرته العلمية",
+  contactIntro: "تواصل معنا عبر الوسائل التالية",
+  facebookUrl: "",
+  youtubeUrl: "",
+  telegramUrl: "",
+  twitterUrl: "",
+  instagramUrl: "",
 };
 
 export const fields: Field[] = [
@@ -153,24 +164,9 @@ export const adhkar: Dhikr[] = [
 ];
 
 export const doubts: Doubt[] = [
-  {
-    id: 1,
-    category: "العقيدة",
-    q: "لماذا خلقنا الله إذا كان يعلم من سيطيعه ومن سيعصيه؟",
-    a: "علم الله السابق لا يُبطل الاختيار، فالله يعلم لكن العبد يختار ويحاسب على اختياره. والابتلاء سنة إلهية ليميز الله الخبيث من الطيب، ولتظهر حكمة الثواب والعقاب.",
-  },
-  {
-    id: 2,
-    category: "القرآن",
-    q: "هل القرآن محرَّف كما يُشاع؟",
-    a: "القرآن محفوظ بحفظ الله: «إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ». وقد نُقل بالتواتر جيلًا بعد جيل، وتحدَّى الله البشر أن يأتوا بمثله فعجزوا.",
-  },
-  {
-    id: 3,
-    category: "المرأة",
-    q: "هل الإسلام يظلم المرأة؟",
-    a: "الإسلام كرَّم المرأة وجعل لها ذمة مالية مستقلة، وحق التعليم والعمل، وأوصى بها أمًا وزوجة وبنتًا. وما يُشاع من ظلم مخالف لتعاليم الإسلام الصحيحة.",
-  },
+  { id: 1, category: "العقيدة", q: "لماذا خلقنا الله إذا كان يعلم من سيطيعه ومن سيعصيه؟", a: "علم الله السابق لا يُبطل الاختيار، فالله يعلم لكن العبد يختار ويحاسب على اختياره." },
+  { id: 2, category: "القرآن", q: "هل القرآن محرَّف كما يُشاع؟", a: "القرآن محفوظ بحفظ الله: «إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ»." },
+  { id: 3, category: "المرأة", q: "هل الإسلام يظلم المرأة؟", a: "الإسلام كرَّم المرأة وجعل لها ذمة مالية مستقلة، وحق التعليم والعمل." },
 ];
 
 export const learnSteps: LearnStep[] = [

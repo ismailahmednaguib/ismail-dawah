@@ -9,11 +9,12 @@ import type { Settings, Photo } from "@/lib/data";
 import { languages, type Lang } from "@/lib/i18n";
 import { defaultFieldTranslations } from "@/lib/translations";
 
-type Tab = "settings" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions";
+type Tab = "settings" | "general" | "appearance" | "live" | "fields" | "lessons" | "videos" | "articles" | "books" | "audio" | "photos" | "schedule" | "fatwas" | "projects" | "news" | "places" | "adhkar" | "translations" | "questions";
 type Coll = "lessons" | "videos" | "articles" | "audio" | "photos" | "schedule" | "fields" | "books" | "fatwas" | "projects" | "news" | "places" | "adhkar";
 
 const TABS: [Tab, string][] = [
-  ["settings", "⚙️ البيانات"],
+  ["settings", "⚙️ بيانات الشيخ"],
+  ["general", "🎨 الإعدادات العامة"],
   ["appearance", "🎛️ الظهور"],
   ["live", "📡 البث والمجلس"],
   ["fields", "🧭 العلوم"],
@@ -80,7 +81,7 @@ export default function AdminPage() {
       body: JSON.stringify({ content: c }),
     });
     const j = await r.json().catch(() => ({}));
-    setMsg(r.ok ? "✅ تم الحفظ — التغيير ظهر لكل الزوار فورًا" : "❌ " + (j.error || "فشل الحفظ — كود " + r.status));
+    setMsg(r.ok ? "✅ تم الحفظ — التغيير ظهر لكل الزوار فورًا" : "❌ " + (j.error || "فشل الحفظ"));
   };
 
   const setS = (k: keyof Settings, v: unknown) => setC({ ...c, settings: { ...c.settings, [k]: v } });
@@ -111,12 +112,10 @@ export default function AdminPage() {
     });
     const j = await r.json();
     if (j.ok) {
-      setMsg("✅ تم إرسال الإجابة — هتظهر للمستخدم في حسابه");
-      setAdminQuestions((prev) =>
-        prev.map((q) => (q.id === id ? { ...q, answer, status: "answered" } : q))
-      );
+      setMsg("✅ تم إرسال الإجابة");
+      setAdminQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, answer, status: "answered" } : q)));
     } else {
-      setMsg("❌ " + (j.error || "فشل إرسال الإجابة"));
+      setMsg("❌ " + (j.error || "فشل"));
     }
   };
 
@@ -152,13 +151,7 @@ export default function AdminPage() {
     const current = c.fieldTranslations || {};
     const updated = {
       ...current,
-      [slug]: {
-        ...(current[slug] || {}),
-        [lang]: {
-          ...(current[slug]?.[lang] || defaultFieldTranslations[slug]?.[lang] || { name: "", desc: "" }),
-          [field]: value,
-        },
-      },
+      [slug]: { ...(current[slug] || {}), [lang]: { ...(current[slug]?.[lang] || defaultFieldTranslations[slug]?.[lang] || { name: "", desc: "" }), [field]: value } },
     };
     setC({ ...c, fieldTranslations: updated });
   };
@@ -175,31 +168,28 @@ export default function AdminPage() {
 
   const fieldSelect = (coll: Coll, i: number, current: string) => (
     <select className={input} value={current} onChange={(e) => upd(coll, i, { field: e.target.value })}>
-      {c.fields.map((f) => (
-        <option key={f.slug} value={f.slug}>{f.icon} {f.name}</option>
-      ))}
+      {c.fields.map((f) => (<option key={f.slug} value={f.slug}>{f.icon} {f.name}</option>))}
     </select>
   );
 
   if (loading) {
     return (
-      <>
+      <div dir="rtl">
         <Header />
         <main className="py-24 text-center text-gray-500">⏳ جاري التحقق…</main>
         <Footer />
-      </>
+      </div>
     );
   }
 
   if (!authed) return null;
-
-  return (
-    <>
+    return (
+    <div dir="rtl" className="font-sans">
       <Header />
       <main className="py-12 bg-cream-dark min-h-screen">
         <div className="max-w-4xl mx-auto px-4">
           {live === false && (
-            <div className="bg-red-50 border-2 border-red-200 text-red-700 rounded-xl p-4 mb-6 text-sm">⚠️ قاعدة البيانات مش متصلة — راجع متغيرات البيئة.</div>
+            <div className="bg-red-50 border-2 border-red-200 text-red-700 rounded-xl p-4 mb-6 text-sm">⚠️ قاعدة البيانات مش متصلة</div>
           )}
 
           <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
@@ -232,16 +222,84 @@ export default function AdminPage() {
                   <div><span className={label}>البريد</span><input className={input} value={c.settings.email} onChange={(e) => setS("email", e.target.value)} /></div>
                 </div>
                 <div><span className={label}>العنوان</span><input className={input} value={c.settings.address} onChange={(e) => setS("address", e.target.value)} /></div>
+                <div><span className={label}>الشهادة الأولى</span><input className={input} value={c.settings.cred1} onChange={(e) => setS("cred1", e.target.value)} /></div>
+                <div><span className={label}>الشهادة التانية</span><input className={input} value={c.settings.cred2} onChange={(e) => setS("cred2", e.target.value)} /></div>
+                <div>
+                  <span className={label}>الاهتمامات (كل سطر اهتمام)</span>
+                  <textarea rows={3} className={input} value={c.settings.interests.join("\n")} onChange={(e) => setS("interests", e.target.value.split("\n"))} />
+                </div>
                 <div>
                   <span className={label}>الصورة الشخصية</span>
-                  <input type="file" accept="image/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "image"); if (u) { setS("portraitSrc", u); setMsg("✅ اترفعت — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
-                  {c.settings.portraitSrc && <img src={c.settings.portraitSrc} alt="معاينة" className="w-24 h-24 object-cover rounded-lg mt-2 border-2 border-gold" />}
+                  <input type="file" accept="image/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "image"); if (u) { setS("portraitSrc", u); setMsg("✅ اترفعت"); } else setMsg("❌ فشل"); }} className="text-sm" />
+                  {c.settings.portraitSrc && <img src={c.settings.portraitSrc} className="w-24 h-24 object-cover rounded-lg mt-2 border-2 border-gold" />}
                 </div>
                 <div>
-                  <span className={label}>صورة مشاركة الموقع (واتساب وفيسبوك)</span>
-                  <input type="file" accept="image/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "image"); if (u) { setS("ogImage", u); setMsg("✅ اترفعت — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
-                  {c.settings.ogImage && <img src={c.settings.ogImage} alt="معاينة" className="w-40 h-24 object-cover rounded-lg mt-2 border-2 border-gold" />}
+                  <span className={label}>صورة مشاركة الموقع (OG Image)</span>
+                  <input type="file" accept="image/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "image"); if (u) { setS("ogImage", u); setMsg("✅ اترفعت"); } else setMsg("❌ فشل"); }} className="text-sm" />
+                  {c.settings.ogImage && <img src={c.settings.ogImage} className="w-40 h-24 object-cover rounded-lg mt-2 border-2 border-gold" />}
                 </div>
+              </>
+            )}
+
+            {tab === "general" && (
+              <>
+                <h2 className="font-serif text-2xl text-primary border-b-2 border-gold pb-2">🎨 الإعدادات العامة — تحكم في كل نصوص الموقع</h2>
+                
+                <div className="bg-blue-50 border-r-4 border-blue-500 p-4 rounded">
+                  <h3 className="font-bold text-blue-900 mb-2">🏠 الصفحة الرئيسية</h3>
+                  <div><span className={label}>نص البسملة فوق</span><input className={input} value={c.settings.homeKicker || ""} onChange={(e) => setS("homeKicker", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>نص الشعار الرئيسي</span><input className={input} value={c.settings.homeHeroText || ""} onChange={(e) => setS("homeHeroText", e.target.value)} /></div>
+                </div>
+
+                <div className="bg-purple-50 border-r-4 border-purple-500 p-4 rounded">
+                  <h3 className="font-bold text-purple-900 mb-2">🎨 ألوان الموقع (Hex)</h3>
+                  <div className="grid sm:grid-cols-3 gap-3">
+                    <div>
+                      <span className={label}>اللون الأساسي</span>
+                      <input type="color" value={c.settings.primaryColor || "#0b2e22"} onChange={(e) => setS("primaryColor", e.target.value)} className="w-full h-10 rounded cursor-pointer" />
+                      <input className={input + " mt-1"} value={c.settings.primaryColor || ""} onChange={(e) => setS("primaryColor", e.target.value)} placeholder="#0b2e22" />
+                    </div>
+                    <div>
+                      <span className={label}>اللون الذهبي</span>
+                      <input type="color" value={c.settings.goldColor || "#c9a227"} onChange={(e) => setS("goldColor", e.target.value)} className="w-full h-10 rounded cursor-pointer" />
+                      <input className={input + " mt-1"} value={c.settings.goldColor || ""} onChange={(e) => setS("goldColor", e.target.value)} placeholder="#c9a227" />
+                    </div>
+                    <div>
+                      <span className={label}>لون الخلفية</span>
+                      <input type="color" value={c.settings.creamColor || "#f5f1e8"} onChange={(e) => setS("creamColor", e.target.value)} className="w-full h-10 rounded cursor-pointer" />
+                      <input className={input + " mt-1"} value={c.settings.creamColor || ""} onChange={(e) => setS("creamColor", e.target.value)} placeholder="#f5f1e8" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 border-r-4 border-green-500 p-4 rounded">
+                  <h3 className="font-bold text-green-900 mb-2">📄 نصوص صفحات المحتوى</h3>
+                  <div><span className={label}>مقدمة صفحة الشبهات</span><textarea rows={2} className={input} value={c.settings.doubtsIntro || ""} onChange={(e) => setS("doubtsIntro", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>مقدمة صفحة مسار التعلم</span><textarea rows={2} className={input} value={c.settings.learnIntro || ""} onChange={(e) => setS("learnIntro", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>مقدمة صفحة تعلم الصلاة</span><textarea rows={2} className={input} value={c.settings.prayerGuideIntro || ""} onChange={(e) => setS("prayerGuideIntro", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>مقدمة صفحة اعتنق الإسلام</span><textarea rows={2} className={input} value={c.settings.embraceIslamIntro || ""} onChange={(e) => setS("embraceIslamIntro", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>مقدمة صفحة عن الشيخ</span><textarea rows={2} className={input} value={c.settings.aboutIntro || ""} onChange={(e) => setS("aboutIntro", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>مقدمة صفحة تواصل</span><textarea rows={2} className={input} value={c.settings.contactIntro || ""} onChange={(e) => setS("contactIntro", e.target.value)} /></div>
+                </div>
+
+                <div className="bg-yellow-50 border-r-4 border-yellow-500 p-4 rounded">
+                  <h3 className="font-bold text-yellow-900 mb-2">🔗 روابط السوشيال ميديا</h3>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <div><span className={label}>📘 فيسبوك</span><input className={input} value={c.settings.facebookUrl || ""} onChange={(e) => setS("facebookUrl", e.target.value)} placeholder="https://facebook.com/..." /></div>
+                    <div><span className={label}>📺 يوتيوب</span><input className={input} value={c.settings.youtubeUrl || ""} onChange={(e) => setS("youtubeUrl", e.target.value)} placeholder="https://youtube.com/..." /></div>
+                    <div><span className={label}>✈️ تيليجرام</span><input className={input} value={c.settings.telegramUrl || ""} onChange={(e) => setS("telegramUrl", e.target.value)} placeholder="https://t.me/..." /></div>
+                    <div><span className={label}>🐦 تويتر/X</span><input className={input} value={c.settings.twitterUrl || ""} onChange={(e) => setS("twitterUrl", e.target.value)} placeholder="https://twitter.com/..." /></div>
+                    <div><span className={label}>📷 إنستجرام</span><input className={input} value={c.settings.instagramUrl || ""} onChange={(e) => setS("instagramUrl", e.target.value)} placeholder="https://instagram.com/..." /></div>
+                  </div>
+                </div>
+
+                <div className="bg-pink-50 border-r-4 border-pink-500 p-4 rounded">
+                  <h3 className="font-bold text-pink-900 mb-2">🦶 الفوتر</h3>
+                  <div><span className={label}>نص الفوتر</span><input className={input} value={c.settings.footerText || ""} onChange={(e) => setS("footerText", e.target.value)} /></div>
+                  <div className="mt-2"><span className={label}>نص حقوق الملكية</span><input className={input} value={c.settings.copyrightText || ""} onChange={(e) => setS("copyrightText", e.target.value)} /></div>
+                </div>
+
+                <button onClick={save} className={addBtn + " w-full"}>💾 حفظ كل الإعدادات العامة</button>
               </>
             )}
 
@@ -255,13 +313,13 @@ export default function AdminPage() {
             {tab === "live" && (
               <>
                 <div><span className={label}>عنوان البث</span><input className={input} value={c.settings.liveTitle} onChange={(e) => setS("liveTitle", e.target.value)} /></div>
-                <div><span className={label}>رابط البث (يوتيوب أو أي رابط)</span><input className={input} value={c.settings.liveUrl} onChange={(e) => setS("liveUrl", e.target.value)} placeholder="https://youtube.com/watch?v=..." /></div>
+                <div><span className={label}>رابط البث</span><input className={input} value={c.settings.liveUrl} onChange={(e) => setS("liveUrl", e.target.value)} /></div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div><span className={label}>يوم المجلس</span><input className={input} value={c.settings.meetingDay} onChange={(e) => setS("meetingDay", e.target.value)} /></div>
                   <div><span className={label}>وقت المجلس</span><input className={input} value={c.settings.meetingTime} onChange={(e) => setS("meetingTime", e.target.value)} /></div>
                 </div>
                 <div><span className={label}>مكان المجلس</span><input className={input} value={c.settings.meetingPlace} onChange={(e) => setS("meetingPlace", e.target.value)} /></div>
-                <div><span className={label}>رابط مكان المجلس على الخريطة (اختياري)</span><input className={input} value={c.settings.meetingLink} onChange={(e) => setS("meetingLink", e.target.value)} /></div>
+                <div><span className={label}>رابط الخريطة</span><input className={input} value={c.settings.meetingLink} onChange={(e) => setS("meetingLink", e.target.value)} /></div>
               </>
             )}
 
@@ -271,15 +329,14 @@ export default function AdminPage() {
                   <div key={f.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">علم #{i + 1}</b><button onClick={() => del("fields", i)} className={delBtn}>🗑 حذف</button></div>
                     <div className="grid grid-cols-3 gap-3">
-                      <input className={input} value={f.name} placeholder="الاسم" onChange={(e) => upd("fields", i, { name: e.target.value })} />
-                      <input className={input} value={f.slug} placeholder="slug إنجليزي" onChange={(e) => upd("fields", i, { slug: e.target.value })} />
-                      <input className={input} value={f.icon} placeholder="أيقونة" onChange={(e) => upd("fields", i, { icon: e.target.value })} />
+                      <input className={input} value={f.name} onChange={(e) => upd("fields", i, { name: e.target.value })} />
+                      <input className={input} value={f.slug} onChange={(e) => upd("fields", i, { slug: e.target.value })} />
+                      <input className={input} value={f.icon} onChange={(e) => upd("fields", i, { icon: e.target.value })} />
                     </div>
-                    <input className={input} value={f.desc} placeholder="وصف مختصر" onChange={(e) => upd("fields", i, { desc: e.target.value })} />
+                    <input className={input} value={f.desc} onChange={(e) => upd("fields", i, { desc: e.target.value })} />
                   </div>
                 ))}
-                <button onClick={() => add("fields", { id: Date.now(), slug: "new-field", name: "علم جديد", icon: "📚", desc: "" })} className={addBtn}>➕ إضافة علم</button>
-                <button onClick={() => setC({ ...c, fields: defaultContent.fields })} className="border-2 border-gold text-gold py-3 rounded-lg font-bold hover:bg-gold hover:text-gray-900 transition">♻️ استعادة القائمة الكاملة (17 علم)</button>
+                <button onClick={() => add("fields", { id: Date.now(), slug: "new", name: "علم جديد", icon: "📚", desc: "" })} className={addBtn}>➕ إضافة علم</button>
               </>
             )}
 
@@ -288,13 +345,13 @@ export default function AdminPage() {
                 {c.lessons.map((l, i) => (
                   <div key={l.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">درس #{i + 1}</b><button onClick={() => del("lessons", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={l.title} placeholder="العنوان" onChange={(e) => upd("lessons", i, { title: e.target.value })} />
+                    <input className={input} value={l.title} onChange={(e) => upd("lessons", i, { title: e.target.value })} />
                     <div className="grid grid-cols-2 gap-3">
-                      <input className={input} value={l.category} placeholder="التصنيف" onChange={(e) => upd("lessons", i, { category: e.target.value })} />
+                      <input className={input} value={l.category} onChange={(e) => upd("lessons", i, { category: e.target.value })} />
                       {fieldSelect("lessons", i, l.field)}
                     </div>
-                    <input className={input} value={l.link} placeholder="رابط الاستماع" onChange={(e) => upd("lessons", i, { link: e.target.value })} />
-                    <textarea rows={2} className={input} value={l.desc} placeholder="الوصف" onChange={(e) => upd("lessons", i, { desc: e.target.value })} />
+                    <input className={input} value={l.link} onChange={(e) => upd("lessons", i, { link: e.target.value })} />
+                    <textarea rows={2} className={input} value={l.desc} onChange={(e) => upd("lessons", i, { desc: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("lessons", { id: Date.now(), title: "درس جديد", category: "", date: String(new Date().getFullYear()), link: "", desc: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ إضافة درس</button>
@@ -306,12 +363,12 @@ export default function AdminPage() {
                 {c.videos.map((v, i) => (
                   <div key={v.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">فيديو #{i + 1}</b><button onClick={() => del("videos", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={v.title} placeholder="العنوان" onChange={(e) => upd("videos", i, { title: e.target.value })} />
+                    <input className={input} value={v.title} onChange={(e) => upd("videos", i, { title: e.target.value })} />
                     <div className="grid grid-cols-2 gap-3">
-                      <input className={input} value={v.url} placeholder="رابط يوتيوب" onChange={(e) => upd("videos", i, { url: e.target.value })} />
+                      <input className={input} value={v.url} onChange={(e) => upd("videos", i, { url: e.target.value })} />
                       {fieldSelect("videos", i, v.field)}
                     </div>
-                    <textarea rows={2} className={input} value={v.desc} placeholder="الوصف" onChange={(e) => upd("videos", i, { desc: e.target.value })} />
+                    <textarea rows={2} className={input} value={v.desc} onChange={(e) => upd("videos", i, { desc: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("videos", { id: Date.now(), title: "فيديو جديد", url: "", desc: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ إضافة فيديو</button>
@@ -323,13 +380,13 @@ export default function AdminPage() {
                 {c.articles.map((a, i) => (
                   <div key={a.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">مقال #{i + 1}</b><button onClick={() => del("articles", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={a.title} placeholder="عنوان المقال" onChange={(e) => upd("articles", i, { title: e.target.value })} />
+                    <input className={input} value={a.title} onChange={(e) => upd("articles", i, { title: e.target.value })} />
                     <div className="grid grid-cols-2 gap-3">
-                      <input className={input} value={a.date} placeholder="التاريخ" onChange={(e) => upd("articles", i, { date: e.target.value })} />
+                      <input className={input} value={a.date} onChange={(e) => upd("articles", i, { date: e.target.value })} />
                       {fieldSelect("articles", i, a.field)}
                     </div>
-                    <textarea rows={2} className={input} value={a.excerpt} placeholder="مقتطف مختصر" onChange={(e) => upd("articles", i, { excerpt: e.target.value })} />
-                    <textarea rows={6} className={input} value={a.body} placeholder="نص المقال (سطر فاضي = فقرة)" onChange={(e) => upd("articles", i, { body: e.target.value })} />
+                    <textarea rows={2} className={input} value={a.excerpt} onChange={(e) => upd("articles", i, { excerpt: e.target.value })} />
+                    <textarea rows={6} className={input} value={a.body} onChange={(e) => upd("articles", i, { body: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("articles", { id: Date.now(), title: "مقال جديد", date: new Date().toLocaleDateString("ar-EG"), excerpt: "", body: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ كتابة مقال</button>
@@ -341,16 +398,16 @@ export default function AdminPage() {
                 {c.books.map((b, i) => (
                   <div key={b.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">كتاب #{i + 1}</b><button onClick={() => del("books", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={b.title} placeholder="اسم الكتاب" onChange={(e) => upd("books", i, { title: e.target.value })} />
+                    <input className={input} value={b.title} onChange={(e) => upd("books", i, { title: e.target.value })} />
                     <div className="grid grid-cols-2 gap-3">
                       {fieldSelect("books", i, b.field)}
-                      <input className={input} value={b.url} placeholder="رابط PDF خارجي (اختياري)" onChange={(e) => upd("books", i, { url: e.target.value })} />
+                      <input className={input} value={b.url} onChange={(e) => upd("books", i, { url: e.target.value })} />
                     </div>
                     <div>
                       <span className={label}>أو ارفع PDF من جهازك</span>
-                      <input type="file" accept="application/pdf" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري رفع الكتاب…"); const u = await uploadFile(f, "doc"); if (u) { upd("books", i, { url: u }); setMsg("✅ الكتاب اترفع — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
+                      <input type="file" accept="application/pdf" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "doc"); if (u) { upd("books", i, { url: u }); setMsg("✅ اترفع"); } else setMsg("❌ فشل"); }} className="text-sm" />
                     </div>
-                    <textarea rows={2} className={input} value={b.desc} placeholder="وصف الكتاب" onChange={(e) => upd("books", i, { desc: e.target.value })} />
+                    <textarea rows={2} className={input} value={b.desc} onChange={(e) => upd("books", i, { desc: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("books", { id: Date.now(), title: "كتاب جديد", field: c.fields[0]?.slug || "", url: "", desc: "" })} className={addBtn}>➕ إضافة كتاب</button>
@@ -363,15 +420,15 @@ export default function AdminPage() {
                   <div key={a.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">مقطع #{i + 1}</b><button onClick={() => del("audio", i)} className={delBtn}>🗑 حذف</button></div>
                     <div className="grid grid-cols-2 gap-3">
-                      <input className={input} value={a.title} placeholder="العنوان" onChange={(e) => upd("audio", i, { title: e.target.value })} />
+                      <input className={input} value={a.title} onChange={(e) => upd("audio", i, { title: e.target.value })} />
                       {fieldSelect("audio", i, a.field)}
                     </div>
                     <div>
-                      <span className={label}>رفع MP3 من جهازك</span>
-                      <input type="file" accept="audio/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري رفع المقطع…"); const u = await uploadFile(f, "audio"); if (u) { upd("audio", i, { url: u }); setMsg("✅ المقطع اترفع — اضغط حفظ ونشر"); } else setMsg("❌ فشل الرفع"); }} className="text-sm" />
+                      <span className={label}>رفع MP3</span>
+                      <input type="file" accept="audio/*" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setMsg("⏳ جاري الرفع…"); const u = await uploadFile(f, "audio"); if (u) { upd("audio", i, { url: u }); setMsg("✅ اترفع"); } else setMsg("❌ فشل"); }} className="text-sm" />
                       {a.url && <audio src={a.url} controls className="w-full mt-2" />}
                     </div>
-                    <textarea rows={2} className={input} value={a.desc} placeholder="الوصف" onChange={(e) => upd("audio", i, { desc: e.target.value })} />
+                    <textarea rows={2} className={input} value={a.desc} onChange={(e) => upd("audio", i, { desc: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("audio", { id: Date.now(), title: "مقطع جديد", url: "", desc: "", field: c.fields[0]?.slug || "" })} className={addBtn}>➕ إضافة مقطع</button>
@@ -381,26 +438,26 @@ export default function AdminPage() {
             {tab === "photos" && (
               <>
                 <div>
-                  <span className={label}>رفع صور جديدة + اختيار العلم التابعين ليه</span>
+                  <span className={label}>رفع صور جديدة</span>
                   <input type="file" accept="image/*" multiple onChange={async (e) => {
                     const files = Array.from(e.target.files || []);
                     if (!files.length) return;
-                    setMsg("⏳ جاري رفع " + files.length + " صورة…");
+                    setMsg("⏳ جاري الرفع…");
                     const items: Photo[] = [];
                     for (const f of files) {
                       const u = await uploadFile(f, "image");
                       if (u) items.push({ id: Date.now() + Math.random(), url: u, caption: "", field: c.fields[0]?.slug || "" });
                     }
                     setC((prev) => ({ ...prev, photos: [...items, ...prev.photos] } as Content));
-                    setMsg("✅ اترفعت الصور — حدد العلم لكل صورة واضغط حفظ");
+                    setMsg("✅ اترفعت");
                   }} className="text-sm" />
                 </div>
-                <div><span className={label}>رابط تحميل تطبيق الموبايل (APK)</span><input className={input} value={c.settings.appUrl} onChange={(e) => setS("appUrl", e.target.value)} placeholder="https://....supabase.co/.../ismail-dawah.apk" /></div>
+                <div><span className={label}>رابط APK</span><input className={input} value={c.settings.appUrl} onChange={(e) => setS("appUrl", e.target.value)} /></div>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {c.photos.map((p, i) => (
                     <div key={p.id} className="border-2 border-gray-100 rounded-lg p-3 grid gap-2">
-                      <img src={p.url} alt={p.caption} className="w-full h-40 object-cover rounded-lg" />
-                      <input className={input} value={p.caption} placeholder="تعليق الصورة" onChange={(e) => upd("photos", i, { caption: e.target.value })} />
+                      <img src={p.url} className="w-full h-40 object-cover rounded-lg" />
+                      <input className={input} value={p.caption} onChange={(e) => upd("photos", i, { caption: e.target.value })} />
                       {fieldSelect("photos", i, p.field)}
                       <button onClick={() => del("photos", i)} className={delBtn}>🗑 حذف</button>
                     </div>
@@ -414,10 +471,10 @@ export default function AdminPage() {
                 {c.schedule.map((s, i) => (
                   <div key={s.id} className={itemBox + " grid-cols-2"}>
                     <div className="flex justify-between items-center col-span-2"><b className="text-sm text-primary">موعد #{i + 1}</b><button onClick={() => del("schedule", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={s.day} placeholder="اليوم" onChange={(e) => upd("schedule", i, { day: e.target.value })} />
-                    <input className={input} value={s.time} placeholder="الوقت" onChange={(e) => upd("schedule", i, { time: e.target.value })} />
-                    <input className={input} value={s.topic} placeholder="الموضوع" onChange={(e) => upd("schedule", i, { topic: e.target.value })} />
-                    <input className={input} value={s.place} placeholder="المكان" onChange={(e) => upd("schedule", i, { place: e.target.value })} />
+                    <input className={input} value={s.day} onChange={(e) => upd("schedule", i, { day: e.target.value })} />
+                    <input className={input} value={s.time} onChange={(e) => upd("schedule", i, { time: e.target.value })} />
+                    <input className={input} value={s.topic} onChange={(e) => upd("schedule", i, { topic: e.target.value })} />
+                    <input className={input} value={s.place} onChange={(e) => upd("schedule", i, { place: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("schedule", { id: Date.now(), day: "السبت", time: "", topic: "", place: "" })} className={addBtn}>➕ إضافة موعد</button>
@@ -429,8 +486,8 @@ export default function AdminPage() {
                 {c.fatwas.map((f, i) => (
                   <div key={f.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">فتوى #{i + 1}</b><button onClick={() => del("fatwas", i)} className={delBtn}>🗑 حذف</button></div>
-                    <textarea rows={2} className={input} value={f.q} placeholder="السؤال" onChange={(e) => upd("fatwas", i, { q: e.target.value })} />
-                    <textarea rows={4} className={input} value={f.a} placeholder="الإجابة" onChange={(e) => upd("fatwas", i, { a: e.target.value })} />
+                    <textarea rows={2} className={input} value={f.q} onChange={(e) => upd("fatwas", i, { q: e.target.value })} />
+                    <textarea rows={4} className={input} value={f.a} onChange={(e) => upd("fatwas", i, { a: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("fatwas", { id: Date.now(), q: "", a: "" })} className={addBtn}>➕ إضافة فتوى</button>
@@ -442,9 +499,9 @@ export default function AdminPage() {
                 {c.projects.map((p, i) => (
                   <div key={p.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">مشروع #{i + 1}</b><button onClick={() => del("projects", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={p.title} placeholder="اسم المشروع" onChange={(e) => upd("projects", i, { title: e.target.value })} />
-                    <textarea rows={2} className={input} value={p.desc} placeholder="وصف المشروع" onChange={(e) => upd("projects", i, { desc: e.target.value })} />
-                    <input className={input} value={p.goal} placeholder="الهدف (مثال: 50,000 جنيه)" onChange={(e) => upd("projects", i, { goal: e.target.value })} />
+                    <input className={input} value={p.title} onChange={(e) => upd("projects", i, { title: e.target.value })} />
+                    <textarea rows={2} className={input} value={p.desc} onChange={(e) => upd("projects", i, { desc: e.target.value })} />
+                    <input className={input} value={p.goal} onChange={(e) => upd("projects", i, { goal: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("projects", { id: Date.now(), title: "", desc: "", goal: "" })} className={addBtn}>➕ إضافة مشروع</button>
@@ -456,9 +513,9 @@ export default function AdminPage() {
                 {c.news.map((n, i) => (
                   <div key={n.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">خبر #{i + 1}</b><button onClick={() => del("news", i)} className={delBtn}>🗑 حذف</button></div>
-                    <input className={input} value={n.title} placeholder="عنوان الخبر" onChange={(e) => upd("news", i, { title: e.target.value })} />
-                    <input className={input} value={n.date} placeholder="التاريخ" onChange={(e) => upd("news", i, { date: e.target.value })} />
-                    <textarea rows={4} className={input} value={n.body} placeholder="نص الخبر" onChange={(e) => upd("news", i, { body: e.target.value })} />
+                    <input className={input} value={n.title} onChange={(e) => upd("news", i, { title: e.target.value })} />
+                    <input className={input} value={n.date} onChange={(e) => upd("news", i, { date: e.target.value })} />
+                    <textarea rows={4} className={input} value={n.body} onChange={(e) => upd("news", i, { body: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("news", { id: Date.now(), title: "", date: new Date().toLocaleDateString("ar-EG"), body: "" })} className={addBtn}>➕ إضافة خبر</button>
@@ -471,10 +528,10 @@ export default function AdminPage() {
                   <div key={p.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">مكان #{i + 1}</b><button onClick={() => del("places", i)} className={delBtn}>🗑 حذف</button></div>
                     <div className="grid grid-cols-2 gap-3">
-                      <input className={input} value={p.name} placeholder="اسم المسجد/المركز" onChange={(e) => upd("places", i, { name: e.target.value })} />
-                      <input className={input} value={p.area} placeholder="المنطقة" onChange={(e) => upd("places", i, { area: e.target.value })} />
+                      <input className={input} value={p.name} onChange={(e) => upd("places", i, { name: e.target.value })} />
+                      <input className={input} value={p.area} onChange={(e) => upd("places", i, { area: e.target.value })} />
                     </div>
-                    <input className={input} value={p.note} placeholder="ملاحظة (موعد الدرس مثلًا)" onChange={(e) => upd("places", i, { note: e.target.value })} />
+                    <input className={input} value={p.note} onChange={(e) => upd("places", i, { note: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("places", { id: Date.now(), name: "", area: "", note: "" })} className={addBtn}>➕ إضافة مكان</button>
@@ -487,10 +544,10 @@ export default function AdminPage() {
                   <div key={a.id} className={itemBox}>
                     <div className="flex justify-between items-center"><b className="text-sm text-primary">ذكر #{i + 1}</b><button onClick={() => del("adhkar", i)} className={delBtn}>🗑 حذف</button></div>
                     <div className="grid grid-cols-2 gap-3">
-                      <input className={input} value={a.category} placeholder="التصنيف (صباح/مساء/نوم…)" onChange={(e) => upd("adhkar", i, { category: e.target.value })} />
-                      <input type="number" min={1} className={input} value={a.repeat} placeholder="عدد التكرار" onChange={(e) => upd("adhkar", i, { repeat: Number(e.target.value) || 1 })} />
+                      <input className={input} value={a.category} onChange={(e) => upd("adhkar", i, { category: e.target.value })} />
+                      <input type="number" min={1} className={input} value={a.repeat} onChange={(e) => upd("adhkar", i, { repeat: Number(e.target.value) || 1 })} />
                     </div>
-                    <textarea rows={3} className={input} value={a.text} placeholder="نص الذكر" onChange={(e) => upd("adhkar", i, { text: e.target.value })} />
+                    <textarea rows={3} className={input} value={a.text} onChange={(e) => upd("adhkar", i, { text: e.target.value })} />
                   </div>
                 ))}
                 <button onClick={() => add("adhkar", { id: Date.now(), category: "أذكار الصباح", text: "", repeat: 1 })} className={addBtn}>➕ إضافة ذكر</button>
@@ -501,30 +558,23 @@ export default function AdminPage() {
               <>
                 <div className="bg-amber-50 border-r-4 border-amber-500 p-4 rounded mb-2">
                   <h2 className="font-bold text-lg text-primary mb-1">🌍 إدارة الترجمات</h2>
-                  <p className="text-sm text-gray-600">
-                    هنا تتحكم في ترجمة <b>أسماء العلوم ووصفها</b> في كل لغة. أي تغيير هنا يظهر فورًا بعد الحفظ.
-                    <br />
-                    <span className="text-xs text-gray-500">💡 الحقول الفاضية = الترجمة الافتراضية (لو ملأتها، هتظهر بدلا منها)</span>
-                  </p>
+                  <p className="text-sm text-gray-600">تحكم في ترجمة أسماء العلوم ووصفها في كل لغة</p>
                 </div>
-
                 <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 mb-4">
-                  <h3 className="font-bold text-sm text-primary mb-2">🌐 اللغات المتاحة ({languages.length} لغة):</h3>
+                  <h3 className="font-bold text-sm text-primary mb-2">🌐 اللغات المتاحة ({languages.length}):</h3>
                   <div className="flex flex-wrap gap-2">
                     {languages.map((l) => (
                       <span key={l.code} className="bg-white border border-gold/40 px-3 py-1 rounded-full text-xs font-bold">
-                        {l.flag} {l.name} <span className="text-gray-400">({l.code})</span>
+                        {l.flag} {l.name}
                       </span>
                     ))}
                   </div>
                 </div>
-
                 {c.fields.map((f) => (
                   <details key={f.id} className="bg-gray-50 rounded-lg p-4 border-2 border-gray-100">
                     <summary className="cursor-pointer font-bold flex items-center gap-2">
                       <span className="text-2xl">{f.icon}</span>
                       <span className="text-primary">{f.name}</span>
-                      <span className="text-xs text-gray-500 font-normal">({f.slug})</span>
                     </summary>
                     <div className="mt-4 space-y-3">
                       {languages.map((l) => (
@@ -532,44 +582,24 @@ export default function AdminPage() {
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-lg">{l.flag}</span>
                             <span className="font-bold text-sm text-primary">{l.name}</span>
-                            <span className="text-xs text-gray-400">({l.code.toUpperCase()})</span>
                           </div>
                           <div className="grid gap-2">
-                            <div>
-                              <span className="text-xs text-gray-500">اسم العلم:</span>
-                              <input
-                                className={input}
-                                value={getTranslationValue(f.slug, l.code, "name")}
-                                placeholder={defaultFieldTranslations[f.slug]?.[l.code]?.name || "(افتراضي)"}
-                                onChange={(e) => setTranslation(f.slug, l.code, "name", e.target.value)}
-                              />
-                            </div>
-                            <div>
-                              <span className="text-xs text-gray-500">الوصف:</span>
-                              <input
-                                className={input}
-                                value={getTranslationValue(f.slug, l.code, "desc")}
-                                placeholder={defaultFieldTranslations[f.slug]?.[l.code]?.desc || "(افتراضي)"}
-                                onChange={(e) => setTranslation(f.slug, l.code, "desc", e.target.value)}
-                              />
-                            </div>
+                            <input className={input} value={getTranslationValue(f.slug, l.code, "name")} onChange={(e) => setTranslation(f.slug, l.code, "name", e.target.value)} placeholder="اسم العلم" />
+                            <input className={input} value={getTranslationValue(f.slug, l.code, "desc")} onChange={(e) => setTranslation(f.slug, l.code, "desc", e.target.value)} placeholder="الوصف" />
                           </div>
                         </div>
                       ))}
                     </div>
                   </details>
                 ))}
-
-                <button onClick={save} className={addBtn + " w-full"}>💾 حفظ كل الترجمات</button>
+                <button onClick={save} className={addBtn + " w-full"}>💾 حفظ الترجمات</button>
               </>
             )}
 
             {tab === "questions" && (
               <>
                 <div className="bg-amber-50 border-r-4 border-amber-500 p-4 rounded mb-4">
-                  <p className="text-sm text-amber-800">
-                    💬 دي الأسئلة الخاصة من المستخدمين المسجلين. كل مستخدم بيشوف إجابته في حسابه بس.
-                  </p>
+                  <p className="text-sm text-amber-800">💬 الأسئلة الخاصة من المستخدمين المسجلين</p>
                 </div>
                 {adminQuestions.length === 0 ? (
                   <p className="text-center text-gray-500 py-8">لا توجد أسئلة بعد</p>
@@ -582,9 +612,7 @@ export default function AdminPage() {
                           {q.status === "answered" ? "✅ تمت الإجابة" : "⏳ في الانتظار"}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500">
-                        👤 {q.users?.name} — {q.users?.email} — {new Date(q.created_at).toLocaleDateString("ar-EG")}
-                      </p>
+                      <p className="text-xs text-gray-500">👤 {q.users?.name} — {q.users?.email}</p>
                       <div className="bg-gray-50 rounded-lg p-3">
                         <p className="font-bold text-primary">❓ {q.question}</p>
                       </div>
@@ -594,19 +622,8 @@ export default function AdminPage() {
                         </div>
                       ) : (
                         <>
-                          <textarea
-                            rows={3}
-                            className={input}
-                            placeholder="اكتب الإجابة…"
-                            value={answers[q.id] || ""}
-                            onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-                          />
-                          <button
-                            onClick={() => answerQuestion(q.id)}
-                            className="bg-gold text-gray-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gold-light transition"
-                          >
-                            إرسال الإجابة
-                          </button>
+                          <textarea rows={3} className={input} value={answers[q.id] || ""} onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })} placeholder="اكتب الإجابة…" />
+                          <button onClick={() => answerQuestion(q.id)} className="bg-gold text-gray-900 px-4 py-2 rounded-lg font-bold text-sm hover:bg-gold-light transition">إرسال الإجابة</button>
                         </>
                       )}
                     </div>
@@ -618,6 +635,6 @@ export default function AdminPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
