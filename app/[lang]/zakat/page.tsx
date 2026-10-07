@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackButton from "@/components/BackButton";
-import { SectionTitle } from "@/components/Cards";
+import PageHero from "@/components/PageHero";
+import IslamicSection from "@/components/IslamicSection";
 import { t, type Lang } from "@/lib/i18n";
 
 export default function ZakatPage() {
@@ -21,10 +22,9 @@ export default function ZakatPage() {
   const [business, setBusiness] = useState(0);
   const [debts, setDebts] = useState(0);
 
-  // أسعار تقريبية (بالجنيه المصري) - يمكن تحديثها
   const goldPricePerGram = 3200;
   const silverPricePerGram = 38;
-  const nisab = 85 * goldPricePerGram; // نصاب الذهب (85 جرام)
+  const nisab = 85 * goldPricePerGram;
 
   const totalAssets = cash + (gold * goldPricePerGram) + (silver * silverPricePerGram) + stocks + business - debts;
   const zakatDue = totalAssets >= nisab ? totalAssets * 0.025 : 0;
@@ -33,146 +33,151 @@ export default function ZakatPage() {
   return (
     <>
       <Header lang={L} />
-      <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
-        <div className="max-w-3xl mx-auto px-4">
-          <BackButton href={`/${lang}/tools`} label={tr.back} />
-          <SectionTitle>🧮 حاسبة الزكاة</SectionTitle>
-          <p className="text-center text-gray-500 dark:text-gray-400 mb-8">
-            احسب زكاة أموالك بسهولة ودقة
-          </p>
+      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
+        <PageHero
+          icon="💰"
+          title="حاسبة الزكاة"
+          subtitle="احسب زكاة أموالك بسهولة ودقة"
+          verse="وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ"
+          verseSource="سورة البقرة - الآية 43"
+          gradient="from-pink-600 via-pink-700 to-pink-800"
+        />
 
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md space-y-4">
-            <div>
-              <label className="block font-bold text-sm mb-1 text-primary dark:text-gold">💵 النقدية (في البنك والبيت)</label>
-              <input
-                type="number"
-                value={cash || ""}
-                onChange={(e) => setCash(Number(e.target.value))}
-                placeholder="0"
-                className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-2 focus:border-gold"
-              />
-            </div>
+        <section className="py-10">
+          <div className="max-w-4xl mx-auto px-4">
+            <BackButton href={`/${lang}/tools`} label={tr.back} />
 
-            <div>
-              <label className="block font-bold text-sm mb-1 text-primary dark:text-gold">🥇 الذهب (بالجرام)</label>
-              <input
-                type="number"
-                value={gold || ""}
-                onChange={(e) => setGold(Number(e.target.value))}
-                placeholder="0"
-                className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-2 focus:border-gold"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                ≈ {gold * goldPricePerGram} جنيه (سعر الجرام: {goldPricePerGram} ج)
-              </p>
-            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg space-y-6">
+              <h3 className="font-serif text-2xl text-primary dark:text-gold mb-4">💵 أدخل أموالك</h3>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">💵 النقدية (في البنك والبيت)</label>
+                  <input
+                    type="number"
+                    value={cash || ""}
+                    onChange={(e) => setCash(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold"
+                  />
+                </div>
 
-            <div>
-              <label className="block font-bold text-sm mb-1 text-primary dark:text-gold">🥈 الفضة (بالجرام)</label>
-              <input
-                type="number"
-                value={silver || ""}
-                onChange={(e) => setSilver(Number(e.target.value))}
-                placeholder="0"
-                className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-2 focus:border-gold"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                ≈ {silver * silverPricePerGram} جنيه
-              </p>
-            </div>
-
-            <div>
-              <label className="block font-bold text-sm mb-1 text-primary dark:text-gold">📈 الأسهم والسندات</label>
-              <input
-                type="number"
-                value={stocks || ""}
-                onChange={(e) => setStocks(Number(e.target.value))}
-                placeholder="0"
-                className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-2 focus:border-gold"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-sm mb-1 text-primary dark:text-gold">🏪 عروض التجارة</label>
-              <input
-                type="number"
-                value={business || ""}
-                onChange={(e) => setBusiness(Number(e.target.value))}
-                placeholder="0"
-                className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-2 focus:border-gold"
-              />
-            </div>
-
-            <div>
-              <label className="block font-bold text-sm mb-1 text-primary dark:text-gold">💳 الديون المستحقة عليك</label>
-              <input
-                type="number"
-                value={debts || ""}
-                onChange={(e) => setDebts(Number(e.target.value))}
-                placeholder="0"
-                className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-2 focus:border-gold"
-              />
-            </div>
-
-            {/* النتيجة */}
-            <div className="border-t-2 border-gold/30 pt-4 mt-6">
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-cream-dark dark:bg-gray-700 rounded-xl p-4 text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">إجمالي الأموال</p>
-                  <p className="text-2xl font-bold text-primary dark:text-white">
-                    {totalAssets.toLocaleString("ar-EG")} ج
+                <div>
+                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">🥇 الذهب (بالجرام)</label>
+                  <input
+                    type="number"
+                    value={gold || ""}
+                    onChange={(e) => setGold(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    ≈ {(gold * goldPricePerGram).toLocaleString("ar-EG")} جنيه
                   </p>
                 </div>
-                <div className="bg-cream-dark dark:bg-gray-700 rounded-xl p-4 text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">النصاب</p>
-                  <p className="text-2xl font-bold text-primary dark:text-white">
-                    {nisab.toLocaleString("ar-EG")} ج
+
+                <div>
+                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">🥈 الفضة (بالجرام)</label>
+                  <input
+                    type="number"
+                    value={silver || ""}
+                    onChange={(e) => setSilver(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    ≈ {(silver * silverPricePerGram).toLocaleString("ar-EG")} جنيه
                   </p>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">📈 الأسهم والسندات</label>
+                  <input
+                    type="number"
+                    value={stocks || ""}
+                    onChange={(e) => setStocks(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">🏪 عروض التجارة</label>
+                  <input
+                    type="number"
+                    value={business || ""}
+                    onChange={(e) => setBusiness(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">💳 الديون المستحقة عليك</label>
+                  <input
+                    type="number"
+                    value={debts || ""}
+                    onChange={(e) => setDebts(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold"
+                  />
                 </div>
               </div>
 
-              <div className={`rounded-xl p-6 text-center ${isNisabReached ? "bg-green-50 dark:bg-green-900/20 border-2 border-green-300" : "bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300"}`}>
-                {isNisabReached ? (
-                  <>
-                    <p className="text-sm text-green-800 dark:text-green-200 mb-2">
-                      ✅ بلغ المال النصاب — تجب الزكاة
+              {/* النتيجة */}
+              <div className="border-t-2 border-gold/30 pt-6 mt-6">
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="bg-cream-dark dark:bg-gray-700 rounded-xl p-6 text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">إجمالي الأموال</p>
+                    <p className="text-3xl font-bold text-primary dark:text-white">
+                      {totalAssets.toLocaleString("ar-EG")} ج
                     </p>
-                    <p className="text-4xl font-bold text-green-700 dark:text-green-300">
-                      {zakatDue.toLocaleString("ar-EG")} ج
+                  </div>
+                  <div className="bg-cream-dark dark:bg-gray-700 rounded-xl p-6 text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">النصاب</p>
+                    <p className="text-3xl font-bold text-primary dark:text-white">
+                      {nisab.toLocaleString("ar-EG")} ج
                     </p>
-                    <p className="text-sm text-green-600 dark:text-green-400 mt-2">
-                      مقدار الزكاة (2.5%)
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm text-amber-800 dark:text-amber-200 mb-2">
-                      ⚠️ لم يبلغ المال النصاب
-                    </p>
-                    <p className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                      لا تجب الزكاة
-                    </p>
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
-                      يحتاج {Math.max(0, nisab - totalAssets).toLocaleString("ar-EG")} ج للوصول للنصاب
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
+                  </div>
+                </div>
 
-            {/* ملاحظات فقهية */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mt-4">
-              <h3 className="font-bold text-blue-900 dark:text-blue-200 mb-2">📝 ملاحظات فقهية:</h3>
-              <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1 list-disc list-inside">
-                <li>النصاب = 85 جرام ذهب أو 595 جرام فضة</li>
-                <li>يشترط مرور الحول الهجري على المال</li>
-                <li>ذهب الزينة المُباح لا زكاة فيه عند الجمهور</li>
-                <li>الديون المستحقة لك على مليء تُزكى</li>
-                <li>استشر أهل العلم في المسائل الخاصة</li>
-              </ul>
+                <div className={`rounded-2xl p-8 text-center ${isNisabReached ? "bg-gradient-to-br from-green-500 to-green-600 text-white" : "bg-gradient-to-br from-amber-500 to-amber-600 text-white"}`}>
+                  {isNisabReached ? (
+                    <>
+                      <span className="text-5xl mb-3 block">✅</span>
+                      <p className="text-lg mb-2">بلغ المال النصاب — تجب الزكاة</p>
+                      <p className="text-5xl font-bold mb-2">
+                        {zakatDue.toLocaleString("ar-EG")} ج
+                      </p>
+                      <p className="text-sm opacity-90">مقدار الزكاة (2.5%)</p>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-5xl mb-3 block">⚠️</span>
+                      <p className="text-lg mb-2">لم يبلغ المال النصاب</p>
+                      <p className="text-3xl font-bold mb-2">لا تجب الزكاة</p>
+                      <p className="text-sm opacity-90">
+                        يحتاج {Math.max(0, nisab - totalAssets).toLocaleString("ar-EG")} ج للوصول للنصاب
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* ملاحظات فقهية */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 border-r-4 border-blue-500 rounded-xl p-6 mt-6">
+                <h4 className="font-bold text-blue-900 dark:text-blue-200 mb-3">📝 ملاحظات فقهية:</h4>
+                <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-2 list-disc list-inside">
+                  <li>النصاب = 85 جرام ذهب أو 595 جرام فضة</li>
+                  <li>يشترط مرور الحول الهجري على المال</li>
+                  <li>ذهب الزينة المُباح لا زكاة فيه عند الجمهور</li>
+                  <li>الديون المستحقة لك على مليء تُزكى</li>
+                  <li>استشر أهل العلم في المسائل الخاصة</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
       <Footer lang={L} />
     </>

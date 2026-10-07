@@ -5,7 +5,8 @@ import { useParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BackButton from "@/components/BackButton";
-import { SectionTitle } from "@/components/Cards";
+import PageHero from "@/components/PageHero";
+import IslamicSection from "@/components/IslamicSection";
 import { t, type Lang } from "@/lib/i18n";
 
 export default function QiblaPage() {
@@ -42,7 +43,6 @@ export default function QiblaPage() {
       setLoading(false);
     });
 
-    // استخدام DeviceOrientationEvent للبوصلة
     const handleOrientation = (e: DeviceOrientationEvent) => {
       if (e.alpha !== null) setDeviceHeading(e.alpha);
     };
@@ -55,52 +55,82 @@ export default function QiblaPage() {
   return (
     <>
       <Header lang={L} />
-      <main className="py-16 bg-cream-dark dark:bg-gray-900 min-h-screen">
-        <div className="max-w-2xl mx-auto px-4">
-          <BackButton href={`/${lang}/tools`} label={tr.back} />
-          <SectionTitle>🧭 تحديد القبلة</SectionTitle>
+      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
+        <PageHero
+          icon="🕋"
+          title="تحديد القبلة"
+          subtitle="اتجاه القبلة من أي مكان في العالم"
+          verse="فَوَلِّ وَجْهَكَ شَطْرَ الْمَسْجِدِ الْحَرَامِ"
+          verseSource="سورة البقرة - الآية 144"
+          gradient="from-orange-600 via-orange-700 to-orange-800"
+        />
 
-          {loading ? (
-            <p className="text-center text-gray-500 py-10">⏳ جاري تحديد موقعك...</p>
-          ) : error ? (
-            <p className="text-center text-red-500 py-10">❌ {error}</p>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-md text-center">
-              <p className="text-sm text-gray-500 mb-2">اتجاه القبلة من موقعك</p>
-              <p className="text-3xl font-bold text-gold mb-6">{qiblaAngle?.toFixed(2)}°</p>
+        <section className="py-10">
+          <div className="max-w-3xl mx-auto px-4">
+            <BackButton href={`/${lang}/tools`} label={tr.back} />
 
-              {/* بوصلة */}
-              <div className="relative w-64 h-64 mx-auto my-8">
-                <div className="absolute inset-0 rounded-full border-4 border-gold bg-cream-dark dark:bg-gray-700"></div>
-                <div className="absolute inset-4 rounded-full border-2 border-gold/30"></div>
-                {/* اتجاه القبلة */}
-                <div
-                  className="absolute top-1/2 left-1/2 w-1 h-24 bg-gold origin-bottom transition-transform duration-300"
-                  style={{
-                    transform: `translate(-50%, -100%) rotate(${compassAngle}deg)`,
-                  }}
-                >
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 text-2xl">🕋</div>
-                </div>
-                {/* الشمال */}
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 font-bold text-primary dark:text-white">N</div>
-                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 font-bold text-primary dark:text-white">S</div>
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 font-bold text-primary dark:text-white">E</div>
-                <div className="absolute left-2 top-1/2 -translate-y-1/2 font-bold text-primary dark:text-white">W</div>
+            {loading ? (
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-10 text-center shadow-lg">
+                <div className="text-6xl mb-4 animate-pulse">🕋</div>
+                <p className="text-gray-500">⏳ جاري تحديد موقعك...</p>
               </div>
+            ) : error ? (
+              <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-300 rounded-2xl p-8 text-center">
+                <span className="text-5xl mb-3 block">❌</span>
+                <p className="text-red-700 dark:text-red-300 font-bold">{error}</p>
+              </div>
+            ) : (
+              <>
+                {/* معلومات القبلة */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg mb-6 text-center">
+                  <p className="text-sm text-gray-500 mb-2">اتجاه القبلة من موقعك</p>
+                  <p className="text-5xl font-bold text-gold mb-2">{qiblaAngle?.toFixed(2)}°</p>
+                  {location && (
+                    <p className="text-xs text-gray-400 mt-3">
+                      📍 إحداثياتك: {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
+                    </p>
+                  )}
+                </div>
 
-              <p className="text-sm text-gray-500 mt-4">
-                💡 لفّ جهازك حتى تتطابق الكعبة 🕋 مع اتجاه القبلة
-              </p>
+                {/* البوصلة */}
+                <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg">
+                  <div className="relative w-72 h-72 mx-auto my-8">
+                    {/* الدائرة الخارجية */}
+                    <div className="absolute inset-0 rounded-full border-4 border-gold bg-gradient-to-br from-cream-dark to-cream dark:from-gray-700 dark:to-gray-800 shadow-inner"></div>
+                    
+                    {/* الدائرة الداخلية */}
+                    <div className="absolute inset-8 rounded-full border-2 border-gold/30"></div>
+                    
+                    {/* الاتجاهات */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 font-bold text-primary dark:text-white text-lg">N</div>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-bold text-primary dark:text-white text-lg">S</div>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-primary dark:text-white text-lg">E</div>
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-primary dark:text-white text-lg">W</div>
 
-              {location && (
-                <p className="text-xs text-gray-400 mt-4">
-                  📍 موقعك: {location.lat.toFixed(4)}, {location.lng.toFixed(4)}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
+                    {/* سهم القبلة */}
+                    <div
+                      className="absolute top-1/2 left-1/2 w-2 h-32 bg-gradient-to-t from-gold to-gold-light origin-bottom transition-transform duration-300 rounded-full shadow-lg"
+                      style={{
+                        transform: `translate(-50%, -100%) rotate(${compassAngle}deg)`,
+                      }}
+                    >
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 text-3xl">🕋</div>
+                    </div>
+
+                    {/* المركز */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gold rounded-full shadow-lg"></div>
+                  </div>
+
+                  <div className="bg-amber-50 dark:bg-amber-900/20 border-r-4 border-amber-500 rounded-xl p-4 mt-6">
+                    <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">
+                      💡 <strong>تعليمات:</strong> لفّ جهازك حتى تتطابق الكعبة 🕋 مع اتجاه القبلة. السهم الذهبي يشير لاتجاه القبلة.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
       </main>
       <Footer lang={L} />
     </>
