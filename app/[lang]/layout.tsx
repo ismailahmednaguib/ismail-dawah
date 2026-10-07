@@ -104,7 +104,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       },
     },
     verification: {
-  google: "wAl9bjpp6YTNFlc_LJNfXQOqvdKzz4Ethu1_acbr",
+  google: "0ae699754d97c303.html",
 },
     category: "religion",
   };
