@@ -1,16 +1,33 @@
 // lib/content.ts
-// نظام إدارة المحتوى — CRUD + أنواع + كاش
+// نظام إدارة المحتوى — آمن للبناء (Lazy Client)
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-// ===== عميل Supabase =====
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+// ===== عميل Supabase بشكل Lazy =====
+let contentClient: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabaseClient(): SupabaseClient {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) {
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  }
+  if (!contentClient) {
+    contentClient = createClient(url, anonKey);
+  }
+  return contentClient;
+}
+
+// Proxy آمن — لا ينهار وقت Build
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop, _receiver) {
+    const client = getSupabaseClient();
+    const value = Reflect.get(client, prop, client);
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+});
 
 // ===== أنواع المحتوى =====
-
 export type ContentType =
   | "article"
   | "fatwa"
@@ -41,97 +58,7 @@ export interface ContentBase {
   translations?: Record<string, string>;
 }
 
-export interface Article extends ContentBase {
-  title: string;
-  excerpt: string;
-  body: string;
-  category: string;
-  tags: string[];
-  cover_image: string | null;
-  reading_time: number;
-}
-
-export interface Fatwa extends ContentBase {
-  question: string;
-  answer: string;
-  scholar: string | null;
-  category: string;
-  tags: string[];
-}
-
-export interface NewsItem extends ContentBase {
-  title: string;
-  excerpt: string;
-  body: string;
-  source: string | null;
-  cover_image: string | null;
-  tags: string[];
-}
-
-export interface Khutba extends ContentBase {
-  title: string;
-  excerpt: string;
-  body: string;
-  khutba_date: string | null;
-  duration_minutes: number | null;
-  audio_url: string | null;
-  tags: string[];
-}
-
-export interface Doubt extends ContentBase {
-  title: string;
-  doubt_text: string;
-  response_text: string;
-  category: string;
-  severity: "low" | "medium" | "high";
-  tags: string[];
-}
-
-export interface ProphetStory extends ContentBase {
-  title: string;
-  prophet_name: string;
-  body: string;
-  order_number: number;
-  lessons: string[];
-  tags: string[];
-}
-
-export interface DawahField extends ContentBase {
-  title: string;
-  description: string;
-  body: string;
-  icon: string | null;
-  priority: number;
-  related_fields: string[];
-}
-
-export interface DawahProject extends ContentBase {
-  title: string;
-  description: string;
-  body: string;
-  status_project: "active" | "completed" | "planned";
-  funding_goal: number | null;
-  funding_current: number | null;
-  cover_image: string | null;
-  tags: string[];
-}
-
-// ===== الاتحاد العام لكل أنواع المحتوى =====
-export type ContentItem =
-  | Article
-  | Fatwa
-  | NewsItem
-  | Khutba
-  | Doubt
-  | ProphetStory
-  | DawahField
-  | DawahProject;
-
-// ===== دوال مساعدة عامة =====
-
-/**
- * جلب المحتوى حسب النوع
- */
+// ===== دوال مساعدة =====
 export async function getContentByType(
   type: ContentType,
   options: {
@@ -143,312 +70,152 @@ export async function getContentByType(
     ascending?: boolean;
   } = {}
 ): Promise<ContentBase[]> {
-  const {
-    lang = "ar",
-    status = "published",
-    limit = 20,
-    offset = 0,
-    orderBy = "published_at",
-    ascending = false,
-  } = options;
+  const { lang = "ar", status = "published", limit = 20, offset = 0, orderBy = "published_at", ascending = false } = options;
 
-  const { data, error } = await supabase
-    .from("content")
-    .select("*")
-    .eq("type", type)
-    .eq("lang", lang)
-    .eq("status", status)
-    .order(orderBy, { ascending })
-    .range(offset, offset + limit - 1);
+  try {
+    const { data, error } = await supabase
+      .from("content")
+      .select("*")
+      .eq("type", type)
+      .eq("lang", lang)
+      .eq("status", status)
+      .order(orderBy, { ascending })
+      .range(offset, offset + limit - 1);
 
-  if (error) {
-    console.error(`Error fetching ${type} content:`, error);
+    if (error) return [];
+    return data || [];
+  } catch {
     return [];
   }
-
-  return data || [];
 }
 
-/**
- * جلب محتوى واحد بالـ slug
- */
-export async function getContentBySlug(
-  type: ContentType,
-  slug: string,
-  lang: string = "ar"
-): Promise<ContentBase | null> {
-  const { data, error } = await supabase
-    .from("content")
-    .select("*")
-    .eq("type", type)
-    .eq("slug", slug)
-    .eq("lang", lang)
-    .single();
-
-  if (error) {
-    console.error(`Error fetching ${type} by slug "${slug}":`, error);
+export async function getContentBySlug(type: ContentType, slug: string, lang = "ar"): Promise<ContentBase | null> {
+  try {
+    const { data, error } = await supabase
+      .from("content")
+      .select("*")
+      .eq("type", type)
+      .eq("slug", slug)
+      .eq("lang", lang)
+      .single();
+    if (error) return null;
+    return data;
+  } catch {
     return null;
   }
-
-  return data;
 }
 
-/**
- * جلب محتوى واحد بالـ ID
- */
 export async function getContentById(id: string): Promise<ContentBase | null> {
-  const { data, error } = await supabase
-    .from("content")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    console.error(`Error fetching content by id "${id}":`, error);
+  try {
+    const { data, error } = await supabase.from("content").select("*").eq("id", id).single();
+    if (error) return null;
+    return data;
+  } catch {
     return null;
   }
-
-  return data;
 }
 
-/**
- * البحث في المحتوى
- */
 export async function searchContent(
   query: string,
-  options: {
-    type?: ContentType;
-    lang?: string;
-    limit?: number;
-  } = {}
+  options: { type?: ContentType; lang?: string; limit?: number } = {}
 ): Promise<ContentBase[]> {
   const { type, lang = "ar", limit = 20 } = options;
-
-  let dbQuery = supabase
-    .from("content")
-    .select("*")
-    .eq("status", "published")
-    .eq("lang", lang)
-    .limit(limit);
-
-  if (type) {
-    dbQuery = dbQuery.eq("type", type);
-  }
-
-  // البحث بالعنوان أو المحتوى
-  dbQuery = dbQuery.or(
-    `title.ilike.%${query}%,excerpt.ilike.%${query}%,body.ilike.%${query}%`
-  );
-
-  const { data, error } = await dbQuery;
-
-  if (error) {
-    console.error("Error searching content:", error);
+  try {
+    let dbQuery = supabase
+      .from("content")
+      .select("*")
+      .eq("status", "published")
+      .eq("lang", lang)
+      .limit(limit);
+    if (type) dbQuery = dbQuery.eq("type", type);
+    dbQuery = dbQuery.or(`title.ilike.%${query}%,excerpt.ilike.%${query}%,body.ilike.%${query}%`);
+    const { data, error } = await dbQuery;
+    if (error) return [];
+    return data || [];
+  } catch {
     return [];
   }
-
-  return data || [];
 }
 
-/**
- * إنشاء محتوى جديد
- */
 export async function createContent(
   content: Omit<ContentBase, "id" | "created_at" | "updated_at" | "views">
 ): Promise<ContentBase | null> {
-  const { data, error } = await supabase
-    .from("content")
-    .insert([content])
-    .select()
-    .single();
-
-  if (error) {
-    console.error("Error creating content:", error);
+  try {
+    const { data, error } = await supabase.from("content").insert([content]).select().single();
+    if (error) return null;
+    return data;
+  } catch {
     return null;
   }
-
-  return data;
 }
 
-/**
- * تحديث محتوى موجود
- */
-export async function updateContent(
-  id: string,
-  updates: Partial<ContentBase>
-): Promise<ContentBase | null> {
-  const { data, error } = await supabase
-    .from("content")
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error(`Error updating content "${id}":`, error);
+export async function updateContent(id: string, updates: Partial<ContentBase>): Promise<ContentBase | null> {
+  try {
+    const { data, error } = await supabase
+      .from("content")
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) return null;
+    return data;
+  } catch {
     return null;
   }
-
-  return data;
 }
 
-/**
- * حذف محتوى
- */
 export async function deleteContent(id: string): Promise<boolean> {
-  const { error } = await supabase.from("content").delete().eq("id", id);
-
-  if (error) {
-    console.error(`Error deleting content "${id}":`, error);
+  try {
+    const { error } = await supabase.from("content").delete().eq("id", id);
+    return !error;
+  } catch {
     return false;
   }
-
-  return true;
 }
 
-/**
- * زيادة عدد المشاهدات
- */
-export async function incrementViews(id: string): Promise<void> {
-  await supabase.rpc("increment_content_views", { content_id: id });
+export async function getLatestContent(lang = "ar", limit = 6): Promise<ContentBase[]> {
+  return getContentByType("article", { lang, limit });
 }
 
-/**
- * جلب أحدث المحتوى (للرئيسية)
- */
-export async function getLatestContent(
-  lang: string = "ar",
-  limit: number = 6
-): Promise<ContentBase[]> {
-  const { data, error } = await supabase
-    .from("content")
-    .select("*")
-    .eq("status", "published")
-    .eq("lang", lang)
-    .order("published_at", { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error("Error fetching latest content:", error);
+export async function getPopularContent(lang = "ar", limit = 6): Promise<ContentBase[]> {
+  try {
+    const { data, error } = await supabase
+      .from("content")
+      .select("*")
+      .eq("status", "published")
+      .eq("lang", lang)
+      .order("views", { ascending: false })
+      .limit(limit);
+    if (error) return [];
+    return data || [];
+  } catch {
     return [];
   }
-
-  return data || [];
 }
 
-/**
- * جلب المحتوى الأكثر مشاهدة
- */
-export async function getPopularContent(
-  lang: string = "ar",
-  limit: number = 6
-): Promise<ContentBase[]> {
-  const { data, error } = await supabase
-    .from("content")
-    .select("*")
-    .eq("status", "published")
-    .eq("lang", lang)
-    .order("views", { ascending: false })
-    .limit(limit);
-
-  if (error) {
-    console.error("Error fetching popular content:", error);
-    return [];
-  }
-
-  return data || [];
-}
-
-/**
- * جلب إحصائيات المحتوى
- */
 export async function getContentStats(): Promise<{
   total: number;
-  byType: Record<ContentType, number>;
-  byStatus: Record<ContentStatus, number>;
+  byType: Record<string, number>;
+  byStatus: Record<string, number>;
 } | null> {
-  const { data, error } = await supabase.from("content").select("type, status");
-
-  if (error) {
-    console.error("Error fetching content stats:", error);
+  try {
+    const { data, error } = await supabase.from("content").select("type, status");
+    if (error) return null;
+    const byType: Record<string, number> = {};
+    const byStatus: Record<string, number> = {};
+    for (const item of data || []) {
+      byType[item.type] = (byType[item.type] || 0) + 1;
+      byStatus[item.status] = (byStatus[item.status] || 0) + 1;
+    }
+    return { total: data?.length || 0, byType, byStatus };
+  } catch {
     return null;
   }
-
-  const byType: Record<string, number> = {};
-  const byStatus: Record<string, number> = {};
-
-  for (const item of data || []) {
-    byType[item.type] = (byType[item.type] || 0) + 1;
-    byStatus[item.status] = (byStatus[item.status] || 0) + 1;
-  }
-
-  return {
-    total: data?.length || 0,
-    byType: byType as Record<ContentType, number>,
-    byStatus: byStatus as Record<ContentStatus, number>,
-  };
 }
 
-/**
- * جلب المحتوى حسب التصنيف
- */
-export async function getContentByCategory(
-  type: ContentType,
-  category: string,
-  lang: string = "ar"
-): Promise<ContentBase[]> {
-  const { data, error } = await supabase
-    .from("content")
-    .select("*")
-    .eq("type", type)
-    .eq("lang", lang)
-    .eq("status", "published")
-    .contains("category", [category])
-    .order("published_at", { ascending: false });
-
-  if (error) {
-    console.error(`Error fetching ${type} by category "${category}":`, error);
-    return [];
-  }
-
-  return data || [];
-}
-
-/**
- * جلب المحتوى حسب الوسم
- */
-export async function getContentByTag(
-  tag: string,
-  options: { type?: ContentType; lang?: string } = {}
-): Promise<ContentBase[]> {
-  const { type, lang = "ar" } = options;
-
-  let dbQuery = supabase
-    .from("content")
-    .select("*")
-    .eq("status", "published")
-    .eq("lang", lang)
-    .contains("tags", [tag])
-    .order("published_at", { ascending: false });
-
-  if (type) {
-    dbQuery = dbQuery.eq("type", type);
-  }
-
-  const { data, error } = await dbQuery;
-
-  if (error) {
-    console.error(`Error fetching content by tag "${tag}":`, error);
-    return [];
-  }
-
-  return data || [];
-}
-
-// ===== كاش بسيط في الذاكرة =====
+// ===== كاش بسيط =====
 const contentCache = new Map<string, { data: unknown; expires: number }>();
-
-const DEFAULT_CACHE_TTL = 5 * 60 * 1000; // 5 دقائق
+const DEFAULT_CACHE_TTL = 5 * 60 * 1000;
 
 export function getCachedContent<T>(key: string): T | null {
   const cached = contentCache.get(key);
@@ -461,10 +228,7 @@ export function getCachedContent<T>(key: string): T | null {
 }
 
 export function setCachedContent(key: string, data: unknown, ttl?: number): void {
-  contentCache.set(key, {
-    data,
-    expires: Date.now() + (ttl || DEFAULT_CACHE_TTL),
-  });
+  contentCache.set(key, { data, expires: Date.now() + (ttl || DEFAULT_CACHE_TTL) });
 }
 
 export function invalidateContentCache(pattern?: string): void {
@@ -473,19 +237,108 @@ export function invalidateContentCache(pattern?: string): void {
     return;
   }
   for (const key of contentCache.keys()) {
-    if (key.includes(pattern)) {
-      contentCache.delete(key);
-    }
+    if (key.includes(pattern)) contentCache.delete(key);
   }
 }
-// ===== Stubs مؤقتة — هتتعدل لما نطور الصفحات القديمة =====
 
-export const defaultContent: ContentBase[] = [];
+// ===== طبقة توافق للصفحات القديمة =====
+export const defaultContent: any = {
+  site: {
+    name: "إسماعيل أحمد نجيب",
+    nameEn: "Ismail Ahmed Naguib",
+    tagline: "منصة دعوية شاملة",
+    description: "منصة إسلامية شاملة تجمع القرآن والسنة والعلوم الشرعية وأدوات الدعوة في مكان واحد",
+    url: "https://ismailahmednaguib.vercel.app",
+  },
+  about: { title: "من نحن", subtitle: "تعرف على المنصة وصاحبها", body: "" },
+  contact: { title: "تواصل معنا", subtitle: "نسعد بتواصلك" },
+  fields: [],
+  projects: [],
+  khutab: [],
+  fatwa: [],
+  news: [],
+  live: [],
+  learn: [],
+  dawahGuide: { title: "دليل الدعوة", subtitle: "كيف تكون داعية ناجحًا", body: "" },
+  prayerGuide: { title: "دليل الصلاة", subtitle: "تعلّم الصلاة الصحيحة خطوة بخطوة", body: "" },
+  hajjGuide: { title: "دليل الحج والعمرة", subtitle: "من الإحرام حتى التحلل", body: "" },
+  zakat: { title: "حاسبة الزكاة", subtitle: "زكاة المال والذهب والعروض", body: "" },
+  inheritance: { title: "علم المواريث", subtitle: "تقسيم التركات شرعًا", body: "" },
+  prophets: [],
+  memorization: { title: "حفظ القرآن", subtitle: "خطة عملية للحفظ والمراجعة", body: "" },
+  ruqyah: { title: "الرقية الشرعية", subtitle: "آيات وأدعية الرقية", body: "" },
+  dailyWird: { title: "الورد اليومي", subtitle: "برنامجك اليومي من القرآن والذكر", body: "" },
+  khatmDua: { title: "ختمة الدعاء", subtitle: "شارك في ختمة دعاء جماعية", body: "" },
+  youthIssues: [],
+  womenFatwas: [],
+  embraceIslam: { title: "ادخل الإسلام", subtitle: "لغير المسلمين والمهتمين", body: "" },
+  atheismResponse: [],
+  doubts: [],
+};
 
-export async function getContent(
-  type: ContentType,
-  slug: string,
-  lang: string = "ar"
-): Promise<ContentBase | null> {
-  return getContentBySlug(type, slug, lang);
+const contentKeyAliases: Record<string, string> = {
+  about: "about",
+  fields: "fields",
+  field: "fields",
+  projects: "projects",
+  project: "projects",
+  khutab: "khutab",
+  khutbah: "khutab",
+  fatwa: "fatwa",
+  fatwas: "fatwa",
+  news: "news",
+  live: "live",
+  learn: "learn",
+  dawahGuide: "dawahGuide",
+  "dawah-guide": "dawahGuide",
+  prayerGuide: "prayerGuide",
+  "prayer-guide": "prayerGuide",
+  hajjGuide: "hajjGuide",
+  "hajj-guide": "hajjGuide",
+  zakat: "zakat",
+  inheritance: "inheritance",
+  prophets: "prophets",
+  prophetsStories: "prophets",
+  "prophets-stories": "prophets",
+  memorization: "memorization",
+  quranMemorization: "memorization",
+  "quran-memorization": "memorization",
+  ruqyah: "ruqyah",
+  dailyWird: "dailyWird",
+  "daily-wird": "dailyWird",
+  khatmDua: "khatmDua",
+  "khatm-dua": "khatmDua",
+  youthIssues: "youthIssues",
+  "youth-issues": "youthIssues",
+  womenFatwas: "womenFatwas",
+  embraceIslam: "embraceIslam",
+  "embrace-islam": "embraceIslam",
+  atheismResponse: "atheismResponse",
+  "atheism-response": "atheismResponse",
+  doubts: "doubts",
+};
+
+export async function getContent(...args: any[]): Promise<any> {
+  if (args.length === 0) return defaultContent;
+
+  const first = args[0];
+  const second = args[1];
+  const third = args[2];
+
+  if (typeof first === "string") {
+    const alias = contentKeyAliases[first] || first;
+    if (alias in defaultContent) return defaultContent[alias];
+  }
+
+  if (typeof first === "string" && typeof second === "string") {
+    return getContentBySlug(first as ContentType, second, typeof third === "string" ? third : "ar");
+  }
+
+  if (typeof first === "string") {
+    return getContentByType(first as ContentType, {
+      lang: typeof second === "string" ? second : "ar",
+    });
+  }
+
+  return defaultContent;
 }
