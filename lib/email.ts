@@ -450,3 +450,29 @@ export async function handleContactForm(
     };
   }
 }
+// ===== Stub مؤقتة لـ API route القديمة =====
+
+export async function subscribeEmail(
+  email: string,
+  lang: string = "ar"
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data, error } = await supabase
+      .from("newsletter_subscribers")
+      .upsert(
+        { email, lang, subscribed_at: new Date().toISOString() },
+        { onConflict: "email" }
+      );
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Unknown error",
+    };
+  }
+}

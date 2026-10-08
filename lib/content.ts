@@ -478,3 +478,14 @@ export function invalidateContentCache(pattern?: string): void {
     }
   }
 }
+// ===== Stubs مؤقتة — هتتعدل لما نطور الصفحات القديمة =====
+
+export const defaultContent: ContentBase[] = [];
+
+export async function getContent(
+  type: ContentType,
+  slug: string,
+  lang: string = "ar"
+): Promise<ContentBase | null> {
+  return getContentBySlug(type, slug, lang);
+}

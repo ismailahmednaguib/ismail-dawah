@@ -556,3 +556,6 @@ export function getAllAdhkar(): Array<Dhikr & { category: string }> {
     cat.adhkar.map((d) => ({ ...d, category: cat.arabicTitle }))
   );
 }
+// ===== Stub مؤقتة لـ sitemap =====
+
+export const fields = DAWAH_FIELDS;

@@ -582,3 +582,14 @@ export const translations: Record<'ar' | 'en', TranslationDict> = {
     "common.lightMode": "Light Mode",
   },
 };
+// ===== Stubs مؤقتة =====
+
+export const defaultFieldTranslations: Record<string, Record<string, string>> = {};
+
+export function getFieldTranslation(
+  fieldId: string,
+  lang: string,
+  key: string
+): string {
+  return defaultFieldTranslations[fieldId]?.[`${lang}_${key}`] || key;
+}

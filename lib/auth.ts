@@ -450,3 +450,69 @@ export async function setUserRole(
 
   return true;
 }
+// ===== Stubs مؤقتة للـ API routes القديمة =====
+
+import bcrypt from "bcryptjs";
+import { randomUUID } from "crypto";
+
+const SESSION_COOKIE = "admin_session";
+const SESSION_DURATION = 60 * 60 * 24; // 24 ساعة
+
+// تخزين الجلسات في الذاكرة (مؤقت — بعدين نستخدم Supabase)
+const sessions = new Map<string, { userId: string; expires: number }>();
+
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 12);
+}
+
+export async function verifyPassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+
+export function createSession(userId: string): string {
+  const token = randomUUID();
+  sessions.set(token, {
+    userId,
+    expires: Date.now() + SESSION_DURATION * 1000,
+  });
+  return token;
+}
+
+export function getSessionUserId(token: string): string | null {
+  const session = sessions.get(token);
+  if (!session) return null;
+  if (Date.now() > session.expires) {
+    sessions.delete(token);
+    return null;
+  }
+  return session.userId;
+}
+
+export async function getAdminFromCookie(
+  cookieValue: string | undefined
+): Promise<UserProfile | null> {
+  if (!cookieValue) return null;
+  const userId = getSessionUserId(cookieValue);
+  if (!userId) return null;
+
+  const adminUser = await getUserById(userId);
+  if (!adminUser || adminUser.role !== "admin") return null;
+  return adminUser;
+}
+
+export async function getUserById(id: string): Promise<UserProfile | null> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error || !data) return null;
+  return data as UserProfile;
+}
+
+export { SESSION_COOKIE };
