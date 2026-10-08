@@ -1,17 +1,74 @@
-node_modules
-.next
-out
+# ================================
+# 📦 Dependencies
+# ================================
+node_modules/
+
+# ================================
+# ⚡ Next.js
+# ================================
+.next/
+out/
+# ملفات الـ build المؤقتة
+trace
+trace-build
+*.tsbuildinfo
+# Turbopack cache (لو موجود)
+.turbopack/
+
+# ================================
+# 🔐 Environment Variables (مهم جداً!)
+# ================================
+.env
+.env.local
 .env*.local
+.env.development
+.env.production
+
+# ================================
+# 🤖 Android / TWA / Bubblewrap
+# ================================
+android/
+.gradle/
+app/build/
+build/
+*.apk
+*.aab
+*.keystore
+*.idsig
+*.jks
+# ملفات التوقيع المؤقتة
+fingerprint.txt
+manifest-checksum.txt
+
+# ================================
+# 💻 نظام التشغيل
+# ================================
 .DS_Store
+Thumbs.db
+desktop.ini
 
-# Bubblewrap Android
-android/
-*.apk
-*.aab
-*.keystore
+# ================================
+# 🛠️ IDE & Editors
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# Bubblewrap Android
-android/
-*.apk
-*.aab
-*.keystore
+# ================================
+# 📜 Logs
+# ================================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.vercel
+
+# ================================
+# 🗑️ ملفات مؤقتة / نسخ احتياطي
+# ================================
+*.backup
+*.bak
+project-map.txt
+# Kilo worktrees
+.kilo/
