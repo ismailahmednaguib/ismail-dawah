@@ -1,194 +1,239 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BackButton from "@/components/BackButton";
-import PageHero from "@/components/PageHero";
-import IslamicSection from "@/components/IslamicSection";
-import { t, type Lang } from "@/lib/i18n";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
-type Timings = { Fajr: string; Sunrise: string; Dhuhr: string; Asr: string; Maghrib: string; Isha: string };
+type PrayerTimings = {
+  Fajr: string;
+  Sunrise: string;
+  Dhuhr: string;
+  Asr: string;
+  Maghrib: string;
+  Isha: string;
+};
 
-const COUNTRIES = [
-  { name: "Egypt", ar: "مصر", cities: ["Cairo", "Alexandria", "Giza", "Luxor", "Aswan"] },
-  { name: "Saudi Arabia", ar: "السعودية", cities: ["Makkah", "Madinah", "Riyadh", "Jeddah", "Dammam"] },
-  { name: "United Arab Emirates", ar: "الإمارات", cities: ["Dubai", "Abu Dhabi", "Sharjah"] },
-  { name: "Jordan", ar: "الأردن", cities: ["Amman", "Irbid", "Zarqa"] },
-  { name: "Morocco", ar: "المغرب", cities: ["Casablanca", "Rabat", "Marrakech"] },
-  { name: "Algeria", ar: "الجزائر", cities: ["Algiers", "Oran", "Constantine"] },
-  { name: "Tunisia", ar: "تونس", cities: ["Tunis", "Sfax", "Sousse"] },
-  { name: "Turkey", ar: "تركيا", cities: ["Istanbul", "Ankara", "Izmir"] },
-  { name: "Pakistan", ar: "باكستان", cities: ["Karachi", "Lahore", "Islamabad"] },
-  { name: "Indonesia", ar: "إندونيسيا", cities: ["Jakarta", "Surabaya", "Bandung"] },
-  { name: "Malaysia", ar: "ماليزيا", cities: ["Kuala Lumpur", "Penang"] },
-  { name: "United Kingdom", ar: "بريطانيا", cities: ["London", "Manchester", "Birmingham"] },
-  { name: "USA", ar: "أمريكا", cities: ["New York", "Los Angeles", "Chicago"] },
+const PRAYERS_AR = [
+  { key: "Fajr", name: "الفجر", icon: "🌄" },
+  { key: "Sunrise", name: "الشروق", icon: "🌅" },
+  { key: "Dhuhr", name: "الظهر", icon: "☀️" },
+  { key: "Asr", name: "العصر", icon: "🌤️" },
+  { key: "Maghrib", name: "المغرب", icon: "🌇" },
+  { key: "Isha", name: "العشاء", icon: "🌙" },
+];
+
+const PRAYERS_EN = [
+  { key: "Fajr", name: "Fajr", icon: "🌄" },
+  { key: "Sunrise", name: "Sunrise", icon: "🌅" },
+  { key: "Dhuhr", name: "Dhuhr", icon: "☀️" },
+  { key: "Asr", name: "Asr", icon: "🌤️" },
+  { key: "Maghrib", name: "Maghrib", icon: "🌇" },
+  { key: "Isha", name: "Isha", icon: "🌙" },
 ];
 
 export default function PrayerTimesPage() {
-  const params = useParams();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
-  const tr = t(L);
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] === "en" ? "en" : "ar";
+  const [timings, setTimings] = useState<PrayerTimings | null>(null);
+  const [location, setLocation] = useState<string>(lang === "ar" ? "القاهرة، مصر" : "Cairo, Egypt");
+  const [loading, setLoading] = useState(true);
+  const [now, setNow] = useState(new Date());
+  const [city, setCity] = useState("");
 
-  const [country, setCountry] = useState(localStorage.getItem("prayerCountry") || "Egypt");
-  const [city, setCity] = useState(localStorage.getItem("prayerCity") || "Cairo");
-  const [timings, setTimings] = useState<Timings | null>(null);
-  const [hijriDate, setHijriDate] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [useGPS, setUseGPS] = useState(false);
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  const selectedCountry = COUNTRIES.find(c => c.name === country);
-
-  const fetchTimes = async (c: string, ci: string) => {
+  const fetchTimings = async (cityName: string) => {
     setLoading(true);
     try {
-      const r = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${ci}&country=${c}&method=5`);
-      const j = await r.json();
-      if (j.data) {
-        setTimings({
-          Fajr: j.data.timings.Fajr,
-          Sunrise: j.data.timings.Sunrise,
-          Dhuhr: j.data.timings.Dhuhr,
-          Asr: j.data.timings.Asr,
-          Maghrib: j.data.timings.Maghrib,
-          Isha: j.data.timings.Isha,
-        });
-        setHijriDate(`${j.data.date.hijri.day} ${j.data.date.hijri.month.ar} ${j.data.date.hijri.year}هـ`);
-        localStorage.setItem("prayerCountry", c);
-        localStorage.setItem("prayerCity", ci);
+      const res = await fetch(
+        `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(cityName)}&method=5`
+      );
+      const data = await res.json();
+      if (data.data) {
+        setTimings(data.data.timings);
+        setLocation(`${data.data.meta.timezone}`);
       }
-    } catch {}
-    setLoading(false);
-  };
-
-  useEffect(() => { fetchTimes(country, city); }, []);
-
-  const useGPSTimes = () => {
-    if (!navigator.geolocation) return alert("المتصفح لا يدعم تحديد الموقع");
-    setUseGPS(true);
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      setLoading(true);
-      try {
-        const r = await fetch(`https://api.aladhan.com/v1/timings?latitude=${pos.coords.latitude}&longitude=${pos.coords.longitude}&method=5`);
-        const j = await r.json();
-        if (j.data) {
-          setTimings({
-            Fajr: j.data.timings.Fajr,
-            Sunrise: j.data.timings.Sunrise,
-            Dhuhr: j.data.timings.Dhuhr,
-            Asr: j.data.timings.Asr,
-            Maghrib: j.data.timings.Maghrib,
-            Isha: j.data.timings.Isha,
-          });
-          setHijriDate(`${j.data.date.hijri.day} ${j.data.date.hijri.month.ar} ${j.data.date.hijri.year}هـ`);
-        }
-      } catch {}
+    } catch (e) {
+      console.error(e);
+    } finally {
       setLoading(false);
-      setUseGPS(false);
-    });
+    }
   };
 
-  const prayerList = timings ? [
-    { ar: "الفجر", en: "Fajr", time: timings.Fajr, icon: "🌅", gradient: "from-indigo-500 to-blue-600" },
-    { ar: "الشروق", en: "Sunrise", time: timings.Sunrise, icon: "☀️", gradient: "from-orange-400 to-yellow-500" },
-    { ar: "الظهر", en: "Dhuhr", time: timings.Dhuhr, icon: "🌞", gradient: "from-yellow-400 to-orange-500" },
-    { ar: "العصر", en: "Asr", time: timings.Asr, icon: "🌤️", gradient: "from-amber-500 to-orange-600" },
-    { ar: "المغرب", en: "Maghrib", time: timings.Maghrib, icon: "🌇", gradient: "from-rose-500 to-pink-600" },
-    { ar: "العشاء", en: "Isha", time: timings.Isha, icon: "🌙", gradient: "from-purple-600 to-indigo-700" },
-  ] : [];
+  useEffect(() => {
+    fetchTimings("Cairo");
+  }, []);
+
+  // حساب الصلاة القادمة
+  const getNextPrayer = () => {
+    if (!timings) return null;
+    const prayers = PRAYERS_AR.filter((p) => p.key !== "Sunrise");
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+
+    for (const prayer of prayers) {
+      const [h, m] = timings[prayer.key as keyof PrayerTimings].split(":").map(Number);
+      const prayerMins = h * 60 + m;
+      if (prayerMins > nowMins) {
+        return { ...prayer, time: timings[prayer.key as keyof PrayerTimings], diff: prayerMins - nowMins };
+      }
+    }
+    // لو فات كل الصلوات، الفجر بتاع بكرة
+    const [h, m] = timings.Fajr.split(":").map(Number);
+    return { ...PRAYERS_AR[0], time: timings.Fajr, diff: 24 * 60 - nowMins + h * 60 + m };
+  };
+
+  const nextPrayer = getNextPrayer();
+  const formatCountdown = (mins: number) => {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const s = 60 - now.getSeconds();
+    return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  };
+
+  const isCurrentPrayer = (key: string) => {
+    if (!timings) return false;
+    const prayers = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+    const idx = prayers.indexOf(key);
+    if (idx === -1) return false;
+
+    const nowMins = now.getHours() * 60 + now.getMinutes();
+    const [h, m] = timings[key as keyof PrayerTimings].split(":").map(Number);
+    const prayerMins = h * 60 + m;
+    if (nowMins < prayerMins) return false;
+
+    if (idx === prayers.length - 1) return true;
+    const [nh, nm] = timings[prayers[idx + 1] as keyof PrayerTimings].split(":").map(Number);
+    return nowMins < nh * 60 + nm;
+  };
+
+  const displayPrayers = lang === "ar" ? PRAYERS_AR : PRAYERS_EN;
 
   return (
-    <>
-      <Header lang={L} />
-      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        <PageHero
-          icon="🕌"
-          title="مواقيت الصلاة"
-          subtitle="مواقيت دقيقة لكل دول العالم"
-          hadith="إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا"
-          gradient="from-teal-600 via-teal-700 to-teal-800"
-        />
+    <main className="min-h-screen bg-gradient-to-b from-primary-50 via-white to-primary-50/30 dark:from-night-950 dark:via-night-900 dark:to-night-950">
+      {/* Hero مع العد التنازلي */}
+      <section className="relative overflow-hidden py-16 md:py-24">
+        <div className="absolute inset-0 gradient-hero" />
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 start-10 w-72 h-72 bg-gold-400 rounded-full blur-3xl animate-float" />
+        </div>
 
-        <section className="py-10">
-          <div className="max-w-4xl mx-auto px-4">
-            <BackButton href={`/${lang}/tools`} label={tr.back} />
+        <div className="container-page relative text-center text-white">
+          <span className="badge bg-white/15 border border-white/25 text-white mb-4">
+            🕌 {lang === "ar" ? "أوقات الصلاة" : "Prayer Times"}
+          </span>
+          <h1 className="heading-1 !text-white mb-4">
+            {lang === "ar" ? "مواقيت الصلاة" : "Prayer Times"}
+          </h1>
+          <p className="text-primary-100 mb-8">
+            📍 {location} • {now.toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+          </p>
 
-            {/* اختيار الدولة والمدينة */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg mb-8">
-              <h3 className="font-bold text-primary dark:text-gold mb-4">📍 اختر موقعك</h3>
-              <div className="grid sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">الدولة</label>
-                  <select
-                    value={country}
-                    onChange={(e) => {
-                      setCountry(e.target.value);
-                      const c = COUNTRIES.find(x => x.name === e.target.value);
-                      if (c) {
-                        setCity(c.cities[0]);
-                        fetchTimes(e.target.value, c.cities[0]);
-                      }
-                    }}
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-3 py-2 focus:border-gold"
-                  >
-                    {COUNTRIES.map(c => (
-                      <option key={c.name} value={c.name}>{lang === "ar" ? c.ar : c.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block font-bold text-sm mb-2 text-primary dark:text-gold">المدينة</label>
-                  <select
-                    value={city}
-                    onChange={(e) => {
-                      setCity(e.target.value);
-                      fetchTimes(country, e.target.value);
-                    }}
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-3 py-2 focus:border-gold"
-                  >
-                    {selectedCountry?.cities.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
+          {/* العد التنازلي للصلاة القادمة */}
+          {nextPrayer && (
+            <div className="inline-block glass rounded-3xl px-8 md:px-16 py-6 border border-white/20">
+              <p className="text-primary-100 text-sm mb-2">
+                {lang === "ar" ? "الصلاة القادمة" : "Next Prayer"}
+              </p>
+              <div className="text-4xl md:text-6xl font-black mb-2" style={{ fontFamily: "var(--font-amiri)" }}>
+                {nextPrayer.icon} {nextPrayer.name}
               </div>
-              <button
-                onClick={useGPSTimes}
-                disabled={useGPS}
-                className="w-full bg-gold text-gray-900 py-3 rounded-lg font-bold hover:bg-gold-light transition disabled:opacity-50"
-              >
-                {useGPS ? "⏳ جاري تحديد الموقع..." : "📍 استخدام موقعي الحالي (GPS)"}
-              </button>
+              <div className="text-2xl md:text-3xl font-mono text-gold-300" dir="ltr">
+                {formatCountdown(nextPrayer.diff)}
+              </div>
+              <p className="text-primary-100 mt-2">
+                {lang === "ar" ? "الساعة" : "At"} {nextPrayer.time}
+              </p>
             </div>
+          )}
 
-            {/* المواقيت */}
-            {loading ? (
-              <p className="text-center text-gray-500 py-10">⏳ جاري التحميل...</p>
-            ) : timings ? (
-              <>
-                {/* التاريخ والمدينة */}
-                <div className="text-center mb-6">
-                  <p className="text-sm text-gray-500">📍 {city}, {selectedCountry?.ar}</p>
-                  <p className="font-serif text-xl text-gold mt-1">{hijriDate}</p>
-                </div>
+          {/* البحث عن مدينة */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (city.trim()) fetchTimings(city.trim());
+            }}
+            className="mt-8 flex max-w-md mx-auto gap-2"
+          >
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder={lang === "ar" ? "اكتب اسم مدينتك..." : "Enter your city..."}
+              className="flex-1 px-5 py-3 rounded-2xl bg-white/10 border border-white/25 text-white placeholder:text-primary-200 outline-none focus:bg-white/20 transition-all"
+            />
+            <button type="submit" className="btn-gold !py-3 cursor-pointer">
+              🔍 {lang === "ar" ? "بحث" : "Search"}
+            </button>
+          </form>
+        </div>
+      </section>
 
-                {/* بطاقات المواقيت */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {prayerList.map(p => (
-                    <div key={p.en} className={`bg-gradient-to-br ${p.gradient} rounded-2xl p-6 text-center text-white shadow-lg hover:shadow-xl transition hover:-translate-y-1`}>
-                      <div className="text-4xl mb-2">{p.icon}</div>
-                      <div className="font-bold text-lg">{lang === "ar" ? p.ar : p.en}</div>
-                      <div className="text-3xl font-mono font-bold mt-2" dir="ltr">{p.time}</div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : null}
+      {/* شبكة المواقيت */}
+      <section className="container-page py-16 pb-24">
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="inline-block w-12 h-12 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+            <p className="mt-4 text-body">
+              {lang === "ar" ? "جاري التحميل..." : "Loading..."}
+            </p>
           </div>
-        </section>
-      </main>
-      <Footer lang={L} />
-    </>
+        ) : timings ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
+            {displayPrayers.map((prayer) => {
+              const isCurrent = isCurrentPrayer(prayer.key);
+              const isNext = nextPrayer?.key === prayer.key;
+              return (
+                <div
+                  key={prayer.key}
+                  className={`card p-6 text-center relative overflow-hidden transition-all ${
+                    isCurrent
+                      ? "ring-2 ring-gold-500 bg-gold-50 dark:bg-gold-500/10"
+                      : isNext
+                      ? "ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/20"
+                      : ""
+                  }`}
+                >
+                  {isCurrent && (
+                    <span className="absolute top-2 end-2 badge-gold text-xs">
+                      {lang === "ar" ? "الآن" : "Now"}
+                    </span>
+                  )}
+                  {isNext && !isCurrent && (
+                    <span className="absolute top-2 end-2 badge-primary text-xs">
+                      {lang === "ar" ? "القادمة" : "Next"}
+                    </span>
+                  )}
+                  <div className="text-4xl mb-3">{prayer.icon}</div>
+                  <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-1" style={{ fontFamily: "var(--font-amiri)" }}>
+                    {prayer.name}
+                  </h3>
+                  <p className="text-2xl font-black text-primary-600 dark:text-primary-400" dir="ltr">
+                    {timings[prayer.key as keyof PrayerTimings]}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-20 text-body">
+            {lang === "ar" ? "تعذر تحميل المواقيت" : "Failed to load times"}
+          </div>
+        )}
+
+        {/* آية */}
+        <div className="max-w-3xl mx-auto mt-16 text-center">
+          <div className="card p-8">
+            <p className="quran-text text-2xl md:text-3xl mb-4">
+              ﴿ إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا ﴾
+            </p>
+            <p className="text-body text-sm">
+              {lang === "ar" ? "سورة النساء — الآية 103" : "An-Nisa — Verse 103"}
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

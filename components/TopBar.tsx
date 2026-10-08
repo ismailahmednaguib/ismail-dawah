@@ -1,120 +1,227 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { BackButtonCompact } from "./BackButton";
+import ShareButtons from "./ShareButtons";
+import BookmarkButton from "./BookmarkButton";
 
-type PrayerTimes = {
-  Fajr: string; Sunrise: string; Dhuhr: string;
-  Asr: string; Maghrib: string; Isha: string;
-};
+interface TopBarCrumb {
+  label: string;
+  href?: string;
+}
 
-export default function TopBar() {
-  const [times, setTimes] = useState<PrayerTimes | null>(null);
-  const [hijriDate, setHijriDate] = useState("");
-  const [gregDate, setGregDate] = useState("");
-  const [city, setCity] = useState("القاهرة");
-  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string } | null>(null);
-  const [countdown, setCountdown] = useState("--:--:--");
-  const [now, setNow] = useState(new Date());
+interface TopBarProps {
+  title: string;
+  subtitle?: string;
+  breadcrumb?: TopBarCrumb[];
+  backHref?: string;
+  showBack?: boolean;
+  showShare?: boolean;
+  showBookmark?: boolean;
+  bookmarkType?: string;
+  actions?: React.ReactNode;
+  sticky?: boolean;
+  className?: string;
+}
 
-  useEffect(() => {
-    const savedCity = localStorage.getItem("prayerCity") || "Cairo";
-    const savedCountry = localStorage.getItem("prayerCountry") || "Egypt";
-    const savedCityAr = localStorage.getItem("prayerCityAr") || "القاهرة";
-    setCity(savedCityAr);
+export default function TopBar({
+  title,
+  subtitle,
+  breadcrumb,
+  backHref,
+  showBack = true,
+  showShare = true,
+  showBookmark = false,
+  bookmarkType = "page",
+  actions,
+  sticky = true,
+  className = "",
+}: TopBarProps) {
+  const pathname = usePathname();
+  const lang = pathname.split("/")[1] === "en" ? "en" : "ar";
+  const isRTL = lang === "ar";
 
-    fetch(`https://api.aladhan.com/v1/timingsByCity?city=${savedCity}&country=${savedCountry}&method=5`)
-      .then(r => r.json())
-      .then(j => {
-        if (j.data) {
-          setTimes({
-            Fajr: j.data.timings.Fajr,
-            Sunrise: j.data.timings.Sunrise,
-            Dhuhr: j.data.timings.Dhuhr,
-            Asr: j.data.timings.Asr,
-            Maghrib: j.data.timings.Maghrib,
-            Isha: j.data.timings.Isha,
-          });
-          setHijriDate(`${j.data.date.hijri.day} ${j.data.date.hijri.month.ar} ${j.data.date.hijri.year}هـ`);
-          setGregDate(`${j.data.date.gregorian.day} ${j.data.date.gregorian.month.en} ${j.data.date.gregorian.year}`);
-        }
-      })
-      .catch(() => {});
-  }, []);
+  const [copied, setCopied] = useState(false);
 
-  // تحديث الساعة كل ثانية
-  useEffect(() => {
-    const i = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(i);
-  }, []);
+  const resolvedBackHref = backHref || `/${lang}`;
 
-  // حساب الصلاة القادمة والعداد
-  useEffect(() => {
-    if (!times) return;
-    const prayers = [
-      { name: "الفجر", time: times.Fajr },
-      { name: "الشروق", time: times.Sunrise },
-      { name: "الظهر", time: times.Dhuhr },
-      { name: "العصر", time: times.Asr },
-      { name: "المغرب", time: times.Maghrib },
-      { name: "العشاء", time: times.Isha },
-    ];
+  const bookmarkItem = {
+    id: pathname,
+    title,
+    href: pathname,
+    type: bookmarkType,
+  };
 
-    const update = () => {
-      const now = new Date();
-      let next = prayers[0];
-      for (const p of prayers) {
-        const [h, m] = p.time.split(" ")[0].split(":").map(Number);
-        const pt = new Date();
-        pt.setHours(h, m, 0, 0);
-        if (pt > now) { next = p; break; }
-      }
-      setNextPrayer(next);
+  const handleMobileShare = async () => {
+    if (typeof window === "undefined") return;
 
-      const [h, m] = next.time.split(" ")[0].split(":").map(Number);
-      const pt = new Date();
-      pt.setHours(h, m, 0, 0);
-      if (pt <= now) pt.setDate(pt.getDate() + 1);
-
-      const diff = pt.getTime() - now.getTime();
-      const hours = Math.floor(diff / 3600000);
-      const minutes = Math.floor((diff % 3600000) / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
-      setCountdown(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`);
+    const url = window.location.href;
+    const nav = navigator as Navigator & {
+      share?: (data: ShareData) => Promise<void>;
     };
 
-    update();
-    const interval = setInterval(update, 1000);
-    return () => clearInterval(interval);
-  }, [times]);
+    // 1) نجرب المشاركة الأصلية للمتصفح/الموبايل
+    if (typeof nav.share === "function") {
+      try {
+        await nav.share({
+          title,
+          text: subtitle || undefined,
+          url,
+        });
+        return;
+      } catch {
+        // المستخدم ألغى أو المتصفح رفض، نكمل لنسخ الرابط
+      }
+    }
 
-  const timeStr = now.toLocaleTimeString("ar-EG", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    // 2) بديل: نسخ الرابط
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // لو النسخ فشل، نسكت عشان ما نكسرش التجربة
+    }
+  };
 
   return (
-    <div className="bg-primary text-white text-xs py-2 border-b-2 border-gold/50">
-      <div className="max-w-6xl mx-auto px-4 flex items-center justify-between gap-3 flex-wrap">
-        {/* التاريخ الهجري + الميلادي */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="bg-gold/20 text-gold-light px-2 py-0.5 rounded font-bold">📅 {hijriDate}</span>
-          <span className="hidden sm:inline text-white/60">|</span>
-          <span className="hidden sm:inline text-white/80">{gregDate}</span>
-        </div>
+    <div
+      className={`
+        ${
+          sticky
+            ? "sticky top-16 z-40 md:top-20"
+            : "relative z-30"
+        }
+        border-b border-primary-100/70 bg-white/85 backdrop-blur-xl
+        dark:border-night-700/60 dark:bg-night-900/85
+        ${className}
+      `}
+    >
+      <div className="container-page">
+        <div className="flex min-h-14 items-center justify-between gap-3 py-3">
+          {/* ===== الجهة الأولى: رجوع + عنوان + مسار ===== */}
+          <div className="flex min-w-0 items-center gap-3">
+            {showBack && (
+              <BackButtonCompact
+                href={resolvedBackHref}
+                className="shrink-0"
+              />
+            )}
 
-        {/* الساعة + المدينة */}
-        <div className="flex items-center gap-2">
-          <span className="text-white/80">📍 {city}</span>
-          <span className="font-mono font-bold text-gold bg-black/20 px-2 py-0.5 rounded" dir="ltr">🕐 {timeStr}</span>
-        </div>
+            <div className="min-w-0">
+              {breadcrumb && breadcrumb.length > 0 && (
+                <nav
+                  aria-label="breadcrumb"
+                  className="mb-0.5 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400"
+                >
+                  {breadcrumb.map((crumb, index) => (
+                    <Fragment key={`${crumb.label}-${index}`}>
+                      {index > 0 && (
+                        <span className="text-slate-300 dark:text-slate-600">
+                          /
+                        </span>
+                      )}
 
-        {/* الصلاة القادمة + العداد */}
-        {nextPrayer && (
-          <div className="flex items-center gap-2 bg-gold text-gray-900 px-3 py-1 rounded-full font-bold">
-            <span>🕌 {nextPrayer.name}</span>
-            <span className="font-mono" dir="ltr">{nextPrayer.time}</span>
-            <span className="bg-gray-900 text-gold px-2 py-0.5 rounded-full text-xs font-mono" dir="ltr">
-              ⏱ {countdown}
-            </span>
+                      {crumb.href ? (
+                        <Link
+                          href={crumb.href}
+                          className="transition-colors hover:text-primary-600 dark:hover:text-primary-300"
+                        >
+                          {crumb.label}
+                        </Link>
+                      ) : (
+                        <span className="max-w-[140px] truncate font-semibold text-slate-700 sm:max-w-none dark:text-slate-200">
+                          {crumb.label}
+                        </span>
+                      )}
+                    </Fragment>
+                  ))}
+                </nav>
+              )}
+
+              <h1 className="truncate text-base font-bold text-slate-900 sm:text-lg dark:text-white">
+                {title}
+              </h1>
+
+              {subtitle && (
+                <p className="hidden max-w-xl truncate text-xs text-slate-500 sm:block dark:text-slate-400">
+                  {subtitle}
+                </p>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* ===== الجهة الثانية: أزرار ===== */}
+          <div className="flex shrink-0 items-center gap-2">
+            {actions}
+
+            {showShare && (
+              <>
+                {/* زر مشاركة سريع للموبايل */}
+                <button
+                  type="button"
+                  onClick={handleMobileShare}
+                  aria-label={isRTL ? "مشاركة" : "Share"}
+                  title={isRTL ? "مشاركة" : "Share"}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-primary-200 bg-white text-primary-700 transition-all duration-200 hover:bg-primary-50 active:scale-95 md:hidden dark:border-night-700 dark:bg-night-800 dark:text-primary-300 dark:hover:bg-night-700"
+                >
+                  {copied ? (
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="18" cy="5" r="3" />
+                      <circle cx="6" cy="12" r="3" />
+                      <circle cx="18" cy="19" r="3" />
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </svg>
+                  )}
+                </button>
+
+                {/* أزرار المشاركة الكاملة للديسكتوب */}
+                <div className="hidden md:block">
+                  <ShareButtons
+                    lang={lang}
+                    title={title}
+                    text={subtitle}
+                    variant="compact"
+                    showCopy={true}
+                    showNative={true}
+                  />
+                </div>
+              </>
+            )}
+
+            {showBookmark && (
+              <BookmarkButton
+                item={bookmarkItem}
+                size="sm"
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,277 +1,584 @@
-import type { Lang } from "./i18n";
+// lib/translations.ts
+// قاموس الترجمات الكامل للمنصة
 
-type Entry = { name: string; desc: string };
-type FieldTrans = Partial<Record<Lang, Entry>>;
+export type TranslationDict = Record<string, string>;
 
-export const defaultFieldTranslations: Record<string, FieldTrans> = {
-  aqeedah: {
-    ar: { name: "العقيدة", desc: "التوحيد وأركان الإيمان والرد على الشبهات العقدية" },
-    en: { name: "Aqeedah", desc: "Monotheism, pillars of faith, and responding to doctrinal doubts" },
-    fr: { name: "Aqida", desc: "Monothéisme, piliers de la foi et réponse aux doutes" },
-    ur: { name: "عقیدہ", desc: "توحید، ایمان کے ارکان اور عقیدتی شبہات کا جواب" },
-    tr: { name: "Akaid", desc: "Tevhid, imanın şartları ve akaid şüphelerine cevaplar" },
-    id: { name: "Akidah", desc: "Tauhid, rukun iman, dan menjawab keraguan akidah" },
-    ha: { name: "Aqeedah", desc: "Tawhidi, ginshiƙan imani da amsa shakku" },
-    bn: { name: "আকীদা", desc: "তাওহীদ, ঈমানের স্তম্ভ ও সন্দেহের জবাব" },
-    so: { name: "Caqiido", desc: "Tawxiidka, tiirarka iimaanka iyo ka jawaabista shakiga" },
-    fa: { name: "عقیده", desc: "توحید، ارکان ایمان و پاسخ به شبهات" },
-    es: { name: "Aqeedah", desc: "Monoteísmo, pilares de la fe y respuesta a dudas" },
-    ru: { name: "Акыда", desc: "Единобожие, столпы веры и ответы на сомнения" },
-    sw: { name: "Aqeedah", desc: "Tawhidi, nguzo za imani na majibu ya mashaka" },
+export const translations: Record<'ar' | 'en', TranslationDict> = {
+  ar: {
+    // ===== عام =====
+    "site.name": "إسماعيل أحمد نجيب",
+    "site.tagline": "منصة دعوية شاملة",
+    "site.description": "منصة إسلامية شاملة تجمع القرآن والسنة والعلوم الشرعية وأدوات الدعوة في مكان واحد",
+
+    // ===== التنقل =====
+    "nav.home": "الرئيسية",
+    "nav.quran": "القرآن الكريم",
+    "nav.adhkar": "الأذكار",
+    "nav.prayer": "مواقيت الصلاة",
+    "nav.fatwa": "الفتاوى",
+    "nav.live": "البث المباشر",
+    "nav.more": "المزيد",
+    "nav.search": "البحث",
+    "nav.account": "حسابي",
+    "nav.login": "تسجيل الدخول",
+    "nav.register": "إنشاء حساب",
+    "nav.logout": "تسجيل الخروج",
+    "nav.bookmarks": "المحفوظات",
+
+    // ===== الفوتر =====
+    "footer.worship": "العبادات",
+    "footer.knowledge": "العلوم",
+    "footer.dawah": "الدعوة",
+    "footer.about": "من نحن",
+    "footer.contact": "تواصل معنا",
+    "footer.privacy": "الخصوصية",
+    "footer.rights": "جميع الحقوق محفوظة",
+    "footer.newsletter.title": "اشترك في النشرة البريدية",
+    "footer.newsletter.desc": "صلك جديد المحتوى الدعوي والدروس والفتاوى أولاً بأول",
+    "footer.newsletter.placeholder": "بريدك الإلكتروني",
+    "footer.newsletter.subscribe": "اشترك",
+    "footer.newsletter.success": "تم الاشتراك بنجاح",
+    "footer.newsletter.error": "حدث خطأ، حاول مرة أخرى",
+
+    // ===== الصفحة الرئيسية =====
+    "home.hero.badge": "✨ منصة دعوية شاملة",
+    "home.hero.title": "نورُ العلم.. بين يديك",
+    "home.hero.subtitle": "القرآن الكريم، السنة النبوية، الفتاوى، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد",
+    "home.hero.cta1": "ابدأ الآن",
+    "home.hero.cta2": "البث المباشر",
+    "home.stats.sections": "قسم ومحتوى",
+    "home.stats.languages": "لغتان",
+    "home.stats.free": "مجاني 100%",
+    "home.tools.title": "أدواتك اليومية",
+    "home.tools.subtitle": "كل ما تحتاجه في يومك",
+    "home.learn.title": "تعلّم ودلائل",
+    "home.learn.subtitle": "خطوة بخطوة نحو الفهم الصحيح",
+    "home.responses.title": "العلوم والردود",
+    "home.responses.subtitle": "دافع عن عقيدتك بالعلم والحجة",
+    "home.dawah.title": "الدعوة والمجتمع",
+    "home.dawah.subtitle": "كن داعيةً مؤثراً",
+    "home.verse.text": "﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾",
+    "home.verse.ref": "سورة طه — الآية 114",
+
+    // ===== القرآن =====
+    "quran.title": "القرآن الكريم",
+    "quran.subtitle": "اقرأ واستمع إلى كتاب الله",
+    "quran.search.placeholder": "ابحث عن سورة...",
+    "quran.surah": "سورة",
+    "quran.ayah": "آية",
+    "quran.juz": "جزء",
+    "quran.hizb": "حزب",
+    "quran.page": "صفحة",
+    "quran.makki": "مكية",
+    "quran.madani": "مدنية",
+    "quran.listen": "استمع",
+    "quran.read": "اقرأ",
+    "quran.bookmark": "حفظ",
+    "quran.share": "مشاركة",
+    "quran.totalSurahs": "سورة",
+
+    // ===== الأذكار =====
+    "adhkar.title": "الأذكار",
+    "adhkar.subtitle": "أذكار الصباح والمساء والنوم",
+    "adhkar.morning": "أذكار الصباح",
+    "adhkar.evening": "أذكار المساء",
+    "adhkar.sleep": "أذكار النوم",
+    "adhkar.wake": "أذكار الاستيقاظ",
+    "adhkar.afterPrayer": "أذكار بعد الصلاة",
+    "adhkar.counter": "العداد",
+    "adhkar.repeat": "التكرار",
+    "adhkar.done": "تم",
+
+    // ===== المسبحة =====
+    "tasbih.title": "المسبحة الإلكترونية",
+    "tasbih.subtitle": "سبّح واستغفر وصلِّ على النبي ﷺ",
+    "tasbih.subhanAllah": "سبحان الله",
+    "tasbih.alhamdulillah": "الحمد لله",
+    "tasbih.allahuAkbar": "الله أكبر",
+    "tasbih.astaghfirullah": "أستغفر الله",
+    "tasbih.laIlahaIllaAllah": "لا إله إلا الله",
+    "tasbih.salawat": "اللهم صلِّ وسلم على نبينا محمد",
+    "tasbih.count": "العدد",
+    "tasbih.target": "الهدف",
+    "tasbih.reset": "إعادة تعيين",
+    "tasbih.vibrate": "اهتزاز",
+
+    // ===== مواقيت الصلاة =====
+    "prayer.title": "مواقيت الصلاة",
+    "prayer.subtitle": "مواعيد الصلاة حسب موقعك",
+    "prayer.fajr": "الفجر",
+    "prayer.sunrise": "الشروق",
+    "prayer.dhuhr": "الظهر",
+    "prayer.asr": "العصر",
+    "prayer.maghrib": "المغرب",
+    "prayer.isha": "العشاء",
+    "prayer.next": "الصلاة القادمة",
+    "prayer.remaining": "الوقت المتبقي",
+    "prayer.location": "تحديد الموقع",
+    "prayer.detecting": "جارٍ تحديد موقعك...",
+    "prayer.error": "تعذر تحديد الموقع",
+
+    // ===== القبلة =====
+    "qibla.title": "اتجاه القبلة",
+    "qibla.subtitle": "حدد اتجاه الكعبة المشرفة",
+    "qibla.direction": "الاتجاه",
+    "qibla.degrees": "درجة",
+    "qibla.north": "الشمال",
+
+    // ===== التقويم =====
+    "calendar.title": "التقويم الهجري",
+    "calendar.subtitle": "التقويم الهجري والميلادي",
+    "calendar.hijri": "هجري",
+    "calendar.gregorian": "ميلادي",
+    "calendar.today": "اليوم",
+
+    // ===== الفتاوى =====
+    "fatwa.title": "الفتاوى",
+    "fatwa.subtitle": "أسئلة وأجوبة شرعية",
+    "fatwa.ask": "اطرح سؤالك",
+    "fatwa.search.placeholder": "ابحث في الفتاوى...",
+    "fatwa.categories": "التصنيفات",
+    "fatwa.recent": "أحدث الفتاوى",
+    "fatwa.popular": "الأكثر قراءة",
+
+    // ===== الرد على الإلحاد =====
+    "atheism.title": "الرد على الإلحاد",
+    "atheism.subtitle": "حجج عقلية ونقلية على وجود الله",
+
+    // ===== الشبهات =====
+    "doubts.title": "الشبهات والردود",
+    "doubts.subtitle": "شبهات معاصرة بأجوبة علمية",
+
+    // ===== قضايا الشباب =====
+    "youth.title": "قضايا الشباب",
+    "youth.subtitle": "مشاكل وحلول جيلنا",
+
+    // ===== فتاوى المرأة =====
+    "womenFatwas.title": "فتاوى المرأة",
+    "womenFatwas.subtitle": "أحكام تخص المرأة المسلمة",
+
+    // ===== ادخل الإسلام =====
+    "embraceIslam.title": "ادخل الإسلام",
+    "embraceIslam.subtitle": "لغير المسلمين والمهتمين",
+    "embraceIslam.shahada": "الشهادتان",
+    "embraceIslam.steps": "خطوات الدخول في الإسلام",
+
+    // ===== دليل الصلاة =====
+    "prayerGuide.title": "دليل الصلاة",
+    "prayerGuide.subtitle": "تعلّم الصلاة الصحيحة خطوة بخطوة",
+
+    // ===== دليل الحج =====
+    "hajjGuide.title": "دليل الحج والعمرة",
+    "hajjGuide.subtitle": "من الإحرام حتى التحلل",
+
+    // ===== الزكاة =====
+    "zakat.title": "حاسبة الزكاة",
+    "zakat.subtitle": "زكاة المال والذهب والعروض",
+    "zakat.calculator": "الحاسبة",
+    "zakat.amount": "المبلغ",
+    "zakat.nisab": "النصاب",
+    "zakat.result": "الزكاة المستحقة",
+
+    // ===== المواريث =====
+    "inheritance.title": "علم المواريث",
+    "inheritance.subtitle": "تقسيم التركات شرعاً",
+
+    // ===== قصص الأنبياء =====
+    "prophets.title": "قصص الأنبياء",
+    "prophets.subtitle": "العبر والدروس من حياة الأنبياء",
+
+    // ===== حفظ القرآن =====
+    "memorization.title": "حفظ القرآن",
+    "memorization.subtitle": "خطة عملية للحفظ والمراجعة",
+
+    // ===== الرقية الشرعية =====
+    "ruqyah.title": "الرقية الشرعية",
+    "ruqyah.subtitle": "آيات وأدعية الرقية",
+
+    // ===== الورد اليومي =====
+    "dailyWird.title": "الورد اليومي",
+    "dailyWird.subtitle": "برنامجك اليومي من القرآن والذكر",
+
+    // ===== دليل الدعوة =====
+    "dawahGuide.title": "دليل الدعوة",
+    "dawahGuide.subtitle": "كيف تكون داعية ناجحاً",
+
+    // ===== المجالات =====
+    "fields.title": "المجالات الدعوية",
+    "fields.subtitle": "ساحات الدعوة المعاصرة",
+
+    // ===== المشاريع =====
+    "projects.title": "المشاريع",
+    "projects.subtitle": "مبادرات دعوية قائمة",
+
+    // ===== الخطب =====
+    "khutab.title": "الخطب",
+    "khutab.subtitle": "خطب جمعة مكتوبة",
+
+    // ===== ختمة الدعاء =====
+    "khatmDua.title": "ختمة الدعاء",
+    "khatmDua.subtitle": "شارك في ختمة دعاء جماعية",
+
+    // ===== البث المباشر =====
+    "live.title": "البث المباشر",
+    "live.subtitle": "دروس ومحاضرات حية",
+    "live.now": "مباشر الآن",
+    "live.upcoming": "قادم",
+    "live.ended": "انتهى",
+
+    // ===== الأخبار =====
+    "news.title": "الأخبار",
+    "news.subtitle": "آخر الأخبار والمقالات",
+
+    // ===== البحث =====
+    "search.title": "البحث",
+    "search.placeholder": "ابحث في المنصة...",
+    "search.noResults": "لا توجد نتائج",
+    "search.results": "نتيجة",
+
+    // ===== من نحن =====
+    "about.title": "من نحن",
+    "about.subtitle": "تعرف على المنصة وصاحبها",
+
+    // ===== تواصل معنا =====
+    "contact.title": "تواصل معنا",
+    "contact.subtitle": "نسعد بتواصلك",
+    "contact.name": "الاسم",
+    "contact.email": "البريد الإلكتروني",
+    "contact.message": "الرسالة",
+    "contact.send": "إرسال",
+    "contact.success": "تم إرسال رسالتك بنجاح",
+
+    // ===== تسجيل الدخول =====
+    "login.title": "تسجيل الدخول",
+    "login.email": "البريد الإلكتروني",
+    "login.password": "كلمة المرور",
+    "login.submit": "دخول",
+    "login.forgot": "نسيت كلمة المرور؟",
+    "login.noAccount": "ليس لديك حساب؟",
+
+    // ===== إنشاء حساب =====
+    "register.title": "إنشاء حساب",
+    "register.name": "الاسم الكامل",
+    "register.email": "البريد الإلكتروني",
+    "register.password": "كلمة المرور",
+    "register.confirmPassword": "تأكيد كلمة المرور",
+    "register.submit": "إنشاء الحساب",
+    "register.haveAccount": "لديك حساب بالفعل؟",
+
+    // ===== المحفوظات =====
+    "bookmarks.title": "المحفوظات",
+    "bookmarks.empty": "لا توجد محفوظات بعد",
+
+    // ===== التعلم =====
+    "learn.title": "تعلّم",
+    "learn.subtitle": "محتوى تعليمي شامل",
+
+    // ===== الخريطة =====
+    "map.title": "خريطة المنصة",
+    "map.subtitle": "جميع الأقسام في مكان واحد",
+
+    // ===== رسائل عامة =====
+    "common.loading": "جارٍ التحميل...",
+    "common.error": "حدث خطأ",
+    "common.retry": "إعادة المحاولة",
+    "common.back": "رجوع",
+    "common.readMore": "اقرأ المزيد",
+    "common.viewAll": "عرض الكل",
+    "common.share": "مشاركة",
+    "common.copy": "نسخ",
+    "common.copied": "تم النسخ",
+    "common.language": "اللغة",
+    "common.darkMode": "الوضع الليلي",
+    "common.lightMode": "الوضع النهاري",
   },
-  fiqh: {
-    ar: { name: "الفقه", desc: "العبادات والمعاملات والأحوال الشخصية" },
-    en: { name: "Fiqh", desc: "Worship, transactions, and personal status" },
-    fr: { name: "Fiqh", desc: "Adorations, transactions et statut personnel" },
-    ur: { name: "فقہ", desc: "عبادات، معاملات اور ذاتی حیثیت" },
-    tr: { name: "Fıkıh", desc: "İbadetler, muameleler ve şahsi hal" },
-    id: { name: "Fiqih", desc: "Ibadah, muamalah, dan hukum keluarga" },
-    ha: { name: "Fiqhu", desc: "Ibada, mu'amala da matsayin mutum" },
-    bn: { name: "ফিকহ", desc: "ইবাদাত, লেনদেন ও ব্যক্তিগত অবস্থা" },
-    so: { name: "Fiqhi", desc: "Cibaadooyinka, macaamilka iyo xaaladda shakhsiga" },
-    fa: { name: "فقه", desc: "عبادات، معاملات و احوال شخصیه" },
-    es: { name: "Fiqh", desc: "Adoración, transacciones y estado personal" },
-    ru: { name: "Фикх", desc: "Поклонение, сделки и личный статус" },
-    sw: { name: "Fiqhi", desc: "Ibada, miamala na hali ya kibinafsi" },
-  },
-  usul: {
-    ar: { name: "أصول الفقه", desc: "القواعد التي يُبنى عليها الاستنباط" },
-    en: { name: "Usul al-Fiqh", desc: "Principles upon which legal deduction is built" },
-    fr: { name: "Usul al-Fiqh", desc: "Principes de la déduction juridique" },
-    ur: { name: "اصول الفقہ", desc: "وہ قواعد جن پر استنباط کی بنیاد رکھی جاتی ہے" },
-    tr: { name: "Fıkıh Usulü", desc: "Hüküm çıkarımının üzerine kurulduğu kurallar" },
-    id: { name: "Ushul Fiqih", desc: "Kaidah-kaidah yang menjadi dasar istinbath" },
-    ha: { name: "Usul al-Fiqhu", desc: "Ka'idojin da a gina musu cirewa" },
-    bn: { name: "উসূলে ফিকহ", desc: "যে নীতিমালার উপর ভিত্তি করে বিধান নির্ণয় করা হয়" },
-    so: { name: "Usuul al-Fiqhi", desc: "Qawaaniinta lagu dhiso soo saarista xukunka" },
-    fa: { name: "اصول فقه", desc: "قواعدي که استنباط بر آن بنا می‌شود" },
-    es: { name: "Usul al-Fiqh", desc: "Principios de la deducción jurídica" },
-    ru: { name: "Усуль аль-фикх", desc: "Принципы правового вывода" },
-    sw: { name: "Usul al-Fiqhi", desc: "Kanuni za msingi wa uchambuzi" },
-  },
-  hadith: {
-    ar: { name: "الحديث وعلومه", desc: "المتن والسند ومصطلح الحديث" },
-    en: { name: "Hadith Sciences", desc: "Matn, isnad, and hadith terminology" },
-    fr: { name: "Sciences du hadith", desc: "Texte, chaîne et terminologie du hadith" },
-    ur: { name: "حدیث اور اس کے علوم", desc: "متن، سند اور حدیث کی اصطلاحات" },
-    tr: { name: "Hadis ve İlimleri", desc: "Metin, senet ve hadis ıstılahları" },
-    id: { name: "Hadis dan Ilmu-ilmunya", desc: "Matan, sanad, dan istilah hadis" },
-    ha: { name: "Hadisi da Kimiyarsa", desc: "Matani, isirari da kalmomin hadisi" },
-    bn: { name: "হাদীস ও তার বিজ্ঞান", desc: "মাতন, সানাদ ও হাদীসের পরিভাষা" },
-    so: { name: "Xadiithka iyo Culuumtiisa", desc: "Matniga, isnadka iyo erayada xadiithka" },
-    fa: { name: "حدیث و علوم آن", desc: "متن، سند و اصطلاحات حدیث" },
-    es: { name: "Ciencias del Hadiz", desc: "Texto, cadena y terminología del hadiz" },
-    ru: { name: "Хадисоведение", desc: "Текст, цепочка и терминология хадисов" },
-    sw: { name: "Hadithi na Sayansi yake", desc: "Matini, isiradi na istilahi za hadithi" },
-  },
-  tafsir: {
-    ar: { name: "التفسير", desc: "تدبُّر القرآن وبيان معانيه" },
-    en: { name: "Tafsir", desc: "Reflection on the Quran and explaining its meanings" },
-    fr: { name: "Tafsir", desc: "Méditation du Coran et explication de ses sens" },
-    ur: { name: "تفسیر", desc: "قرآن پر تدبر اور اس کے معانی کا بیان" },
-    tr: { name: "Tefsir", desc: "Kur'an'ı tefekkür ve anlamlarının açıklanması" },
-    id: { name: "Tafsir", desc: "Merenungi Al-Qur'an dan menjelaskan maknanya" },
-    ha: { name: "Tafsir", desc: "Tunani kan Alqur'ani da bayyana ma'anarsa" },
-    bn: { name: "তাফসীর", desc: "কুরআন নিয়ে গবেষণা ও তার অর্থ ব্যাখ্যা" },
-    so: { name: "Tafsiir", desc: "Ku fiirsashada Quraanka iyo sharaxa macnaha" },
-    fa: { name: "تفسیر", desc: "تدبر در قرآن و بیان معانی آن" },
-    es: { name: "Tafsir", desc: "Reflexión sobre el Corán y sus significados" },
-    ru: { name: "Тафсир", desc: "Размышление над Кораном и его значения" },
-    sw: { name: "Tafsiri", desc: "Kutafakari Qurani na kueleza maana zake" },
-  },
-  "quran-sciences": {
-    ar: { name: "علوم القرآن", desc: "أسباب النزول والناسخ والمنسوخ" },
-    en: { name: "Quranic Sciences", desc: "Reasons for revelation, abrogating and abrogated" },
-    fr: { name: "Sciences coraniques", desc: "Causes de la révélation, abrogeant et abrogé" },
-    ur: { name: "علوم القرآن", desc: "اسباب نزول، ناسخ اور منسوخ" },
-    tr: { name: "Kur'an İlimleri", desc: "Nüzul sebepleri, nâsih ve mensûh" },
-    id: { name: "Ulumul Qur'an", desc: "Asbabun nuzul, nasikh dan mansukh" },
-    ha: { name: "Kimiyar Alqur'ani", desc: "Dalilan saukowa, nasikh da mansukh" },
-    bn: { name: "কুরআনের বিজ্ঞান", desc: "নাযিলের কারণ, নাসিখ ও মানসুখ" },
-    so: { name: "Culuumta Quraanka", desc: "Sababaha soo dejinta, nasikh iyo mansukh" },
-    fa: { name: "علوم قرآن", desc: "اسباب نزول، ناسخ و منسوخ" },
-    es: { name: "Ciencias coránicas", desc: "Causas de la revelación, abrogante y abrogado" },
-    ru: { name: "Корановедение", desc: "Причины ниспослания, отменяющее и отменённое" },
-    sw: { name: "Sayansi za Qurani", desc: "Sababu za uteremshaji, nasikh na mansukh" },
-  },
-  seerah: {
-    ar: { name: "السيرة النبوية", desc: "حياة النبي ﷺ ودروسها العملية" },
-    en: { name: "Prophetic Biography", desc: "The life of the Prophet ﷺ and its practical lessons" },
-    fr: { name: "Biographie prophétique", desc: "La vie du Prophète ﷺ et ses leçons pratiques" },
-    ur: { name: "سیرت النبی ﷺ", desc: "نبی ﷺ کی حیات اور اس کے عملی اسباق" },
-    tr: { name: "Siyer", desc: "Peygamber ﷺ'in hayatı ve pratik dersleri" },
-    id: { name: "Sirah Nabawiyah", desc: "Kehidupan Nabi ﷺ dan pelajaran praktisnya" },
-    ha: { name: "Sirar Annabi", desc: "Rayuwar Annabi ﷺ da darussanta" },
-    bn: { name: "সীরাতুন্নবী", desc: "নবী ﷺ-এর জীবনী ও তার ব্যবহারিক শিক্ষা" },
-    so: { name: "Siirada Nabiga", desc: "Noloshii Nebiga ﷺ iyo casharradeeda" },
-    fa: { name: "سیره نبوی", desc: "زندگی پیامبر ﷺ و درس‌های عملی آن" },
-    es: { name: "Biografía profética", desc: "La vida del Profeta ﷺ y sus lecciones" },
-    ru: { name: "Жизнеописание Пророка", desc: "Жизнь Пророка ﷺ и её практические уроки" },
-    sw: { name: "Sirah ya Mtume", desc: "Maisha ya Mtume ﷺ na masomo yake" },
-  },
-  history: {
-    ar: { name: "التاريخ الإسلامي", desc: "من الخلفاء الراشدين إلى العصر الحديث" },
-    en: { name: "Islamic History", desc: "From the Rightly Guided Caliphs to the modern era" },
-    fr: { name: "Histoire islamique", desc: "Des califes bien guidés à l'ère moderne" },
-    ur: { name: "اسلامی تاریخ", desc: "خلفائے راشدین سے جدید دور تک" },
-    tr: { name: "İslam Tarihi", desc: "Hulefa-i Raşidin'den modern çağa kadar" },
-    id: { name: "Sejarah Islam", desc: "Dari Khulafaur Rasyidin hingga era modern" },
-    ha: { name: "Tarihin Musulunci", desc: "Daga Khalifofin Rashidai zuwa zamani" },
-    bn: { name: "ইসলামের ইতিহাস", desc: "খিলাফতে রাশেদা থেকে আধুনিক যুগ পর্যন্ত" },
-    so: { name: "Taariikhda Islaamka", desc: "Laga soo bilaabo Khulafada Rashidka ilaa casriga" },
-    fa: { name: "تاریخ اسلام", desc: "از خلفای راشدین تا عصر حاضر" },
-    es: { name: "Historia islámica", desc: "Desde los califas bien guiados hasta la era moderna" },
-    ru: { name: "История ислама", desc: "От праведных халифов до наших дней" },
-    sw: { name: "Historia ya Uislamu", desc: "Kuanzia Makhalifa Waliongozwa hadi enzi za kisasa" },
-  },
-  comparative: {
-    ar: { name: "مقارنة الأديان", desc: "دراسة الأديان والحوار والرد على الشبهات" },
-    en: { name: "Comparative Religion", desc: "Study of religions, dialogue, and responding to doubts" },
-    fr: { name: "Religion comparée", desc: "Étude des religions, dialogue et réponse aux doutes" },
-    ur: { name: "مقابلہ ادیان", desc: "ادیان کا مطالعہ، مکالمہ اور شبہات کا جواب" },
-    tr: { name: "Dinler Arası Karşılaştırma", desc: "Dinlerin incelenmesi, diyalog ve şüphelere cevap" },
-    id: { name: "Perbandingan Agama", desc: "Studi agama, dialog, dan menjawab keraguan" },
-    ha: { name: "Kwatanta Addinai", desc: "Nazarin addinai, tattaunawa da amsa shakku" },
-    bn: { name: "তুলনামূলক ধর্ম", desc: "ধর্ম অধ্যয়ন, সংলাপ ও সন্দেহের জবাব" },
-    so: { name: "Isbarbardhiga Diimaha", desc: "Barashada diimaha, wadahadalka iyo ka jawaabista shakiga" },
-    fa: { name: "مقایسه ادیان", desc: "مطالعه ادیان، گفتگو و پاسخ به شبهات" },
-    es: { name: "Religión comparada", desc: "Estudio de religiones, diálogo y respuesta a dudas" },
-    ru: { name: "Сравнительное религиоведение", desc: "Изучение религий, диалог и ответы на сомнения" },
-    sw: { name: "Ulinganishaji wa Dini", desc: "Utafiti wa dini, mazungumzo na majibu ya mashaka" },
-  },
-  akhlaq: {
-    ar: { name: "الأخلاق والرقائق", desc: "تزكية النفس ورقائق القلوب" },
-    en: { name: "Ethics & Spirituality", desc: "Purification of the soul and heart softeners" },
-    fr: { name: "Éthique et spiritualité", desc: "Purification de l'âme et adoucissants des cœurs" },
-    ur: { name: "اخلاق اور رقائق", desc: "نفس کی تزکیہ اور دلوں کے رقائق" },
-    tr: { name: "Ahlak ve Kalp Yumuşatıcılar", desc: "Nefis tezkiyesi ve kalp yumuşatıcı sözler" },
-    id: { name: "Akhlak dan Raqa'iq", desc: "Tazkiyatun nafs dan pelembut hati" },
-    ha: { name: "Halaye da Ruɓe", desc: "Tsarkake rai da laushin zuciya" },
-    bn: { name: "আখলাক ও রাকাইক", desc: "আত্মশুদ্ধি ও হৃদয় কোমলকারী বিষয়" },
-    so: { name: "Akhlaaqda iyo Raqaa'iq", desc: "Nadiifinta nafta iyo jilcinta qalbiga" },
-    fa: { name: "اخلاق و رقائق", desc: "تزکیه نفس و نرم‌کننده‌های دل" },
-    es: { name: "Ética y espiritualidad", desc: "Purificación del alma y ablandadores del corazón" },
-    ru: { name: "Нравственность и духовность", desc: "Очищение души и смягчение сердец" },
-    sw: { name: "Maadili na Roqaiq", desc: "Utakasaji wa nafsi na kulainisha mioyo" },
-  },
-  dawah: {
-    ar: { name: "الدعوة وأصولها", desc: "فقه الدعوة ووسائلها المعاصرة" },
-    en: { name: "Da'wah & Principles", desc: "Fiqh of da'wah and its contemporary means" },
-    fr: { name: "Da'wa et principes", desc: "Fiqh de la da'wa et ses moyens contemporains" },
-    ur: { name: "دعوت اور اس کے اصول", desc: "دعوت کا فقہ اور اس کے جدید ذرائع" },
-    tr: { name: "Davet ve Esasları", desc: "Davet fıkhı ve çağdaş vasıtaları" },
-    id: { name: "Dakwah dan Prinsip-prinsipnya", desc: "Fiqih dakwah dan sarana kontemporer" },
-    ha: { name: "Daw'a da Ka'idojinta", desc: "Fiqhu na daw'a da hanyoyinta na zamani" },
-    bn: { name: "দাওয়াত ও তার নীতিমালা", desc: "দাওয়াতের ফিকহ ও আধুনিক মাধ্যম" },
-    so: { name: "Dacwada iyo Usuusheeda", desc: "Fiqhiga dacwada iyo hababkeeda casriga" },
-    fa: { name: "دعوت و اصول آن", desc: "فقه دعوت و روش‌های معاصر آن" },
-    es: { name: "Da'wah y sus principios", desc: "Fiqh de la da'wah y sus medios contemporáneos" },
-    ru: { name: "Даават и его основы", desc: "Фикх даавата и его современные средства" },
-    sw: { name: "Da'awa na Kanuni zake", desc: "Fiqhi ya da'awa na njia zake za kisasa" },
-  },
-  arabic: {
-    ar: { name: "اللغة العربية", desc: "النحو والصرف والبلاغة لخدمة النصوص" },
-    en: { name: "Arabic Language", desc: "Grammar, morphology, and rhetoric to serve texts" },
-    fr: { name: "Langue arabe", desc: "Grammaire, morphologie et rhétorique" },
-    ur: { name: "عربی زبان", desc: "نحو، صرف اور بلاغت نصوص کی خدمت کے لیے" },
-    tr: { name: "Arap Dili", desc: "Nahiv, sarf ve belagat - metinlere hizmet için" },
-    id: { name: "Bahasa Arab", desc: "Nahwu, sharaf, dan balaghah untuk melayani teks" },
-    ha: { name: "Harshen Larabci", desc: "Nahwu, sarfu da balagha don hidimar rubutu" },
-    bn: { name: "আরবি ভাষা", desc: "নাহু, সরফ ও বালাগা - পাঠ্যের সেবায়" },
-    so: { name: "Luqadda Carabiga", desc: "Naxwaha, sarfu iyo balagha ee adeegga qoraallada" },
-    fa: { name: "زبان عربی", desc: "نحو، صرف و بلاغت برای خدمت به متون" },
-    es: { name: "Lengua árabe", desc: "Gramática, morfología y retórica" },
-    ru: { name: "Арабский язык", desc: "Грамматика, морфология и риторика" },
-    sw: { name: "Lugha ya Kiarabu", desc: "Nahau, sarfu na balagha kwa huduma ya maandishi" },
-  },
-  tajweed: {
-    ar: { name: "التجويد والقراءات", desc: "حُسن تلاوة كتاب الله" },
-    en: { name: "Tajweed & Readings", desc: "Beautiful recitation of the Book of Allah" },
-    fr: { name: "Tajwid et lectures", desc: "Belle récitation du Livre d'Allah" },
-    ur: { name: "تجوید اور قراءات", desc: "اللہ کی کتاب کی اچھی تلاوت" },
-    tr: { name: "Tecvid ve Kıraatler", desc: "Allah'ın kitabının güzel tilaveti" },
-    id: { name: "Tajwid dan Qira'at", desc: "Tilawah yang baik terhadap Kitabullah" },
-    ha: { name: "Tajweed da Karatu", desc: "Kyawun karatun Littafin Allah" },
-    bn: { name: "তাজবীদ ও কিরাআত", desc: "আল্লাহর কিতাবের সুন্দর তিলাওয়াত" },
-    so: { name: "Tajwiidka iyo Qira'aadka", desc: "Akhrinta quruxda badan ee Kitaabka Allah" },
-    fa: { name: "تجوید و قرائات", desc: "تلاوت زیبای کتاب خدا" },
-    es: { name: "Tajweed y lecturas", desc: "Hermosa recitación del Libro de Allah" },
-    ru: { name: "Таджвид и чтения", desc: "Красивое чтение Книги Аллаха" },
-    sw: { name: "Tajwidi na Qira'a", desc: "Usomaji mzuri wa Kitabu cha Allah" },
-  },
-  economics: {
-    ar: { name: "الاقتصاد الإسلامي", desc: "المعاملات المالية المعاصرة" },
-    en: { name: "Islamic Economics", desc: "Contemporary financial transactions" },
-    fr: { name: "Économie islamique", desc: "Transactions financières contemporaines" },
-    ur: { name: "اسلامی معاشیات", desc: "جدید مالی معاملات" },
-    tr: { name: "İslam Ekonomisi", desc: "Çağdaş mali muameleler" },
-    id: { name: "Ekonomi Islam", desc: "Transaksi keuangan kontemporer" },
-    ha: { name: "Tattalin Arziki na Musulunci", desc: "Harkokin kuɗi na zamani" },
-    bn: { name: "ইসলামী অর্থনীতি", desc: "সমসাময়িক আর্থিক লেনদেন" },
-    so: { name: "Dhaqaalaha Islaamka", desc: "Macamilka maaliyadeed ee casriga" },
-    fa: { name: "اقتصاد اسلامی", desc: "معاملات مالی معاصر" },
-    es: { name: "Economía islámica", desc: "Transacciones financieras contemporáneas" },
-    ru: { name: "Исламская экономика", desc: "Современные финансовые операции" },
-    sw: { name: "Uchumi wa Kiislamu", desc: "Miamala ya kifedha ya kisasa" },
-  },
-  faraaid: {
-    ar: { name: "الفرائض والمواريث", desc: "قسمة التركات وفق الكتاب والسنة" },
-    en: { name: "Inheritance (Fara'id)", desc: "Division of estates according to Quran and Sunnah" },
-    fr: { name: "Successions (Fara'id)", desc: "Répartition des héritages selon le Coran et la Sunna" },
-    ur: { name: "فرائض اور میراث", desc: "قرآن و سنت کے مطابق ترکات کی تقسیم" },
-    tr: { name: "Ferâiz", desc: "Kur'an ve Sünnet'e göre miras taksimi" },
-    id: { name: "Faraidh dan Waris", desc: "Pembagian harta waris menurut Al-Qur'an dan Sunnah" },
-    ha: { name: "Faraidi da Gado", desc: "Raba dukiyoyi bisa Alqur'ani da Sunna" },
-    bn: { name: "ফারায়েয ও মীরাস", desc: "কুরআন ও সুন্নাহ অনুযায়ী সম্পদ বণ্টন" },
-    so: { name: "Faraidka iyo Dhaxalka", desc: "Qaybinta hantida sida Quraanka iyo Sunnada" },
-    fa: { name: "فرائض و ارث", desc: "تقسیم ارث بر اساس قرآن و سنت" },
-    es: { name: "Herencia (Fara'id)", desc: "División de herencias según el Corán y la Sunna" },
-    ru: { name: "Наследственное право", desc: "Раздел наследства по Корану и Сунне" },
-    sw: { name: "Faraidhi na Urithi", desc: "Mgawanyo wa mali kwa mujibu wa Qurani na Sunnah" },
-  },
-  family: {
-    ar: { name: "ركن الأسرة", desc: "تربية وأزواج وبيوت مسلمة" },
-    en: { name: "Family Corner", desc: "Upbringing, spouses, and Muslim homes" },
-    fr: { name: "Espace famille", desc: "Éducation, époux et foyers musulmans" },
-    ur: { name: "خاندان کا رکن", desc: "تربیت، میاں بیوی اور مسلم گھر" },
-    tr: { name: "Aile Köşesi", desc: "Terbiye, eşler ve Müslüman evler" },
-    id: { name: "Ruang Keluarga", desc: "Tarbiyah, pasangan, dan rumah tangga muslim" },
-    ha: { name: "Kusurwar Iyali", desc: "Reniya, ma'aurata da gidajen musulmi" },
-    bn: { name: "পরিবার কর্নার", desc: "সন্তান লালন, দাম্পত্য ও মুসলিম ঘর" },
-    so: { name: "Qaybta Qoyska", desc: "Korinta, lammaanaha iyo guryaha muslimka" },
-    fa: { name: "بخش خانواده", desc: "تربیت، همسران و خانه‌های مسلمان" },
-    es: { name: "Rincón familiar", desc: "Crianza, cónyuges y hogares musulmanes" },
-    ru: { name: "Семейный уголок", desc: "Воспитание, супруги и мусульманские дома" },
-    sw: { name: "Pembe ya Familia", desc: "Malezi, wenzi na nyumba za kiislamu" },
-  },
-  youth: {
-    ar: { name: "ركن الشباب", desc: "قضايا معاصرة بلسان شاب" },
-    en: { name: "Youth Corner", desc: "Contemporary issues with a young voice" },
-    fr: { name: "Espace jeunesse", desc: "Questions contemporaines avec une voix jeune" },
-    ur: { name: "نوجوانوں کا رکن", desc: "جدید مسائل نوجوانوں کی زبان میں" },
-    tr: { name: "Gençlik Köşesi", desc: "Gençlerin diliyle güncel meseleler" },
-    id: { name: "Ruang Pemuda", desc: "Isu-isu kontemporer dengan suara pemuda" },
-    ha: { name: "Kusurwar Matasa", desc: "Matsalolin zamani da harshen matashi" },
-    bn: { name: "যুব কর্নার", desc: "তরুণ কণ্ঠে সমসাময়িক বিষয়" },
-    so: { name: "Qaybta Dhalinyarada", desc: "Arrimaha casriga ah ee codka dhallinyarada" },
-    fa: { name: "بخش جوانان", desc: "مسائل معاصر با زبان جوانان" },
-    es: { name: "Rincón juvenil", desc: "Temas contemporáneos con voz joven" },
-    ru: { name: "Молодёжный уголок", desc: "Современные вопросы голосом молодёжи" },
-    sw: { name: "Pembe ya Vijana", desc: "Masuala ya kisasa kwa sauti ya vijana" },
+
+  en: {
+    // ===== General =====
+    "site.name": "Ismail Ahmed Naguib",
+    "site.tagline": "Complete Dawah Platform",
+    "site.description": "A comprehensive Islamic platform combining Quran, Sunnah, Islamic sciences and Dawah tools in one place",
+
+    // ===== Navigation =====
+    "nav.home": "Home",
+    "nav.quran": "Quran",
+    "nav.adhkar": "Adhkar",
+    "nav.prayer": "Prayer Times",
+    "nav.fatwa": "Fatwa",
+    "nav.live": "Live Stream",
+    "nav.more": "More",
+    "nav.search": "Search",
+    "nav.account": "My Account",
+    "nav.login": "Login",
+    "nav.register": "Sign Up",
+    "nav.logout": "Logout",
+    "nav.bookmarks": "Bookmarks",
+
+    // ===== Footer =====
+    "footer.worship": "Worship",
+    "footer.knowledge": "Knowledge",
+    "footer.dawah": "Dawah",
+    "footer.about": "About Us",
+    "footer.contact": "Contact Us",
+    "footer.privacy": "Privacy",
+    "footer.rights": "All rights reserved",
+    "footer.newsletter.title": "Subscribe to Newsletter",
+    "footer.newsletter.desc": "Get the latest Dawah content, lessons and Fatwas",
+    "footer.newsletter.placeholder": "Your email",
+    "footer.newsletter.subscribe": "Subscribe",
+    "footer.newsletter.success": "Subscribed successfully",
+    "footer.newsletter.error": "An error occurred, please try again",
+
+    // ===== Home Page =====
+    "home.hero.badge": "✨ Complete Dawah Platform",
+    "home.hero.title": "The Light of Knowledge.. In Your Hands",
+    "home.hero.subtitle": "Quran, Sunnah, Fatwas and Dawah tools — everything a Muslim needs in one place",
+    "home.hero.cta1": "Get Started",
+    "home.hero.cta2": "Live Stream",
+    "home.stats.sections": "Sections",
+    "home.stats.languages": "Languages",
+    "home.stats.free": "100% Free",
+    "home.tools.title": "Your Daily Tools",
+    "home.tools.subtitle": "Everything you need every day",
+    "home.learn.title": "Learn & Guides",
+    "home.learn.subtitle": "Step by step to correct understanding",
+    "home.responses.title": "Knowledge & Responses",
+    "home.responses.subtitle": "Defend your faith with knowledge",
+    "home.dawah.title": "Dawah & Community",
+    "home.dawah.subtitle": "Be an impactful Da'ee",
+    "home.verse.text": "My Lord, increase me in knowledge",
+    "home.verse.ref": "Surah Taha — Verse 114",
+
+    // ===== Quran =====
+    "quran.title": "The Holy Quran",
+    "quran.subtitle": "Read and listen to the Book of Allah",
+    "quran.search.placeholder": "Search for a Surah...",
+    "quran.surah": "Surah",
+    "quran.ayah": "Ayah",
+    "quran.juz": "Juz",
+    "quran.hizb": "Hizb",
+    "quran.page": "Page",
+    "quran.makki": "Meccan",
+    "quran.madani": "Medinan",
+    "quran.listen": "Listen",
+    "quran.read": "Read",
+    "quran.bookmark": "Bookmark",
+    "quran.share": "Share",
+    "quran.totalSurahs": "Surahs",
+
+    // ===== Adhkar =====
+    "adhkar.title": "Adhkar",
+    "adhkar.subtitle": "Morning, evening and sleep supplications",
+    "adhkar.morning": "Morning Adhkar",
+    "adhkar.evening": "Evening Adhkar",
+    "adhkar.sleep": "Sleep Adhkar",
+    "adhkar.wake": "Waking Up Adhkar",
+    "adhkar.afterPrayer": "After Prayer Adhkar",
+    "adhkar.counter": "Counter",
+    "adhkar.repeat": "Repeat",
+    "adhkar.done": "Done",
+
+    // ===== Tasbih =====
+    "tasbih.title": "Digital Tasbih",
+    "tasbih.subtitle": "Glorify, seek forgiveness and send blessings upon the Prophet ﷺ",
+    "tasbih.subhanAllah": "Subhan Allah",
+    "tasbih.alhamdulillah": "Alhamdulillah",
+    "tasbih.allahuAkbar": "Allahu Akbar",
+    "tasbih.astaghfirullah": "Astaghfirullah",
+    "tasbih.laIlahaIllaAllah": "La ilaha illa Allah",
+    "tasbih.salawat": "O Allah, send blessings upon our Prophet Muhammad",
+    "tasbih.count": "Count",
+    "tasbih.target": "Target",
+    "tasbih.reset": "Reset",
+    "tasbih.vibrate": "Vibrate",
+
+    // ===== Prayer Times =====
+    "prayer.title": "Prayer Times",
+    "prayer.subtitle": "Prayer times based on your location",
+    "prayer.fajr": "Fajr",
+    "prayer.sunrise": "Sunrise",
+    "prayer.dhuhr": "Dhuhr",
+    "prayer.asr": "Asr",
+    "prayer.maghrib": "Maghrib",
+    "prayer.isha": "Isha",
+    "prayer.next": "Next Prayer",
+    "prayer.remaining": "Time Remaining",
+    "prayer.location": "Detect Location",
+    "prayer.detecting": "Detecting your location...",
+    "prayer.error": "Unable to detect location",
+
+    // ===== Qibla =====
+    "qibla.title": "Qibla Direction",
+    "qibla.subtitle": "Find the direction of the Holy Kaaba",
+    "qibla.direction": "Direction",
+    "qibla.degrees": "Degrees",
+    "qibla.north": "North",
+
+    // ===== Calendar =====
+    "calendar.title": "Hijri Calendar",
+    "calendar.subtitle": "Hijri and Gregorian calendar",
+    "calendar.hijri": "Hijri",
+    "calendar.gregorian": "Gregorian",
+    "calendar.today": "Today",
+
+    // ===== Fatwa =====
+    "fatwa.title": "Fatwas",
+    "fatwa.subtitle": "Islamic questions and answers",
+    "fatwa.ask": "Ask your question",
+    "fatwa.search.placeholder": "Search Fatwas...",
+    "fatwa.categories": "Categories",
+    "fatwa.recent": "Recent Fatwas",
+    "fatwa.popular": "Most Read",
+
+    // ===== Atheism Response =====
+    "atheism.title": "Atheism Response",
+    "atheism.subtitle": "Rational and textual proofs for the existence of God",
+
+    // ===== Doubts =====
+    "doubts.title": "Doubts & Answers",
+    "doubts.subtitle": "Modern doubts with scholarly answers",
+
+    // ===== Youth Issues =====
+    "youth.title": "Youth Issues",
+    "youth.subtitle": "Problems and solutions for our generation",
+
+    // ===== Women Fatwas =====
+    "womenFatwas.title": "Women's Fatwas",
+    "womenFatwas.subtitle": "Rulings specific to Muslim women",
+
+    // ===== Embrace Islam =====
+    "embraceIslam.title": "Embrace Islam",
+    "embraceIslam.subtitle": "For non-Muslims and seekers",
+    "embraceIslam.shahada": "The Shahada",
+    "embraceIslam.steps": "Steps to embrace Islam",
+
+    // ===== Prayer Guide =====
+    "prayerGuide.title": "Prayer Guide",
+    "prayerGuide.subtitle": "Learn correct prayer step by step",
+
+    // ===== Hajj Guide =====
+    "hajjGuide.title": "Hajj & Umrah Guide",
+    "hajjGuide.subtitle": "From Ihram to completion",
+
+    // ===== Zakat =====
+    "zakat.title": "Zakat Calculator",
+    "zakat.subtitle": "Zakat on money, gold and trade",
+    "zakat.calculator": "Calculator",
+    "zakat.amount": "Amount",
+    "zakat.nisab": "Nisab",
+    "zakat.result": "Zakat Due",
+
+    // ===== Inheritance =====
+    "inheritance.title": "Islamic Inheritance",
+    "inheritance.subtitle": "Islamic estate division",
+
+    // ===== Prophets Stories =====
+    "prophets.title": "Prophets Stories",
+    "prophets.subtitle": "Lessons from the lives of Prophets",
+
+    // ===== Quran Memorization =====
+    "memorization.title": "Quran Memorization",
+    "memorization.subtitle": "Practical memorization plan",
+
+    // ===== Ruqyah =====
+    "ruqyah.title": "Ruqyah",
+    "ruqyah.subtitle": "Verses and supplications for Ruqyah",
+
+    // ===== Daily Wird =====
+    "dailyWird.title": "Daily Wird",
+    "dailyWird.subtitle": "Your daily Quran and Dhikr program",
+
+    // ===== Dawah Guide =====
+    "dawahGuide.title": "Dawah Guide",
+    "dawahGuide.subtitle": "How to be a successful Da'ee",
+
+    // ===== Fields =====
+    "fields.title": "Dawah Fields",
+    "fields.subtitle": "Modern Dawah arenas",
+
+    // ===== Projects =====
+    "projects.title": "Projects",
+    "projects.subtitle": "Active Dawah initiatives",
+
+    // ===== Khutab =====
+    "khutab.title": "Khutbahs",
+    "khutab.subtitle": "Written Friday sermons",
+
+    // ===== Khatm Dua =====
+    "khatmDua.title": "Dua Khatm",
+    "khatmDua.subtitle": "Join a collective Dua completion",
+
+    // ===== Live =====
+    "live.title": "Live Stream",
+    "live.subtitle": "Live lessons and lectures",
+    "live.now": "Live Now",
+    "live.upcoming": "Upcoming",
+    "live.ended": "Ended",
+
+    // ===== News =====
+    "news.title": "News",
+    "news.subtitle": "Latest news and articles",
+
+    // ===== Search =====
+    "search.title": "Search",
+    "search.placeholder": "Search the platform...",
+    "search.noResults": "No results found",
+    "search.results": "Results",
+
+    // ===== About =====
+    "about.title": "About Us",
+    "about.subtitle": "Learn about the platform and its creator",
+
+    // ===== Contact =====
+    "contact.title": "Contact Us",
+    "contact.subtitle": "We'd love to hear from you",
+    "contact.name": "Name",
+    "contact.email": "Email",
+    "contact.message": "Message",
+    "contact.send": "Send",
+    "contact.success": "Your message has been sent successfully",
+
+    // ===== Login =====
+    "login.title": "Login",
+    "login.email": "Email",
+    "login.password": "Password",
+    "login.submit": "Login",
+    "login.forgot": "Forgot password?",
+    "login.noAccount": "Don't have an account?",
+
+    // ===== Register =====
+    "register.title": "Sign Up",
+    "register.name": "Full Name",
+    "register.email": "Email",
+    "register.password": "Password",
+    "register.confirmPassword": "Confirm Password",
+    "register.submit": "Create Account",
+    "register.haveAccount": "Already have an account?",
+
+    // ===== Bookmarks =====
+    "bookmarks.title": "Bookmarks",
+    "bookmarks.empty": "No bookmarks yet",
+
+    // ===== Learn =====
+    "learn.title": "Learn",
+    "learn.subtitle": "Comprehensive educational content",
+
+    // ===== Map =====
+    "map.title": "Platform Map",
+    "map.subtitle": "All sections in one place",
+
+    // ===== Common =====
+    "common.loading": "Loading...",
+    "common.error": "An error occurred",
+    "common.retry": "Retry",
+    "common.back": "Back",
+    "common.readMore": "Read More",
+    "common.viewAll": "View All",
+    "common.share": "Share",
+    "common.copy": "Copy",
+    "common.copied": "Copied",
+    "common.language": "Language",
+    "common.darkMode": "Dark Mode",
+    "common.lightMode": "Light Mode",
   },
 };
-
-export function getFieldTranslation(
-  slug: string,
-  lang: Lang,
-  fallback: { name: string; desc: string },
-  overrides?: Record<string, Record<string, { name: string; desc: string }>>
-) {
-  if (overrides?.[slug]?.[lang]) {
-    return overrides[slug][lang];
-  }
-  const all = defaultFieldTranslations[slug];
-  if (!all) return fallback;
-  // لو الترجمة مش موجودة للغة، جرب الإنجليزي، ثم العربي، ثم الاسم الأصلي
-  return all[lang] || all.en || all.ar || fallback;
-}

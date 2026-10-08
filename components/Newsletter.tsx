@@ -2,90 +2,95 @@
 
 import { useState } from "react";
 
-export default function Newsletter() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+interface NewsletterProps {
+  lang: string;
+}
 
-  const submit = async () => {
-    if (!email || !email.includes("@")) {
-      setMsg("❌ أدخل إيميل صحيح");
-      return;
-    }
-    setLoading(true);
-    setMsg("");
+export default function Newsletter({ lang }: NewsletterProps) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+
+  const subscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setStatus("loading");
     try {
-      const r = await fetch("/api/newsletter/subscribe", {
+      const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name }),
+        body: JSON.stringify({ email: email.trim(), lang }),
       });
-      const j = await r.json();
-      if (j.ok) {
-        setSuccess(true);
-        setMsg("✅ " + j.message);
-        setEmail("");
-        setName("");
-      } else {
-        setMsg("❌ " + (j.error || "خطأ"));
-      }
+      setStatus(res.ok ? "done" : "error");
+      if (res.ok) setEmail("");
     } catch {
-      setMsg("❌ خطأ في الاتصال");
+      setStatus("error");
     }
-    setLoading(false);
   };
 
-  if (success) {
-    return (
-      <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl p-6 text-center shadow-xl">
-        <span className="text-5xl mb-3 block">✅</span>
-        <h3 className="font-bold text-xl mb-2">شكراً لاشتراكك!</h3>
-        <p className="text-white/90">
-          سيصلك كل جديد من الدروس والفتاوى على إيميلك
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-gradient-to-r from-primary to-primary/80 text-white rounded-2xl p-8 shadow-xl">
-      <div className="text-center mb-6">
-        <span className="text-5xl mb-3 block">📧</span>
-        <h3 className="font-serif text-2xl text-gold mb-2">اشترك في النشرة البريدية</h3>
-        <p className="text-white/80 text-sm">
-          احصل على جديد الدروس والفتاوى والمقالات مباشرة على إيميلك
-        </p>
-      </div>
+    <div className="card p-8 md:p-10">
+      <div className="grid gap-8 md:grid-cols-2 md:items-center">
+        <div>
+          <div className="mb-4 flex items-center gap-3">
+            <span
+              className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
+              style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+            >
+              📬
+            </span>
+            <h3
+              className="text-2xl font-bold text-slate-900 dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {lang === "ar" ? "اشترك في النشرة البريدية" : "Subscribe to Newsletter"}
+            </h3>
+          </div>
+          <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+            {lang === "ar"
+              ? "صلك جديد المحتوى الدعوي والدروس والفتاوى أولاً بأول"
+              : "Get the latest dawah content, lessons and fatwas delivered to your inbox"}
+          </p>
+        </div>
 
-      <div className="space-y-3 max-w-md mx-auto">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="اسمك (اختياري)"
-          className="w-full bg-white/10 backdrop-blur border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/60 focus:border-gold focus:outline-none"
-        />
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="بريدك الإلكتروني"
-          dir="ltr"
-          className="w-full bg-white/10 backdrop-blur border border-white/20 rounded-lg px-4 py-2.5 text-white placeholder-white/60 focus:border-gold focus:outline-none"
-        />
-        <button
-          onClick={submit}
-          disabled={loading}
-          className="w-full bg-gold text-gray-900 py-3 rounded-lg font-bold hover:bg-gold-light transition disabled:opacity-50"
-        >
-          {loading ? "⏳ جاري الاشتراك..." : "📬 اشترك الآن"}
-        </button>
-        {msg && <p className="text-sm text-center text-white/90">{msg}</p>}
-      </div>
+        <div>
+          <form onSubmit={subscribe} className="flex flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={lang === "ar" ? "بريدك الإلكتروني" : "Your email address"}
+              className="input-islamic flex-1"
+            />
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="btn-primary whitespace-nowrap"
+            >
+              {status === "loading"
+                ? lang === "ar" ? "جارٍ الإرسال..." : "Sending..."
+                : status === "done"
+                ? lang === "ar" ? "✓ تم الاشتراك" : "✓ Subscribed"
+                : lang === "ar" ? "اشترك" : "Subscribe"}
+            </button>
+          </form>
 
-      <div className="mt-6 text-center text-xs text-white/60">
-        🔒 إيميلك آمن ولن نشاركه مع أحد
+          {/* رسائل الحالة */}
+          {status === "done" && (
+            <p className="mt-3 text-sm text-green-600 dark:text-green-400 animate-fade-in">
+              {lang === "ar"
+                ? "✓ تم الاشتراك بنجاح! هتوصلك أحدث المحتويات على بريدك."
+                : "✓ Subscribed successfully! You'll receive the latest content."}
+            </p>
+          )}
+          {status === "error" && (
+            <p className="mt-3 text-sm text-red-600 dark:text-red-400 animate-fade-in">
+              {lang === "ar"
+                ? "✗ حدث خطأ، حاول مرة أخرى."
+                : "✗ Something went wrong, please try again."}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

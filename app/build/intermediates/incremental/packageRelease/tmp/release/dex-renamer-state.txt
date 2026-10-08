@@ -1,4 +1,0 @@
-#Tue Oct 06 22:25:30 EEST 2026
-base.0=D\:\\ismail-dawah\\app\\build\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
-renamed.0=classes.dex
-path.0=classes.dex

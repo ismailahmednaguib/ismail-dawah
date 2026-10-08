@@ -1,199 +1,295 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Newsletter from "@/components/Newsletter";
-import IslamicCard from "@/components/IslamicCard";
-import { getContent } from "@/lib/content";
+import Link from "next/link";
 import { t, type Lang } from "@/lib/i18n";
+import { IconCard, CardGrid, StatCard } from "@/components/Cards";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/JsonLd";
+import Newsletter from "@/components/Newsletter";
 
-export const dynamic = "force-dynamic";
-
-// الأقسام + الأدوات في مصفوفة واحدة
-const allSections = [
-  // 📚 الأقسام العلمية والدعوية
-  { slug: "fields", icon: "knowledge", title: "العلوم الشرعية", desc: "17 علماً شرعياً مترجماً لـ 13 لغة", verse: "وَقُل رَّبِّ زِدْنِي عِلْمًا", gradient: "from-emerald-600 to-emerald-700" },
-  { slug: "fatwa", icon: "fatwa", title: "الفتاوى الشرعية", desc: "إجابات فقهية وعقدية", hadith: "مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ", gradient: "from-blue-600 to-blue-700" },
-  { slug: "doubts", icon: "light", title: "الرد على الشبهات", desc: "ردود علمية منهجية", gradient: "from-purple-600 to-purple-700" },
-  
-  // 🛠️ الأدوات الإسلامية
-  { slug: "quran", icon: "quran", title: "المصحف الكريم", desc: "اقرأ القرآن كاملاً", verse: "إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ", gradient: "from-green-600 to-green-700" },
-  { slug: "prayer-times", icon: "mosque", title: "مواقيت الصلاة", desc: "لكل دول العالم", hadith: "الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا", gradient: "from-cyan-600 to-cyan-700" },
-  { slug: "qibla", icon: "kaaba", title: "تحديد القبلة", desc: "من أي مكان", verse: "فَوَلِّ وَجْهَكَ شَطْرَ الْمَسْجِدِ الْحَرَامِ", gradient: "from-orange-600 to-orange-700" },
-  { slug: "zakat", icon: "heart", title: "حاسبة الزكاة", desc: "احسب زكاتك بدقة", verse: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ", gradient: "from-pink-600 to-pink-700" },
-  
-  // 📢 محتوى دعوي
-  { slug: "dawah-guide", icon: "mosque", title: "دليل الدعاة", desc: "كيف تدعو إلى الله", hadith: "بَلِّغُوا عَنِّي وَلَوْ آيَةً", gradient: "from-amber-600 to-amber-700" },
-  { slug: "prophets-stories", icon: "star", title: "قصص الأنبياء", desc: "دروس وعبر", verse: "لَقَدْ كَانَ فِي قَصَصِهِمْ عِبْرَةٌ", gradient: "from-indigo-600 to-indigo-700" },
-  { slug: "prayer-guide", icon: "prayer", title: "تعلم الصلاة", desc: "خطوة بخطوة", hadith: "صَلُّوا كَمَا رَأَيْتُمُونِي أُصَلِّي", gradient: "from-teal-600 to-teal-700" },
-  { slug: "ruqyah", icon: "heart", title: "الرقية الشرعية", desc: "آيات وأدعية للشفاء", verse: "وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ", gradient: "from-fuchsia-600 to-fuchsia-700" },
-  
-  // 🧮 أدوات عملية
-  { slug: "inheritance", icon: "star", title: "حاسبة المواريث", desc: "قسمة التركات", gradient: "from-yellow-600 to-yellow-700" },
-  { slug: "daily-wird", icon: "quran", title: "الورد اليومي", desc: "خطة لختم القرآن", verse: "وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ", gradient: "from-lime-600 to-lime-700" },
-  { slug: "tasbih", icon: "star", title: "التسبيح الرقمي", desc: "عداد تفاعلي", gradient: "from-violet-600 to-violet-700" },
-  { slug: "calendar", icon: "star", title: "التقويم الهجري", desc: "هجري وميلادي", verse: "إِنَّ عِدَّةَ الشُّهُورِ عِندَ اللَّهِ اثْنَا عَشَرَ شَهْرًا", gradient: "from-stone-600 to-stone-700" },
-  
-  // 🎯 محتوى متخصص
-  { slug: "atheism-response", icon: "light", title: "الرد على الإلحاد", desc: "شبهات وردود", gradient: "from-red-600 to-red-700" },
-  { slug: "youth-issues", icon: "heart", title: "قضايا الشباب", desc: "مشاكل وحلول", gradient: "from-rose-600 to-rose-700" },
-  { slug: "women-fatwas", icon: "heart", title: "فتاوى المرأة", desc: "قضايا المرأة المسلمة", gradient: "from-pink-500 to-pink-600" },
-  { slug: "khutab", icon: "mosque", title: "مكتبة الخطب", desc: "خطب جمعة جاهزة", hadith: "خَيْرُ الْحَدِيثِ كِتَابُ اللَّهِ", gradient: "from-amber-700 to-amber-800" },
-  
-  // 🕋 مناسك
-  { slug: "hajj-guide", icon: "kaaba", title: "دليل الحج والعمرة", desc: "خطوة بخطوة", hadith: "خُذُوا عَنِّي مَنَاسِكَكُمْ", gradient: "from-stone-700 to-stone-800" },
-  { slug: "embrace-islam", icon: "heart", title: "اعتنق الإسلام", desc: "رحلتك نحو الهداية", verse: "أَفَغَيْرَ دِينِ اللَّهِ يَبْغُونَ", gradient: "from-rose-700 to-rose-800" },
-  { slug: "quran-memorization", icon: "quran", title: "كيف تحفظ القرآن", desc: "منهج عملي", gradient: "from-green-700 to-green-800" },
-  { slug: "khatm-dua", icon: "star", title: "أدعية ختم القرآن", desc: "أدعية مأثورة", gradient: "from-rose-600 to-rose-700" },
-  { slug: "bookmarks", icon: "star", title: "المفضلة", desc: "صفحاتك المحفوظة", gradient: "from-yellow-500 to-yellow-600" },
+// ===== أدوات سريعة =====
+const QUICK_TOOLS = [
+  { href: "/quran", icon: "📖", key: "nav.quran", color: "teal" as const },
+  { href: "/adhkar", icon: "🤲", key: "nav.adhkar", color: "gold" as const },
+  { href: "/prayer-times", icon: "🕐", key: "nav.prayer", color: "teal" as const },
+  { href: "/qibla", icon: "🧭", key: "qibla.title", color: "gold" as const },
+  { href: "/tasbih", icon: "📿", key: "tasbih.title", color: "teal" as const },
+  { href: "/calendar", icon: "📅", key: "calendar.title", color: "gold" as const },
+  { href: "/fatwa", icon: "⚖️", key: "nav.fatwa", color: "teal" as const },
+  { href: "/ruqyah", icon: "🛡️", key: "ruqyah.title", color: "gold" as const },
 ];
 
-function HeroVerse({ verse, source }: { verse: string; source: string }) {
+// ===== قسم تعلّم =====
+const LEARN_ITEMS = [
+  { href: "/prayer-guide", icon: "🕌", key: "prayerGuide.title" },
+  { href: "/hajj-guide", icon: "🕋", key: "hajjGuide.title" },
+  { href: "/zakat", icon: "💰", key: "zakat.title" },
+  { href: "/inheritance", icon: "📜", key: "inheritance.title" },
+  { href: "/prophets-stories", icon: "📚", key: "prophets.title" },
+  { href: "/quran-memorization", icon: "🎯", key: "memorization.title" },
+];
+
+// ===== قسم العلوم والردود =====
+const RESPONSE_ITEMS = [
+  { href: "/atheism-response", icon: "🧠", key: "atheism.title" },
+  { href: "/doubts", icon: "❓", key: "doubts.title" },
+  { href: "/youth-issues", icon: "👥", key: "youth.title" },
+  { href: "/women-fatwas", icon: "🧕", key: "womenFatwas.title" },
+  { href: "/embrace-islam", icon: "🌱", key: "embraceIslam.title" },
+  { href: "/fatwa", icon: "⚖️", key: "nav.fatwa" },
+];
+
+// ===== قسم الدعوة =====
+const DAWAH_ITEMS = [
+  { href: "/dawah-guide", icon: "📢", key: "dawahGuide.title" },
+  { href: "/fields", icon: "🗺️", key: "fields.title" },
+  { href: "/projects", icon: "🏗️", key: "projects.title" },
+  { href: "/khutab", icon: "🎤", key: "khutab.title" },
+  { href: "/live", icon: "📺", key: "nav.live" },
+  { href: "/khatm-dua", icon: "🤝", key: "khatmDua.title" },
+];
+
+// ===== مكوّن قسم =====
+function Section({
+  titleKey,
+  subtitleKey,
+  items,
+  lang,
+  gradient,
+}: {
+  titleKey: string;
+  subtitleKey: string;
+  items: typeof LEARN_ITEMS;
+  lang: Lang;
+  gradient: "teal" | "gold";
+}) {
   return (
-    <div className="bg-gradient-to-br from-primary via-primary to-primary/90 text-white rounded-3xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden mb-12">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl"></div>
-      <div className="relative">
-        <div className="inline-block bg-gold/20 rounded-full p-4 mb-6">
-          <span className="text-6xl">📖</span>
+    <section className="container-page py-16 md:py-20">
+      <div className="mb-10 text-center">
+        <h2 className="section-title mb-0">{t(lang, titleKey)}</h2>
+        <div className="islamic-divider my-0">
+          <span className="text-xl text-gold-500">✦</span>
         </div>
-        <p className="font-serif text-3xl md:text-4xl text-gold leading-relaxed mb-4">
-          ﴿{verse}﴾
+        <p className="section-subtitle max-w-2xl mx-auto">
+          {t(lang, subtitleKey)}
         </p>
-        <p className="text-white/80 text-lg">{source}</p>
       </div>
-    </div>
+
+      <CardGrid columns={3}>
+        {items.map((item) => (
+          <IconCard
+            key={item.href}
+            icon={item.icon}
+            title={t(lang, item.key)}
+            href={`/${lang}${item.href}`}
+            color={gradient}
+          />
+        ))}
+      </CardGrid>
+    </section>
   );
 }
 
-export default async function Home({ params }: { params: Promise<{ lang: string }> }) {
+// ===== الصفحة الرئيسية =====
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
-  const c = await getContent();
-  const tr = t(lang as Lang);
-  const L = lang as Lang;
-
-  // فلترة الأقسام حسب الإعدادات
-  const visibleSections = c.settings.visibleSections || allSections.map(s => s.slug);
-  const sectionConfig = c.settings.sectionConfig || {};
-
-  const visibleCards = allSections
-    .filter(s => {
-      const config = sectionConfig[s.slug];
-      // لو مش في الإعدادات، اعرضه افتراضياً
-      if (!config) return true;
-      return config.enabled !== false;
-    })
-    .map(s => {
-      const config = sectionConfig[s.slug] || {};
-      return {
-        href: `/${lang}/${s.slug}`,
-        icon: config.icon || s.icon,
-        title: config.customTitle || s.title,
-        description: config.customDesc || s.desc,
-        verse: config.showVerse !== false ? s.verse : undefined,
-        hadith: config.showHadith !== false ? s.hadith : undefined,
-        gradient: config.gradient || s.gradient,
-      };
-    });
+  const l = (lang === "en" ? "en" : "ar") as Lang;
+  const isRTL = l === "ar";
 
   return (
-    <>
-      <Header settings={c.settings} lang={L} />
-      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        
-        {/* Hero */}
-        <section className="relative bg-primary text-white py-20 text-center overflow-hidden">
-          <div className="absolute inset-0 pattern-light opacity-10"></div>
-          <div className="relative max-w-4xl mx-auto px-4">
-            <div className="inline-block bg-gold/20 rounded-full p-3 mb-6">
-              <span className="text-5xl">✨</span>
-            </div>
-            <p className="font-serif text-gold-light text-2xl mb-4">ismail-dawah</p>
-            <h1 className="font-serif text-5xl md:text-6xl mb-4 leading-tight">{c.settings.ownerName}</h1>
-            <div className="ornament my-6"><span className="text-3xl">✦</span></div>
-            <p className="text-white/90 text-xl max-w-2xl mx-auto leading-relaxed">
-              {c.settings.motto}
-            </p>
-            <p className="text-white/70 text-sm mt-4">{c.settings.jobTitle}</p>
+    <main>
+      {/* ===== JSON-LD للسيو ===== */}
+      <OrganizationJsonLd />
+      <WebSiteJsonLd lang={l} />
+
+      {/* ============ Hero Section ============ */}
+      <section className="gradient-hero relative overflow-hidden py-20 text-white md:py-28">
+        {/* زخرفة خلفية */}
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 30%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 70%, #d4af37 1.5px, transparent 1.5px)",
+            backgroundSize: "60px 60px, 90px 90px",
+          }}
+        />
+
+        {/* دوائر متوهجة */}
+        <div className="absolute -top-24 -end-24 h-96 w-96 rounded-full bg-primary-400/20 blur-3xl" />
+        <div className="absolute -bottom-32 -start-20 h-96 w-96 rounded-full bg-gold-500/15 blur-3xl" />
+
+        <div className="container-page relative text-center">
+          {/* الشارة */}
+          <span className="badge mb-6 border border-white/25 bg-white/15 !text-white backdrop-blur-sm animate-fade-in">
+            ✨ {t(l, "home.hero.badge")}
+          </span>
+
+          {/* العنوان */}
+          <h1
+            className="mb-6 text-4xl font-black leading-tight md:text-6xl animate-slide-up"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            {t(l, "home.hero.title")}
+          </h1>
+
+          {/* الوصف */}
+          <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-primary-50 animate-slide-up">
+            {t(l, "home.hero.subtitle")}
+          </p>
+
+          {/* أزرار CTA */}
+          <div className="flex flex-wrap items-center justify-center gap-4 animate-slide-up">
+            <Link href={`/${l}/learn`} className="btn-gold text-base">
+              {t(l, "home.hero.cta1")}
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className={isRTL ? "rotate-180" : ""}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <Link
+              href={`/${l}/live`}
+              className="inline-flex items-center gap-2 rounded-2xl border-2 border-white/40 px-7 py-3.5 text-base font-bold text-white transition-all duration-300 hover:bg-white/10"
+            >
+              <span className="relative flex h-3 w-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
+              </span>
+              {t(l, "home.hero.cta2")}
+            </Link>
           </div>
-        </section>
 
-        <section className="py-16">
-          <div className="max-w-7xl mx-auto px-4">
+          {/* إحصائيات */}
+          <div className="mx-auto mt-16 grid max-w-2xl grid-cols-2 gap-4 sm:grid-cols-4">
+            <StatCard value="35+" label={t(l, "home.stats.sections")} color="gold" className="!bg-white/10 !border-white/20 backdrop-blur-sm" />
+            <StatCard value="2" label={t(l, "home.stats.languages")} color="gold" className="!bg-white/10 !border-white/20 backdrop-blur-sm" />
+            <StatCard value="114" label={isRTL ? "سورة" : "Surahs"} color="gold" className="!bg-white/10 !border-white/20 backdrop-blur-sm" />
+            <StatCard value="100%" label={t(l, "home.stats.free")} color="gold" className="!bg-white/10 !border-white/20 backdrop-blur-sm" />
+          </div>
+        </div>
 
-            {/* آية الافتتاح */}
-            <HeroVerse 
-              verse="قُلْ هَٰذِهِ سَبِيلِي أَدْعُو إِلَى اللَّهِ عَلَىٰ بَصِيرَةٍ"
-              source="سورة يوسف - الآية 108"
+        {/* موجة سفلية */}
+        <div className="relative mt-16">
+          <svg viewBox="0 0 1440 80" fill="none" className="block w-full">
+            <path
+              d="M0 80L60 70C120 60 240 40 360 30C480 20 600 20 720 25C840 30 960 40 1080 45C1200 50 1320 50 1380 50L1440 50V80H1380C1320 80 1200 80 1080 80C960 80 840 80 720 80C600 80 480 80 360 80C240 80 120 80 60 80H0Z"
+              className="fill-slate-50 dark:fill-night-900"
             />
+          </svg>
+        </div>
+      </section>
 
-            {/* كل الأقسام + الأدوات في Grid موحد */}
-            <div className="mb-8 text-center">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-                <h2 className="font-serif text-3xl text-primary dark:text-gold font-bold whitespace-nowrap">
-                  🌟 كل المحتوى في مكان واحد
-                </h2>
-                <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                أقسام دعوية + أدوات إسلامية ({visibleCards.length} قسم وأداة)
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-16">
-              {visibleCards.map((card, i) => (
-                <IslamicCard
-                  key={i}
-                  href={card.href}
-                  icon={card.icon}
-                  title={card.title}
-                  description={card.description}
-                  verse={card.verse}
-                  hadith={card.hadith}
-                  gradient={card.gradient}
-                />
-              ))}
-            </div>
+      {/* ============ الأدوات السريعة ============ */}
+      <section className="container-page -mt-8 relative z-10">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
+          {QUICK_TOOLS.map((tool) => (
+            <Link
+              key={tool.href}
+              href={`/${l}${tool.href}`}
+              className="card card-interactive flex flex-col items-center gap-2 p-4 text-center"
+            >
+              <span className="text-3xl transition-transform duration-300 group-hover:scale-110">
+                {tool.icon}
+              </span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                {t(l, tool.key)}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-            {/* تحميل التطبيق */}
-            {c.settings.appUrl && (
-              <section className="mb-16">
-                <div className="bg-gradient-to-br from-primary via-primary to-primary/90 rounded-3xl p-8 md:p-12 text-center text-white shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl"></div>
-                  <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl"></div>
-                  <div className="relative">
-                    <div className="inline-block bg-gold/20 rounded-full p-4 mb-6">
-                      <span className="text-6xl">📱</span>
-                    </div>
-                    <h2 className="font-serif text-3xl md:text-4xl text-gold mb-4">
-                      حمّل تطبيق ismail-dawah
-                    </h2>
-                    <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-                      كل محتوى الموقع في تطبيق واحد على موبايلك
-                    </p>
-                    <a
-                      href={c.settings.appUrl}
-                      download
-                      className="inline-flex items-center gap-3 bg-gold text-gray-900 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-gold-light hover:scale-105 transition shadow-xl"
-                    >
-                      <span className="text-2xl">⬇️</span>
-                      <span>تحميل التطبيق الآن</span>
-                    </a>
-                  </div>
-                </div>
-              </section>
-            )}
+      {/* ============ قسم تعلّم ============ */}
+      <Section
+        titleKey="home.learn.title"
+        subtitleKey="home.learn.subtitle"
+        items={LEARN_ITEMS}
+        lang={l}
+        gradient="teal"
+      />
 
+      {/* ============ قسم العلوم والردود ============ */}
+      <section className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
+        <Section
+          titleKey="home.responses.title"
+          subtitleKey="home.responses.subtitle"
+          items={RESPONSE_ITEMS}
+          lang={l}
+          gradient="gold"
+        />
+      </section>
+
+      {/* ============ آية اليوم ============ */}
+      <section className="container-page py-16 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="card relative overflow-hidden p-10 text-center md:p-14">
+            <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
+            <div className="mb-6 text-4xl text-gold-500">﴿</div>
+            <p className="quran-text mb-6">{t(l, "home.verse.text")}</p>
+            <div className="text-4xl text-gold-500">﴾</div>
+            <p className="mt-4 text-sm font-semibold text-primary-600 dark:text-primary-400">
+              {t(l, "home.verse.ref")}
+            </p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* النشرة البريدية */}
-        <section className="py-16 bg-gradient-to-br from-cream-dark to-cream dark:from-gray-900 dark:to-gray-800">
-          <div className="max-w-4xl mx-auto px-4">
-            <Newsletter />
+      {/* ============ قسم الدعوة ============ */}
+      <Section
+        titleKey="home.dawah.title"
+        subtitleKey="home.dawah.subtitle"
+        items={DAWAH_ITEMS}
+        lang={l}
+        gradient="teal"
+      />
+
+      {/* ============ النشرة البريدية ============ */}
+      <section className="container-page pb-16 md:pb-20">
+        <Newsletter lang={l} />
+      </section>
+
+      {/* ============ CTA النهائي ============ */}
+      <section className="gradient-hero relative overflow-hidden py-16 text-white md:py-20">
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 70% 20%, #fff 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
+          }}
+        />
+        <div className="container-page relative text-center">
+          <h2
+            className="mb-4 text-3xl font-black md:text-4xl"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            {isRTL ? "ابدأ رحلتك الإيمانية اليوم" : "Start Your Faith Journey Today"}
+          </h2>
+          <p className="mx-auto mb-8 max-w-2xl text-lg text-primary-100">
+            {isRTL
+              ? "انضم إلى آلاف المسلمين الذين يستخدمون المنصة يومياً"
+              : "Join thousands of Muslims using the platform daily"}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link href={`/${l}/register`} className="btn-gold text-base">
+              {t(l, "nav.register")}
+            </Link>
+            <Link
+              href={`/${l}/about`}
+              className="inline-flex items-center gap-2 rounded-2xl border-2 border-white/40 px-7 py-3.5 text-base font-bold text-white transition-all duration-300 hover:bg-white/10"
+            >
+              {t(l, "footer.about")}
+            </Link>
           </div>
-        </section>
-      </main>
-      <Footer settings={c.settings} lang={L} />
-    </>
+        </div>
+      </section>
+    </main>
   );
 }

@@ -1,37 +1,57 @@
-type IslamicSectionProps = {
+import React from "react";
+
+interface IslamicSectionProps {
   title: string;
-  icon?: string;
   subtitle?: string;
   children: React.ReactNode;
+  align?: "center" | "right" | "left";
+  background?: "white" | "light" | "gradient";
+  id?: string;
   className?: string;
-};
+}
 
 export default function IslamicSection({
   title,
-  icon,
   subtitle,
   children,
+  align = "center",
+  background = "white",
+  id,
   className = "",
 }: IslamicSectionProps) {
+  const alignClasses = {
+    center: "text-center items-center",
+    right: "text-right items-end",
+    left: "text-left items-start",
+  };
+
+  const backgroundClasses = {
+    white: "bg-white dark:bg-night-900",
+    light: "bg-primary-50/50 dark:bg-night-800/50",
+    gradient: "bg-gradient-to-br from-primary-50 via-white to-gold-50/30 dark:from-night-900 dark:via-night-800 dark:to-night-900",
+  };
+
   return (
-    <section className={`py-12 ${className}`}>
-      <div className="max-w-6xl mx-auto px-4">
-        {/* عنوان القسم */}
-        <div className="mb-8 text-center">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-            {icon && <span className="text-3xl">{icon}</span>}
-            <h2 className="font-serif text-3xl text-primary dark:text-gold font-bold whitespace-nowrap">
-              {title}
-            </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+    <section
+      id={id}
+      className={`py-16 md:py-20 ${backgroundClasses[background]} ${className}`}
+    >
+      <div className="container-page">
+        {/* رأس القسم */}
+        <div className={`mb-12 flex flex-col gap-4 ${alignClasses[align]}`}>
+          <h2 className="section-title mb-0">{title}</h2>
+          
+          {/* الفاصل الزخرفي الإسلامي */}
+          <div className="islamic-divider my-0">
+            <span className="text-xl text-gold-500">✦</span>
           </div>
+          
           {subtitle && (
-            <p className="text-gray-600 dark:text-gray-400 text-sm">{subtitle}</p>
+            <p className="section-subtitle max-w-2xl">{subtitle}</p>
           )}
         </div>
 
-        {/* المحتوى */}
+        {/* محتوى القسم */}
         {children}
       </div>
     </section>

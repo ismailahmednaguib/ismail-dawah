@@ -1,31 +1,26 @@
 {
-  "name": "ismail-dawah",
-  "version": "0.1.0",
+  "name": "ismail-platform",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.117.2",
-    "@vercel/analytics": "^2.0.1",
-    "next": "16.3.8",
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
+    "@supabase/supabase-js": "^2.49.4",
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/web-push": "^3.6.4",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.8",
-    "sharp": "^0.35.5",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@tailwindcss/postcss": "^4.1.8",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3"
   }
 }

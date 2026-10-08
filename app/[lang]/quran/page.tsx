@@ -1,435 +1,345 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { isValidLang, t, type Lang } from "@/lib/i18n";
+import { SURAHS, toArabicNumeral } from "@/lib/data";
+import TopBar from "@/components/TopBar";
 
-import { useEffect, useState, useRef } from "react";
-import { useParams } from "next/navigation";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BackButton from "@/components/BackButton";
-import PageHero from "@/components/PageHero";
-import { t, type Lang } from "@/lib/i18n";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
 
-type Surah = {
-  number: number;
-  name: string;
-  englishName: string;
-  englishNameTranslation: string;
-  numberOfAyahs: number;
-  revelationType: string;
+  if (!isValidLang(lang)) {
+    return {};
+  }
+
+  const l = lang as Lang;
+
+  return {
+    title: t(l, "quran.title"),
+    description: t(l, "quran.subtitle"),
+    alternates: {
+      canonical: `/${l}/quran`,
+    },
+  };
+}
+
+type SearchParams = {
+  q?: string | string[];
+  type?: string | string[];
 };
 
-type Ayah = {
-  number: number;
-  text: string;
-  numberInSurah: number;
-  juz: number;
-  page: number;
-  sajda?: boolean;
-};
+function getFirstValue(value?: string | string[]): string {
+  if (Array.isArray(value)) {
+    return value[0] ?? "";
+  }
+  return value ?? "";
+}
 
-const reciters = [
-  { id: "ar.alafasy", name: "مشاري العفاسي" },
-  { id: "ar.abdulbasitmurattal", name: "عبد الباسط عبد الصمد" },
-  { id: "ar.husary", name: "محمود خليل الحصري" },
-  { id: "ar.minshawi", name: "محمد صديق المنشاوي" },
-  { id: "ar.ahmedajamy", name: "أحمد العجمي" },
-  { id: "ar.maaboralmajeed", name: "ماهر المعيقلي" },
-];
+function buildQuranQuery(options: {
+  q?: string;
+  type?: "all" | "makki" | "madani";
+}) {
+  const search = new URLSearchParams();
 
-// تحويل الأرقام إلى عربية
-const toArabicNum = (num: number): string => {
-  const arabicNums = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-  return num.toString().split("").map(d => arabicNums[parseInt(d)] || d).join("");
-};
+  if (options.q?.trim()) {
+    search.set("q", options.q.trim());
+  }
 
-export default function QuranPage() {
-  const params = useParams();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
-  const tr = t(L);
+  if (options.type && options.type !== "all") {
+    search.set("type", options.type);
+  }
 
-  const [surahs, setSurahs] = useState<Surah[]>([]);
-  const [selectedSurah, setSelectedSurah] = useState<number | null>(null);
-  const [ayahs, setAyahs] = useState<Ayah[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [reciter, setReciter] = useState("ar.alafasy");
-  const [playingAyah, setPlayingAyah] = useState<number | null>(null);
-  const [fontSize, setFontSize] = useState<"small" | "medium" | "large" | "xlarge">("medium");
-  const [favorites, setFavorites] = useState<number[]>([]);
-  const [lastRead, setLastRead] = useState<{ surah: number; ayah: number } | null>(null);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const queryString = search.toString();
+  return queryString ? `?${queryString}` : "";
+}
 
-  useEffect(() => {
-    fetch("https://api.alquran.cloud/v1/surah")
-      .then(r => r.json())
-      .then(j => setSurahs(j.data || []))
-      .catch(() => {});
-    
-    const savedFav = localStorage.getItem("quran-favorites");
-    if (savedFav) setFavorites(JSON.parse(savedFav));
-    
-    const savedLast = localStorage.getItem("quran-last-read");
-    if (savedLast) setLastRead(JSON.parse(savedLast));
+export default async function QuranPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<SearchParams>;
+}) {
+  const { lang } = await params;
 
-    const savedReciter = localStorage.getItem("quran-reciter");
-    if (savedReciter) setReciter(savedReciter);
+  if (!isValidLang(lang)) {
+    notFound();
+  }
 
-    const savedSize = localStorage.getItem("quran-font-size");
-    if (savedSize) setFontSize(savedSize as any);
-  }, []);
+  const l = lang as Lang;
+  const isRTL = l === "ar";
 
-  const loadSurah = async (num: number) => {
-    setLoading(true);
-    setSelectedSurah(num);
-    setShowSidebar(false);
-    try {
-      const r = await fetch(`https://api.alquran.cloud/v1/surah/${num}/quran-uthmani`);
-      const j = await r.json();
-      setAyahs(j.data?.ayahs || []);
-      localStorage.setItem("quran-last-read", JSON.stringify({ surah: num, ayah: 1 }));
-      setLastRead({ surah: num, ayah: 1 });
-    } catch {
-      setAyahs([]);
+  const sp = await searchParams;
+
+  const q = getFirstValue(sp.q).trim();
+  const rawType = getFirstValue(sp.type);
+
+  const type: "all" | "makki" | "madani" =
+    rawType === "makki" || rawType === "madani" ? rawType : "all";
+
+  const totalAyahs = SURAHS.reduce((sum, surah) => sum + surah.ayahs, 0);
+
+  const filteredSurahs = SURAHS.filter((surah) => {
+    if (type !== "all" && surah.type !== type) {
+      return false;
     }
-    setLoading(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
 
-  const playAyah = (ayahNumber: number) => {
-    if (playingAyah === ayahNumber) {
-      audioRef.current?.pause();
-      setPlayingAyah(null);
-      return;
+    if (!q) {
+      return true;
     }
-    const url = `https://cdn.islamic.network/quran/audio/128/${reciter}/${ayahNumber}.mp3`;
-    if (audioRef.current) {
-      audioRef.current.src = url;
-      audioRef.current.play();
-      setPlayingAyah(ayahNumber);
-    }
-  };
 
-  const toggleFavorite = (surahNum: number) => {
-    const newFav = favorites.includes(surahNum)
-      ? favorites.filter(f => f !== surahNum)
-      : [...favorites, surahNum];
-    setFavorites(newFav);
-    localStorage.setItem("quran-favorites", JSON.stringify(newFav));
-  };
+    const lowerQ = q.toLowerCase();
 
-  const changeFontSize = (size: "small" | "medium" | "large" | "xlarge") => {
-    setFontSize(size);
-    localStorage.setItem("quran-font-size", size);
-  };
+    return (
+      surah.arabicName.includes(q) ||
+      surah.englishName.toLowerCase().includes(lowerQ) ||
+      String(surah.number) === q
+    );
+  });
 
-  const currentSurah = surahs.find(s => s.number === selectedSurah);
-  const filteredSurahs = surahs.filter(s =>
-    s.name.includes(searchTerm) ||
-    s.englishName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.number.toString() === searchTerm
-  );
+  const filterLinks = [
+    {
+      key: "all" as const,
+      label: isRTL ? "الكل" : "All",
+    },
+    {
+      key: "makki" as const,
+      label: t(l, "quran.makki"),
+    },
+    {
+      key: "madani" as const,
+      label: t(l, "quran.madani"),
+    },
+  ];
 
   return (
-    <>
-      <Header lang={L} />
-      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        <PageHero
-          icon="📖"
-          title="المصحف الشريف"
-          subtitle="برواية حفص عن عاصم — على رسم مصحف المدينة النبوية"
-          verse="إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ"
-          verseSource="سورة الإسراء - الآية 9"
-          gradient="from-emerald-800 via-emerald-900 to-emerald-950"
-        />
+    <main>
+      <TopBar
+        title={t(l, "quran.title")}
+        subtitle={t(l, "quran.subtitle")}
+        backHref={`/${l}`}
+        showBookmark={false}
+        breadcrumb={[
+          {
+            label: t(l, "nav.home"),
+            href: `/${l}`,
+          },
+          {
+            label: t(l, "quran.title"),
+          },
+        ]}
+      />
 
-        <audio ref={audioRef} onEnded={() => setPlayingAyah(null)} />
+      <section className="container-page py-10 md:py-14">
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="card p-5 text-center">
+            <p className="text-3xl font-black text-primary-600 dark:text-primary-400">
+              {isRTL ? toArabicNumeral(SURAHS.length) : SURAHS.length}
+            </p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {isRTL ? "سورة" : "Surahs"}
+            </p>
+          </div>
 
-        <section className="py-8">
-          <div className="max-w-5xl mx-auto px-4">
-            <BackButton href={`/${lang}`} label={tr.back} />
+          <div className="card p-5 text-center">
+            <p className="text-3xl font-black text-gold-600 dark:text-gold-400">
+              {isRTL ? toArabicNumeral(totalAyahs) : totalAyahs}
+            </p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {isRTL ? "آية" : "Ayahs"}
+            </p>
+          </div>
 
-            {!selectedSurah ? (
-              <>
-                {/* متابعة القراءة */}
-                {lastRead && (
-                  <div className="bg-gradient-to-br from-emerald-800 to-emerald-900 text-white rounded-2xl p-5 shadow-lg mb-6 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 bg-gold rounded-xl grid place-items-center text-2xl">
-                        📖
-                      </div>
-                      <div>
-                        <p className="text-sm text-white/80 mb-1">متابعة القراءة</p>
-                        <p className="font-bold text-lg">
-                          سورة {surahs.find(s => s.number === lastRead.surah)?.name || lastRead.surah}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => loadSurah(lastRead.surah)}
-                      className="bg-gold text-gray-900 px-6 py-2.5 rounded-lg font-bold hover:bg-gold-light transition"
-                    >
-                      متابعة ←
-                    </button>
-                  </div>
-                )}
+          <div className="card p-5 text-center">
+            <p className="text-3xl font-black text-primary-600 dark:text-primary-400">
+              {isRTL ? toArabicNumeral(30) : 30}
+            </p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {t(l, "quran.juz")}
+            </p>
+          </div>
 
-                {/* بحث */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg mb-6 sticky top-20 z-30">
-                  <input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="🔍 ابحث عن سورة بالاسم أو الرقم..."
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl px-5 py-3 text-lg focus:border-gold focus:outline-none"
-                  />
-                </div>
+          <div className="card p-5 text-center">
+            <p className="text-3xl font-black text-gold-600 dark:text-gold-400">
+              {isRTL ? toArabicNumeral(604) : 604}
+            </p>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+              {t(l, "quran.page")}
+            </p>
+          </div>
+        </div>
 
-                {/* المفضلة */}
-                {favorites.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="font-serif text-xl text-primary dark:text-gold mb-4 flex items-center gap-2">
-                      <span>⭐</span>
-                      <span>سورك المفضلة ({favorites.length})</span>
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {favorites.map(favNum => {
-                        const s = surahs.find(s => s.number === favNum);
-                        if (!s) return null;
-                        return (
-                          <button
-                            key={favNum}
-                            onClick={() => loadSurah(favNum)}
-                            className="bg-gradient-to-br from-amber-600 to-amber-700 text-white rounded-xl p-4 shadow-md hover:shadow-xl transition hover:-translate-y-1 text-center"
-                          >
-                            <p className="font-serif text-xl font-bold">{s.name}</p>
-                            <p className="text-xs text-white/80 mt-1">{toArabicNum(s.numberOfAyahs)} آية</p>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+        {/* ===== البحث والفلترة ===== */}
+        <div className="card mb-8 p-5 md:p-6">
+          <form
+            method="get"
+            action={`/${l}/quran`}
+            className="flex flex-col gap-4 md:flex-row md:items-center"
+          >
+            <div className="relative flex-1">
+              <svg
+                className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>
 
-                {/* فهرس السور */}
-                <div className="mb-4">
-                  <h3 className="font-serif text-xl text-primary dark:text-gold mb-4">
-                    📖 فهرس سور القرآن الكريم ({filteredSurahs.length} سورة)
-                  </h3>
-                </div>
+              <input
+                type="search"
+                name="q"
+                defaultValue={q}
+                placeholder={t(l, "quran.search.placeholder")}
+                className="input-islamic !ps-12"
+                aria-label={t(l, "quran.search.placeholder")}
+              />
+            </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {filteredSurahs.map(s => {
-                    const isFav = favorites.includes(s.number);
-                    return (
-                      <div
-                        key={s.number}
-                        className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition group relative overflow-hidden"
-                      >
-                        <button
-                          onClick={() => toggleFavorite(s.number)}
-                          className="absolute top-2 left-2 text-xl z-10 hover:scale-125 transition"
-                        >
-                          {isFav ? "⭐" : "☆"}
-                        </button>
-                        <button
-                          onClick={() => loadSurah(s.number)}
-                          className="w-full p-4 text-center"
-                        >
-                          {/* رقم السورة بشكل مزخرف */}
-                          <div className="relative mx-auto w-14 h-14 mb-3">
-                            <div className="absolute inset-0 bg-gradient-to-br from-emerald-700 to-emerald-900 rotate-45 rounded-lg"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <span className="text-white font-bold text-lg">
-                                {toArabicNum(s.number)}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <p className="font-serif text-2xl text-primary dark:text-gold font-bold mb-1">
-                            {s.name}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {toArabicNum(s.numberOfAyahs)} آية • {s.revelationType === "Meccan" ? "مكية" : "مدنية"}
-                          </p>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <>
-                {/* شريط الأدوات العلوي */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 mb-6 shadow-lg sticky top-20 z-30">
-                  <div className="flex items-center justify-between flex-wrap gap-3">
-                    <button
-                      onClick={() => { setSelectedSurah(null); setAyahs([]); setPlayingAyah(null); }}
-                      className="flex items-center gap-2 bg-cream-dark dark:bg-gray-700 px-4 py-2 rounded-lg font-bold hover:bg-gold/20 transition"
-                    >
-                      <span>←</span>
-                      <span>الفهرس</span>
-                    </button>
+            <input
+              type="hidden"
+              name="type"
+              value={type === "all" ? "" : type}
+            />
 
-                    <div className="flex items-center gap-2">
-                      {/* القارئ */}
-                      <select
-                        value={reciter}
-                        onChange={(e) => {
-                          setReciter(e.target.value);
-                          localStorage.setItem("quran-reciter", e.target.value);
-                        }}
-                        className="border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-3 py-2 text-sm focus:border-gold"
-                      >
-                        {reciters.map(r => (
-                          <option key={r.id} value={r.id}>🎙️ {r.name}</option>
-                        ))}
-                      </select>
+            <button type="submit" className="btn-primary whitespace-nowrap">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>
+              {isRTL ? "بحث" : "Search"}
+            </button>
+          </form>
 
-                      {/* حجم الخط */}
-                      <div className="flex gap-1 border-2 border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
-                        {(["small", "medium", "large", "xlarge"] as const).map(size => (
-                          <button
-                            key={size}
-                            onClick={() => changeFontSize(size)}
-                            className={`px-3 py-2 text-sm font-bold transition ${
-                              fontSize === size
-                                ? "bg-gold text-gray-900"
-                                : "bg-cream-dark dark:bg-gray-700 hover:bg-gold/20"
-                            }`}
-                          >
-                            {size === "small" ? "أ" : size === "medium" ? "ب" : size === "large" ? "ج" : "د"}
-                          </button>
-                        ))}
-                      </div>
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {filterLinks.map((filter) => {
+              const isActive = type === filter.key;
+              const href = `/${l}/quran${buildQuranQuery({
+                q,
+                type: filter.key,
+              })}`;
 
-                      <button
-                        onClick={() => toggleFavorite(selectedSurah)}
-                        className="text-2xl hover:scale-110 transition"
-                      >
-                        {favorites.includes(selectedSurah) ? "⭐" : "☆"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
+              return (
+                <Link
+                  key={filter.key}
+                  href={href}
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
+                    isActive
+                      ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
+                  }`}
+                >
+                  {filter.label}
+                </Link>
+              );
+            })}
 
-                {/* صفحة المصحف */}
-                {loading ? (
-                  <div className="quran-page text-center py-20">
-                    <p className="text-2xl text-gray-500">⏳ جاري التحميل...</p>
-                  </div>
-                ) : (
-                  <div className="quran-page">
-                    {/* رأس السورة المزخرف */}
-                    <div className="surah-header">
-                      <p className="surah-name">سُورَةُ {currentSurah?.name.replace("سُورَةُ ", "")}</p>
-                      <p className="surah-info">
-                        {currentSurah?.revelationType === "Meccan" ? "مَكِّيَّة" : "مَدَنِيَّة"} • 
-                        عَدَدُ آيَاتِهَا {toArabicNum(currentSurah?.numberOfAyahs || 0)}
-                      </p>
-                    </div>
-
-                    {/* البسملة (ما عدا سورة الفاتحة والتوبة) */}
-                    {selectedSurah !== 1 && selectedSurah !== 9 && (
-                      <div className="basmala">
-                        بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ
-                      </div>
-                    )}
-
-                    {/* نص الآيات */}
-                    <div className={`quran-text size-${fontSize}`}>
-                      {ayahs.map((ayah, idx) => {
-                        const prevJuz = idx > 0 ? ayahs[idx - 1].juz : null;
-                        const isNewJuz = ayah.juz !== prevJuz && idx > 0;
-                        
-                        return (
-                          <span key={ayah.number}>
-                            {/* علامة الجزء الجديد */}
-                            {isNewJuz && (
-                              <span className="juz-marker block my-4">
-                                الجُزءُ {toArabicNum(ayah.juz)}
-                              </span>
-                            )}
-
-                            {/* الآية مع إمكانية الضغط للاستماع */}
-                            <span
-                              onClick={() => playAyah(ayah.number)}
-                              className={`cursor-pointer transition ${
-                                playingAyah === ayah.number ? "ayah-playing" : ""
-                              }`}
-                            >
-                              {ayah.text}
-                              <span className="ayah-number">
-                                {toArabicNum(ayah.numberInSurah)}
-                              </span>
-                              {ayah.sajda && <span className="sajda-mark">۩</span>}
-                            </span>
-                          </span>
-                        );
-                      })}
-                    </div>
-
-                    {/* خاتمة السورة */}
-                    <div className="text-center mt-8 pt-6 border-t-2 border-gold/30">
-                      <p className="font-serif text-2xl text-gold mb-2">
-                        صَدَقَ اللَّهُ العَظِيمُ
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        تمت سورة {currentSurah?.name} بحمد الله
-                      </p>
-                      <div className="flex gap-3 justify-center mt-4">
-                        {selectedSurah > 1 && (
-                          <button
-                            onClick={() => loadSurah(selectedSurah - 1)}
-                            className="bg-cream-dark dark:bg-gray-700 px-5 py-2 rounded-lg font-bold hover:bg-gold/20 transition"
-                          >
-                            → السورة السابقة
-                          </button>
-                        )}
-                        {selectedSurah < 114 && (
-                          <button
-                            onClick={() => loadSurah(selectedSurah + 1)}
-                            className="bg-gold text-gray-900 px-5 py-2 rounded-lg font-bold hover:bg-gold-light transition"
-                          >
-                            السورة التالية ←
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* قائمة التشغيل الحالي */}
-                {playingAyah && (
-                  <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-2xl border-2 border-gold z-40">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => {
-                          audioRef.current?.pause();
-                          setPlayingAyah(null);
-                        }}
-                        className="w-12 h-12 bg-gold text-gray-900 rounded-full grid place-items-center text-xl hover:bg-gold-light transition"
-                      >
-                        ⏸️
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-primary dark:text-gold truncate">
-                          {currentSurah?.name} - الآية {toArabicNum(
-                            ayahs.find(a => a.number === playingAyah)?.numberInSurah || 0
-                          )}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {reciters.find(r => r.id === reciter)?.name}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
+            {(q || type !== "all") && (
+              <Link
+                href={`/${l}/quran`}
+                className="rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+              >
+                {isRTL ? "مسح الفلاتر" : "Clear filters"}
+              </Link>
             )}
           </div>
-        </section>
-      </main>
-      <Footer lang={L} />
-    </>
+        </div>
+
+        {/* ===== عدد النتائج ===== */}
+        <p className="mb-5 text-sm text-slate-500 dark:text-slate-400">
+          {isRTL
+            ? `عدد السور المعروضة: ${toArabicNumeral(filteredSurahs.length)}`
+            : `Showing ${filteredSurahs.length} surahs`}
+        </p>
+
+        {/* ===== قائمة السور ===== */}
+        {filteredSurahs.length === 0 ? (
+          <div className="card p-12 text-center">
+            <div className="mb-4 text-5xl">🔍</div>
+            <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
+              {isRTL ? "لا توجد نتائج" : "No results found"}
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400">
+              {isRTL
+                ? "جرّب البحث باسم السورة أو رقمها."
+                : "Try searching by surah name or number."}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredSurahs.map((surah) => (
+              <Link
+                key={surah.number}
+                href={`/${l}/quran/${surah.number}`}
+                className="card card-interactive group block p-5"
+              >
+                <div className="flex items-center gap-4">
+                  {/* رقم السورة */}
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 font-bold text-white shadow-md transition-transform duration-300 group-hover:scale-110">
+                    {isRTL ? toArabicNumeral(surah.number) : surah.number}
+                  </div>
+
+                  {/* معلومات السورة */}
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-lg font-bold text-slate-800 transition-colors group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-300">
+                      {isRTL ? surah.arabicName : surah.englishName}
+                    </h3>
+
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                      <span>
+                        {isRTL
+                          ? `${toArabicNumeral(surah.ayahs)} آية`
+                          : `${surah.ayahs} ayahs`}
+                      </span>
+
+                      <span className="text-slate-300 dark:text-slate-600">
+                        •
+                      </span>
+
+                      <span
+                        className={`badge ${
+                          surah.type === "makki"
+                            ? "border-gold-300 bg-gold-100 text-gold-700 dark:border-gold-700/50 dark:bg-gold-900/30 dark:text-gold-400"
+                            : "border-primary-300 bg-primary-100 text-primary-700 dark:border-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
+                        }`}
+                      >
+                        {surah.type === "makki"
+                          ? t(l, "quran.makki")
+                          : t(l, "quran.madani")}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* سهم */}
+                  <svg
+                    className="h-5 w-5 shrink-0 text-slate-300 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary-500 rtl:rotate-180 rtl:group-hover:-translate-x-1 dark:text-slate-600"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 }

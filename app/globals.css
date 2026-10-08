@@ -1,280 +1,379 @@
-/* خطوط المصحف الشريف */
-@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Scheherazade+New:wght@400;700&family=Reem+Kufi:wght@400;700&display=swap');
 @import "tailwindcss";
 
+/* ===== تفعيل الوضع الليلي بالكلاس .dark ===== */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ================================================================
+   🎨 نظام التصميم — الثيم الفيروزي الإسلامي الحديث
+   ================================================================ */
 @theme {
-  --color-primary: #0b2e22;
-  --color-primary-light: #145c43;
-  --color-gold: #c9a227;
-  --color-gold-light: #e3c766;
-  --color-cream: #fdfbf7;
-  --color-cream-dark: #f4f1ea;
-  --font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Amiri", ui-serif, Georgia, serif;
+  /* ---------- اللون الأساسي: الفيروزي ---------- */
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #22d3ee;
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0891b2;
+  --color-primary-700: #0e7490;
+  --color-primary-800: #155e75;
+  --color-primary-900: #164e63;
+  --color-primary-950: #083344;
+
+  /* ---------- الذهبي: لمسات الفخامة ---------- */
+  --color-gold-50: #fffbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde68a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #d4af37;
+  --color-gold-600: #b8860b;
+  --color-gold-700: #927113;
+  --color-gold-800: #713f12;
+  --color-gold-900: #422006;
+
+  /* ---------- الليل: الوضع الداكن ---------- */
+  --color-night-50: #f0f9ff;
+  --color-night-100: #e0f2fe;
+  --color-night-200: #bae6fd;
+  --color-night-300: #7dd3fc;
+  --color-night-400: #38bdf8;
+  --color-night-500: #0ea5e9;
+  --color-night-600: #0369a1;
+  --color-night-700: #075985;
+  --color-night-800: #0f2233;
+  --color-night-900: #0a1628;
+  --color-night-950: #060d1a;
+
+  /* ---------- الخطوط ---------- */
+  --font-cairo: var(--font-cairo), "Cairo", ui-sans-serif, system-ui, sans-serif;
+  --font-amiri: var(--font-amiri), "Amiri", "Traditional Arabic", serif;
+  --font-quran: var(--font-scheherazade), "Scheherazade New", "Traditional Arabic", serif;
+
+  /* ---------- الزوايا الدائرية ---------- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-card: 1.25rem;
+
+  /* ---------- الظلال ---------- */
+  --shadow-card: 0 2px 16px -4px rgb(8 51 68 / 0.08);
+  --shadow-card-hover: 0 12px 40px -12px rgb(6 182 212 / 0.25);
+  --shadow-islamic: 0 10px 40px -10px rgb(6 182 212 / 0.35);
+  --shadow-gold: 0 8px 30px -8px rgb(212 175 55 / 0.4);
+
+  /* ---------- الحركات ---------- */
+  --animate-fade-in: fade-in 0.7s ease-out both;
+  --animate-slide-up: slide-up 0.7s ease-out both;
+  --animate-slide-down: slide-down 0.4s ease-out both;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
 }
 
-html { scroll-behavior: smooth; }
+/* ================================================================
+   📐 الأساسيات
+   ================================================================ */
+@layer base {
+  * {
+    @apply border-primary-100;
+  }
 
-body {
-  background-color: var(--color-cream);
-  color: #111827;
-  font-family: var(--font-sans);
-  line-height: 1.7;
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+    font-family: var(--font-cairo);
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  .dark body {
+    @apply bg-night-900 text-slate-200;
+  }
+
+  ::selection {
+    @apply bg-primary-500 text-white;
+  }
+
+  /* شريط التمرير المخصص */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100;
+  }
+
+  .dark ::-webkit-scrollbar-track {
+    @apply bg-night-950;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #06b6d4, #0e7490);
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-600;
+  }
+
+  /* العناوين */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
+    font-family: var(--font-amiri);
+  }
 }
 
-::selection { background: var(--color-gold); color: #1a1a1a; }
+/* ================================================================
+   🧩 المكونات الجاهزة (بتستخدم في كل الصفحات)
+   ================================================================ */
+@layer components {
 
-/* زخرفة إسلامية ذهبية */
-.pattern-gold {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 0l8 24 24 8-24 8-8 24-8-24-24-8 24-8z' fill='%23c9a227' fill-opacity='0.08'/%3E%3C/svg%3E");
-}
-.pattern-light {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 0l8 24 24 8-24 8-8 24-8-24-24-8 24-8z' fill='%23ffffff' fill-opacity='0.06'/%3E%3C/svg%3E");
-}
+  /* ---------- الحاويات ---------- */
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
 
-/* فاصل زخرفي */
-.ornament { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--color-gold); }
-.ornament::before, .ornament::after { content: ""; height: 1px; width: 70px; }
-.ornament::before { background: linear-gradient(to left, transparent, var(--color-gold)); }
-.ornament::after { background: linear-gradient(to right, transparent, var(--color-gold)); }
+  .section {
+    @apply py-16 md:py-24;
+  }
 
-/* ظهور متدرج */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
-.fade-up { animation: fadeUp .7s ease both; }
+  /* ---------- البطاقات ---------- */
+  .card {
+    @apply overflow-hidden rounded-2xl border border-primary-100/60 bg-white transition-all duration-300;
+    box-shadow: var(--shadow-card);
+  }
 
-/* شريط تمرير أنيق */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: var(--color-cream-dark); }
-::-webkit-scrollbar-thumb { background: var(--color-primary-light); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+  .dark .card {
+    @apply border-night-700/50 bg-night-800;
+  }
 
-/* الوضع الليلي */
-.dark { color-scheme: dark; }
-.dark body { background-color: #0e1613; color: #e6e3d8; }
-.dark .bg-white { background-color: #16211c; }
-.dark .bg-cream { background-color: #0e1613; }
-.dark .bg-cream-dark { background-color: #121b17; }
-.dark .bg-cream\/95 { background-color: rgba(14,22,19,.95); }
-.dark .bg-cream-dark\/90 { background-color: rgba(18,27,23,.9); }
-.dark .text-gray-900 { color: #ece9de; }
-.dark .text-gray-700 { color: #c9c5b8; }
-.dark .text-gray-600 { color: #b4b0a4; }
-.dark .text-gray-500 { color: #9b9789; }
-.dark .text-gray-400 { color: #86827a; }
-.dark .text-primary { color: #eaf2ec; }
-.dark .border-gray-100 { border-color: #26332c; }
-.dark .border-gray-200 { border-color: #2c3a32; }
-.dark .border-gray-300 { border-color: #37453c; }
-.dark input, .dark textarea, .dark select { background-color: #101a15; color: #e6e3d8; border-color: #2c3a32; }
+  .card:hover {
+    box-shadow: var(--shadow-card-hover);
+    @apply -translate-y-1 border-primary-200;
+  }
 
-/* تنسيق المصحف الشريف */
-.quran-page {
-  font-family: 'Amiri Quran', 'Scheherazade New', 'Traditional Arabic', serif;
-  background: linear-gradient(to bottom, #fdf9f0 0%, #f8f3e3 100%);
-  border: 3px double #8b6914;
-  border-radius: 8px;
-  box-shadow: 
-    inset 0 0 20px rgba(139, 105, 20, 0.1),
-    0 10px 40px rgba(0, 0, 0, 0.15);
-  position: relative;
-  padding: 2rem;
-}
+  .dark .card:hover {
+    @apply border-primary-500/30;
+  }
 
-.quran-page::before {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(139, 105, 20, 0.3);
-  border-radius: 4px;
-  pointer-events: none;
-}
+  .card-interactive {
+    @apply card cursor-pointer;
+  }
 
-.quran-page::after {
-  content: '';
-  position: absolute;
-  inset: 12px;
-  border: 1px solid rgba(139, 105, 20, 0.15);
-  border-radius: 2px;
-  pointer-events: none;
-}
+  .card-interactive:active {
+    @apply scale-[0.98];
+  }
 
-/* رأس السورة المزخرف */
-.surah-header {
-  background: linear-gradient(135deg, #8b6914 0%, #c9a227 50%, #8b6914 100%);
-  color: white;
-  text-align: center;
-  padding: 1.5rem 2rem;
-  margin: -2rem -2rem 2rem -2rem;
-  border-bottom: 3px double #fff;
-  position: relative;
-}
+  /* ---------- الأزرار ---------- */
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 select-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
 
-.surah-header::before,
-.surah-header::after {
-  content: '۞';
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 2rem;
-  color: rgba(255, 255, 255, 0.6);
-}
+  .btn-primary {
+    @apply btn bg-gradient-to-l from-primary-500 to-primary-700 px-6 py-3 text-white;
+    box-shadow: 0 4px 18px -4px rgb(6 182 212 / 0.5);
+  }
 
-.surah-header::before { left: 1.5rem; }
-.surah-header::after { right: 1.5rem; }
+  .btn-primary:hover {
+    box-shadow: 0 10px 30px -6px rgb(6 182 212 / 0.6);
+    @apply -translate-y-0.5 from-primary-600 to-primary-800;
+  }
 
-.surah-name {
-  font-family: 'Amiri Quran', serif;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
+  .btn-gold {
+    @apply btn bg-gradient-to-l from-gold-400 to-gold-600 px-6 py-3 text-white;
+    box-shadow: 0 4px 18px -4px rgb(212 175 55 / 0.5);
+  }
 
-.surah-info {
-  font-size: 0.9rem;
-  opacity: 0.95;
-  font-family: 'Reem Kufi', sans-serif;
-}
+  .btn-gold:hover {
+    box-shadow: var(--shadow-gold);
+    @apply -translate-y-0.5;
+  }
 
-/* البسملة */
-.basmala {
-  font-family: 'Amiri Quran', serif;
-  font-size: 2.2rem;
-  text-align: center;
-  color: #8b6914;
-  margin: 2rem 0;
-  padding: 1rem;
-  border-top: 1px solid rgba(139, 105, 20, 0.3);
-  border-bottom: 1px solid rgba(139, 105, 20, 0.3);
-}
+  .btn-outline {
+    @apply btn border-2 border-primary-500 bg-transparent px-6 py-3 text-primary-700;
+  }
 
-/* نص الآيات */
-.quran-text {
-  font-family: 'Amiri Quran', 'Scheherazade New', serif;
-  font-size: 28px;
-  line-height: 3;
-  color: #1a1a1a;
-  text-align: justify;
-  text-align-last: center;
-  direction: rtl;
-  padding: 1rem 0;
-}
+  .dark .btn-outline {
+    @apply text-primary-300;
+  }
 
-/* رقم الآية */
-.ayah-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: radial-gradient(circle, #fdf9f0 0%, #f8f3e3 100%);
-  border: 2px solid #8b6914;
-  border-radius: 50%;
-  font-family: 'Amiri Quran', serif;
-  font-size: 16px;
-  font-weight: bold;
-  color: #8b6914;
-  margin: 0 4px;
-  vertical-align: middle;
-  position: relative;
-  box-shadow: 0 0 0 1px rgba(139, 105, 20, 0.2);
-}
+  .btn-outline:hover {
+    @apply bg-primary-500 text-white;
+  }
 
-.ayah-number::before {
-  content: '۝';
-  position: absolute;
-  font-size: 42px;
-  color: #8b6914;
-  z-index: -1;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+  .btn-ghost {
+    @apply btn px-4 py-2 text-slate-600;
+  }
 
-/* علامة السجدة */
-.sajda-mark {
-  display: inline-block;
-  color: #8b0000;
-  font-size: 32px;
-  margin: 0 8px;
-  vertical-align: middle;
-}
+  .dark .btn-ghost {
+    @apply text-slate-300;
+  }
 
-/* علامة الجزء */
-.juz-marker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 1.5rem 0;
-  padding: 0.5rem 1rem;
-  background: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.1), transparent);
-  border-top: 1px solid rgba(139, 105, 20, 0.3);
-  border-bottom: 1px solid rgba(139, 105, 20, 0.3);
-  font-family: 'Reem Kufi', sans-serif;
-  color: #8b6914;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
+  .btn-ghost:hover {
+    @apply bg-primary-50 text-primary-700;
+  }
 
-.juz-marker::before,
-.juz-marker::after {
-  content: '۞';
-  font-size: 1.5rem;
-}
+  .dark .btn-ghost:hover {
+    @apply bg-primary-900/30 text-primary-300;
+  }
 
-/* الآية المحددة */
-.ayah-highlighted {
-  background: rgba(201, 162, 39, 0.15);
-  border-radius: 4px;
-  padding: 0.5rem;
-  transition: all 0.3s;
-}
+  /* ---------- العناوين ---------- */
+  .section-title {
+    @apply mb-3 text-center text-3xl font-black text-primary-950 md:text-4xl;
+    font-family: var(--font-amiri);
+  }
 
-.ayah-playing {
-  background: rgba(201, 162, 39, 0.25);
-  border-right: 4px solid #c9a227;
-  animation: pulse-ayah 2s ease-in-out infinite;
+  .dark .section-title {
+    @apply text-primary-50;
+  }
+
+  .section-subtitle {
+    @apply text-center text-slate-500;
+  }
+
+  .dark .section-subtitle {
+    @apply text-slate-400;
+  }
+
+  /* ---------- الفاصل الإسلامي ---------- */
+  .islamic-divider {
+    @apply mx-auto my-4 flex items-center justify-center gap-3;
+  }
+
+  .islamic-divider::before,
+  .islamic-divider::after {
+    content: "";
+    @apply h-px w-24;
+  }
+
+  .islamic-divider::before {
+    background: linear-gradient(90deg, transparent, #d4af37);
+  }
+
+  .islamic-divider::after {
+    background: linear-gradient(90deg, #d4af37, transparent);
+  }
+
+  /* ---------- الشارات ---------- */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+
+  .badge-primary {
+    @apply badge border border-primary-300 bg-primary-100 text-primary-800;
+  }
+
+  .dark .badge-primary {
+    @apply border-primary-700 bg-primary-900/40 text-primary-300;
+  }
+
+  .badge-gold {
+    @apply badge border border-gold-300 bg-gold-100 text-gold-700;
+  }
+
+  .dark .badge-gold {
+    @apply border-gold-700/50 bg-gold-900/30 text-gold-400;
+  }
+
+  /* ---------- حقول الإدخال ---------- */
+  .input-islamic {
+    @apply w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-primary-500 focus:ring-4 focus:ring-primary-100;
+  }
+
+  .dark .input-islamic {
+    @apply border-night-700 bg-night-800 text-white focus:border-primary-500 focus:ring-primary-900/50;
+  }
+
+  /* ---------- النص القرآني ---------- */
+  .quran-text {
+    font-family: var(--font-quran);
+    @apply text-2xl leading-[2.2] text-primary-900 md:text-3xl;
+    direction: rtl;
+    unicode-bidi: isolate;
+  }
+
+  .dark .quran-text {
+    @apply text-primary-100;
+  }
+
+  /* ---------- تأثير الزجاج ---------- */
+  .glass {
+    @apply backdrop-blur-xl;
+    background: rgb(255 255 255 / 0.85);
+    border-bottom: 1px solid rgb(6 182 212 / 0.1);
+  }
+
+  .dark .glass {
+    background: rgb(10 22 40 / 0.85);
+    border-bottom: 1px solid rgb(6 182 212 / 0.15);
+  }
+
+  /* ---------- التدرجات ---------- */
+  .gradient-primary {
+    background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
+  }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, #083344 0%, #0e7490 55%, #06b6d4 100%);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, #fbbf24 0%, #d4af37 100%);
+  }
+
+  /* ---------- أيقونة في دائرة ---------- */
+  .icon-circle {
+    @apply flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 text-primary-600;
+  }
+
+  .dark .icon-circle {
+    @apply bg-primary-900/40 text-primary-400;
+  }
 }
 
-@keyframes pulse-ayah {
-  0%, 100% { background: rgba(201, 162, 39, 0.25); }
-  50% { background: rgba(201, 162, 39, 0.4); }
-}
-
-/* التحكم في حجم الخط */
-.quran-text.size-small { font-size: 22px; line-height: 2.5; }
-.quran-text.size-medium { font-size: 28px; line-height: 3; }
-.quran-text.size-large { font-size: 34px; line-height: 3.2; }
-.quran-text.size-xlarge { font-size: 40px; line-height: 3.5; }
-
-/* الوضع الليلي */
-.dark .quran-page {
-  background: linear-gradient(to bottom, #1f2937 0%, #111827 100%);
-  border-color: #c9a227;
-}
-
-.dark .quran-text {
-  color: #f3f4f6;
-}
-
-.dark .basmala {
-  color: #c9a227;
-  border-color: rgba(201, 162, 39, 0.3);
-}
-
-.dark .ayah-number {
-  background: radial-gradient(circle, #1f2937 0%, #111827 100%);
-  border-color: #c9a227;
-  color: #c9a227;
-}
-
-.dark .ayah-number::before {
-  color: #c9a227;
-}
-
-.dark .juz-marker {
-  color: #c9a227;
-  background: linear-gradient(90deg, transparent, rgba(201, 162, 39, 0.1), transparent);
-  border-color: rgba(201, 162, 39, 0.3);
+/* ================================================================
+   ♿ إمكانية الوصول
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -1,80 +1,82 @@
 import Link from "next/link";
-import { IslamicIcon } from "@/lib/icons";
 
-type IslamicCardProps = {
-  href: string;
-  icon: string;
+interface IslamicCardProps {
   title: string;
-  description: string;
-  verse?: string;
-  hadith?: string;
-  badge?: string;
-  gradient?: string;
-};
+  description?: string;
+  icon?: string;
+  href?: string;
+  color?: "teal" | "gold";
+  className?: string;
+}
 
 export default function IslamicCard({
-  href,
-  icon,
   title,
   description,
-  verse,
-  hadith,
-  badge,
-  gradient = "from-primary to-primary/80",
+  icon,
+  href,
+  color = "teal",
+  className = "",
 }: IslamicCardProps) {
-  return (
-    <Link
-      href={href}
-      className="group relative bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md overflow-hidden border border-black/5 dark:border-white/10 hover:border-gold/60 hover:-translate-y-1.5 hover:shadow-2xl transition-all duration-300 block"
+  const cardContent = (
+    <div
+      className={`card card-interactive group p-6 ${className}`}
     >
-      {/* زخرفة خلفية */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-2xl group-hover:bg-gold/10 transition-all"></div>
-      
       {/* الأيقونة */}
-      <div className="relative mb-4">
-        <div className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${gradient} text-white shadow-lg group-hover:scale-110 transition-transform`}>
-          <IslamicIcon name={icon} size={28} />
+      {icon && (
+        <div
+          className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110 ${
+            color === "teal"
+              ? "bg-primary-100 dark:bg-primary-900/40"
+              : "bg-gold-100 dark:bg-gold-700/20"
+          }`}
+        >
+          {icon}
         </div>
-      </div>
+      )}
 
       {/* العنوان */}
-      <h3 className="relative font-serif text-xl text-primary dark:text-gold font-bold mb-2 group-hover:text-gold transition-colors">
+      <h3 className="mb-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-300">
         {title}
       </h3>
 
       {/* الوصف */}
-      <p className="relative text-sm text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
-        {description}
-      </p>
+      {description && (
+        <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+          {description}
+        </p>
+      )}
 
-      {/* آية أو حديث */}
-      {verse && (
-        <div className="relative bg-cream-dark dark:bg-gray-700 rounded-lg p-3 mb-3 border-r-4 border-gold">
-          <p className="font-serif text-xs text-primary dark:text-gold leading-relaxed">
-            ﴿{verse}﴾
-          </p>
+      {/* سهم "اقرأ المزيد" لو فيه رابط */}
+      {href && (
+        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary-600 dark:text-primary-400">
+          <span>اقرأ المزيد</span>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
         </div>
       )}
-
-      {hadith && (
-        <div className="relative bg-cream-dark dark:bg-gray-700 rounded-lg p-3 mb-3 border-r-4 border-primary">
-          <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
-            «{hadith}»
-          </p>
-        </div>
-      )}
-
-      {/* Badge */}
-      {badge && (
-        <span className="relative inline-block bg-gold/20 text-gold text-xs font-bold px-3 py-1 rounded-full">
-          {badge}
-        </span>
-      )}
-
-      {/* سهم */}
-      <div className="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="text-gold text-2xl">←</span>
-      </div>
-    </Link>
+    </div>
   );
+
+  // لو فيه رابط، ارجع الكارت جوه <Link>
+  if (href) {
+    return (
+      <Link href={href} className="block">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  // لو مفيش رابط، ارجع الكارت عادي
+  return cardContent;
 }
