@@ -1,192 +1,782 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BackButton from "@/components/BackButton";
-import PageHero from "@/components/PageHero";
-import IslamicSection from "@/components/IslamicSection";
-import { getContent } from "@/lib/content";
-import { t, type Lang } from "@/lib/i18n";
+// app/[lang]/khatm-dua/page.tsx
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import TopBar from "@/components/TopBar";
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
-const duas = [
+type Localized = {
+  ar: string;
+  en: string;
+};
+
+type KhatmStep = {
+  id: string;
+  icon: string;
+  title: Localized;
+  description: Localized;
+  points: Localized[];
+};
+
+type DuaItem = {
+  id: string;
+  title: Localized;
+  arabic: string;
+  translation: string;
+  benefit: Localized;
+};
+
+type ScheduleItem = {
+  id: string;
+  day: Localized;
+  focus: Localized;
+  count: Localized;
+};
+
+type UILang = {
+  title: string;
+  subtitle: string;
+  home: string;
+  description: string;
+  stepsTitle: string;
+  stepsDesc: string;
+  scheduleTitle: string;
+  scheduleDesc: string;
+  duasTitle: string;
+  duasDesc: string;
+  adabTitle: string;
+  adab1: string;
+  adab2: string;
+  adab3: string;
+  adab4: string;
+  adab5: string;
+  noteTitle: string;
+  note1: string;
+  note2: string;
+  note3: string;
+  contact: string;
+  adhkar: string;
+  dailyWird: string;
+  quran: string;
+  start: string;
+};
+
+const UI: Record<Lang, UILang> = {
+  ar: {
+    title: "ختم الدعاء",
+    subtitle: "برنامج جماعي للفقـر إلى الله ورفع الحوائج",
+    home: "الرئيسية",
+    description:
+      "ختم الدعاء هو اجتماع قلوب المؤمنين على الطلب من الله في وقت واحد، مع أذكار وأدعية مأثورة، بهدف تفريج الكرب، وقضاء الحاجات، والتوبة، والرقية، والاستسجار.",
+    stepsTitle: "كيف تُقام ختمة الدعاء؟",
+    stepsDesc:
+      "يُستحب أن تكون برفق وخشوع، لا بتكلف أو ضجيج، مع مراعاة آداب الدعاء.",
+    scheduleTitle: "جدول مقترح",
+    scheduleDesc:
+      "يمكن فردها على أسبوع، أو جعلها في ليلة واحدة حسب القدرة.",
+    duasTitle: "أدعية مختارة",
+    duasDesc: "أدعية جامعة يمكن تكرارها في الختمة.",
+    adabTitle: "آداب الدعاء",
+    adab1: "الإخلاص وحضور القلب.",
+    adab2: "بدء الدعاء بالحمد والصلاة على النبي.",
+    adab3: "التوسل بأسماء الله الحسنى وصفاته.",
+    adab4: "اليقين بالإجابة وعدم الاستعجال.",
+    adab5: "الدعاء للإخوان والمسلمين بظهر الغيب.",
+    noteTitle: "تنبيه",
+    note1:
+      "ختم الدعاء ليس بدعةً إذا كان بمعنى الاجتماع على الدعاء المشروع، لكن يجب تجنب الصيغ المخالفة للسنة.",
+    note2:
+      "لا تُجعل الختمة سببًا للغلو أو الوعود الكاذبة بأن الدعاء سيُستجاب بشكل حتمي لكل طالب.",
+    note3:
+      "الأصل أن يُدعى الله بأدعية صحيحة، ويُترك ما فيه كذب أو غلو أو استهانة بالقدر.",
+    contact: "تواصل معنا",
+    adhkar: "الأذكار",
+    dailyWird: "الورد اليومي",
+    quran: "القرآن",
+    start: "ابدأ الختمة",
+  },
+  en: {
+    title: "Khatm Dua",
+    subtitle: "A collective program of humility and supplication to Allah",
+    home: "Home",
+    description:
+      "Khatm dua is the gathering of believers’ hearts upon asking Allah together, with authentic adhkar and supplications, aiming to relieve distress, fulfill needs, repent, seek ruqyah, and ask forgiveness.",
+    stepsTitle: "How to Conduct Khatm Dua?",
+    stepsDesc:
+      "It should be done gently and devoutly, without affectation or noise, observing the etiquette of du’a.",
+    scheduleTitle: "Suggested Schedule",
+    scheduleDesc:
+      "It can be spread over a week or done in one night according to ability.",
+    duasTitle: "Selected Supplications",
+    duasDesc: "Comprehensive supplications that can be repeated in the khatm.",
+    adabTitle: "Etiquette of Du’a",
+    adab1: "Sincerity and presence of heart.",
+    adab2: "Begin with praise of Allah and blessings upon the Prophet.",
+    adab3: "Call upon Allah by His beautiful names and attributes.",
+    adab4: "Be certain of answer and do not be hasty.",
+    adab5: "Supplicate for brothers and Muslims in absence.",
+    noteTitle: "Notice",
+    note1:
+      "Khatm dua is not an innovation if it means gathering for lawful supplication, but formulas contrary to the Sunnah must be avoided.",
+    note2:
+      "Do not make the khatm a cause of extremism or false promises that every request will certainly be answered.",
+    note3:
+      "The principle is to supplicate with authentic du’as and avoid lies, extremism, or contempt of divine decree.",
+    contact: "Contact Us",
+    adhkar: "Adhkar",
+    dailyWird: "Daily Wird",
+    quran: "Quran",
+    start: "Start Khatm",
+  },
+};
+
+const STEPS: KhatmStep[] = [
   {
-    num: 1,
-    title: "دعاء الختم الأول",
-    text: "اللَّهُمَّ ارْحَمْنِي بِالْقُرْآنِ، وَاجْعَلْهُ لِي إِمَامًا وَنُورًا وَهُدًى وَرَحْمَةً. اللَّهُمَّ ذَكِّرْنِي مِنْهُ مَا نَسِيتُ، وَعَلِّمْنِي مِنْهُ مَا جَهِلْتُ، وَارْزُقْنِي تِلَاوَتَهُ آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ، وَاجْعَلْهُ لِي حُجَّةً يَا رَبَّ الْعَالَمِينَ.",
-    source: "دعاء مأثور",
-    gradient: "from-emerald-600 to-emerald-700"
+    id: "intention",
+    icon: "❤️",
+    title: {
+      ar: "1. النية الصادقة",
+      en: "1. Sincere Intention",
+    },
+    description: {
+      ar: "اجعل النية خالصة لله، لا للرياء أو Show الاجتماعي. اطلب من الله الفقـر إليه وحضور القلب.",
+      en: "Make the intention purely for Allah, not for ostentation or social display. Ask Allah for humility and presence of heart.",
+    },
+    points: [
+      {
+        ar: "توضأ واستقبل القبلة إن تيسر.",
+        en: "Perform wudu and face qiblah if easy.",
+      },
+      {
+        ar: "اختر وقتًا هادئًا، مثل بعد الفجر أو قبل النوم.",
+        en: "Choose a quiet time, such as after Fajr or before sleep.",
+      },
+      {
+        ar: "ادعُ بيقين أن الله يسمعك.",
+        en: "Supplicate with certainty that Allah hears you.",
+      },
+    ],
   },
   {
-    num: 2,
-    title: "دعاء الختم الثاني",
-    text: "اللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي، وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي، وَأَصْلِحْ لِي آخِرَتِي الَّتِي فِيهَا مَعَادِي، وَاجْعَلِ الْحَيَاةَ زِيَادَةً لِي فِي كُلِّ خَيْرٍ، وَاجْعَلِ الْمَوْتَ رَاحَةً لِي مِنْ كُلِّ شَرٍّ.",
-    source: "رواه مسلم",
-    gradient: "from-blue-600 to-blue-700"
+    id: "opening",
+    icon: "🌅",
+    title: {
+      ar: "2. الافتتاح بالحمد والصلاة",
+      en: "2. Opening with Praise and Salawat",
+    },
+    description: {
+      ar: "ابدأ بحمد الله والثناء عليه، ثم الصلاة على النبي صلى الله عليه وسلم، فإن ذلك من أسباب قبول الدعاء.",
+      en: "Begin by praising Allah and thanking Him, then sending blessings upon the Prophet, for that is among the reasons for acceptance of du’a.",
+    },
+    points: [
+      {
+        ar: "قل: الحمد لله رب العالمين.",
+        en: "Say: All praise is due to Allah, Lord of the worlds.",
+      },
+      {
+        ar: "صلِّ على النبي: اللهم صل على محمد.",
+        en: "Send blessings: O Allah, bless Muhammad.",
+      },
+      {
+        ar: "اذكر أسماء الله الحسنى المناسبة لحاجتك.",
+        en: "Mention Allah’s beautiful names suitable for your need.",
+      },
+    ],
   },
   {
-    num: 3,
-    title: "دعاء الختم الثالث",
-    text: "اللَّهُمَّ إِنِّي أَسْأَلُكَ مُوجِبَاتِ رَحْمَتِكَ، وَعَزَائِمَ مَغْفِرَتِكَ، وَالسَّلَامَةَ مِنْ كُلِّ إِثْمٍ، وَالْغَنِيمَةَ مِنْ كُلِّ بِرٍّ، وَالْفَوْزَ بِالْجَنَّةِ، وَالنَّجَاةَ مِنَ النَّارِ.",
-    source: "دعاء جامع",
-    gradient: "from-purple-600 to-purple-700"
+    id: "confession",
+    icon: "🥺",
+    title: {
+      ar: "3. الاعتراف والتوبة",
+      en: "3. Confession and Repentance",
+    },
+    description: {
+      ar: "من آداب الدعاء أن يعترف العبد بذنبه ويسأل الله المغفرة، فإن التوبة من أسباب رفع البلاء.",
+      en: "Among du’a etiquettes is that the servant confesses his sin and asks Allah’s forgiveness, for repentance is among reasons for lifting calamity.",
+    },
+    points: [
+      {
+        ar: "قل: رب إني ظلمت نفسي.",
+        en: "Say: My Lord, I have wronged myself.",
+      },
+      {
+        ar: "استغفر الله ثلاثًا أو أكثر.",
+        en: "Seek forgiveness from Allah three times or more.",
+      },
+      {
+        ar: "اعزم على ترك المعصية إن كنت مقصرًا.",
+        en: "Resolve to leave sin if you have been negligent.",
+      },
+    ],
   },
   {
-    num: 4,
-    title: "دعاء الختم الرابع",
-    text: "اللَّهُمَّ اجْعَلْ خَيْرَ الْعُمُرِ آخِرَهُ، وَخَيْرَ الْعَمَلِ خَوَاتِمَهُ، وَخَيْرَ الْأَيَّامِ يَوْمَ أَلْقَاكَ فِيهِ. اللَّهُمَّ إِنَّا نَسْأَلُكَ حُسْنَ الْخَاتِمَةِ.",
-    source: "دعاء مأثور",
-    gradient: "from-rose-600 to-rose-700"
+    id: "asking",
+    icon: "🤲",
+    title: {
+      ar: "4. سؤال الحوائج",
+      en: "4. Asking for Needs",
+    },
+    description: {
+      ar: "اذكر حاجتك بوضوح وخشوع: دينك، دنياك، أهلك، صحتك، همومك، والمسلمين.",
+      en: "Mention your need clearly and devoutly: your religion, worldly life, family, health, worries, and Muslims.",
+    },
+    points: [
+      {
+        ar: "لا تستحي من سؤال الله صغيرًا وكبيرًا.",
+        en: "Do not be shy from asking Allah for small and great things.",
+      },
+      {
+        ar: "ادعُ لإخوانك بظهر الغيب.",
+        en: "Supplicate for your brothers in absence.",
+      },
+      {
+        ar: "الزم الأدب ولا تعترض على القدر.",
+        en: "Maintain etiquette and do not object to decree.",
+      },
+    ],
   },
   {
-    num: 5,
-    title: "دعاء الختم الخامس",
-    text: "رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنْتَ السَّمِيعُ الْعَلِيمُ، وَتُبْ عَلَيْنَا إِنَّكَ أَنْتَ التَّوَّابُ الرَّحِيمُ. رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ.",
-    source: "سورة البقرة 127-128",
-    gradient: "from-amber-600 to-amber-700"
-  },
-  {
-    num: 6,
-    title: "دعاء ختم شامل",
-    text: "اللَّهُمَّ اجْعَلْنَا مِمَّنْ يَقُومُ بِالْقُرْآنِ، وَيَعْمَلُ بِهِ، وَيَتْلُوهُ حَقَّ تِلَاوَتِهِ، آنَاءَ اللَّيْلِ وَأَطْرَافَ النَّهَارِ، عَلَى وَجْهٍ يُرْضِيكَ عَنَّا يَا رَبَّ الْعَالَمِينَ.",
-    source: "دعاء العلماء",
-    gradient: "from-indigo-600 to-indigo-700"
+    id: "closing",
+    icon: "🌙",
+    title: {
+      ar: "5. الختام والرضا",
+      en: "5. Closing and Contentment",
+    },
+    description: {
+      ar: "اختم بالصلاة على النبي، والحمد لله، ثم ارضَ بقضاء الله، واعلم أن الإجابة قد تكون عاجلة أو مؤجلة أو بصرف شر.",
+      en: "Close with blessings upon the Prophet and praise of Allah, then be content with Allah’s decree, knowing the answer may be immediate, delayed, or a turning away of harm.",
+    },
+    points: [
+      {
+        ar: "لا تستعجل وتقول: دعوت فلم يُستجب لي.",
+        en: "Do not be hasty and say: I supplicated but was not answered.",
+      },
+      {
+        ar: "أحسن الظن بالله.",
+        en: "Have good expectation of Allah.",
+      },
+      {
+        ar: "واظب على الدعاء في الأوقات الفاضلة.",
+        en: "Persist in du’a in virtuous times.",
+      },
+    ],
   },
 ];
 
-export default async function KhatmDuaPage({ params }: { params: Promise<{ lang: string }> }) {
+const SCHEDULE: ScheduleItem[] = [
+  {
+    id: "saturday",
+    day: { ar: "السبت", en: "Saturday" },
+    focus: {
+      ar: "التوبة والاستغفار",
+      en: "Repentance and Istighfar",
+    },
+    count: {
+      ar: "100 مرة: أستغفر الله",
+      en: "100 times: I seek Allah’s forgiveness",
+    },
+  },
+  {
+    id: "sunday",
+    day: { ar: "الأحد", en: "Sunday" },
+    focus: {
+      ar: "الرزق والبركة",
+      en: "Provision and Blessing",
+    },
+    count: {
+      ar: "70 مرة: اللهم اكفني بحلالك",
+      en: "70 times: O Allah, suffice me with Your lawful",
+    },
+  },
+  {
+    id: "monday",
+    day: { ar: "الاثنين", en: "Monday" },
+    focus: {
+      ar: "الشفاء والعافية",
+      en: "Healing and Wellness",
+    },
+    count: {
+      ar: "70 مرة: اللهم رب الناس أذهب البأس",
+      en: "70 times: O Allah, Lord of mankind, remove hardship",
+    },
+  },
+  {
+    id: "tuesday",
+    day: { ar: "الثلاثاء", en: "Tuesday" },
+    focus: {
+      ar: "الهم والكرب",
+      en: "Distress and Anxiety",
+    },
+    count: {
+      ar: "100 مرة: لا إله إلا أنت سبحانك إني كنت من الظالمين",
+      en: "100 times: There is no god but You, glory be to You, I was among the wrongdoers",
+    },
+  },
+  {
+    id: "wednesday",
+    day: { ar: "الأربعاء", en: "Wednesday" },
+    focus: {
+      ar: "الذرية الصالحة",
+      en: "Righteous Offspring",
+    },
+    count: {
+      ar: "70 مرة: رب هب لي من لدنك ذرية طيبة",
+      en: "70 times: My Lord, grant me from Yourself good offspring",
+    },
+  },
+  {
+    id: "thursday",
+    day: { ar: "الخميس", en: "Thursday" },
+    focus: {
+      ar: "فرج الأمور",
+      en: "Relief of Affairs",
+    },
+    count: {
+      ar: "100 مرة: حسبنا الله ونعم الوكيل",
+      en: "100 times: Allah is sufficient for us, and He is the best Disposer of affairs",
+    },
+  },
+  {
+    id: "friday",
+    day: { ar: "الجمعة", en: "Friday" },
+    focus: {
+      ar: "الساعة المباركة",
+      en: "The Blessed Hour",
+    },
+    count: {
+      ar: "أكثر من الصلاة على النبي والدعاء",
+      en: "Increase salawat and supplication",
+    },
+  },
+];
+
+const DUAS: DuaItem[] = [
+  {
+    id: "distress",
+    title: {
+      ar: "دعاء الكرب",
+      en: "Supplication of Distress",
+    },
+    arabic:
+      "لا إِلَهَ إِلَّا اللَّهُ الْعَظِيمُ الْحَلِيمُ، لا إِلَهَ إِلَّا اللَّهُ رَبُّ الْعَرْشِ الْعَظِيمِ، لا إِلَهَ إِلَّا اللَّهُ رَبُّ السَّمَاوَاتِ وَرَبُّ الْأَرْضِ وَرَبُّ الْعَرْشِ الْكَرِيمِ",
+    translation:
+      "There is no god but Allah, the Great, the Forbearing. There is no god but Allah, Lord of the Mighty Throne. There is no god but Allah, Lord of the heavens, Lord of the earth, and Lord of the Noble Throne.",
+    benefit: {
+      ar: "لرفع الهم والشدّة.",
+      en: "For removing worry and hardship.",
+    },
+  },
+  {
+    id: "yunus",
+    title: {
+      ar: "دعاء ذي النون",
+      en: "Dhul-Nun’s Supplication",
+    },
+    arabic:
+      "لا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
+    translation:
+      "There is no god but You, glory be to You. Indeed, I was among the wrongdoers.",
+    benefit: {
+      ar: "من دعاء الله به في كرب إلا فرّج عنه.",
+      en: "No one supplicates with it in distress except Allah relieves him.",
+    },
+  },
+  {
+    id: "provision",
+    title: {
+      ar: "دعاء الرزق",
+      en: "Supplication for Provision",
+    },
+    arabic:
+      "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+    translation:
+      "O Allah, suffice me with Your lawful against Your prohibited, and enrich me by Your bounty beyond all besides You.",
+    benefit: {
+      ar: "للغنى عمن سوا الله.",
+      en: "For being independent of others besides Allah.",
+    },
+  },
+  {
+    id: "healing",
+    title: {
+      ar: "دعاء الشفاء",
+      en: "Supplication for Healing",
+    },
+    arabic:
+      "اللَّهُمَّ رَبَّ النَّاسِ، أَذْهِبِ الْبَأْسَ، اشْفِ أَنْتَ الشَّافِي، لا شِفَاءَ إِلَّا شِفَاؤُكَ، شِفَاءً لا يُغَادِرُ سَقَمًا",
+    translation:
+      "O Allah, Lord of mankind, remove hardship. Heal, You are the Healer. There is no healing except Your healing, a healing that leaves no illness behind.",
+    benefit: {
+      ar: "للمريض والمبتلى.",
+      en: "For the sick and afflicted.",
+    },
+  },
+  {
+    id: "guidance",
+    title: {
+      ar: "دعاء الثبات",
+      en: "Supplication for Steadfastness",
+    },
+    arabic:
+      "يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ",
+    translation:
+      "O Turner of hearts, keep my heart firm upon Your religion.",
+    benefit: {
+      ar: "للسلامة من الفتن والزيغ.",
+      en: "For safety from trials and deviation.",
+    },
+  },
+];
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
   const { lang } = await params;
-  const c = await getContent();
-  const tr = t(lang as Lang);
-  const L = lang as Lang;
+
+  if (!isValidLang(lang)) {
+    return {};
+  }
+
+  const l = lang as Lang;
+  const ui = UI[l];
+
+  return {
+    title: ui.title,
+    description: ui.description,
+    alternates: {
+      canonical: `/${l}/khatm-dua`,
+      languages: {
+        ar: "/ar/khatm-dua",
+        en: "/en/khatm-dua",
+      },
+    },
+    openGraph: {
+      title: ui.title,
+      description: ui.description,
+      url: `/${l}/khatm-dua`,
+      locale: l === "ar" ? "ar_EG" : "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: ui.title,
+      description: ui.description,
+    },
+  };
+}
+
+export function generateStaticParams() {
+  return [{ lang: "ar" }, { lang: "en" }];
+}
+
+export default async function KhatmDuaPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+
+  if (!isValidLang(lang)) {
+    notFound();
+  }
+
+  const l = lang as Lang;
+  const ui = UI[l];
+  const isRTL = l === "ar";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: ui.title,
+    description: ui.description,
+    inLanguage: l,
+  };
 
   return (
-    <>
-      <Header settings={c.settings} lang={L} />
-      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        <PageHero
-          icon="✨"
-          title="أدعية ختم القرآن"
-          subtitle="مجموعة من الأدعية المأثورة عند ختم القرآن الكريم"
-          verse="رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنتَ السَّمِيعُ الْعَلِيمُ"
-          verseSource="سورة البقرة - الآية 127"
-          gradient="from-rose-600 via-rose-700 to-rose-800"
-        />
+    <main dir={isRTL ? "rtl" : "ltr"}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
 
-        <section className="py-10">
-          <div className="max-w-4xl mx-auto px-4">
-            <BackButton href={`/${lang}`} label={tr.back} />
+      <TopBar
+        title={ui.title}
+        subtitle={ui.subtitle}
+        backHref={`/${l}`}
+        showBookmark={false}
+        breadcrumb={[
+          {
+            label: ui.home,
+            href: `/${l}`,
+          },
+          {
+            label: ui.title,
+          },
+        ]}
+      />
 
-            {/* مقدمة */}
-            <div className="bg-gradient-to-br from-primary to-primary/90 text-white rounded-3xl p-8 mb-10 text-center shadow-2xl">
-              <span className="text-6xl mb-4 block">🤲</span>
-              <h2 className="font-serif text-2xl text-gold mb-3">لحظة مباركة</h2>
-              <p className="text-white/90 max-w-2xl mx-auto">
-                ختم القرآن من أعظم المنح الربانية، ويُستحب الدعاء عند الختم، 
-                فهذه لحظة استجابة عظيمة. اختر من هذه الأدعية ما شئت وادعُ الله بقلب حاضر.
-              </p>
-            </div>
+      <section className="container-page py-10 md:py-14">
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
-            {/* الأدعية */}
-            <IslamicSection title={`${duas.length} أدعية`} icon="📜" subtitle="اختر الدعاء وادعُ به بقلب خاشع">
-              <div className="space-y-6">
-                {duas.map((d) => (
-                  <div key={d.num} className={`bg-gradient-to-br ${d.gradient} text-white rounded-2xl p-6 md:p-8 shadow-lg relative overflow-hidden`}>
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                    <div className="relative">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="w-12 h-12 bg-gold text-gray-900 rounded-full grid place-items-center font-bold text-xl">
-                          {d.num}
-                        </span>
-                        <h3 className="font-serif text-xl font-bold">{d.title}</h3>
-                      </div>
-                      
-                      <div className="bg-white/10 backdrop-blur rounded-xl p-5 mb-4">
-                        <p className="font-serif text-xl leading-loose">
-                          {d.text}
-                        </p>
-                      </div>
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="badge-primary mb-5">
+              🌙 {isRTL ? "برنامج دعوي" : "Dawah Program"}
+            </span>
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-white/70">📚 {d.source}</span>
-                        <button
-                          onClick={() => {
-                            if (navigator.share) {
-                              navigator.share({ title: d.title, text: d.text });
-                            } else if (navigator.clipboard) {
-                              navigator.clipboard.writeText(d.text);
-                              alert("تم نسخ الدعاء");
-                            }
-                          }}
-                          className="bg-white/20 backdrop-blur px-4 py-2 rounded-lg text-sm font-bold hover:bg-white/30 transition"
-                        >
-                          📋 نسخ الدعاء
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </IslamicSection>
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
 
-            {/* آداب ختم القرآن */}
-            <IslamicSection title="آداب ختم القرآن" icon="💎">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md border-r-4 border-gold">
-                  <h3 className="font-bold text-primary dark:text-gold text-lg mb-3">🌟 عند الختم</h3>
-                  <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start gap-2">
-                      <span className="text-gold">✓</span>
-                      <span>ادعُ الله بخشوع وحضور قلب</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-gold">✓</span>
-                      <span>استقبل القبلة إن أمكن</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-gold">✓</span>
-                      <span>ادعُ لنفسك وللمسلمين</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-gold">✓</span>
-                      <span>اجمع أهلك للدعاء (إن أمكن)</span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md border-r-4 border-emerald-500">
-                  <h3 className="font-bold text-primary dark:text-gold text-lg mb-3">🔄 بعد الختم</h3>
-                  <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>ابدأ ختمة جديدة فوراً</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>احمد الله على التوفيق</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>اعزم على العمل بما تعلمت</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>علّم غيرك ما تعلمت</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </IslamicSection>
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
 
-            {/* آية */}
-            <div className="bg-gradient-to-br from-gold/20 to-gold/10 border-2 border-gold rounded-3xl p-8 md:p-12 text-center mt-10">
-              <p className="font-serif text-2xl md:text-3xl text-primary dark:text-gold leading-relaxed mb-3">
-                ﴿وَقُل رَّبِّ زِدْنِي عِلْمًا﴾
-              </p>
-              <p className="text-gray-600 dark:text-gray-400">سورة طه - الآية 114</p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+              <Link href={`/${l}/adhkar`} className="btn-primary">
+                {ui.start}
+              </Link>
+
+              <Link href={`/${l}/daily-wird`} className="btn-outline">
+                {ui.dailyWird}
+              </Link>
             </div>
           </div>
-        </section>
-      </main>
-      <Footer settings={c.settings} lang={L} />
-    </>
+        </div>
+
+        <div className="mb-12">
+          <div className="mb-6 text-center">
+            <h2 className="section-title mb-0">{ui.stepsTitle}</h2>
+
+            <div className="islamic-divider my-0">
+              <span className="text-xl text-gold-500">✦</span>
+            </div>
+
+            <p className="section-subtitle mx-auto max-w-2xl">
+              {ui.stepsDesc}
+            </p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            {STEPS.map((step) => (
+              <article
+                key={step.id}
+                id={step.id}
+                className="card relative scroll-mt-32 overflow-hidden p-6 md:p-7"
+              >
+                <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
+
+                <div className="mb-5 flex items-start gap-4">
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                    {step.icon}
+                  </span>
+
+                  <div className="min-w-0">
+                    <h3
+                      className="text-xl font-black leading-relaxed text-slate-900 dark:text-white"
+                      style={{ fontFamily: "var(--font-amiri)" }}
+                    >
+                      {isRTL ? step.title.ar : step.title.en}
+                    </h3>
+
+                    <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
+                      {isRTL ? step.description.ar : step.description.en}
+                    </p>
+                  </div>
+                </div>
+
+                <ul className="space-y-3">
+                  {step.points.map((point, index) => (
+                    <li
+                      key={`${step.id}-point-${index}`}
+                      className="flex items-start gap-3 leading-relaxed text-slate-600 dark:text-slate-300"
+                    >
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                      <span>{isRTL ? point.ar : point.en}</span>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div id="schedule" className="mb-12 scroll-mt-32">
+          <div className="mb-6 text-center">
+            <h2 className="section-title mb-0">{ui.scheduleTitle}</h2>
+
+            <div className="islamic-divider my-0">
+              <span className="text-xl text-gold-500">✦</span>
+            </div>
+
+            <p className="section-subtitle mx-auto max-w-2xl">
+              {ui.scheduleDesc}
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SCHEDULE.map((item) => (
+              <article
+                key={item.id}
+                className="card relative overflow-hidden p-5"
+              >
+                <div className="gradient-gold absolute inset-x-0 top-0 h-1" />
+
+                <h3
+                  className="mb-2 text-lg font-black text-slate-900 dark:text-white"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  {isRTL ? item.day.ar : item.day.en}
+                </h3>
+
+                <p className="mb-2 text-sm font-bold text-primary-700 dark:text-primary-300">
+                  {isRTL ? item.focus.ar : item.focus.en}
+                </p>
+
+                <p className="leading-relaxed text-slate-600 dark:text-slate-300">
+                  {isRTL ? item.count.ar : item.count.en}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <div id="duas" className="mb-12 scroll-mt-32">
+          <div className="mb-6 text-center">
+            <h2 className="section-title mb-0">{ui.duasTitle}</h2>
+
+            <div className="islamic-divider my-0">
+              <span className="text-xl text-gold-500">✦</span>
+            </div>
+
+            <p className="section-subtitle mx-auto max-w-2xl">
+              {ui.duasDesc}
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {DUAS.map((dua) => (
+              <details key={dua.id} className="card group p-6 md:p-7">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                  <div className="flex min-w-0 items-start gap-4">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-xl dark:bg-gold-900/40">
+                      🤲
+                    </span>
+
+                    <h3
+                      className="text-lg font-black leading-relaxed text-slate-900 md:text-xl dark:text-white"
+                      style={{ fontFamily: "var(--font-amiri)" }}
+                    >
+                      {isRTL ? dua.title.ar : dua.title.en}
+                    </h3>
+                  </div>
+
+                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700 transition-transform duration-300 group-open:rotate-45 dark:bg-primary-900/40 dark:text-primary-300">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 5v14" />
+                      <path d="M5 12h14" />
+                    </svg>
+                  </span>
+                </summary>
+
+                <div className="mt-5 border-t border-slate-100 pt-5 dark:border-night-700">
+                  <p
+                    className="mb-4 text-xl leading-loose text-slate-900 dark:text-white"
+                    style={{ fontFamily: "var(--font-amiri)" }}
+                    dir="rtl"
+                  >
+                    {dua.arabic}
+                  </p>
+
+                  <p className="mb-4 leading-relaxed text-slate-600 dark:text-slate-300">
+                    {dua.translation}
+                  </p>
+
+                  <p className="text-sm font-bold text-gold-700 dark:text-gold-300">
+                    {isRTL ? dua.benefit.ar : dua.benefit.en}
+                  </p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        <div className="card mb-8 p-6 md:p-8">
+          <h2
+            className="mb-5 text-xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            {ui.adabTitle}
+          </h2>
+
+          <ul className="space-y-3">
+            {[ui.adab1, ui.adab2, ui.adab3, ui.adab4, ui.adab5].map(
+              (item, index) => (
+                <li
+                  key={`${item}-${index}`}
+                  className="flex items-start gap-3 leading-relaxed text-slate-600 dark:text-slate-300"
+                >
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
+                  <span>{item}</span>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+
+        <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
+          <h2
+            className="mb-5 text-xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            📌 {ui.noteTitle}
+          </h2>
+
+          <ul className="space-y-3">
+            {[ui.note1, ui.note2, ui.note3].map((note, index) => (
+              <li
+                key={`${note}-${index}`}
+                className="flex items-start gap-3 leading-relaxed text-slate-700 dark:text-slate-200"
+              >
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href={`/${l}/contact`} className="btn-primary">
+              {ui.contact}
+            </Link>
+
+            <Link href={`/${l}/quran`} className="btn-outline">
+              {ui.quran}
+            </Link>
+
+            <Link href={`/${l}/adhkar`} className="btn-outline">
+              {ui.adhkar}
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
