@@ -1,196 +1,479 @@
+// app/[lang]/bookmarks/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BackButton from "@/components/BackButton";
-import PageHero from "@/components/PageHero";
-import IslamicSection from "@/components/IslamicSection";
-import { t, type Lang } from "@/lib/i18n";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+
+// ============================================================
+// الأنواع
+// ============================================================
+
+type Lang = "ar" | "en";
 
 type Bookmark = {
   id: string;
   title: string;
   url: string;
-  type: string;
-  icon: string;
-  addedAt: string;
+  category: string;
+  createdAt: number;
 };
 
+type UILang = {
+  title: string;
+  subtitle: string;
+  description: string;
+  home: string;
+  empty: string;
+  emptyDesc: string;
+  noFilterResults: string;
+  noFilterResultsDesc: string;
+  all: string;
+  category: string;
+  addedAt: string;
+  remove: string;
+  clearAll: string;
+  confirmClear: string;
+  backHome: string;
+  count: string;
+  open: string;
+  noteTitle: string;
+  note1: string;
+  note2: string;
+};
+
+// ============================================================
+// الثوابت
+// ============================================================
+
+const STORAGE_KEY = "ismail-dawah-bookmarks";
+
+const UI: Record<Lang, UILang> = {
+  ar: {
+    title: "المفضلة",
+    subtitle: "العناصر التي حفظتها سابقًا",
+    description:
+      "راجع العناصر التي قمت بحفظها في المنصة، مثل السور، الأذكار، الفتاوى، المقالات، أو أي صفحة أعجبتك.",
+    home: "الرئيسية",
+    empty: "لا توجد عناصر محفوظة",
+    emptyDesc:
+      "لم تقم بحفظ أي عنصر بعد. استخدم زر الحفظ في الصفحات لإضافة عناصر إلى المفضلة.",
+    noFilterResults: "لا توجد نتائج في هذا التصنيف",
+    noFilterResultsDesc: "جرّب تصنيفًا آخر أو اعرض كل العناصر.",
+    all: "الكل",
+    category: "التصنيف",
+    addedAt: "أُضيف في",
+    remove: "إزالة",
+    clearAll: "حذف الكل",
+    confirmClear: "هل تريد حذف جميع العناصر المحفوظة؟",
+    backHome: "العودة للرئيسية",
+    count: "عدد العناصر",
+    open: "فتح",
+    noteTitle: "ملاحظة",
+    note1:
+      "المفضلة تُحفظ محليًا على جهازك داخل المتصفح، ولا تُرفع إلى السيرفر.",
+    note2:
+      "إذا مسحت بيانات المتصفح أو استخدمت جهازًا آخر، فقد لا تجد العناصر المحفوظة.",
+  },
+  en: {
+    title: "Bookmarks",
+    subtitle: "Items you saved earlier",
+    description:
+      "Review items you saved on the platform, such as surahs, adhkar, fatwas, articles, or any page you liked.",
+    home: "Home",
+    empty: "No saved items",
+    emptyDesc:
+      "You have not saved any item yet. Use the save button on pages to add items to bookmarks.",
+    noFilterResults: "No results in this category",
+    noFilterResultsDesc: "Try another category or show all items.",
+    all: "All",
+    category: "Category",
+    addedAt: "Added at",
+    remove: "Remove",
+    clearAll: "Clear all",
+    confirmClear: "Do you want to delete all saved items?",
+    backHome: "Back to Home",
+    count: "Items",
+    open: "Open",
+    noteTitle: "Notice",
+    note1:
+      "Bookmarks are stored locally in your browser and are not uploaded to the server.",
+    note2:
+      "If you clear browser data or use another device, saved items may not be available.",
+  },
+};
+
+const CATEGORY_LABELS: Record<string, { ar: string; en: string }> = {
+  all: { ar: "الكل", en: "All" },
+  quran: { ar: "قرآن", en: "Quran" },
+  adhkar: { ar: "أذكار", en: "Adhkar" },
+  fatwa: { ar: "فتاوى", en: "Fatwas" },
+  articles: { ar: "مقالات", en: "Articles" },
+  stories: { ar: "قصص", en: "Stories" },
+  guides: { ar: "أدلة", en: "Guides" },
+  other: { ar: "أخرى", en: "Other" },
+};
+
+// ============================================================
+// دوال مساعدة
+// ============================================================
+
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+function categoryLabel(category: string, lang: Lang): string {
+  const label = CATEGORY_LABELS[category];
+
+  if (label) {
+    return lang === "ar" ? label.ar : label.en;
+  }
+
+  return category;
+}
+
+function formatDate(timestamp: number, lang: Lang): string {
+  try {
+    return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(timestamp));
+  } catch {
+    return new Date(timestamp).toLocaleString();
+  }
+}
+
+function createId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+// ============================================================
+// الصفحة
+// ============================================================
+
 export default function BookmarksPage() {
-  const params = useParams();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
-  const tr = t(L);
+  const pathname = usePathname();
+  const lang: Lang = pathname.startsWith("/en") ? "en" : "ar";
+  const ui = UI[lang];
+  const isRTL = lang === "ar";
 
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<string>("all");
+  const [loaded, setLoaded] = useState<boolean>(false);
 
+  // تحميل المفضلة من localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("bookmarks");
-    if (saved) setBookmarks(JSON.parse(saved));
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+
+        if (Array.isArray(parsed)) {
+          const normalized: Bookmark[] = parsed
+            .map((item: any) => ({
+              id: String(item?.id ?? createId()),
+              title: String(item?.title ?? ""),
+              url: String(item?.url ?? "#"),
+              category: String(item?.category ?? "other"),
+              createdAt: Number(item?.createdAt ?? Date.now()),
+            }))
+            .filter(
+              (item) =>
+                item.id &&
+                item.title &&
+                isSafeUrl(item.url)
+            );
+
+          setBookmarks(normalized);
+        }
+      }
+    } catch {
+      // تجاهل أخطاء القراءة
+    }
+
+    setLoaded(true);
   }, []);
 
-  const remove = (id: string) => {
-    const updated = bookmarks.filter(b => b.id !== id);
-    setBookmarks(updated);
-    localStorage.setItem("bookmarks", JSON.stringify(updated));
-  };
-
-  const clearAll = () => {
-    if (confirm("هل تريد حذف كل المفضلة؟")) {
-      setBookmarks([]);
-      localStorage.setItem("bookmarks", "[]");
+  // حفظ المفضلة في localStorage
+  useEffect(() => {
+    if (!loaded) {
+      return;
     }
-  };
 
-  const types = ["all", ...Array.from(new Set(bookmarks.map(b => b.type)))];
-  
-  const filtered = bookmarks.filter(b => {
-    const matchesType = filter === "all" || b.type === filter;
-    const matchesSearch = !search || b.title.toLowerCase().includes(search.toLowerCase());
-    return matchesType && matchesSearch;
-  });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+    } catch {
+      // تجاهل أخطاء الحفظ
+    }
+  }, [bookmarks, loaded]);
+
+  const categories = useMemo(() => {
+    const unique = new Set(
+      bookmarks.map((bookmark) => bookmark.category || "other")
+    );
+
+    return ["all", ...Array.from(unique)];
+  }, [bookmarks]);
+
+  const filtered = useMemo(() => {
+    if (filter === "all") {
+      return bookmarks;
+    }
+
+    return bookmarks.filter(
+      (bookmark) => (bookmark.category || "other") === filter
+    );
+  }, [bookmarks, filter]);
+
+  function removeBookmark(id: string) {
+    setBookmarks((prev) => prev.filter((bookmark) => bookmark.id !== id));
+  }
+
+  function clearAll() {
+    if (window.confirm(ui.confirmClear)) {
+      setBookmarks([]);
+      setFilter("all");
+    }
+  }
 
   return (
-    <>
-      <Header lang={L} />
-      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        <PageHero
-          icon="⭐"
-          title="المفضلة"
-          subtitle="صفحاتك المحفوظة للرجوع إليها بسهولة"
-          hadith="الْكَلِمَةُ الطَّيِّبَةُ صَدَقَةٌ"
-          gradient="from-amber-600 via-amber-700 to-amber-800"
-        />
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen">
+      <section className="container-page py-10 md:py-14">
+        {/* ===== ترويسة ===== */}
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
-        <section className="py-10">
-          <div className="max-w-5xl mx-auto px-4">
-            <BackButton href={`/${lang}`} label={tr.back} />
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="badge-primary mb-5">
+              🔖 {isRTL ? "عناصر محفوظة" : "Saved items"}
+            </span>
 
-            {bookmarks.length === 0 ? (
-              <div className="bg-white dark:bg-gray-800 rounded-3xl p-12 text-center shadow-lg">
-                <span className="text-7xl mb-4 block">📭</span>
-                <h2 className="font-serif text-2xl text-primary dark:text-gold mb-3">
-                  لا توجد عناصر في المفضلة
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-6">
-                  اضغط على ⭐ في أي صفحة لإضافتها هنا
-                </p>
-                <Link
-                  href={`/${lang}`}
-                  className="inline-block bg-gold text-gray-900 px-6 py-3 rounded-xl font-bold hover:bg-gold-light transition"
-                >
-                  🏠 العودة للرئيسية
-                </Link>
-              </div>
-            ) : (
-              <>
-                {/* الإحصائيات */}
-                <div className="grid sm:grid-cols-3 gap-3 mb-6">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center shadow-md">
-                    <p className="text-3xl font-bold text-gold">{bookmarks.length}</p>
-                    <p className="text-xs text-gray-500">إجمالي المحفوظات</p>
-                  </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center shadow-md">
-                    <p className="text-3xl font-bold text-gold">{types.length - 1}</p>
-                    <p className="text-xs text-gray-500">نوع مختلف</p>
-                  </div>
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center shadow-md">
-                    <p className="text-3xl font-bold text-gold">
-                      {bookmarks[0] ? new Date(bookmarks[0].addedAt).toLocaleDateString("ar-EG", { month: "short" }) : "-"}
-                    </p>
-                    <p className="text-xs text-gray-500">آخر إضافة</p>
-                  </div>
-                </div>
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
 
-                {/* البحث */}
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md mb-4">
-                  <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="🔍 ابحث في المفضلة..."
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-xl px-4 py-2 focus:border-gold focus:outline-none"
-                  />
-                </div>
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
+          </div>
+        </div>
 
-                {/* الفلاتر */}
-                <div className="flex gap-2 mb-6 flex-wrap">
-                  {types.map(type => (
-                    <button
-                      key={type}
-                      onClick={() => setFilter(type)}
-                      className={`px-4 py-2 rounded-full font-bold text-sm transition ${
-                        filter === type
-                          ? "bg-gold text-gray-900"
-                          : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gold/20"
-                      }`}
-                    >
-                      {type === "all" ? "⭐ الكل" : type}
-                    </button>
-                  ))}
-                </div>
+        {/* ===== إحصائيات بسيطة ===== */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="card p-5 text-center">
+            <p className="mb-1 text-sm font-bold text-slate-500 dark:text-slate-400">
+              {ui.count}
+            </p>
 
-                {/* العنوان + حذف */}
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-serif text-2xl text-primary dark:text-gold">
-                    {filtered.length} عنصر
-                  </h2>
+            <p className="text-3xl font-black text-primary-700 dark:text-primary-300">
+              {bookmarks.length}
+            </p>
+          </div>
+
+          <div className="card p-5 text-center">
+            <p className="mb-1 text-sm font-bold text-slate-500 dark:text-slate-400">
+              {ui.category}
+            </p>
+
+            <p className="text-3xl font-black text-gold-700 dark:text-gold-300">
+              {Math.max(categories.length - 1, 0)}
+            </p>
+          </div>
+
+          <div className="card p-5 text-center">
+            <p className="mb-1 text-sm font-bold text-slate-500 dark:text-slate-400">
+              {isRTL ? "معروض الآن" : "Currently shown"}
+            </p>
+
+            <p className="text-3xl font-black text-slate-900 dark:text-white">
+              {filtered.length}
+            </p>
+          </div>
+        </div>
+
+        {/* ===== الفلاتر ===== */}
+        {bookmarks.length > 0 && (
+          <div className="card mb-8 p-6 md:p-7">
+            <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
+              {ui.category}
+            </h2>
+
+            <div className="flex flex-wrap gap-3">
+              {categories.map((category) => {
+                const isActive = filter === category;
+
+                return (
                   <button
-                    onClick={clearAll}
-                    className="text-sm text-red-500 font-bold hover:underline"
+                    key={category}
+                    type="button"
+                    onClick={() => setFilter(category)}
+                    className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all duration-300 ${
+                      isActive
+                        ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25"
+                        : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
+                    }`}
                   >
-                    🗑️ حذف الكل
+                    {categoryLabel(category, lang)}
                   </button>
-                </div>
+                );
+              })}
+            </div>
 
-                {/* القائمة */}
-                <div className="grid md:grid-cols-2 gap-3">
-                  {filtered.map(b => (
-                    <div key={b.id} className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-md hover:shadow-xl transition border-r-4 border-gold flex items-center gap-3">
-                      <span className="text-4xl">{b.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <Link
-                          href={b.url}
-                          className="font-bold text-primary dark:text-gold hover:underline block truncate"
-                        >
-                          {b.title}
-                        </Link>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="bg-gold/20 text-gold text-xs px-2 py-0.5 rounded-full">
-                            {b.type}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {new Date(b.addedAt).toLocaleDateString("ar-EG")}
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => remove(b.id)}
-                        className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={clearAll}
+                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+              >
+                🗑️ {ui.clearAll}
+              </button>
 
-            {/* نصيحة */}
-            <div className="bg-gradient-to-br from-primary to-primary/90 text-white rounded-3xl p-8 text-center shadow-2xl mt-10">
-              <p className="font-serif text-xl text-gold mb-3">
-                «مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ»
-              </p>
-              <p className="text-white/70 text-sm">رواه مسلم</p>
+              <Link
+                href={`/${lang}`}
+                className="btn-outline"
+              >
+                {ui.backHome}
+              </Link>
             </div>
           </div>
-        </section>
-      </main>
-      <Footer lang={L} />
-    </>
+        )}
+
+        {/* ===== حالة التحميل ===== */}
+        {!loaded && (
+          <div className="card p-10 text-center">
+            <p className="text-slate-500 dark:text-slate-400">
+              {isRTL ? "جاري تحميل المفضلة..." : "Loading bookmarks..."}
+            </p>
+          </div>
+        )}
+
+        {/* ===== لا توجد عناصر ===== */}
+        {loaded && bookmarks.length === 0 && (
+          <div className="card p-12 text-center">
+            <div className="mb-4 text-5xl">🔖</div>
+
+            <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
+              {ui.empty}
+            </h2>
+
+            <p className="mb-6 text-slate-500 dark:text-slate-400">
+              {ui.emptyDesc}
+            </p>
+
+            <Link href={`/${lang}`} className="btn-primary">
+              {ui.backHome}
+            </Link>
+          </div>
+        )}
+
+        {/* ===== لا توجد نتائج في الفلتر ===== */}
+        {loaded && bookmarks.length > 0 && filtered.length === 0 && (
+          <div className="card p-12 text-center">
+            <div className="mb-4 text-5xl">📭</div>
+
+            <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
+              {ui.noFilterResults}
+            </h2>
+
+            <p className="mb-6 text-slate-500 dark:text-slate-400">
+              {ui.noFilterResultsDesc}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setFilter("all")}
+              className="btn-primary"
+            >
+              {ui.all}
+            </button>
+          </div>
+        )}
+
+        {/* ===== قائمة المفضلة ===== */}
+        {loaded && filtered.length > 0 && (
+          <div className="grid gap-5 lg:grid-cols-2">
+            {filtered.map((bookmark) => (
+              <article
+                key={bookmark.id}
+                className="card relative overflow-hidden p-6 md:p-7"
+              >
+                <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
+
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <span className="badge-primary">
+                    {categoryLabel(bookmark.category, lang)}
+                  </span>
+
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    {ui.addedAt}: {formatDate(bookmark.createdAt, lang)}
+                  </span>
+                </div>
+
+                <h3
+                  className="mb-2 text-xl font-black leading-relaxed text-slate-900 dark:text-white"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  {bookmark.title}
+                </h3>
+
+                <p className="mb-5 break-all text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                  {bookmark.url}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <a
+                    href={bookmark.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline"
+                  >
+                    {ui.open}
+                  </a>
+
+                  <button
+                    type="button"
+                    onClick={() => removeBookmark(bookmark.id)}
+                    className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-bold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+                  >
+                    🗑️ {ui.remove}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+
+        {/* ===== ملاحظة ===== */}
+        <div className="card mt-8 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
+          <h2
+            className="mb-4 text-xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            📌 {ui.noteTitle}
+          </h2>
+
+          <ul className="space-y-3">
+            {[ui.note1, ui.note2].map((note, index) => (
+              <li
+                key={`${note}-${index}`}
+                className="flex items-start gap-3 leading-relaxed text-slate-700 dark:text-slate-200"
+              >
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </main>
   );
 }
