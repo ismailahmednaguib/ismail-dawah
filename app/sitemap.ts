@@ -166,6 +166,11 @@ const ROUTES: SitemapRoute[] = [
     changeFrequency: "yearly",
     priority: 0.4,
   },
+    {
+    path: "/download",
+    changeFrequency: "weekly",
+    priority: 0.75,
+  },
 ];
 
 // ============================================================

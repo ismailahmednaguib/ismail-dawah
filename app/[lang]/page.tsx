@@ -254,6 +254,43 @@ export default async function HomePage({
       <section className="container-page pb-16 md:pb-20">
         <Newsletter lang={l} />
       </section>
+      {/* ===== Download App Section ===== */}
+<div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+  <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+
+  <div className="mx-auto max-w-3xl text-center">
+    <span className="badge-primary mb-5">
+      📱 {isRTL ? "تطبيق أندرويد" : "Android App"}
+    </span>
+
+    <h2
+      className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-4xl dark:text-white"
+      style={{ fontFamily: "var(--font-amiri)" }}
+    >
+      {isRTL ? "حمّل التطبيق الآن" : "Download the app now"}
+    </h2>
+
+    <p className="mb-7 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+      {isRTL
+        ? "افتح منصة إسماعيل أحمد نجيب كتطبيق مستقل على هاتفك أندرويد."
+        : "Open the Ismail Ahmed Naguib platform as a standalone app on your Android phone."}
+    </p>
+
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      <a
+        href="/downloads/ismail-dawah.apk"
+        download="ismail-dawah.apk"
+        className="btn-primary"
+      >
+        ⬇️ {isRTL ? "تحميل APK" : "Download APK"}
+      </a>
+
+      <Link href={`/${l}/download`} className="btn-outline">
+        {isRTL ? "صفحة التحميل" : "Download Page"}
+      </Link>
+    </div>
+  </div>
+</div>
 
       {/* ============ CTA النهائي ============ */}
       <section className="gradient-hero relative overflow-hidden py-16 text-white md:py-20">
