@@ -1,4 +1,26 @@
-import { MetadataRoute } from "next";
+// app/robots.ts
+import type { MetadataRoute } from "next";
+
+// ============================================================
+// إعدادات الموقع
+// ============================================================
+
+/**
+ * رابط الموقع الأساسي.
+ *
+ * على Vercel يُفضل إضافة Variable:
+ * NEXT_PUBLIC_SITE_URL=https://ismailahmednaguib.vercel.app
+ *
+ * ولو المتغير مش موجود، هيستخدم الرابط الاحتياطي ده.
+ */
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://ismailahmednaguib.vercel.app"
+).replace(/\/+$/, "");
+
+// ============================================================
+// Robots
+// ============================================================
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,10 +28,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/setup-admin"],
+        disallow: [
+          "/api/",
+        ],
       },
     ],
-    sitemap: "https://ismailahmednaguib.vercel.app/sitemap.xml",
-    host: "https://ismailahmednaguib.vercel.app",
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }
