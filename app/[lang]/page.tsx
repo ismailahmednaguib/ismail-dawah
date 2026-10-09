@@ -278,7 +278,7 @@ export default async function HomePage({
 
     <div className="flex flex-wrap items-center justify-center gap-3">
       <a
-        href="/downloads/ismail-dawah.apk"
+        href="/api/download/android"
         download="ismail-dawah.apk"
         className="btn-primary"
       >

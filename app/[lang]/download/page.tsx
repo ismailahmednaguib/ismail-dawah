@@ -29,10 +29,15 @@ type UILang = {
   note4: string;
 };
 
-const DOWNLOAD_URL = "/downloads/ismail-dawah.apk";
+const DIRECT_APK_URL =
+  process.env.NEXT_PUBLIC_ANDROID_APK_URL ??
+  "https://fwzasbyojjxycxvuvleo.supabase.co/storage/v1/object/public/site/app/ismail-dawah.apk";
+
+const PROXY_DOWNLOAD_URL = "/api/download/android";
+
 const FILE_NAME = "ismail-dawah.apk";
 const VERSION = "0.1.0-beta";
-const FILE_SIZE = "5-6 MB";
+const FILE_SIZE = "5–6 MB";
 const REQUIREMENTS = "Android 8.0+";
 
 const UI: Record<Lang, UILang> = {
@@ -155,12 +160,12 @@ export default async function DownloadPage({
     applicationCategory: "EducationalApplication",
     operatingSystem: "Android",
     softwareVersion: VERSION,
-    downloadUrl: DOWNLOAD_URL,
+    downloadUrl: DIRECT_APK_URL,
     description: ui.description,
   };
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -192,11 +197,11 @@ export default async function DownloadPage({
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
               <span className="badge-primary">
-                📱 {isRTL ? ui.androidApp : ui.androidApp}
+                📱 {ui.androidApp}
               </span>
 
               <span className="badge-gold">
-                🧪 {isRTL ? ui.betaNotice : ui.betaNotice}
+                🧪 {ui.betaNotice}
               </span>
             </div>
 
@@ -259,7 +264,7 @@ export default async function DownloadPage({
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a
-              href={DOWNLOAD_URL}
+              href={PROXY_DOWNLOAD_URL}
               download={FILE_NAME}
               className="btn-primary"
             >
@@ -299,7 +304,9 @@ export default async function DownloadPage({
 
           <div className="mt-6 text-center">
             <a
-              href={DOWNLOAD_URL}
+              href={DIRECT_APK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm font-bold text-primary-700 underline dark:text-primary-300"
             >
               {ui.directLink}
