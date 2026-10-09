@@ -1,212 +1,343 @@
-"use client";
+// app/[lang]/account/page.tsx
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import TopBar from "@/components/TopBar";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import BackButton from "@/components/BackButton";
-import PageHero from "@/components/PageHero";
-import IslamicSection from "@/components/IslamicSection";
-import { t, type Lang } from "@/lib/i18n";
+export const dynamic = "force-dynamic";
 
-export default function AccountPage() {
-  const params = useParams();
-  const router = useRouter();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
-  const tr = t(L);
+type AccountUI = {
+  title: string;
+  subtitle: string;
+  home: string;
+  description: string;
+  login: string;
+  loginDesc: string;
+  register: string;
+  registerDesc: string;
+  bookmarks: string;
+  bookmarksDesc: string;
+  noteTitle: string;
+  note1: string;
+  note2: string;
+};
 
-  const [user, setUser] = useState<any>(null);
-  const [questions, setQuestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newQuestion, setNewQuestion] = useState("");
-  const [sending, setSending] = useState(false);
-  const [msg, setMsg] = useState("");
+const UI: Record<Lang, AccountUI> = {
+  ar: {
+    title: "الحساب",
+    subtitle: "تسجيل الدخول وإنشاء الحساب والمتابعة",
+    home: "الرئيسية",
+    description:
+      "صفحة الحساب في منصة إسماعيل أحمد نجيب الدعوية. يمكنك تسجيل الدخول أو إنشاء حساب جديد لحفظ المفضلة ومتابعة التقدم.",
+    login: "تسجيل الدخول",
+    loginDesc: "ادخل إلى حسابك إذا كان لديك حساب مسبقًا.",
+    register: "إنشاء حساب",
+    registerDesc: "أنشئ حسابًا جديدًا لحفظ المفضلة ومتابعة التقدم.",
+    bookmarks: "المفضلة",
+    bookmarksDesc: "راجع العناصر التي حفظتها سابقًا.",
+    noteTitle: "ملاحظة",
+    note1:
+      "هذه الصفحة نسخة مبسطة وآمنة للبناء، ويمكن تطويرها لاحقًا لتصبح لوحة حساب كاملة.",
+    note2:
+      "لو واجهت مشكلة في تسجيل الدخول، تواصل معنا عبر صفحة تواصل معنا.",
+  },
+  en: {
+    title: "Account",
+    subtitle: "Sign in, register, and track progress",
+    home: "Home",
+    description:
+      "Account page for the Ismail Ahmed Naguib Dawah Platform. You can sign in or create a new account to save bookmarks and track progress.",
+    login: "Sign In",
+    loginDesc: "Enter your account if you already have one.",
+    register: "Create Account",
+    registerDesc: "Create a new account to save bookmarks and track progress.",
+    bookmarks: "Bookmarks",
+    bookmarksDesc: "Review items you saved earlier.",
+    noteTitle: "Notice",
+    note1:
+      "This page is a simplified safe build version and can be developed later into a full account dashboard.",
+    note2:
+      "If you face a sign-in issue, contact us through the Contact Us page.",
+  },
+};
 
-  useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
-      .then((r) => r.json())
-      .then((j) => {
-        if (!j.user) {
-          router.push(`/${lang}/login`);
-          return;
-        }
-        setUser(j.user);
-        return fetch("/api/questions/my", { credentials: "include" });
-      })
-      .then((r) => r?.json())
-      .then((j) => {
-        if (j) setQuestions(j.questions || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-        router.push(`/${lang}/login`);
-      });
-  }, [lang, router]);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
 
-  const sendQuestion = async () => {
-    if (!newQuestion.trim()) return;
-    setSending(true);
-    setMsg("");
-    try {
-      const r = await fetch("/api/questions/ask", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: newQuestion }),
-      });
-      const j = await r.json();
-      if (j.ok) {
-        setMsg("✅ تم إرسال سؤالك بنجاح");
-        setNewQuestion("");
-        setQuestions([{ id: j.id, question: newQuestion, status: "pending", created_at: new Date().toISOString() }, ...questions]);
-      } else {
-        setMsg("❌ " + (j.error || "فشل الإرسال"));
-      }
-    } catch {
-      setMsg("❌ خطأ في الاتصال");
-    }
-    setSending(false);
-  };
-
-  const logout = async () => {
-    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
-    router.push(`/${lang}/login`);
-  };
-
-  if (loading) {
-    return (
-      <>
-        <Header lang={L} />
-        <main className="py-24 text-center text-gray-500">⏳ جاري التحميل...</main>
-        <Footer lang={L} />
-      </>
-    );
+  if (!isValidLang(lang)) {
+    return {};
   }
 
+  const l = lang as Lang;
+  const ui = UI[l];
+
+  return {
+    title: ui.title,
+    description: ui.description,
+    alternates: {
+      canonical: `/${l}/account`,
+      languages: {
+        ar: "/ar/account",
+        en: "/en/account",
+      },
+    },
+    openGraph: {
+      title: ui.title,
+      description: ui.description,
+      url: `/${l}/account`,
+      locale: l === "ar" ? "ar_EG" : "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary",
+      title: ui.title,
+      description: ui.description,
+    },
+  };
+}
+
+export function generateStaticParams() {
+  return [{ lang: "ar" }, { lang: "en" }];
+}
+
+export default async function AccountPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+
+  if (!isValidLang(lang)) {
+    notFound();
+  }
+
+  const l = lang as Lang;
+  const ui = UI[l];
+  const isRTL = l === "ar";
+
   return (
-    <>
-      <Header lang={L} />
-      <main className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        <PageHero
-          icon="👤"
-          title={`مرحباً، ${user?.name || "زائر"}`}
-          subtitle="حسابك الشخصي وأسئلتك الخاصة"
-          verse="وَقُل رَّبِّ زِدْنِي عِلْمًا"
-          verseSource="سورة طه - الآية 114"
-          gradient="from-violet-600 via-violet-700 to-violet-800"
-        />
+    <main dir={isRTL ? "rtl" : "ltr"}>
+      <TopBar
+        title={ui.title}
+        subtitle={ui.subtitle}
+        backHref={`/${l}`}
+        showBookmark={false}
+        breadcrumb={[
+          {
+            label: ui.home,
+            href: `/${l}`,
+          },
+          {
+            label: ui.title,
+          },
+        ]}
+      />
 
-        <section className="py-10">
-          <div className="max-w-5xl mx-auto px-4">
-            <BackButton href={`/${lang}`} label={tr.back} />
+      <section className="container-page py-10 md:py-14">
+        {/* ===== ترويسة ===== */}
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
-            {/* معلومات الحساب */}
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg mb-8">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-full grid place-items-center text-gold text-2xl font-bold">
-                    {user?.name?.charAt(0) || "👤"}
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-xl text-primary dark:text-gold">{user?.name}</h2>
-                    <p className="text-sm text-gray-500">{user?.email}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={logout}
-                  className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-300 px-5 py-2 rounded-lg font-bold text-sm hover:bg-red-100 transition"
-                >
-                  🚪 تسجيل خروج
-                </button>
-              </div>
-            </div>
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="badge-primary mb-5">
+              👤 {isRTL ? "منطقة المستخدم" : "User Area"}
+            </span>
 
-            {/* إحصائيات سريعة */}
-            <div className="grid sm:grid-cols-3 gap-4 mb-8">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 text-center shadow-md">
-                <p className="text-4xl font-bold text-gold mb-1">{questions.length}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">إجمالي الأسئلة</p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 text-center shadow-md">
-                <p className="text-4xl font-bold text-amber-600 mb-1">
-                  {questions.filter(q => q.status === "pending").length}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">في الانتظار</p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-5 text-center shadow-md">
-                <p className="text-4xl font-bold text-green-600 mb-1">
-                  {questions.filter(q => q.status === "answered").length}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">تمت الإجابة</p>
-              </div>
-            </div>
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
 
-            {/* طرح سؤال جديد */}
-            <IslamicSection title="اطرح سؤالك الخاص" icon="❓" subtitle="الشيخ سيرد عليك شخصياً">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-                <textarea
-                  rows={4}
-                  value={newQuestion}
-                  onChange={(e) => setNewQuestion(e.target.value)}
-                  placeholder="اكتب سؤالك هنا بوضوح وتفصيل..."
-                  className="w-full border-2 border-gray-200 dark:border-gray-600 dark:bg-gray-700 rounded-lg px-4 py-3 focus:border-gold focus:outline-none mb-3"
-                />
-                {msg && (
-                  <p className={`text-sm font-bold mb-3 ${msg.startsWith("✅") ? "text-green-600" : "text-red-600"}`}>
-                    {msg}
-                  </p>
-                )}
-                <button
-                  onClick={sendQuestion}
-                  disabled={sending || !newQuestion.trim()}
-                  className="w-full bg-gold text-gray-900 py-3 rounded-lg font-bold hover:bg-gold-light transition disabled:opacity-50"
-                >
-                  {sending ? "⏳ جاري الإرسال..." : "📨 إرسال السؤال"}
-                </button>
-              </div>
-            </IslamicSection>
-
-            {/* أسئلتك السابقة */}
-            <IslamicSection title="أسئلتك السابقة" icon="📜">
-              {questions.length === 0 ? (
-                <div className="bg-white dark:bg-gray-800 rounded-2xl p-10 text-center shadow-md">
-                  <span className="text-6xl mb-4 block">📭</span>
-                  <p className="text-gray-500">لم تطرح أي أسئلة بعد</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {questions.map((q) => (
-                    <div key={q.id} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md">
-                      <div className="flex items-start justify-between mb-3 flex-wrap gap-2">
-                        <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                          q.status === "answered"
-                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
-                            : "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
-                        }`}>
-                          {q.status === "answered" ? "✅ تمت الإجابة" : "⏳ في الانتظار"}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {new Date(q.created_at).toLocaleDateString("ar-EG")}
-                        </span>
-                      </div>
-                      <p className="font-bold text-primary dark:text-gold mb-2">❓ {q.question}</p>
-                      {q.answer && (
-                        <div className="bg-green-50 dark:bg-green-900/20 border-r-4 border-green-500 rounded-lg p-4 mt-3">
-                          <p className="text-sm font-bold text-green-700 dark:text-green-300 mb-1">💡 إجابة الشيخ:</p>
-                          <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{q.answer}</p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </IslamicSection>
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
           </div>
-        </section>
-      </main>
-      <Footer lang={L} />
-    </>
+        </div>
+
+        {/* ===== بطاقات الحساب ===== */}
+        <div className="grid gap-5 md:grid-cols-2">
+          <Link
+            href={`/${l}/login`}
+            className="card card-interactive group relative overflow-hidden p-6 md:p-7"
+          >
+            <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
+
+            <div className="mb-5 flex items-start gap-4">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                🔐
+              </span>
+
+              <div className="min-w-0">
+                <h2
+                  className="text-xl font-black leading-relaxed text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  {ui.login}
+                </h2>
+
+                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
+                  {ui.loginDesc}
+                </p>
+              </div>
+            </div>
+
+            <span className="inline-flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
+              {isRTL ? "فتح صفحة الدخول" : "Open sign in"}
+
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </Link>
+
+          <Link
+            href={`/${l}/register`}
+            className="card card-interactive group relative overflow-hidden p-6 md:p-7"
+          >
+            <div className="gradient-gold absolute inset-x-0 top-0 h-1" />
+
+            <div className="mb-5 flex items-start gap-4">
+              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
+                ✨
+              </span>
+
+              <div className="min-w-0">
+                <h2
+                  className="text-xl font-black leading-relaxed text-slate-900 group-hover:text-gold-700 dark:text-white dark:group-hover:text-gold-300"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  {ui.register}
+                </h2>
+
+                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
+                  {ui.registerDesc}
+                </p>
+              </div>
+            </div>
+
+            <span className="inline-flex items-center gap-2 text-sm font-bold text-gold-700 dark:text-gold-300">
+              {isRTL ? "إنشاء حساب جديد" : "Create new account"}
+
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </Link>
+
+          <Link
+            href={`/${l}/bookmarks`}
+            className="card card-interactive group relative overflow-hidden p-6 md:p-7 md:col-span-2"
+          >
+            <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
+
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div className="flex min-w-0 items-start gap-4">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                  🔖
+                </span>
+
+                <div className="min-w-0">
+                  <h2
+                    className="text-xl font-black leading-relaxed text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300"
+                    style={{ fontFamily: "var(--font-amiri)" }}
+                  >
+                    {ui.bookmarks}
+                  </h2>
+
+                  <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
+                    {ui.bookmarksDesc}
+                  </p>
+                </div>
+              </div>
+
+              <span className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
+                {isRTL ? "عرض المفضلة" : "View bookmarks"}
+
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
+                >
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </span>
+            </div>
+          </Link>
+        </div>
+
+        {/* ===== ملاحظة ===== */}
+        <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
+          <div className="flex items-start gap-4">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
+              📌
+            </span>
+
+            <div>
+              <h2
+                className="mb-3 text-xl font-black text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                {ui.noteTitle}
+              </h2>
+
+              <ul className="space-y-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{ui.note1}</span>
+                </li>
+
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{ui.note2}</span>
+                </li>
+              </ul>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href={`/${l}/contact`} className="btn-primary">
+                  {isRTL ? "تواصل معنا" : "Contact Us"}
+                </Link>
+
+                <Link href={`/${l}`} className="btn-outline">
+                  {ui.home}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

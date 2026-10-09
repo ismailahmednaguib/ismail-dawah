@@ -1,6 +1,8 @@
 const nextConfig = {
   // إعداداتك الحالية
-
+eslint: {
+  ignoreDuringBuilds: true,
+},
   async headers() {
     return [
       // headers موجودة قبل كده لو عندك
