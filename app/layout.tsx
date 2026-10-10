@@ -21,8 +21,6 @@ function normalizeSiteUrl(raw: string | undefined | null): string {
 
   try {
     const url = new URL(value);
-
-    // نستخدم origin فقط حتى لا تتكرر مسارات غريبة في metadataBase
     return url.origin;
   } catch {
     return FALLBACK_SITE_URL;
@@ -39,7 +37,6 @@ const SITE_DESCRIPTION_AR =
 
 // ============================================================
 // Fonts
-// مهم: نستخدم -source حتى لا تتعارض أسماء المتغيرات مع Tailwind
 // ============================================================
 
 const cairo = Cairo({
@@ -179,12 +176,8 @@ export const metadata: Metadata = {
         sizes: "512x512",
         type: "image/png",
       },
-      {
-        url: "/icon-maskable-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
-      },
+      // لا تضع purpose هنا إذا كان إصدار Next عندك لا يدعمه.
+      // الأيقونة Maskable تُضاف في manifest.webmanifest.
     ],
     apple: "/apple-touch-icon.png",
   },
@@ -248,10 +241,8 @@ export default function RootLayout({
             "var(--font-cairo-source), ui-sans-serif, system-ui, sans-serif",
         }}
       >
-        {/* يضبط الاتجاه واللغة والوضع الليلي حسب المسار */}
         <HtmlDir />
 
-        {/* تخطي إلى المحتوى — مفيد للوصولية */}
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-cyan-700 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
@@ -259,10 +250,8 @@ export default function RootLayout({
           تخطَّ إلى المحتوى
         </a>
 
-        {/* تسجيل Service Worker للـ PWA */}
         <SWRegister />
 
-        {/* تتبع التحليلات */}
         <AnalyticsTracker />
 
         {children}
