@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { faqJsonLd } from "@/lib/seo";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ============================================================
 // الأنواع
@@ -70,7 +72,7 @@ const FAQS: FaqItem[] = [
     },
     answer: {
       ar: "لأن كثير من الباحثين عن العلم الشرعي يتوهون بين مصادر مشتتة أو محتوى غير منظم. المنصة جاءت لتكون مكانًا واحدًا جامعًا: سهل، سريع، محترم لوقت المستخدم، ومدعوم بالترجمة، بحيث يخدم المسلم الجديد، وطالب العلم، والداعية، والعائلة المسلمة.",
-      en: "Many seekers of Islamic knowledge get lost between scattered sources or poorly organized content. This platform was built to be one unified place: simple, fast, respectful of the user's time, and translation-ready, serving new Muslims, students of knowledge, da‘ees, and Muslim families.",
+      en: "Many seekers of Islamic knowledge get lost between scattered sources or poorly organized content. This platform was built to be one unified place: simple, fast, respectful of the user's time, and translation-ready, serving new Muslims, students of knowledge, da'ees, and Muslim families.",
     },
   },
   {
@@ -316,11 +318,11 @@ const FAQS: FaqItem[] = [
     categoryId: "dawah",
     question: {
       ar: "أنا داعية/مؤسسة، كيف أتعاون معكم؟",
-      en: "I am a da‘ee/institution, how can I collaborate?",
+      en: "I am a da'ee/institution, how can I collaborate?",
     },
     answer: {
       ar: "يسعدنا التعاون مع الدعاة والمؤسسات الدعوية في: إنتاج المحتوى، الترجمة، مراجعة الفتاوى، أو نشر الخطب والدروس. راسلنا عبر صفحة \"تواصل معنا\" مع نبذة عن جهة التعاون المقترح.",
-      en: "We are pleased to collaborate with da‘ees and dawah institutions in: content production, translation, fatwa review, or publishing sermons and lessons. Contact us through the \"Contact Us\" page with a brief about the proposed collaboration.",
+      en: "We are pleased to collaborate with da'ees and dawah institutions in: content production, translation, fatwa review, or publishing sermons and lessons. Contact us through the \"Contact Us\" page with a brief about the proposed collaboration.",
     },
   },
   {
@@ -374,6 +376,21 @@ const UI: Record<
     stillHaveQuestionsDesc: string;
     contactUs: string;
     note: string;
+    verse: string;
+    verseSource: string;
+    totalQuestions: string;
+    totalCategories: string;
+    languages: string;
+    alwaysUpdated: string;
+    relatedTitle: string;
+    aboutPage: string;
+    aboutPageDesc: string;
+    contactPage: string;
+    contactPageDesc: string;
+    privacyPage: string;
+    privacyPageDesc: string;
+    termsPage: string;
+    termsPageDesc: string;
   }
 > = {
   ar: {
@@ -397,6 +414,21 @@ const UI: Record<
       "راسلنا وسنجيبك إن شاء الله في أقرب وقت ممكن.",
     contactUs: "تواصل معنا",
     note: "قد تُحدّث الإجابات دوريًا حسب المستجدات وتصحيحات أهل العلم.",
+    verse: "﴿ فَاسْأَلُوا أَهْلَ الذِّكْرِ إِن كُنتُمْ لَا تَعْلَمُونَ ﴾",
+    verseSource: "سورة النحل — الآية 43",
+    totalQuestions: "سؤال",
+    totalCategories: "تصنيف",
+    languages: "لغتان",
+    alwaysUpdated: "تحديث مستمر",
+    relatedTitle: "صفحات ذات صلة",
+    aboutPage: "من نحن",
+    aboutPageDesc: "تعرّف على المنصة ورؤيتها.",
+    contactPage: "تواصل معنا",
+    contactPageDesc: "أرسل استفسارك مباشرة.",
+    privacyPage: "سياسة الخصوصية",
+    privacyPageDesc: "كيف نحمي بياناتك.",
+    termsPage: "الشروط والأحكام",
+    termsPageDesc: "قواعد استخدام المنصة.",
   },
   en: {
     title: "Frequently Asked Questions",
@@ -419,6 +451,21 @@ const UI: Record<
       "Contact us and we will reply, in sha Allah, as soon as possible.",
     contactUs: "Contact Us",
     note: "Answers may be updated periodically based on new developments and scholars' corrections.",
+    verse: "\"So ask the people of the message if you do not know.\"",
+    verseSource: "Surah An-Nahl — Verse 43",
+    totalQuestions: "Questions",
+    totalCategories: "Categories",
+    languages: "Languages",
+    alwaysUpdated: "Always Updated",
+    relatedTitle: "Related Pages",
+    aboutPage: "About Us",
+    aboutPageDesc: "Learn about our platform and vision.",
+    contactPage: "Contact Us",
+    contactPageDesc: "Send your inquiry directly.",
+    privacyPage: "Privacy Policy",
+    privacyPageDesc: "How we protect your data.",
+    termsPage: "Terms & Conditions",
+    termsPageDesc: "Platform usage rules.",
   },
 };
 
@@ -430,7 +477,6 @@ function getFirstValue(value?: string | string[]): string {
   if (Array.isArray(value)) {
     return value[0] ?? "";
   }
-
   return value ?? "";
 }
 
@@ -441,7 +487,6 @@ function normalize(value: string): string {
 function formatNumber(value: number, lang: Lang): string {
   if (lang === "ar") {
     const arabicNumerals = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-
     return String(value)
       .split("")
       .map((digit) => {
@@ -450,24 +495,18 @@ function formatNumber(value: number, lang: Lang): string {
       })
       .join("");
   }
-
   return String(value);
 }
 
 function faqMatchesQuery(faq: FaqItem, query: string): boolean {
-  if (!query) {
-    return true;
-  }
-
+  if (!query) return true;
   const q = normalize(query);
-
   const haystack = [
     faq.question.ar,
     faq.question.en,
     faq.answer.ar,
     faq.answer.en,
   ];
-
   return haystack.some((text) => normalize(text).includes(q));
 }
 
@@ -476,17 +515,9 @@ function buildFaqHref(
   options: { q?: string; category?: string }
 ): string {
   const search = new URLSearchParams();
-
-  if (options.q?.trim()) {
-    search.set("q", options.q.trim());
-  }
-
-  if (options.category && options.category !== "all") {
-    search.set("category", options.category);
-  }
-
+  if (options.q?.trim()) search.set("q", options.q.trim());
+  if (options.category && options.category !== "all") search.set("category", options.category);
   const queryString = search.toString();
-
   return `/${lang}/faq${queryString ? `?${queryString}` : ""}`;
 }
 
@@ -500,10 +531,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -524,11 +552,20 @@ export async function generateMetadata({
       url: `/${l}/faq`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -549,17 +586,13 @@ export default async function FaqPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
   const isRTL = l === "ar";
 
   const sp = await searchParams;
-
   const q = getFirstValue(sp.q).trim();
   const rawCategory = getFirstValue(sp.category);
   const category =
@@ -568,10 +601,7 @@ export default async function FaqPage({
       : "all";
 
   const filteredFaqs = FAQS.filter((faq) => {
-    if (category !== "all" && faq.categoryId !== category) {
-      return false;
-    }
-
+    if (category !== "all" && faq.categoryId !== category) return false;
     return faqMatchesQuery(faq, q);
   });
 
@@ -587,7 +617,7 @@ export default async function FaqPage({
   );
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       {/* ===== JSON-LD للأسئلة الشائعة ===== */}
       <script
         type="application/ld+json"
@@ -596,23 +626,74 @@ export default async function FaqPage({
         }}
       />
 
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="badge-primary mb-5">
+              ❓ {isRTL ? "الأسئلة الشائعة" : "FAQ"}
+            </span>
+
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
+
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard icon="❓" label={ui.totalQuestions} value={FAQS.length} color="primary" />
+          <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
+          <StatCard icon="🌍" label={ui.languages} value={2} color="primary" />
+          <StatCard icon="🔄" label={ui.alwaysUpdated} value="✓" color="gold" />
+        </div>
+
         {/* ===== بطاقة البحث ===== */}
         <div className="card mb-8 p-6 md:p-7">
           <form
@@ -673,7 +754,7 @@ export default async function FaqPage({
                 </span>
               )}
 
-              {q && <span className="badge-gold">“{q}”</span>}
+              {q && <span className="badge-gold">"{q}"</span>}
 
               <Link
                 href={`/${l}/faq`}
@@ -823,6 +904,86 @@ export default async function FaqPage({
           </div>
         )}
 
+        {/* ===== صفحات ذات صلة ===== */}
+        <div className="mt-12">
+          <h2
+            className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🔗 {ui.relatedTitle}
+          </h2>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link
+              href={`/${l}/about`}
+              className="card card-interactive group flex items-center gap-3 p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
+                🌐
+              </span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.aboutPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.aboutPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href={`/${l}/contact`}
+              className="card card-interactive group flex items-center gap-3 p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
+                📬
+              </span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.contactPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.contactPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href={`/${l}/privacy`}
+              className="card card-interactive group flex items-center gap-3 p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
+                🔒
+              </span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.privacyPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.privacyPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href={`/${l}/terms`}
+              className="card card-interactive group flex items-center gap-3 p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
+                📜
+              </span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.termsPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.termsPageDesc}
+                </p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* ===== CTA التواصل ===== */}
         <div className="card relative mt-10 overflow-hidden p-8 text-center md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
@@ -838,7 +999,7 @@ export default async function FaqPage({
             {ui.stillHaveQuestionsDesc}
           </p>
 
-          <Link href={`/${l}/contact`} className="btn-primary">
+          <Link href={`/${l}/contact`} className="btn-primary inline-flex items-center gap-2">
             {ui.contactUs}
             <svg
               width="18"
@@ -857,12 +1018,49 @@ export default async function FaqPage({
         </div>
 
         {/* ===== ملاحظة ===== */}
-        <div className="card mt-6 p-5 text-center">
-          <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-            {ui.note}
+        <div className="card mt-6 border-gold-200 bg-gold-50/60 p-5 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            📌 {ui.note}
           </p>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: number | string;
+  color: "primary" | "gold";
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }

@@ -2,891 +2,932 @@
 "use client";
 
 import {
+  type ChangeEvent,
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
-  type ChangeEvent,
 } from "react";
-import { SURAHS, toArabicNumeral, type Surah } from "@/lib/data";
-import type { Lang } from "@/lib/i18n";
 
-const STORAGE_KEY = "dawah_memorization_plan_v1";
+// ============================================================
+// Types
+// ============================================================
 
-type SavedState = {
-  date: string;
-  selectedSurah: number;
-  dailyGoal: number;
-  memorized: Record<number, number>;
-  reviewed: Record<number, number>;
-  streak: number;
-  lastActiveDate: string | null;
+type Lang = "ar" | "en";
+
+type Surah = {
+  n: number;
+  ar: string;
+  en: string;
+  a: number;
 };
 
-const DAILY_GOAL_OPTIONS = [1, 3, 5, 10, 20, 50];
+type Progress = Record<number, number>;
 
-const UI: Record<
-  Lang,
-  {
-    chooseSurah: string;
-    dailyGoal: string;
-    ayahsPerDay: string;
-    memorized: string;
-    reviewed: string;
-    markMemorized: string;
-    markReviewed: string;
-    resetSurah: string;
-    progress: string;
-    overallProgress: string;
-    completedSurahs: string;
-    totalAyahsMemorized: string;
-    streak: string;
-    days: string;
-    day: string;
-    surah: string;
-    ayahs: string;
-    of: string;
-    planTitle: string;
-    planDesc: string;
-    tipTitle: string;
-    tips: string[];
-    note: string;
-    loading: string;
-    searchSurah: string;
-    noSurahFound: string;
-    estimatedFinish: string;
-    daysLeft: string;
-    completed: string;
-    notStarted: string;
-    inProgress: string;
-    resetAll: string;
-    confirmReset: string;
-  }
-> = {
+type StoredState = {
+  progress: Progress;
+  dailyGoal: number;
+  streak: number;
+  lastActionDate: string | null;
+  updatedAt: string;
+};
+
+type Message = {
+  type: "success" | "error";
+  text: string;
+} | null;
+
+type MemorizationPlanProps = {
+  lang?: Lang | string;
+  [key: string]: unknown;
+};
+
+// ============================================================
+// Constants
+// ============================================================
+
+const STORAGE_KEY = "ismail-quran-memorization-v1";
+
+const SURAHS: Surah[] = [
+  { n: 1, ar: "الفاتحة", en: "Al-Fatihah", a: 7 },
+  { n: 2, ar: "البقرة", en: "Al-Baqarah", a: 286 },
+  { n: 3, ar: "آل عمران", en: "Ali 'Imran", a: 200 },
+  { n: 4, ar: "النساء", en: "An-Nisa", a: 176 },
+  { n: 5, ar: "المائدة", en: "Al-Ma'idah", a: 120 },
+  { n: 6, ar: "الأنعام", en: "Al-An'am", a: 165 },
+  { n: 7, ar: "الأعراف", en: "Al-A'raf", a: 206 },
+  { n: 8, ar: "الأنفال", en: "Al-Anfal", a: 75 },
+  { n: 9, ar: "التوبة", en: "At-Tawbah", a: 129 },
+  { n: 10, ar: "يونس", en: "Yunus", a: 109 },
+  { n: 11, ar: "هود", en: "Hud", a: 123 },
+  { n: 12, ar: "يوسف", en: "Yusuf", a: 111 },
+  { n: 13, ar: "الرعد", en: "Ar-Ra'd", a: 43 },
+  { n: 14, ar: "إبراهيم", en: "Ibrahim", a: 52 },
+  { n: 15, ar: "الحجر", en: "Al-Hijr", a: 99 },
+  { n: 16, ar: "النحل", en: "An-Nahl", a: 128 },
+  { n: 17, ar: "الإسراء", en: "Al-Isra", a: 111 },
+  { n: 18, ar: "الكهف", en: "Al-Kahf", a: 110 },
+  { n: 19, ar: "مريم", en: "Maryam", a: 98 },
+  { n: 20, ar: "طه", en: "Ta-Ha", a: 135 },
+  { n: 21, ar: "الأنبياء", en: "Al-Anbiya", a: 112 },
+  { n: 22, ar: "الحج", en: "Al-Hajj", a: 78 },
+  { n: 23, ar: "المؤمنون", en: "Al-Mu'minun", a: 118 },
+  { n: 24, ar: "النور", en: "An-Nur", a: 64 },
+  { n: 25, ar: "الفرقان", en: "Al-Furqan", a: 77 },
+  { n: 26, ar: "الشعراء", en: "Ash-Shu'ara", a: 227 },
+  { n: 27, ar: "النمل", en: "An-Naml", a: 93 },
+  { n: 28, ar: "القصص", en: "Al-Qasas", a: 88 },
+  { n: 29, ar: "العنكبوت", en: "Al-Ankabut", a: 69 },
+  { n: 30, ar: "الروم", en: "Ar-Rum", a: 60 },
+  { n: 31, ar: "لقمان", en: "Luqman", a: 34 },
+  { n: 32, ar: "السجدة", en: "As-Sajdah", a: 30 },
+  { n: 33, ar: "الأحزاب", en: "Al-Ahzab", a: 73 },
+  { n: 34, ar: "سبأ", en: "Saba", a: 54 },
+  { n: 35, ar: "فاطر", en: "Fatir", a: 45 },
+  { n: 36, ar: "يس", en: "Ya-Sin", a: 83 },
+  { n: 37, ar: "الصافات", en: "As-Saffat", a: 182 },
+  { n: 38, ar: "ص", en: "Sad", a: 88 },
+  { n: 39, ar: "الزمر", en: "Az-Zumar", a: 75 },
+  { n: 40, ar: "غافر", en: "Ghafir", a: 85 },
+  { n: 41, ar: "فصلت", en: "Fussilat", a: 54 },
+  { n: 42, ar: "الشورى", en: "Ash-Shura", a: 53 },
+  { n: 43, ar: "الزخرف", en: "Az-Zukhruf", a: 89 },
+  { n: 44, ar: "الدخان", en: "Ad-Dukhan", a: 59 },
+  { n: 45, ar: "الجاثية", en: "Al-Jathiyah", a: 37 },
+  { n: 46, ar: "الأحقاف", en: "Al-Ahqaf", a: 35 },
+  { n: 47, ar: "محمد", en: "Muhammad", a: 38 },
+  { n: 48, ar: "الفتح", en: "Al-Fath", a: 29 },
+  { n: 49, ar: "الحجرات", en: "Al-Hujurat", a: 18 },
+  { n: 50, ar: "ق", en: "Qaf", a: 45 },
+  { n: 51, ar: "الذاريات", en: "Adh-Dhariyat", a: 60 },
+  { n: 52, ar: "الطور", en: "At-Tur", a: 49 },
+  { n: 53, ar: "النجم", en: "An-Najm", a: 62 },
+  { n: 54, ar: "القمر", en: "Al-Qamar", a: 55 },
+  { n: 55, ar: "الرحمن", en: "Ar-Rahman", a: 78 },
+  { n: 56, ar: "الواقعة", en: "Al-Waqi'ah", a: 96 },
+  { n: 57, ar: "الحديد", en: "Al-Hadid", a: 29 },
+  { n: 58, ar: "المجادلة", en: "Al-Mujadila", a: 22 },
+  { n: 59, ar: "الحشر", en: "Al-Hashr", a: 24 },
+  { n: 60, ar: "الممتحنة", en: "Al-Mumtahanah", a: 13 },
+  { n: 61, ar: "الصف", en: "As-Saff", a: 14 },
+  { n: 62, ar: "الجمعة", en: "Al-Jumu'ah", a: 11 },
+  { n: 63, ar: "المنافقون", en: "Al-Munafiqun", a: 11 },
+  { n: 64, ar: "التغابن", en: "At-Taghabun", a: 18 },
+  { n: 65, ar: "الطلاق", en: "At-Talaq", a: 12 },
+  { n: 66, ar: "التحريم", en: "At-Tahrim", a: 12 },
+  { n: 67, ar: "الملك", en: "Al-Mulk", a: 30 },
+  { n: 68, ar: "القلم", en: "Al-Qalam", a: 52 },
+  { n: 69, ar: "الحاقة", en: "Al-Haqqah", a: 52 },
+  { n: 70, ar: "المعارج", en: "Al-Ma'arij", a: 44 },
+  { n: 71, ar: "نوح", en: "Nuh", a: 28 },
+  { n: 72, ar: "الجن", en: "Al-Jinn", a: 28 },
+  { n: 73, ar: "المزمل", en: "Al-Muzzammil", a: 20 },
+  { n: 74, ar: "المدثر", en: "Al-Muddaththir", a: 56 },
+  { n: 75, ar: "القيامة", en: "Al-Qiyamah", a: 40 },
+  { n: 76, ar: "الإنسان", en: "Al-Insan", a: 31 },
+  { n: 77, ar: "المرسلات", en: "Al-Mursalat", a: 50 },
+  { n: 78, ar: "النبأ", en: "An-Naba", a: 40 },
+  { n: 79, ar: "النازعات", en: "An-Nazi'at", a: 46 },
+  { n: 80, ar: "عبس", en: "Abasa", a: 42 },
+  { n: 81, ar: "التكوير", en: "At-Takwir", a: 29 },
+  { n: 82, ar: "الانفطار", en: "Al-Infitar", a: 19 },
+  { n: 83, ar: "المطففين", en: "Al-Mutaffifin", a: 36 },
+  { n: 84, ar: "الانشقاق", en: "Al-Inshiqaq", a: 25 },
+  { n: 85, ar: "البروج", en: "Al-Buruj", a: 22 },
+  { n: 86, ar: "الطارق", en: "At-Tariq", a: 17 },
+  { n: 87, ar: "الأعلى", en: "Al-A'la", a: 19 },
+  { n: 88, ar: "الغاشية", en: "Al-Ghashiyah", a: 26 },
+  { n: 89, ar: "الفجر", en: "Al-Fajr", a: 30 },
+  { n: 90, ar: "البلد", en: "Al-Balad", a: 20 },
+  { n: 91, ar: "الشمس", en: "Ash-Shams", a: 15 },
+  { n: 92, ar: "الليل", en: "Al-Layl", a: 21 },
+  { n: 93, ar: "الضحى", en: "Ad-Duha", a: 11 },
+  { n: 94, ar: "الشرح", en: "Ash-Sharh", a: 8 },
+  { n: 95, ar: "التين", en: "At-Tin", a: 8 },
+  { n: 96, ar: "العلق", en: "Al-Alaq", a: 19 },
+  { n: 97, ar: "القدر", en: "Al-Qadr", a: 5 },
+  { n: 98, ar: "البينة", en: "Al-Bayyinah", a: 8 },
+  { n: 99, ar: "الزلزلة", en: "Az-Zalzalah", a: 8 },
+  { n: 100, ar: "العاديات", en: "Al-Adiyat", a: 11 },
+  { n: 101, ar: "القارعة", en: "Al-Qari'ah", a: 11 },
+  { n: 102, ar: "التكاثر", en: "At-Takathur", a: 8 },
+  { n: 103, ar: "العصر", en: "Al-Asr", a: 3 },
+  { n: 104, ar: "الهمزة", en: "Al-Humazah", a: 9 },
+  { n: 105, ar: "الفيل", en: "Al-Fil", a: 5 },
+  { n: 106, ar: "قريش", en: "Quraysh", a: 4 },
+  { n: 107, ar: "الماعون", en: "Al-Ma'un", a: 7 },
+  { n: 108, ar: "الكوثر", en: "Al-Kawthar", a: 3 },
+  { n: 109, ar: "الكافرون", en: "Al-Kafirun", a: 6 },
+  { n: 110, ar: "النصر", en: "An-Nasr", a: 3 },
+  { n: 111, ar: "المسد", en: "Al-Masad", a: 5 },
+  { n: 112, ar: "الإخلاص", en: "Al-Ikhlas", a: 4 },
+  { n: 113, ar: "الفلق", en: "Al-Falaq", a: 5 },
+  { n: 114, ar: "الناس", en: "An-Nas", a: 6 },
+];
+
+const SURAH_BY_N = new Map(SURAHS.map((s) => [s.n, s]));
+const TOTAL_AYAHS = SURAHS.reduce((sum, s) => sum + s.a, 0);
+
+// ============================================================
+// UI Text
+// ============================================================
+
+type ComponentUI = {
+  title: string;
+  description: string;
+  selectSurah: string;
+  dailyGoal: string;
+  goalHint: string;
+  quickAdd: string;
+  addOne: string;
+  addFive: string;
+  addTen: string;
+  addGoal: string;
+  subtractOne: string;
+  resetSurah: string;
+  resetAll: string;
+  export: string;
+  import: string;
+  totalMemorized: string;
+  totalProgress: string;
+  surahProgress: string;
+  remaining: string;
+  streak: string;
+  lastUpdate: string;
+  note: string;
+  imported: string;
+  exported: string;
+  importFailed: string;
+  exportFailed: string;
+  resetSurahDone: string;
+  resetAllDone: string;
+  confirmResetSurah: string;
+  confirmResetAll: string;
+  loading: string;
+};
+
+const UI: Record<Lang, ComponentUI> = {
   ar: {
-    chooseSurah: "اختر السورة",
-    dailyGoal: "الهدف اليومي",
-    ayahsPerDay: "آية في اليوم",
-    memorized: "المحفوظ",
-    reviewed: "المراجع",
-    markMemorized: "علّم كمحفوظ",
-    markReviewed: "علّم كمراجع",
+    title: "الخطة التفاعلية لحفظ القرآن",
+    description:
+      "اختر السورة وحدد هدفك اليومي وسجّل تقدمك. يُحفظ كل شيء محليًا على جهازك.",
+    selectSurah: "اختر السورة",
+    dailyGoal: "الهدف اليومي (آية)",
+    goalHint: "يمكنك ضبط الهدف من 1 إلى 50 آية.",
+    quickAdd: "إضافة سريعة",
+    addOne: "+1",
+    addFive: "+5",
+    addTen: "+10",
+    addGoal: "+ الهدف",
+    subtractOne: "-1",
     resetSurah: "تصفير السورة",
-    progress: "التقدم",
-    overallProgress: "التقدم الكلي",
-    completedSurahs: "سور مكتملة",
-    totalAyahsMemorized: "إجمالي الآيات المحفوظة",
+    resetAll: "تصفير الكل",
+    export: "تصدير JSON",
+    import: "استيراد JSON",
+    totalMemorized: "إجمالي المحفوظ",
+    totalProgress: "نسبة الحفظ الكلية",
+    surahProgress: "تقدم السورة",
+    remaining: "المتبقي في السورة",
     streak: "أيام متتالية",
-    days: "يوم",
-    day: "يوم",
-    surah: "سورة",
-    ayahs: "آية",
-    of: "من",
-    planTitle: "خطتك اليومية",
-    planDesc: "حدد سورة وهدف يومي، والتزم به إن شاء الله.",
-    tipTitle: "نصائح للحفظ",
-    tips: [
-      "اختر وقتًا ثابتًا يوميًا للحفظ، مثل بعد الفجر.",
-      "راجع المحفوظ قبل البدء في الجديد.",
-      "اقطع السورة إلى مجموعات صغيرة من 3-5 آيات.",
-      "استمع للتلاوة قبل الحفظ لضبط النطق.",
-      "لا تنتقل لسورة جديدة حتى تتقن السابقة.",
-      "اجعل لك وردًا يوميًا للمراجعة ولو آية واحدة.",
-    ],
-    note: "💡 تقدمك يُحفظ على جهازك فقط. حافظ على الاستمرارية ولو بآية واحدة يوميًا.",
-    loading: "جارٍ التحميل...",
-    searchSurah: "ابحث عن السورة...",
-    noSurahFound: "لا توجد سورة مطابقة",
-    estimatedFinish: "الانتهاء المتوقع",
-    daysLeft: "يوم متبقي",
-    completed: "مكتملة",
-    notStarted: "لم تبدأ",
-    inProgress: "جارية",
-    resetAll: "تصفير الخطة كلها",
-    confirmReset: "هل أنت متأكد من تصفير كل التقدم؟",
+    lastUpdate: "آخر تحديث",
+    note:
+      "بياناتك لا تُرفع إلى السيرفر؛ تُحفظ في localStorage فقط. اعمل نسخة احتياطية بالتصدير دوريًا.",
+    imported: "تم استيراد التقدم بنجاح",
+    exported: "تم تنزيل نسخة احتياطية",
+    importFailed: "ملف الاستيراد غير صالح",
+    exportFailed: "تعذر تصدير البيانات",
+    resetSurahDone: "تم تصفير تقدم السورة",
+    resetAllDone: "تم حذف كل تقدم الحفظ",
+    confirmResetSurah: "هل تريد تصفير تقدم هذه السورة؟",
+    confirmResetAll:
+      "هل تريد حذف كل تقدم الحفظ؟ لا يمكن التراجع.",
+    loading: "جاري تحميل تقدمك...",
   },
   en: {
-    chooseSurah: "Choose Surah",
-    dailyGoal: "Daily Goal",
-    ayahsPerDay: "ayahs per day",
-    memorized: "Memorized",
-    reviewed: "Reviewed",
-    markMemorized: "Mark as memorized",
-    markReviewed: "Mark as reviewed",
+    title: "Interactive Quran Memorization Plan",
+    description:
+      "Choose a surah, set your daily goal, and record your progress. Everything is saved locally on your device.",
+    selectSurah: "Choose surah",
+    dailyGoal: "Daily goal (ayahs)",
+    goalHint: "You can set the goal from 1 to 50 ayahs.",
+    quickAdd: "Quick add",
+    addOne: "+1",
+    addFive: "+5",
+    addTen: "+10",
+    addGoal: "+ Goal",
+    subtractOne: "-1",
     resetSurah: "Reset surah",
-    progress: "Progress",
-    overallProgress: "Overall progress",
-    completedSurahs: "Completed surahs",
-    totalAyahsMemorized: "Total ayahs memorized",
+    resetAll: "Reset all",
+    export: "Export JSON",
+    import: "Import JSON",
+    totalMemorized: "Total memorized",
+    totalProgress: "Overall progress",
+    surahProgress: "Surah progress",
+    remaining: "Remaining in surah",
     streak: "Day streak",
-    days: "days",
-    day: "day",
-    surah: "Surah",
-    ayahs: "ayahs",
-    of: "of",
-    planTitle: "Your Daily Plan",
-    planDesc: "Pick a surah and a daily goal, then stay consistent, in sha Allah.",
-    tipTitle: "Memorization Tips",
-    tips: [
-      "Choose a fixed time daily, such as after Fajr.",
-      "Review what you memorized before starting new ayahs.",
-      "Break the surah into small groups of 3-5 ayahs.",
-      "Listen to recitation before memorizing to fix pronunciation.",
-      "Do not move to a new surah until the previous one is solid.",
-      "Keep a daily revision portion, even one ayah.",
-    ],
-    note: "💡 Your progress is saved only on your device. Stay consistent, even with one ayah a day.",
-    loading: "Loading...",
-    searchSurah: "Search surah...",
-    noSurahFound: "No matching surah",
-    estimatedFinish: "Estimated finish",
-    daysLeft: "days left",
-    completed: "Completed",
-    notStarted: "Not started",
-    inProgress: "In progress",
-    resetAll: "Reset whole plan",
-    confirmReset: "Are you sure you want to reset all progress?",
+    lastUpdate: "Last update",
+    note:
+      "Your data is not uploaded to the server; it is stored only in localStorage. Export periodically for backup.",
+    imported: "Progress imported successfully",
+    exported: "Backup downloaded",
+    importFailed: "Invalid import file",
+    exportFailed: "Could not export data",
+    resetSurahDone: "Surah progress reset",
+    resetAllDone: "All memorization progress deleted",
+    confirmResetSurah: "Do you want to reset this surah progress?",
+    confirmResetAll:
+      "Do you want to delete all memorization progress? This cannot be undone.",
+    loading: "Loading your progress...",
   },
 };
 
-function getTodayKey(): string {
-  return new Date().toISOString().slice(0, 10);
+// ============================================================
+// Helpers
+// ============================================================
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+function pad2(value: number): string {
+  return String(value).padStart(2, "0");
+}
+
+function dateKey(date: Date): string {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(
+    date.getDate()
+  )}`;
+}
+
+function todayKey(): string {
+  return dateKey(new Date());
+}
+
+function yesterdayKey(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return dateKey(d);
 }
 
 function formatNumber(value: number, lang: Lang): string {
-  return lang === "ar" ? toArabicNumeral(value) : String(value);
+  try {
+    return value.toLocaleString(lang === "ar" ? "ar-EG" : "en-US");
+  } catch {
+    return String(value);
+  }
 }
 
-function surahLabel(surah: Surah, lang: Lang): string {
-  return lang === "ar" ? surah.arabicName : surah.englishName;
+function formatDateTime(iso: string, lang: Lang): string {
+  try {
+    return new Date(iso).toLocaleString(lang === "ar" ? "ar-EG" : "en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
+  } catch {
+    return "—";
+  }
 }
 
-function calculateStreak(lastActive: string | null, today: string): number {
-  if (!lastActive) return 0;
+function sanitizeProgress(raw: unknown): Progress {
+  const out: Progress = {};
 
-  const last = new Date(lastActive);
-  const current = new Date(today);
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return out;
+  }
 
-  const diffTime = current.getTime() - last.getTime();
-  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+    const n = Number(key);
 
-  // لو نفس اليوم، ما نزيدش الستريك
-  if (diffDays === 0) return -1;
-
-  // لو يوم واحد فقط، نزيد
-  if (diffDays === 1) return 1;
-
-  // لو أكتر من يوم، نبدأ من جديد
-  return -2;
-}
-
-export default function MemorizationPlan({ lang }: { lang: Lang }) {
-  const ui = UI[lang] || UI.ar;
-  const isRTL = lang === "ar";
-
-  const [selectedSurah, setSelectedSurah] = useState<number>(1);
-  const [dailyGoal, setDailyGoal] = useState<number>(5);
-  const [memorized, setMemorized] = useState<Record<number, number>>({});
-  const [reviewed, setReviewed] = useState<Record<number, number>>({});
-  const [streak, setStreak] = useState<number>(0);
-  const [lastActiveDate, setLastActiveDate] = useState<string | null>(null);
-  const [hydrated, setHydrated] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
-
-  // ===== تحميل الحالة =====
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const today = getTodayKey();
-
-      if (!raw) {
-        setHydrated(true);
-        return;
-      }
-
-      const parsed = JSON.parse(raw) as Partial<SavedState>;
-
-      const validSurah =
-        typeof parsed.selectedSurah === "number" &&
-        SURAHS.some((s) => s.number === parsed.selectedSurah)
-          ? parsed.selectedSurah
-          : 1;
-
-      const validGoal =
-        typeof parsed.dailyGoal === "number" &&
-        DAILY_GOAL_OPTIONS.includes(parsed.dailyGoal)
-          ? parsed.dailyGoal
-          : 5;
-
-      setSelectedSurah(validSurah);
-      setDailyGoal(validGoal);
-      setMemorized(parsed.memorized || {});
-      setReviewed(parsed.reviewed || {});
-
-      // حساب الستريك
-      const lastDate = parsed.lastActiveDate ?? null;
-      const streakDelta = calculateStreak(lastDate, today);
-
-      if (streakDelta === 1) {
-        setStreak((parsed.streak ?? 0) + 1);
-      } else if (streakDelta === -2) {
-        setStreak(0);
-      } else {
-        setStreak(parsed.streak ?? 0);
-      }
-
-      setLastActiveDate(lastDate);
-    } catch {
-      // تجاهل أخطاء القراءة
-    } finally {
-      setHydrated(true);
+    if (!Number.isInteger(n) || n < 1 || n > 114) {
+      continue;
     }
+
+    const surah = SURAH_BY_N.get(n);
+
+    if (!surah) {
+      continue;
+    }
+
+    const v = Math.floor(Number(value));
+
+    if (!Number.isFinite(v)) {
+      continue;
+    }
+
+    out[n] = clamp(v, 0, surah.a);
+  }
+
+  return out;
+}
+
+function sanitizeState(raw: unknown): StoredState | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return null;
+  }
+
+  const obj = raw as Record<string, unknown>;
+
+  const progress = sanitizeProgress(obj.progress);
+
+  const dailyGoal = clamp(
+    Math.floor(Number(obj.dailyGoal)) || 5,
+    1,
+    50
+  );
+
+  const streak = Math.max(0, Math.floor(Number(obj.streak)) || 0);
+
+  const lastActionDate =
+    typeof obj.lastActionDate === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(obj.lastActionDate)
+      ? obj.lastActionDate
+      : null;
+
+  const updatedAt =
+    typeof obj.updatedAt === "string"
+      ? obj.updatedAt
+      : new Date().toISOString();
+
+  return {
+    progress,
+    dailyGoal,
+    streak,
+    lastActionDate,
+    updatedAt,
+  };
+}
+
+function defaultState(): StoredState {
+  return {
+    progress: {},
+    dailyGoal: 5,
+    streak: 0,
+    lastActionDate: null,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function loadState(): StoredState {
+  if (typeof window === "undefined") {
+    return defaultState();
+  }
+
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+
+    if (!raw) {
+      return defaultState();
+    }
+
+    const parsed = JSON.parse(raw);
+    return sanitizeState(parsed) ?? defaultState();
+  } catch {
+    return defaultState();
+  }
+}
+
+function saveState(state: StoredState): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // ignore quota / privacy errors
+  }
+}
+
+// ============================================================
+// Component
+// ============================================================
+
+export default function MemorizationPlan({
+  lang = "ar",
+}: MemorizationPlanProps) {
+  const L: Lang = lang === "en" ? "en" : "ar";
+  const isRTL = L === "ar";
+  const ui = UI[L];
+
+  const [mounted, setMounted] = useState(false);
+  const [state, setState] = useState<StoredState>(defaultState);
+  const [selectedSurah, setSelectedSurah] = useState(1);
+  const [message, setMessage] = useState<Message>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const messageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load from localStorage after mount to avoid hydration mismatch
+  useEffect(() => {
+    setState(loadState());
+    setMounted(true);
   }, []);
 
-  // ===== حفظ الحالة =====
+  // Save whenever state changes after mount
   useEffect(() => {
-    if (!hydrated) return;
-
-    try {
-      const today = getTodayKey();
-      const state: SavedState = {
-        date: today,
-        selectedSurah,
-        dailyGoal,
-        memorized,
-        reviewed,
-        streak,
-        lastActiveDate,
-      };
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      // تجاهل أخطاء الحفظ
+    if (mounted) {
+      saveState(state);
     }
-  }, [
-    dailyGoal,
-    hydrated,
-    lastActiveDate,
-    memorized,
-    reviewed,
-    selectedSurah,
-    streak,
-  ]);
+  }, [state, mounted]);
 
-  const currentSurah = useMemo(
-    () => SURAHS.find((s) => s.number === selectedSurah) ?? SURAHS[0],
-    [selectedSurah]
-  );
+  // Auto dismiss message
+  useEffect(() => {
+    if (!message) return;
 
-  const filteredSurahs = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    if (messageTimerRef.current !== null) {
+      clearTimeout(messageTimerRef.current);
+    }
 
-    if (!q) return SURAHS;
+    messageTimerRef.current = setTimeout(() => {
+      setMessage(null);
+    }, 3500);
 
-    return SURAHS.filter(
-      (surah) =>
-        surah.arabicName.includes(search.trim()) ||
-        surah.englishName.toLowerCase().includes(q) ||
-        String(surah.number) === q
-    );
-  }, [search]);
+    return () => {
+      if (messageTimerRef.current !== null) {
+        clearTimeout(messageTimerRef.current);
+      }
+    };
+  }, [message]);
 
-  const currentMemorized = memorized[currentSurah.number] ?? 0;
-  const currentReviewed = reviewed[currentSurah.number] ?? 0;
-  const currentPercent = Math.min(
-    Math.round((currentMemorized / currentSurah.ayahs) * 100),
-    100
-  );
-  const isSurahComplete = currentMemorized >= currentSurah.ayahs;
-
-  const totalMemorized = useMemo(
-    () =>
-      Object.values(memorized).reduce(
-        (sum, value) => sum + (value ?? 0),
-        0
-      ),
-    [memorized]
-  );
-
-  const totalAyahs = useMemo(
-    () => SURAHS.reduce((sum, surah) => sum + surah.ayahs, 0),
+  const showMessage = useCallback(
+    (type: "success" | "error", text: string) => {
+      setMessage({ type, text });
+    },
     []
   );
 
-  const overallPercent = useMemo(
-    () => Math.min(Math.round((totalMemorized / totalAyahs) * 100), 100),
-    [totalAyahs, totalMemorized]
-  );
+  const surah = SURAH_BY_N.get(selectedSurah) ?? SURAHS[0];
 
-  const completedSurahs = useMemo(
-    () =>
-      SURAHS.filter(
-        (surah) => (memorized[surah.number] ?? 0) >= surah.ayahs
-      ).length,
-    [memorized]
-  );
-
-  const remainingAyahsInSurah = Math.max(
+  const memorizedInSurah = clamp(
+    Math.floor(state.progress[surah.n] ?? 0),
     0,
-    currentSurah.ayahs - currentMemorized
+    surah.a
   );
 
-  const estimatedDays = useMemo(() => {
-    if (remainingAyahsInSurah === 0) return 0;
-    return Math.ceil(remainingAyahsInSurah / dailyGoal);
-  }, [dailyGoal, remainingAyahsInSurah]);
+  const remainingInSurah = surah.a - memorizedInSurah;
 
-  // ===== تحديث آخر نشاط =====
-  const touchActivity = useCallback(() => {
-    const today = getTodayKey();
+  const totalMemorized = useMemo(() => {
+    return Object.values(state.progress).reduce((sum, value) => {
+      return sum + Math.max(0, Math.floor(Number(value) || 0));
+    }, 0);
+  }, [state.progress]);
 
-    setLastActiveDate((prev) => {
-      if (prev === today) return prev;
+  const totalPercent =
+    TOTAL_AYAHS > 0 ? (totalMemorized / TOTAL_AYAHS) * 100 : 0;
 
-      const delta = calculateStreak(prev, today);
+  const surahPercent =
+    surah.a > 0 ? (memorizedInSurah / surah.a) * 100 : 0;
 
-      if (delta === 1) {
-        setStreak((s) => s + 1);
-      } else if (delta === -2) {
-        setStreak(1);
-      }
-
-      return today;
-    });
-  }, []);
-
-  // ===== زيادة الحفظ =====
-  const incrementMemorized = useCallback(
+  const addToSurah = useCallback(
     (amount: number) => {
-      if (!hydrated) return;
+      setState((prev) => {
+        const current = prev.progress[surah.n] ?? 0;
+        const next = clamp(Math.floor(current + amount), 0, surah.a);
 
-      setMemorized((prev) => {
-        const current = prev[currentSurah.number] ?? 0;
-        const next = Math.min(current + amount, currentSurah.ayahs);
+        if (next === current) {
+          return prev;
+        }
+
+        const today = todayKey();
+        let streak = prev.streak;
+        let lastActionDate = prev.lastActionDate;
+
+        const increased = amount > 0 && next > current;
+
+        if (increased && lastActionDate !== today) {
+          streak =
+            lastActionDate === yesterdayKey() ? streak + 1 : 1;
+          lastActionDate = today;
+        }
 
         return {
           ...prev,
-          [currentSurah.number]: next,
+          progress: {
+            ...prev.progress,
+            [surah.n]: next,
+          },
+          streak,
+          lastActionDate,
+          updatedAt: new Date().toISOString(),
         };
       });
-
-      touchActivity();
     },
-    [currentSurah.ayahs, currentSurah.number, hydrated, touchActivity]
+    [surah.a, surah.n]
   );
 
-  // ===== زيادة المراجعة =====
-  const incrementReviewed = useCallback(() => {
-    if (!hydrated) return;
+  const onGoalChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = clamp(
+      Math.floor(Number(event.target.value) || 1),
+      1,
+      50
+    );
 
-    setReviewed((prev) => {
-      const current = prev[currentSurah.number] ?? 0;
-      const next = Math.min(current + dailyGoal, currentSurah.ayahs);
+    setState((prev) => ({
+      ...prev,
+      dailyGoal: value,
+      updatedAt: new Date().toISOString(),
+    }));
+  };
 
-      return {
-        ...prev,
-        [currentSurah.number]: next,
+  const resetSurahProgress = () => {
+    if (!window.confirm(ui.confirmResetSurah)) return;
+
+    setState((prev) => ({
+      ...prev,
+      progress: {
+        ...prev.progress,
+        [surah.n]: 0,
+      },
+      updatedAt: new Date().toISOString(),
+    }));
+
+    showMessage("success", ui.resetSurahDone);
+  };
+
+  const resetAllProgress = () => {
+    if (!window.confirm(ui.confirmResetAll)) return;
+
+    setState((prev) => ({
+      progress: {},
+      dailyGoal: prev.dailyGoal,
+      streak: 0,
+      lastActionDate: null,
+      updatedAt: new Date().toISOString(),
+    }));
+
+    showMessage("success", ui.resetAllDone);
+  };
+
+  const exportData = () => {
+    try {
+      const payload = {
+        version: 1,
+        app: "ismail-quran-memorization",
+        exportedAt: new Date().toISOString(),
+        ...state,
       };
-    });
 
-    touchActivity();
-  }, [currentSurah.ayahs, currentSurah.number, dailyGoal, hydrated, touchActivity]);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
 
-  // ===== تصفير السورة =====
-  const resetSurah = useCallback(() => {
-    setMemorized((prev) => {
-      const next = { ...prev };
-      delete next[currentSurah.number];
-      return next;
-    });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
 
-    setReviewed((prev) => {
-      const next = { ...prev };
-      delete next[currentSurah.number];
-      return next;
-    });
-  }, [currentSurah.number]);
+      anchor.href = url;
+      anchor.download = `quran-memorization-${todayKey()}.json`;
 
-  // ===== تصفير الكل =====
-  const resetAll = useCallback(() => {
-    const confirmed = window.confirm(ui.confirmReset);
-    if (!confirmed) return;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
 
-    setMemorized({});
-    setReviewed({});
-    setStreak(0);
-    setLastActiveDate(null);
-  }, [ui.confirmReset]);
+      URL.revokeObjectURL(url);
 
-  // ===== تغيير الهدف =====
-  const handleGoalChange = useCallback(
-    (event: ChangeEvent<HTMLSelectElement>) => {
-      setDailyGoal(Number(event.target.value));
-    },
-    []
-  );
+      showMessage("success", ui.exported);
+    } catch {
+      showMessage("error", ui.exportFailed);
+    }
+  };
 
-  // ===== تغيير السورة =====
-  const handleSurahChange = useCallback((number: number) => {
-    setSelectedSurah(number);
-    setSearch("");
-  }, []);
+  const onImportFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
 
-  if (!hydrated) {
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const next = sanitizeState(parsed);
+
+      if (!next) {
+        throw new Error("invalid_state");
+      }
+
+      setState(next);
+      showMessage("success", ui.imported);
+    } catch {
+      showMessage("error", ui.importFailed);
+    } finally {
+      event.target.value = "";
+    }
+  };
+
+  if (!mounted) {
     return (
-      <section className="container-page py-10 md:py-14">
-        <div className="card p-10 text-center">
-          <div className="mx-auto mb-5 h-12 w-12 animate-spin rounded-full border-4 border-primary-200 border-t-primary-600 dark:border-night-700 dark:border-t-primary-400" />
-          <p className="text-lg font-bold text-slate-700 dark:text-slate-200">
-            {ui.loading}
-          </p>
-        </div>
+      <section
+        dir={isRTL ? "rtl" : "ltr"}
+        className="card animate-pulse p-6 md:p-8"
+        aria-busy="true"
+      >
+        <div className="mb-4 h-8 w-64 rounded bg-slate-200 dark:bg-night-700" />
+        <div className="mb-3 h-4 w-full rounded bg-slate-200 dark:bg-night-700" />
+        <div className="h-4 w-2/3 rounded bg-slate-200 dark:bg-night-700" />
+        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
+          {ui.loading}
+        </p>
       </section>
     );
   }
 
   return (
-    <section className="container-page py-10 md:py-14">
-      {/* ===== بطاقة الخطة اليومية ===== */}
-      <div className="card relative mb-8 overflow-hidden p-6 md:p-8">
-        <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+    <section
+      dir={isRTL ? "rtl" : "ltr"}
+      className="card relative overflow-hidden p-6 md:p-8"
+    >
+      <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
-        <div className="mb-6">
-          <h2
-            className="mb-2 text-2xl font-black text-slate-900 dark:text-white"
-            style={{ fontFamily: "var(--font-amiri)" }}
-          >
-            {ui.planTitle}
-          </h2>
+      <div className="mb-6">
+        <h2 className="mb-2 text-2xl font-black text-slate-900 dark:text-white">
+          🧠 {ui.title}
+        </h2>
+        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {ui.description}
+        </p>
+      </div>
 
-          <p className="text-slate-500 dark:text-slate-400">
-            {ui.planDesc}
+      {message && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`mb-5 rounded-xl px-4 py-3 text-sm font-semibold ${
+            message.type === "success"
+              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/25 dark:text-emerald-300"
+              : "bg-red-50 text-red-700 dark:bg-red-950/25 dark:text-red-300"
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
+      {/* Stats */}
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-night-700 dark:bg-night-800/50">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            {ui.totalMemorized}
+          </p>
+          <p className="mt-1 text-2xl font-black text-cyan-700 dark:text-cyan-300">
+            {formatNumber(totalMemorized, L)} / {formatNumber(TOTAL_AYAHS, L)}
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
-          {/* اختيار السورة */}
-          <div>
-            <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
-              {ui.chooseSurah}
-            </label>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-night-700 dark:bg-night-800/50">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            {ui.totalProgress}
+          </p>
+          <p className="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-300">
+            {totalPercent.toFixed(1)}%
+          </p>
+        </div>
 
-            <div className="relative mb-3">
-              <svg
-                className="pointer-events-none absolute start-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.3-4.3" />
-              </svg>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-night-700 dark:bg-night-800/50">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            {ui.streak}
+          </p>
+          <p className="mt-1 text-2xl font-black text-amber-700 dark:text-amber-300">
+            {formatNumber(state.streak, L)}
+          </p>
+        </div>
 
-              <input
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder={ui.searchSurah}
-                className="input-islamic !ps-12"
-                aria-label={ui.searchSurah}
-              />
-            </div>
-
-            <div className="max-h-64 overflow-y-auto rounded-2xl border border-slate-200 bg-white dark:border-night-700 dark:bg-night-800">
-              {filteredSurahs.length === 0 ? (
-                <p className="p-6 text-center text-sm text-slate-500 dark:text-slate-400">
-                  {ui.noSurahFound}
-                </p>
-              ) : (
-                filteredSurahs.map((surah) => {
-                  const isActive = surah.number === currentSurah.number;
-                  const surahMemorized = memorized[surah.number] ?? 0;
-                  const surahPercent = Math.min(
-                    Math.round((surahMemorized / surah.ayahs) * 100),
-                    100
-                  );
-                  const isComplete = surahMemorized >= surah.ayahs;
-
-                  return (
-                    <button
-                      key={surah.number}
-                      type="button"
-                      onClick={() => handleSurahChange(surah.number)}
-                      className={`flex w-full items-center gap-3 border-b border-slate-100 px-4 py-3 text-start transition-all last:border-b-0 dark:border-night-700 ${
-                        isActive
-                          ? "bg-primary-50 dark:bg-primary-950/30"
-                          : "hover:bg-slate-50 dark:hover:bg-night-700"
-                      }`}
-                    >
-                      <span
-                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-black ${
-                          isComplete
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
-                            : isActive
-                            ? "bg-primary-500 text-white"
-                            : "bg-slate-100 text-slate-600 dark:bg-night-700 dark:text-slate-300"
-                        }`}
-                      >
-                        {isComplete ? "✓" : formatNumber(surah.number, lang)}
-                      </span>
-
-                      <div className="min-w-0 flex-1">
-                        <p
-                          className={`truncate text-sm font-bold ${
-                            isActive
-                              ? "text-primary-800 dark:text-primary-200"
-                              : "text-slate-800 dark:text-slate-100"
-                          }`}
-                        >
-                          {surahLabel(surah, lang)}
-                        </p>
-
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {formatNumber(surah.ayahs, lang)} {ui.ayahs}
-                        </p>
-                      </div>
-
-                      {surahMemorized > 0 && (
-                        <span className="shrink-0 text-xs font-black text-gold-600 dark:text-gold-400">
-                          {formatNumber(surahPercent, lang)}%
-                        </span>
-                      )}
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* الهدف اليومي */}
-          <div>
-            <label
-              htmlFor="daily-goal"
-              className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-            >
-              {ui.dailyGoal}
-            </label>
-
-            <select
-              id="daily-goal"
-              value={dailyGoal}
-              onChange={handleGoalChange}
-              className="input-islamic"
-            >
-              {DAILY_GOAL_OPTIONS.map((goal) => (
-                <option key={goal} value={goal}>
-                  {formatNumber(goal, lang)} {ui.ayahsPerDay}
-                </option>
-              ))}
-            </select>
-
-            {estimatedDays > 0 && (
-              <div className="mt-4 rounded-xl border border-primary-100 bg-primary-50/60 p-4 text-center dark:border-primary-900/40 dark:bg-primary-950/20">
-                <p className="text-xs font-bold text-primary-700 dark:text-primary-300">
-                  {ui.estimatedFinish}
-                </p>
-                <p className="mt-1 text-2xl font-black text-slate-900 dark:text-white">
-                  {formatNumber(estimatedDays, lang)}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {ui.daysLeft}
-                </p>
-              </div>
-            )}
-
-            {isSurahComplete && (
-              <div className="mt-4 rounded-xl border border-green-200 bg-green-50/60 p-4 text-center dark:border-green-800/40 dark:bg-green-950/20">
-                <p className="text-sm font-black text-green-700 dark:text-green-300">
-                  ✓ {ui.completed}
-                </p>
-              </div>
-            )}
-          </div>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-night-700 dark:bg-night-800/50">
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+            {ui.remaining}
+          </p>
+          <p className="mt-1 text-2xl font-black text-slate-900 dark:text-white">
+            {formatNumber(remainingInSurah, L)}
+          </p>
         </div>
       </div>
 
-      {/* ===== السورة الحالية ===== */}
-      <div className="card mb-8 p-6 md:p-8">
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="mb-1 text-sm font-bold text-primary-600 dark:text-primary-400">
-              {ui.surah} {formatNumber(currentSurah.number, lang)}
-            </p>
+      {/* Controls */}
+      <div className="mb-6 grid gap-4 md:grid-cols-2">
+        <div>
+          <label
+            htmlFor="memorization-surah"
+            className="mb-1 block text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            {ui.selectSurah}
+          </label>
 
-            <h2
-              className="text-3xl font-black text-slate-900 dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {surahLabel(currentSurah, lang)}
-            </h2>
-
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-              {formatNumber(currentSurah.ayahs, lang)} {ui.ayahs} •{" "}
-              {currentSurah.type === "makki"
-                ? isRTL
-                  ? "مكية"
-                  : "Meccan"
-                : isRTL
-                ? "مدنية"
-                : "Medinan"}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => incrementMemorized(1)}
-              disabled={isSurahComplete}
-              className="btn-primary inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 5v14" />
-                <path d="M5 12h14" />
-              </svg>
-              {ui.markMemorized}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => incrementMemorized(dailyGoal)}
-              disabled={isSurahComplete}
-              className="btn-outline inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              +{formatNumber(dailyGoal, lang)}
-            </button>
-
-            <button
-              type="button"
-              onClick={incrementReviewed}
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-gold-200 bg-gold-50 px-5 py-3 text-sm font-bold text-gold-700 transition-all hover:bg-gold-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gold-800/40 dark:bg-gold-950/20 dark:text-gold-300 dark:hover:bg-gold-900/30"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M1 4v6h6" />
-                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-              </svg>
-              {ui.markReviewed}
-            </button>
-
-            <button
-              type="button"
-              onClick={resetSurah}
-              disabled={currentMemorized === 0 && currentReviewed === 0}
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition-all hover:bg-red-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 6h18" />
-                <path d="M8 6V4h8v2" />
-                <path d="M19 6l-1 14H6L5 6" />
-              </svg>
-              {ui.resetSurah}
-            </button>
-          </div>
+          <select
+            id="memorization-surah"
+            value={selectedSurah}
+            onChange={(e) => setSelectedSurah(Number(e.target.value))}
+            className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-600 dark:border-night-700 dark:bg-night-800 dark:text-white"
+          >
+            {SURAHS.map((s) => (
+              <option key={s.n} value={s.n}>
+                {s.n}. {isRTL ? s.ar : s.en} ({s.a})
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* شريط التقدم */}
-        <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between text-sm font-bold">
-            <span className="text-slate-600 dark:text-slate-300">
-              {ui.memorized}:{" "}
-              <span className="text-primary-600 dark:text-primary-400">
-                {formatNumber(currentMemorized, lang)}
-              </span>{" "}
-              {ui.of}{" "}
-              <span className="text-slate-800 dark:text-white">
-                {formatNumber(currentSurah.ayahs, lang)}
-              </span>
-            </span>
+        <div>
+          <label
+            htmlFor="memorization-goal"
+            className="mb-1 block text-xs font-bold text-slate-600 dark:text-slate-300"
+          >
+            {ui.dailyGoal}
+          </label>
 
-            <span className="text-primary-600 dark:text-primary-400">
-              {formatNumber(currentPercent, lang)}%
-            </span>
-          </div>
+          <input
+            id="memorization-goal"
+            type="number"
+            min={1}
+            max={50}
+            value={state.dailyGoal}
+            onChange={onGoalChange}
+            className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-600 dark:border-night-700 dark:bg-night-800 dark:text-white"
+          />
 
-          <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-night-800">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isSurahComplete
-                  ? "bg-gradient-to-r from-green-400 to-green-600"
-                  : "bg-gradient-to-r from-primary-400 via-primary-500 to-gold-400"
-              }`}
-              style={{ width: `${currentPercent}%` }}
-            />
-          </div>
-        </div>
-
-        {/* إحصائيات السورة */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-night-700 dark:bg-night-800/50">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              {ui.memorized}
-            </p>
-            <p className="mt-1 text-2xl font-black text-primary-600 dark:text-primary-400">
-              {formatNumber(currentMemorized, lang)}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-night-700 dark:bg-night-800/50">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              {ui.reviewed}
-            </p>
-            <p className="mt-1 text-2xl font-black text-gold-600 dark:text-gold-400">
-              {formatNumber(currentReviewed, lang)}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-center dark:border-night-700 dark:bg-night-800/50">
-            <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-              {ui.streak}
-            </p>
-            <p className="mt-1 text-2xl font-black text-slate-800 dark:text-white">
-              {formatNumber(streak, lang)} {ui.day}
-            </p>
-          </div>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            {ui.goalHint}
+          </p>
         </div>
       </div>
 
-      {/* ===== التقدم الكلي ===== */}
-      <div className="card mb-8 p-6 md:p-8">
-        <h2
-          className="mb-6 text-xl font-black text-slate-900 dark:text-white"
-          style={{ fontFamily: "var(--font-amiri)" }}
-        >
-          {ui.overallProgress}
-        </h2>
+      {/* Surah progress */}
+      <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 dark:border-night-700 dark:bg-night-800">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-lg font-black text-slate-900 dark:text-white">
+            {surah.n}. {isRTL ? surah.ar : surah.en}
+          </h3>
 
-        <div className="mb-6">
-          <div className="mb-2 flex items-center justify-between text-sm font-bold">
-            <span className="text-slate-600 dark:text-slate-300">
-              {formatNumber(totalMemorized, lang)} / {formatNumber(totalAyahs, lang)}{" "}
-              {ui.ayahs}
-            </span>
-            <span className="text-primary-600 dark:text-primary-400">
-              {formatNumber(overallPercent, lang)}%
-            </span>
-          </div>
-
-          <div className="h-4 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-night-800">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-primary-400 via-primary-500 to-gold-400 transition-all duration-700"
-              style={{ width: `${overallPercent}%` }}
-            />
-          </div>
+          <span className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-700 dark:bg-cyan-950/35 dark:text-cyan-300">
+            {formatNumber(memorizedInSurah, L)} / {formatNumber(surah.a, L)}
+          </span>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-primary-100 bg-primary-50/60 p-5 text-center dark:border-primary-900/40 dark:bg-primary-950/20">
-            <p className="text-xs font-bold text-primary-700 dark:text-primary-300">
-              {ui.completedSurahs}
-            </p>
-            <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
-              {formatNumber(completedSurahs, lang)}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-gold-100 bg-gold-50/60 p-5 text-center dark:border-gold-800/40 dark:bg-gold-950/20">
-            <p className="text-xs font-bold text-gold-700 dark:text-gold-300">
-              {ui.totalAyahsMemorized}
-            </p>
-            <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
-              {formatNumber(totalMemorized, lang)}
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-green-100 bg-green-50/60 p-5 text-center dark:border-green-800/40 dark:bg-green-950/20">
-            <p className="text-xs font-bold text-green-700 dark:text-green-300">
-              {ui.streak}
-            </p>
-            <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
-              {formatNumber(streak, lang)}
-            </p>
-          </div>
+        <div className="mb-2 h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-night-700">
+          <div
+            className="h-3 rounded-full bg-gradient-to-r from-cyan-600 to-emerald-500 transition-all"
+            style={{ width: `${Math.min(100, surahPercent)}%` }}
+          />
         </div>
 
-        <div className="mt-6 text-center">
+        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+          {ui.surahProgress}: {surahPercent.toFixed(1)}%
+        </p>
+      </div>
+
+      {/* Overall progress */}
+      <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5 dark:border-amber-900/30 dark:bg-amber-950/15">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-lg font-black text-slate-900 dark:text-white">
+            {ui.totalProgress}
+          </h3>
+          <span className="text-sm font-black text-amber-700 dark:text-amber-300">
+            {totalPercent.toFixed(1)}%
+          </span>
+        </div>
+
+        <div className="h-3 w-full overflow-hidden rounded-full bg-white/70 dark:bg-night-800">
+          <div
+            className="h-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all"
+            style={{ width: `${Math.min(100, totalPercent)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Quick actions */}
+      <div className="mb-6">
+        <p className="mb-3 text-sm font-black text-slate-700 dark:text-slate-200">
+          {ui.quickAdd}
+        </p>
+
+        <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={resetAll}
-            className="inline-flex items-center gap-2 rounded-xl border-2 border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition-all hover:bg-red-100 active:scale-95 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+            onClick={() => addToSurah(1)}
+            className="rounded-xl bg-cyan-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-cyan-800"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M3 6h18" />
-              <path d="M8 6V4h8v2" />
-              <path d="M19 6l-1 14H6L5 6" />
-            </svg>
-            {ui.resetAll}
+            {ui.addOne}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => addToSurah(5)}
+            className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-cyan-700"
+          >
+            {ui.addFive}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => addToSurah(10)}
+            className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700"
+          >
+            {ui.addTen}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => addToSurah(state.dailyGoal)}
+            className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-amber-700"
+          >
+            {ui.addGoal}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => addToSurah(-1)}
+            className="rounded-xl border-2 border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 dark:border-night-700 dark:text-slate-200 dark:hover:bg-night-800"
+          >
+            {ui.subtractOne}
           </button>
         </div>
       </div>
 
-      {/* ===== نصائح ===== */}
-      <div className="card mb-8 p-6 md:p-8">
-        <h2
-          className="mb-5 text-xl font-black text-slate-900 dark:text-white"
-          style={{ fontFamily: "var(--font-amiri)" }}
+      {/* Danger / backup actions */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={resetSurahProgress}
+          className="rounded-xl border-2 border-amber-300 px-4 py-2 text-sm font-bold text-amber-700 transition hover:bg-amber-50 dark:border-amber-800/50 dark:text-amber-300 dark:hover:bg-amber-950/20"
         >
-          💡 {ui.tipTitle}
-        </h2>
+          {ui.resetSurah}
+        </button>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {ui.tips.map((tip, index) => (
-            <div
-              key={index}
-              className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-4 dark:border-night-700 dark:bg-night-800/40"
-            >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-black text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
-                {formatNumber(index + 1, lang)}
-              </span>
+        <button
+          type="button"
+          onClick={resetAllProgress}
+          className="rounded-xl border-2 border-red-300 px-4 py-2 text-sm font-bold text-red-700 transition hover:bg-red-50 dark:border-red-800/50 dark:text-red-300 dark:hover:bg-red-950/20"
+        >
+          {ui.resetAll}
+        </button>
 
-              <p className="leading-relaxed text-slate-600 dark:text-slate-300">
-                {tip}
-              </p>
-            </div>
-          ))}
-        </div>
+        <button
+          type="button"
+          onClick={exportData}
+          className="rounded-xl border-2 border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 dark:border-night-700 dark:text-slate-200 dark:hover:bg-night-800"
+        >
+          ⬇️ {ui.export}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          className="rounded-xl border-2 border-slate-300 px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100 dark:border-night-700 dark:text-slate-200 dark:hover:bg-night-800"
+        >
+          ⬆️ {ui.import}
+        </button>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="application/json,.json"
+          className="hidden"
+          onChange={(e) => void onImportFile(e)}
+        />
       </div>
 
-      {/* ===== ملاحظة ===== */}
-      <div className="card p-5 text-center">
-        <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-          {ui.note}
+      {/* Last update + note */}
+      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600 dark:border-night-700 dark:bg-night-800/50 dark:text-slate-300">
+        <p className="mb-1 font-bold">
+          {ui.lastUpdate}: {formatDateTime(state.updatedAt, L)}
         </p>
+        <p className="leading-relaxed">{ui.note}</p>
       </div>
     </section>
   );

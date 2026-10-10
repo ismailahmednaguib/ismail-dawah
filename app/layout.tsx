@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import { Cairo, Amiri, Scheherazade_New } from "next/font/google";
 import "./globals.css";
@@ -5,36 +6,79 @@ import HtmlDir from "@/components/HtmlDir";
 import SWRegister from "@/components/SWRegister";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 
-// ===== الخطوط العربية =====
+// ============================================================
+// Site constants
+// ============================================================
+
+const FALLBACK_SITE_URL = "https://ismailahmednaguib.vercel.app";
+
+function normalizeSiteUrl(raw: string | undefined | null): string {
+  const value = String(raw || "").trim();
+
+  if (!value) {
+    return FALLBACK_SITE_URL;
+  }
+
+  try {
+    const url = new URL(value);
+
+    // نستخدم origin فقط حتى لا تتكرر مسارات غريبة في metadataBase
+    return url.origin;
+  } catch {
+    return FALLBACK_SITE_URL;
+  }
+}
+
+const SITE_URL = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
+
+const SITE_NAME = "إسماعيل أحمد نجيب | منصة دعوية شاملة";
+const SITE_SHORT_NAME = "إسماعيل أحمد نجيب";
+
+const SITE_DESCRIPTION_AR =
+  "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد.";
+
+// ============================================================
+// Fonts
+// مهم: نستخدم -source حتى لا تتعارض أسماء المتغيرات مع Tailwind
+// ============================================================
+
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
   weight: ["300", "400", "600", "700", "900"],
-  variable: "--font-cairo",
+  variable: "--font-cairo-source",
   display: "swap",
 });
 
 const amiri = Amiri({
-  subsets: ["arabic"],
+  subsets: ["arabic", "latin"],
   weight: ["400", "700"],
-  variable: "--font-amiri",
+  variable: "--font-amiri-source",
   display: "swap",
 });
 
 const scheherazade = Scheherazade_New({
-  subsets: ["arabic"],
+  subsets: ["arabic", "latin"],
   weight: ["400", "700"],
-  variable: "--font-scheherazade",
+  variable: "--font-scheherazade-source",
   display: "swap",
 });
 
-// ===== الـ Metadata الأساسي =====
+// ============================================================
+// Metadata
+// ============================================================
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+
   title: {
-    default: "إسماعيل أحمد نجيب | منصة دعوية شاملة",
-    template: "%s | إسماعيل أحمد نجيب",
+    default: SITE_NAME,
+    template: `%s | ${SITE_SHORT_NAME}`,
   },
-  description:
-    "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد",
+
+  description: SITE_DESCRIPTION_AR,
+
+  applicationName: SITE_SHORT_NAME,
+
   keywords: [
     "إسلام",
     "قرآن",
@@ -43,46 +87,72 @@ export const metadata: Metadata = {
     "مواقيت الصلاة",
     "القبلة",
     "دعوة",
-    "الإسلام",
+    "الرد على الشبهات",
+    "منصة دعوية",
+    "قصص الأنبياء",
+    "الرقية الشرعية",
+    "حاسبة الزكاة",
+    "دليل الحج",
     "Islam",
     "Quran",
     "Adhkar",
+    "Fatwa",
+    "Prayer Times",
+    "Qibla",
     "Dawah",
+    "Islamic Platform",
+    "Prophets Stories",
+    "Ruqyah",
+    "Zakat Calculator",
+    "Hajj Guide",
   ],
-  authors: [{ name: "إسماعيل أحمد نجيب" }],
-  creator: "إسماعيل أحمد نجيب",
-  publisher: "إسماعيل أحمد نجيب",
+
+  authors: [
+    {
+      name: SITE_SHORT_NAME,
+      url: SITE_URL,
+    },
+  ],
+
+  creator: SITE_SHORT_NAME,
+  publisher: SITE_SHORT_NAME,
+
+  category: "education",
+
   alternates: {
-    canonical: "https://ismailahmednaguib.vercel.app",
+    canonical: SITE_URL,
     languages: {
-      ar: "https://ismailahmednaguib.vercel.app/ar",
-      en: "https://ismailahmednaguib.vercel.app/en",
+      ar: `${SITE_URL}/ar`,
+      en: `${SITE_URL}/en`,
+      "x-default": SITE_URL,
     },
   },
+
   openGraph: {
     type: "website",
     locale: "ar_EG",
     alternateLocale: ["en_US"],
-    url: "https://ismailahmednaguib.vercel.app",
-    siteName: "إسماعيل أحمد نجيب | منصة دعوية شاملة",
-    title: "إسماعيل أحمد نجيب | منصة دعوية شاملة",
-    description:
-      "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION_AR,
     images: [
       {
         url: "/icon-512.png",
         width: 512,
         height: 512,
-        alt: "إسماعيل أحمد نجيب",
+        alt: SITE_SHORT_NAME,
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "إسماعيل أحمد نجيب | منصة دعوية شاملة",
-    description: "منصة إسلامية شاملة لكل ما يحتاجه المسلم",
+    title: SITE_NAME,
+    description: "منصة إسلامية شاملة لكل ما يحتاجه المسلم.",
     images: ["/icon-512.png"],
   },
+
   robots: {
     index: true,
     follow: true,
@@ -94,11 +164,21 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+
   manifest: "/manifest.webmanifest",
+
   icons: {
     icon: [
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      {
+        url: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
       {
         url: "/icon-maskable-512.png",
         sizes: "512x512",
@@ -108,27 +188,47 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-touch-icon.png",
   },
+
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "إسماعيل أحمد نجيب",
+    title: SITE_SHORT_NAME,
   },
-  category: "education",
+
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 };
 
-// ===== الـ Viewport =====
+// ============================================================
+// Viewport
+// ============================================================
+
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0e7490" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a1628" },
-  ],
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   colorScheme: "light dark",
+  viewportFit: "cover",
+
+  themeColor: [
+    {
+      media: "(prefers-color-scheme: light)",
+      color: "#0e7490",
+    },
+    {
+      media: "(prefers-color-scheme: dark)",
+      color: "#0a1628",
+    },
+  ],
 };
 
-// ===== الـ Layout الرئيسي =====
+// ============================================================
+// Root Layout
+// ============================================================
+
 export default function RootLayout({
   children,
 }: {
@@ -141,11 +241,25 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${cairo.variable} ${amiri.variable} ${scheherazade.variable}`}
     >
-      <body className="min-h-screen flex flex-col font-[family-name:var(--font-cairo)]">
-        {/* بيضبط الاتجاه واللغة والوضع الليلي حسب المسار */}
+      <body
+        className="min-h-screen flex flex-col antialiased"
+        style={{
+          fontFamily:
+            "var(--font-cairo-source), ui-sans-serif, system-ui, sans-serif",
+        }}
+      >
+        {/* يضبط الاتجاه واللغة والوضع الليلي حسب المسار */}
         <HtmlDir />
 
-        {/* تسجيل الـ Service Worker للـ PWA */}
+        {/* تخطي إلى المحتوى — مفيد للوصولية */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-cyan-700 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
+        >
+          تخطَّ إلى المحتوى
+        </a>
+
+        {/* تسجيل Service Worker للـ PWA */}
         <SWRegister />
 
         {/* تتبع التحليلات */}

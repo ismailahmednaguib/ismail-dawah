@@ -2,73 +2,55 @@
 import type { MetadataRoute } from "next";
 
 // ============================================================
-// إعدادات الموقع
+// Site URL
 // ============================================================
 
-/**
- * رابط الموقع الأساسي.
- *
- * على Vercel يفضّل إضافة Variable:
- * NEXT_PUBLIC_SITE_URL=https://ismailahmednaguib.vercel.app
- *
- * ولو المتغير مش موجود، هيستخدم الرابط الاحتياطي ده.
- */
-const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  "https://ismailahmednaguib.vercel.app"
-).replace(/\/+$/, "");
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`.replace(/\/+$/, "")
+    : "https://ismailahmednaguib.vercel.app");
 
 // ============================================================
-// Manifest
+// Icons
+// وحّدها مع layout.tsx
 // ============================================================
 
-export default function manifest(): MetadataRoute.Manifest {
-  return {
-    id: SITE_URL,
+const ICONS = {
+  icon192: "/icon-192.png",
+  icon512: "/icon-512.png",
+  maskable512: "/icon-maskable-512.png",
+  appleTouchIcon: "/apple-touch-icon.png",
+};
+
+// ============================================================
+// Colors
+// ============================================================
+
+const COLORS = {
+  background: "#f8fafc",
+  theme: "#0e7490",
+};
+
+// ============================================================
+// Locales
+// ============================================================
+
+type Locale = "ar" | "en";
+
+type LocaleContent = {
+  name: string;
+  short_name: string;
+  description: string;
+  shortcuts: NonNullable<MetadataRoute.Manifest["shortcuts"]>;
+};
+
+const texts: Record<Locale, LocaleContent> = {
+  ar: {
     name: "منصة إسماعيل أحمد نجيب الدعوية",
     short_name: "إسماعيل نجيب",
     description:
-      "منصة إسلامية دعوية شاملة تجمع القرآن، الأذكار، الفتاوى، قصص الأنبياء، مواقيت الصلاة، اتجاه القبلة، المسبحة، خطة حفظ القرآن، الرقية الشرعية، الورد اليومي، حاسبة الزكاة، الميراث، دليل الحج والعمرة، دليل الدعوة، المقالات، والأسئلة الشائعة.",
-
-    start_url: "/ar",
-    scope: "/",
-
-    display: "standalone",
-    orientation: "portrait-primary",
-
-    background_color: "#ffffff",
-    theme_color: "#0f766e",
-
-    lang: "ar",
-    dir: "rtl",
-
-    categories: [
-      "education",
-      "lifestyle",
-      "reference",
-      "utilities",
-    ],
-
-    icons: [
-      {
-        src: "/icons/logo-192.png",
-        sizes: "192x192",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/logo-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/maskable-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "maskable",
-      },
-    ],
+      "منصة إسلامية دعوية شاملة: القرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، المسبحة، خطة الحفظ، الزكاة، الحج، الدعوة، والمقالات.",
 
     shortcuts: [
       {
@@ -126,6 +108,145 @@ export default function manifest(): MetadataRoute.Manifest {
         url: "/ar/search",
       },
     ],
+  },
+
+  en: {
+    name: "Ismail Ahmed Naguib Dawah Platform",
+    short_name: "Ismail Naguib",
+    description:
+      "A comprehensive Islamic dawah platform: Quran, adhkar, fatwas, prayer times, qibla, tasbih, memorization plan, zakat, Hajj guide, dawah tools, and articles.",
+
+    shortcuts: [
+      {
+        name: "Holy Quran",
+        short_name: "Quran",
+        description: "Browse surahs, listen, and read",
+        url: "/en/quran",
+      },
+      {
+        name: "Adhkar",
+        short_name: "Adhkar",
+        description: "Morning, evening, sleep, and after-prayer remembrances",
+        url: "/en/adhkar",
+      },
+      {
+        name: "Prayer Times",
+        short_name: "Prayer",
+        description: "Prayer times based on your location",
+        url: "/en/prayer-times",
+      },
+      {
+        name: "Qibla Direction",
+        short_name: "Qibla",
+        description: "Qibla compass and distance to Makkah",
+        url: "/en/qibla",
+      },
+      {
+        name: "Tasbih Counter",
+        short_name: "Tasbih",
+        description: "Interactive counter for dhikr and tasbih",
+        url: "/en/tasbih",
+      },
+      {
+        name: "Quran Memorization Plan",
+        short_name: "Memorize",
+        description: "Organize your daily memorization and revision",
+        url: "/en/quran-memorization",
+      },
+      {
+        name: "Zakat Calculator",
+        short_name: "Zakat",
+        description: "Calculate zakat based on nisab and debts",
+        url: "/en/zakat",
+      },
+      {
+        name: "Hajj & Umrah Guide",
+        short_name: "Hajj",
+        description: "Steps, duʿas, and common mistakes",
+        url: "/en/hajj-guide",
+      },
+      {
+        name: "Search",
+        short_name: "Search",
+        description: "Search Quran, adhkar, fatwas, stories, and pages",
+        url: "/en/search",
+      },
+    ],
+  },
+};
+
+// ============================================================
+// Manifest
+// ============================================================
+
+export default async function manifest({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<MetadataRoute.Manifest> {
+  const { lang } = await params;
+
+  const locale: Locale = lang === "en" ? "en" : "ar";
+  const content = texts[locale];
+
+  const dir: "rtl" | "ltr" = locale === "ar" ? "rtl" : "ltr";
+
+  return {
+    id: `${SITE_URL}/${locale}`,
+
+    name: content.name,
+    short_name: content.short_name,
+    description: content.description,
+
+    start_url: `/${locale}`,
+    scope: "/",
+
+    display: "standalone",
+    display_override: ["standalone", "browser"],
+
+    orientation: "portrait-primary",
+
+    background_color: COLORS.background,
+    theme_color: COLORS.theme,
+
+    lang: locale,
+    dir,
+
+    categories: [
+      "education",
+      "reference",
+      "lifestyle",
+      "utilities",
+    ],
+
+    icons: [
+      {
+        src: ICONS.icon192,
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: ICONS.icon512,
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: ICONS.maskable512,
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: ICONS.appleTouchIcon,
+        sizes: "180x180",
+        type: "image/png",
+        purpose: "any",
+      },
+    ],
+
+    shortcuts: content.shortcuts,
 
     prefer_related_applications: false,
   };

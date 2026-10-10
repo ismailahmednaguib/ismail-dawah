@@ -1,13 +1,30 @@
+// components/Footer.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { t } from "@/lib/i18n";
+import { t, type Lang } from "@/lib/i18n";
 
-export default function Footer() {
+// ============================================================
+// الأنواع
+// ============================================================
+
+type FooterProps = {
+  lang?: Lang;
+  settings?: any;
+};
+
+// ============================================================
+// المكون الرئيسي
+// ============================================================
+
+export default function Footer({ lang: langProp, settings }: FooterProps) {
   const pathname = usePathname();
-  const lang = pathname.split("/")[1] === "en" ? "en" : "ar";
+  
+  // ✅ استخدام langProp إذا مُرر، أو استخراجه من pathname
+  const lang: Lang = langProp || (pathname.split("/")[1] === "en" ? "en" : "ar");
+  const isRTL = lang === "ar";
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -17,7 +34,7 @@ export default function Footer() {
     if (!email.trim()) return;
     setStatus("loading");
     try {
-      const res = await fetch("/api/newsletter/subscribe", {
+      const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), lang }),
@@ -29,36 +46,60 @@ export default function Footer() {
     }
   };
 
-  // روابط الأقسام الثلاثة
+  // ============================================================
+  // الروابط - مع استخدام المفاتيح الصحيحة من translations.ts
+  // ============================================================
+
   const worshipLinks = [
-    { href: `/${lang}/quran`, label: t(lang, "nav.quran") },
-    { href: `/${lang}/prayer-times`, label: t(lang, "nav.prayer") },
-    { href: `/${lang}/adhkar`, label: t(lang, "nav.adhkar") },
-    { href: `/${lang}/qibla`, label: lang === "ar" ? "اتجاه القبلة" : "Qibla" },
-    { href: `/${lang}/tasbih`, label: lang === "ar" ? "المسبحة" : "Tasbih" },
+    { href: `/${lang}/quran`, label: t(lang, "quran") },
+    { href: `/${lang}/prayer-times`, label: t(lang, "prayer_times") },
+    { href: `/${lang}/adhkar`, label: t(lang, "adhkar") },
+    { href: `/${lang}/qibla`, label: t(lang, "qibla") },
+    { href: `/${lang}/tasbih`, label: t(lang, "tasbih") },
   ];
 
   const knowledgeLinks = [
-    { href: `/${lang}/fatwa`, label: t(lang, "nav.fatwa") },
-    { href: `/${lang}/atheism-response`, label: lang === "ar" ? "الرد على الإلحاد" : "Atheism Response" },
-    { href: `/${lang}/doubts`, label: lang === "ar" ? "الشبهات" : "Doubts" },
-    { href: `/${lang}/prophets-stories`, label: lang === "ar" ? "قصص الأنبياء" : "Prophets Stories" },
-    { href: `/${lang}/inheritance`, label: lang === "ar" ? "المواريث" : "Inheritance" },
+    { href: `/${lang}/fatwa`, label: t(lang, "fatwa") },
+    { href: `/${lang}/atheism-response`, label: t(lang, "atheism_response") },
+    { href: `/${lang}/doubts`, label: t(lang, "doubts") },
+    { href: `/${lang}/prophets-stories`, label: t(lang, "prophets_stories") },
+    { href: `/${lang}/inheritance`, label: t(lang, "inheritance") },
   ];
 
   const dawahLinks = [
-    { href: `/${lang}/dawah-guide`, label: lang === "ar" ? "دليل الدعوة" : "Dawah Guide" },
-    { href: `/${lang}/projects`, label: lang === "ar" ? "المشاريع" : "Projects" },
-    { href: `/${lang}/khutab`, label: lang === "ar" ? "الخطب" : "Khutbahs" },
-    { href: `/${lang}/live`, label: t(lang, "nav.live") },
-    { href: `/${lang}/embrace-islam`, label: lang === "ar" ? "ادخل الإسلام" : "Embrace Islam" },
+    { href: `/${lang}/dawah-guide`, label: t(lang, "dawah_guide") },
+    { href: `/${lang}/projects`, label: t(lang, "projects") },
+    { href: `/${lang}/khutab`, label: t(lang, "khutab") },
+    { href: `/${lang}/live`, label: t(lang, "live") },
+    { href: `/${lang}/embrace-islam`, label: t(lang, "embrace_islam") },
   ];
 
+  // نصوص الأعمدة
+  const worshipTitle = isRTL ? "العبادات" : "Worship";
+  const knowledgeTitle = isRTL ? "العلوم والردود" : "Knowledge & Responses";
+  const dawahTitle = isRTL ? "الدعوة" : "Dawah";
+
   const columns = [
-    { title: t(lang, "footer.worship"), links: worshipLinks },
-    { title: t(lang, "footer.knowledge"), links: knowledgeLinks },
-    { title: t(lang, "footer.dawah"), links: dawahLinks },
+    { title: worshipTitle, links: worshipLinks },
+    { title: knowledgeTitle, links: knowledgeLinks },
+    { title: dawahTitle, links: dawahLinks },
   ];
+
+  // نصوص النشرة البريدية
+  const newsletterTitle = isRTL ? "اشترك في النشرة البريدية" : "Subscribe to our Newsletter";
+  const newsletterDesc = isRTL 
+    ? "صلك جديد المحتوى الدعوي والدروس والفتاوى أولاً بأول" 
+    : "Get the latest Dawah content, lessons, and fatwas as soon as they're published";
+  const newsletterPlaceholder = isRTL ? "بريدك الإلكتروني" : "Your email address";
+  const newsletterSubscribe = isRTL ? "اشترك" : "Subscribe";
+  const newsletterSuccess = isRTL ? "تم الاشتراك بنجاح! شكراً لك." : "Successfully subscribed! Thank you.";
+  const newsletterError = isRTL ? "حدث خطأ، يرجى المحاولة مرة أخرى." : "An error occurred, please try again.";
+
+  // نصوص الفوتر
+  const aboutText = t(lang, "about");
+  const contactText = t(lang, "contact");
+  const privacyText = t(lang, "privacy");
+  const rightsText = isRTL ? "جميع الحقوق محفوظة" : "All rights reserved";
 
   return (
     <footer className="mt-24 text-white"
@@ -77,11 +118,11 @@ export default function Footer() {
                   📬
                 </span>
                 <h3 className="text-2xl font-bold" style={{ fontFamily: "var(--font-amiri)" }}>
-                  {t(lang, "footer.newsletter.title")}
+                  {newsletterTitle}
                 </h3>
               </div>
               <p className="leading-relaxed text-primary-100">
-                {t(lang, "footer.newsletter.desc")}
+                {newsletterDesc}
               </p>
             </div>
 
@@ -91,7 +132,7 @@ export default function Footer() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t(lang, "footer.newsletter.placeholder")}
+                placeholder={newsletterPlaceholder}
                 className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white placeholder-slate-300 outline-none transition-all focus:border-primary-300 focus:bg-white/15"
               />
               <button
@@ -102,8 +143,8 @@ export default function Footer() {
                 {status === "loading"
                   ? "..."
                   : status === "done"
-                  ? "✓ " + (lang === "ar" ? "تم" : "Done")
-                  : t(lang, "footer.newsletter.subscribe")}
+                  ? "✓ " + (isRTL ? "تم" : "Done")
+                  : newsletterSubscribe}
               </button>
             </form>
           </div>
@@ -111,12 +152,12 @@ export default function Footer() {
           {/* رسائل الحالة */}
           {status === "done" && (
             <p className="mt-4 text-center text-sm text-primary-200">
-              ✓ {t(lang, "footer.newsletter.success")}
+              ✓ {newsletterSuccess}
             </p>
           )}
           {status === "error" && (
             <p className="mt-4 text-center text-sm text-red-300">
-              ✗ {t(lang, "footer.newsletter.error")}
+              ✗ {newsletterError}
             </p>
           )}
         </div>
@@ -138,12 +179,12 @@ export default function Footer() {
                 </svg>
               </span>
               <span className="text-xl font-bold">
-                {lang === "ar" ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib"}
+                {isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib"}
               </span>
             </Link>
 
             <p className="mb-6 max-w-xs leading-relaxed text-primary-100">
-              {lang === "ar"
+              {isRTL
                 ? "منصة دعوية شاملة تجمع القرآن والسنة والعلوم الشرعية وأدوات الدعوة في مكان واحد، بلغات متعددة."
                 : "A comprehensive Dawah platform combining Quran, Sunnah, Islamic sciences and Dawah tools in one place, in multiple languages."}
             </p>
@@ -153,7 +194,7 @@ export default function Footer() {
               <Link
                 href={`/${lang}/about`}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition-all hover:bg-white/20"
-                title={t(lang, "footer.about")}
+                title={aboutText}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="12" cy="12" r="10" />
@@ -163,7 +204,7 @@ export default function Footer() {
               <Link
                 href={`/${lang}/contact`}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition-all hover:bg-white/20"
-                title={t(lang, "footer.contact")}
+                title={contactText}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -204,12 +245,12 @@ export default function Footer() {
             className="text-lg text-primary-200 md:text-xl"
             style={{ fontFamily: "var(--font-quran)" }}
           >
-            {lang === "ar"
+            {isRTL
               ? "﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾"
               : "\"My Lord, increase me in knowledge\""}
           </p>
           <p className="mt-2 text-xs text-primary-300/70">
-            {lang === "ar" ? "سورة طه — الآية 114" : "Surah Taha — Verse 114"}
+            {isRTL ? "سورة طه — الآية 114" : "Surah Taha — Verse 114"}
           </p>
         </div>
       </div>
@@ -219,19 +260,19 @@ export default function Footer() {
         <div className="container-page flex flex-col items-center justify-between gap-4 py-5 text-xs text-primary-200/70 sm:flex-row">
           <p>
             © {new Date().getFullYear()}{" "}
-            {lang === "ar"
-              ? "إسماعيل أحمد نجيب — " + t(lang, "footer.rights")
-              : "Ismail Ahmed Naguib — " + t(lang, "footer.rights")}
+            {isRTL
+              ? "إسماعيل أحمد نجيب — " + rightsText
+              : "Ismail Ahmed Naguib — " + rightsText}
           </p>
           <div className="flex gap-5">
             <Link href={`/${lang}/about`} className="transition-colors hover:text-primary-300">
-              {t(lang, "footer.about")}
+              {aboutText}
             </Link>
             <Link href={`/${lang}/contact`} className="transition-colors hover:text-primary-300">
-              {t(lang, "footer.contact")}
+              {contactText}
             </Link>
             <Link href={`/${lang}/privacy`} className="transition-colors hover:text-primary-300">
-              {t(lang, "footer.privacy")}
+              {privacyText}
             </Link>
           </div>
         </div>

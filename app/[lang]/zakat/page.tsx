@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -128,6 +130,33 @@ const UI: Record<
     grams: string;
     optional: string;
     approximate: string;
+    verse: string;
+    verseSource: string;
+    hadith: string;
+    hadithSource: string;
+    introTitle: string;
+    introDesc: string;
+    virtue1Title: string;
+    virtue1Desc: string;
+    virtue2Title: string;
+    virtue2Desc: string;
+    virtue3Title: string;
+    virtue3Desc: string;
+    virtue4Title: string;
+    virtue4Desc: string;
+    rateLabel: string;
+    goldNisab: string;
+    silverNisab: string;
+    currenciesCount: string;
+    relatedTitle: string;
+    inheritancePage: string;
+    inheritancePageDesc: string;
+    fatwaPage: string;
+    fatwaPageDesc: string;
+    hajjPage: string;
+    hajjPageDesc: string;
+    contactPage: string;
+    contactPageDesc: string;
   }
 > = {
   ar: {
@@ -204,6 +233,34 @@ const UI: Record<
     grams: "جرام",
     optional: "اختياري",
     approximate: "تقريبي",
+    verse: "﴿ خُذْ مِنْ أَمْوَالِهِمْ صَدَقَةً تُطَهِّرُهُمْ وَتُزَكِّيهِم بِهَا ﴾",
+    verseSource: "سورة التوبة — الآية 103",
+    hadith: "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ",
+    hadithSource: "رواه مسلم",
+    introTitle: "فضل الزكاة وشروطها",
+    introDesc:
+      "الزكاة ركن من أركان الإسلام الخمسة، وفرض على كل مسلم بلغ ماله النصاب وحال عليه الحول. وهي طهرة للمال والنفس، وسبب للبركة والنماء، وتكافل بين أفراد المجتمع المسلم.",
+    virtue1Title: "تطهير المال والنفس",
+    virtue1Desc: "الزكاة تطهر المال من الشح، وتطهر النفس من البخل.",
+    virtue2Title: "البركة والنماء",
+    virtue2Desc: "المال الذي تُخرج زكاته يبارك الله فيه ويزيده.",
+    virtue3Title: "التكافل الاجتماعي",
+    virtue3Desc: "الزكاة تربط الغني بالفقير برباط عبادة لا منّة.",
+    virtue4Title: "النجاة يوم القيامة",
+    virtue4Desc: "الزكاة ظل لصاحبها يوم القيامة، وسبب لدخول الجنة.",
+    rateLabel: "نسبة الزكاة",
+    goldNisab: "نصاب الذهب",
+    silverNisab: "نصاب الفضة",
+    currenciesCount: "عملات مدعومة",
+    relatedTitle: "صفحات ذات صلة",
+    inheritancePage: "حاسبة الميراث",
+    inheritancePageDesc: "قسّم التركة حسب الفرائض.",
+    fatwaPage: "الفتاوى",
+    fatwaPageDesc: "أسئلة فقهية عن الزكاة.",
+    hajjPage: "دليل الحج والعمرة",
+    hajjPageDesc: "مناسك الحج والعمرة.",
+    contactPage: "تواصل معنا",
+    contactPageDesc: "للاستفسار عن الزكاة.",
   },
   en: {
     title: "Zakat Calculator",
@@ -279,6 +336,34 @@ const UI: Record<
     grams: "grams",
     optional: "optional",
     approximate: "approximate",
+    verse: "\"Take from their wealth a charity by which you purify them and cause them increase.\"",
+    verseSource: "Surah At-Tawbah — Verse 103",
+    hadith: "Wealth does not decrease because of charity.",
+    hadithSource: "Narrated by Muslim",
+    introTitle: "Virtue of Zakat and Its Conditions",
+    introDesc:
+      "Zakat is one of the five pillars of Islam, obligatory on every Muslim whose wealth reaches nisab and a lunar year has passed. It purifies wealth and soul, causes blessing and growth, and creates solidarity among the Muslim community.",
+    virtue1Title: "Purification of Wealth and Soul",
+    virtue1Desc: "Zakat purifies wealth from stinginess and the soul from miserliness.",
+    virtue2Title: "Blessing and Growth",
+    virtue2Desc: "Wealth from which zakat is paid is blessed and increased by Allah.",
+    virtue3Title: "Social Solidarity",
+    virtue3Desc: "Zakat connects the rich and poor through worship, not favor.",
+    virtue4Title: "Salvation on Judgment Day",
+    virtue4Desc: "Zakat is a shade for its giver on Judgment Day and a means to enter Paradise.",
+    rateLabel: "Zakat Rate",
+    goldNisab: "Gold Nisab",
+    silverNisab: "Silver Nisab",
+    currenciesCount: "Supported Currencies",
+    relatedTitle: "Related Pages",
+    inheritancePage: "Inheritance Calculator",
+    inheritancePageDesc: "Distribute estate according to faraid.",
+    fatwaPage: "Fatwas",
+    fatwaPageDesc: "Fiqh questions about zakat.",
+    hajjPage: "Hajj & Umrah Guide",
+    hajjPageDesc: "Rites of Hajj and Umrah.",
+    contactPage: "Contact Us",
+    contactPageDesc: "For zakat inquiries.",
   },
 };
 
@@ -287,40 +372,26 @@ const UI: Record<
 // ============================================================
 
 function getFirstValue(value?: string | string[]): string {
-  if (Array.isArray(value)) {
-    return value[0] ?? "";
-  }
-
+  if (Array.isArray(value)) return value[0] ?? "";
   return value ?? "";
 }
 
 function parseNumber(value?: string | string[]): number {
   const raw = getFirstValue(value).replace(/,/g, "").trim();
-
-  if (!raw) {
-    return 0;
-  }
-
+  if (!raw) return 0;
   const parsed = Number(raw);
-
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
 function parseNonNegativeNumber(value?: string | string[]): number {
   const raw = getFirstValue(value).replace(/,/g, "").trim();
-
-  if (!raw) {
-    return 0;
-  }
-
+  if (!raw) return 0;
   const parsed = Number(raw);
-
   return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
 }
 
 function formatNumber(value: number, lang: Lang): string {
   const safe = Number.isFinite(value) ? value : 0;
-
   try {
     return new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en-US", {
       maximumFractionDigits: 2,
@@ -333,64 +404,44 @@ function formatNumber(value: number, lang: Lang): string {
 function formatCurrency(value: number, lang: Lang, currencyId: string): string {
   const currency = CURRENCIES.find((item) => item.id === currencyId);
   const symbol = currency
-    ? lang === "ar"
-      ? currency.symbolAr
-      : currency.symbolEn
+    ? lang === "ar" ? currency.symbolAr : currency.symbolEn
     : currencyId;
-
   return `${formatNumber(value, lang)} ${symbol}`;
 }
 
 function normalizeNisabBasis(value?: string | string[]): NisabBasis {
   const raw = getFirstValue(value).toLowerCase();
-
   return raw === "gold" ? "gold" : "silver";
 }
 
 function normalizeIrrigation(value?: string | string[]): Irrigation {
   const raw = getFirstValue(value).toLowerCase();
-
   if (raw === "irrigated") return "irrigated";
   if (raw === "mixed") return "mixed";
-
   return "rain";
 }
 
 function normalizeCurrency(value?: string | string[]): string {
   const raw = getFirstValue(value).toUpperCase();
-
-  return CURRENCIES.some((currency) => currency.id === raw) ? raw : "EGP";
+  return CURRENCIES.some((c) => c.id === raw) ? raw : "EGP";
 }
 
 function cropRate(irrigation: Irrigation): number {
   if (irrigation === "irrigated") return CROPS_IRRIGATED_RATE;
   if (irrigation === "mixed") return CROPS_MIXED_RATE;
-
   return CROPS_RAIN_RATE;
 }
 
-function cropRateLabel(irrigation: Irrigation, lang: Lang, ui: (typeof UI)[Lang]): string {
-  if (irrigation === "irrigated") {
-    return lang === "ar" ? "5%" : "5%";
-  }
-
-  if (irrigation === "mixed") {
-    return lang === "ar" ? "7.5%" : "7.5%";
-  }
-
-  return lang === "ar" ? "10%" : "10%";
+function cropRateLabel(irrigation: Irrigation): string {
+  if (irrigation === "irrigated") return "5%";
+  if (irrigation === "mixed") return "7.5%";
+  return "10%";
 }
 
 function irrigationLabel(irrigation: Irrigation, lang: Lang, ui: (typeof UI)[Lang]): string {
-  if (irrigation === "irrigated") {
-    return lang === "ar" ? ui.irrigated : ui.irrigated;
-  }
-
-  if (irrigation === "mixed") {
-    return lang === "ar" ? ui.mixed : ui.mixed;
-  }
-
-  return lang === "ar" ? ui.rain : ui.rain;
+  if (irrigation === "irrigated") return ui.irrigated;
+  if (irrigation === "mixed") return ui.mixed;
+  return ui.rain;
 }
 
 // ============================================================
@@ -403,10 +454,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -427,11 +475,20 @@ export async function generateMetadata({
       url: `/${l}/zakat`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -448,17 +505,13 @@ export default async function ZakatPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
   const isRTL = l === "ar";
 
   const sp = await searchParams;
-
   const submitted = Object.keys(sp).length > 0;
 
   const currency = normalizeCurrency(sp.currency);
@@ -485,12 +538,8 @@ export default async function ZakatPage({
   const goldNisabValue = GOLD_NISAB_GRAMS * goldPrice;
   const silverNisabValue = SILVER_NISAB_GRAMS * silverPrice;
 
-  let nisabValue =
-    nisabBasis === "gold" ? goldNisabValue : silverNisabValue;
-
-  if (nisabValue <= 0) {
-    nisabValue = Math.max(goldNisabValue, silverNisabValue);
-  }
+  let nisabValue = nisabBasis === "gold" ? goldNisabValue : silverNisabValue;
+  if (nisabValue <= 0) nisabValue = Math.max(goldNisabValue, silverNisabValue);
 
   const canCalculateMonetaryNisab = nisabValue > 0;
   const reachedMetalNisabByWeight =
@@ -500,59 +549,120 @@ export default async function ZakatPage({
     ? netWealth >= nisabValue
     : reachedMetalNisabByWeight && netWealth > 0;
 
-  const zakatAmount =
-    canCalculateMonetaryNisab && payable ? netWealth * ZAKAT_RATE : 0;
+  const zakatAmount = canCalculateMonetaryNisab && payable ? netWealth * ZAKAT_RATE : 0;
 
   const rate = cropRate(irrigation);
   const cropZakat = crops > 0 ? crops * rate : 0;
 
   const warnings: string[] = [];
+  if (goldGrams > 0 && goldPrice <= 0) warnings.push(ui.warningGoldPrice);
+  if (silverGrams > 0 && silverPrice <= 0) warnings.push(ui.warningSilverPrice);
+  if (!canCalculateMonetaryNisab && submitted) warnings.push(ui.warningNisab);
+  if (debts > totalAssets && submitted) warnings.push(ui.warningDebts);
+  if (crops > 0) warnings.push(ui.warningCropsThreshold);
 
-  if (goldGrams > 0 && goldPrice <= 0) {
-    warnings.push(ui.warningGoldPrice);
-  }
-
-  if (silverGrams > 0 && silverPrice <= 0) {
-    warnings.push(ui.warningSilverPrice);
-  }
-
-  if (!canCalculateMonetaryNisab && submitted) {
-    warnings.push(ui.warningNisab);
-  }
-
-  if (debts > totalAssets && submitted) {
-    warnings.push(ui.warningDebts);
-  }
-
-  if (crops > 0) {
-    warnings.push(ui.warningCropsThreshold);
-  }
+  // JSON-LD
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        name: ui.title,
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Web",
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/zakat`,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      },
+      {
+        "@type": "Article",
+        headline: ui.title,
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/zakat`,
+        articleSection: isRTL ? "العبادات" : "Worship",
+        keywords: isRTL
+          ? "الزكاة, النصاب, الذهب, الفضة, حاسبة الزكاة"
+          : "zakat, nisab, gold, silver, zakat calculator",
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: isRTL ? "ما هو نصاب الزكاة؟" : "What is the zakat nisab?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: isRTL
+                ? "نصاب الزكاة هو مقدار المال الذي تجب فيه الزكاة، ويعادل 85 جراماً من الذهب أو 595 جراماً من الفضة."
+                : "Zakat nisab is the minimum wealth threshold requiring zakat, equivalent to 85 grams of gold or 595 grams of silver.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: isRTL ? "كم نسبة الزكاة في المال؟" : "What is the zakat rate on wealth?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: isRTL
+                ? "نسبة الزكاة في المال هي 2.5% (ربع العشر) من صافي المال بعد خصم الديون."
+                : "The zakat rate on wealth is 2.5% (one-fortieth) of net wealth after deducting debts.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: isRTL ? "متى تجب الزكاة؟" : "When is zakat due?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: isRTL
+                ? "تجب الزكاة إذا بلغ المال النصاب وحال عليه الحول القمري (سنة هجرية كاملة)."
+                : "Zakat is due when wealth reaches nisab and one lunar year (hawl) has passed.",
+            },
+          },
+        ],
+      },
+    ],
+  };
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
+          <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
-            <span className="badge-primary mb-5">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #d4af37, #0e7490)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+                  <path d="M11 7h2v2h-2zm0 4h2v6h-2z" fill="#d4af37" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="badge-gold mb-5">
               💰 {isRTL ? "زكاة المال" : "Wealth Zakat"}
             </span>
 
@@ -566,6 +676,63 @@ export default async function ZakatPage({
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.description}
             </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-300 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-gold-700 dark:bg-night-800/80">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+
+            {/* حديث شريف */}
+            <div className="mt-4 rounded-2xl border border-primary-200 bg-primary-50/60 p-4 backdrop-blur-sm dark:border-primary-800 dark:bg-primary-950/20">
+              <p
+                className="mb-1 text-base font-black text-primary-700 md:text-lg dark:text-primary-300"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                «{ui.hadith}»
+              </p>
+              <p className="text-xs text-primary-600 dark:text-primary-400">
+                📜 {ui.hadithSource}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== إحصائيات ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard icon="%" label={ui.rateLabel} value="2.5" color="primary" />
+          <StatCard icon="🥇" label={ui.goldNisab} value={`${GOLD_NISAB_GRAMS}g`} color="gold" />
+          <StatCard icon="🥈" label={ui.silverNisab} value={`${SILVER_NISAB_GRAMS}g`} color="primary" />
+          <StatCard icon="💱" label={ui.currenciesCount} value={CURRENCIES.length} color="gold" />
+        </div>
+
+        {/* ===== مقدمة ===== */}
+        <div className="card mb-8 overflow-hidden">
+          <div className="gradient-gold h-1.5 w-full" />
+          <div className="p-6 md:p-8">
+            <h2
+              className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              💎 {ui.introTitle}
+            </h2>
+            <p className="mb-6 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.introDesc}
+            </p>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <VirtueCard icon="✨" title={ui.virtue1Title} desc={ui.virtue1Desc} color="gold" />
+              <VirtueCard icon="📈" title={ui.virtue2Title} desc={ui.virtue2Desc} color="primary" />
+              <VirtueCard icon="🤝" title={ui.virtue3Title} desc={ui.virtue3Desc} color="gold" />
+              <VirtueCard icon="🏆" title={ui.virtue4Title} desc={ui.virtue4Desc} color="primary" />
+            </div>
           </div>
         </div>
 
@@ -582,27 +749,14 @@ export default async function ZakatPage({
             {ui.formSubtitle}
           </p>
 
-          <form
-            method="get"
-            action={`/${l}/zakat`}
-            className="grid gap-6"
-          >
+          <form method="get" action={`/${l}/zakat`} className="grid gap-6">
             {/* ===== العملة وأساس النصاب ===== */}
             <div className="grid gap-5 md:grid-cols-2">
               <div>
-                <label
-                  htmlFor="currency"
-                  className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
+                <label htmlFor="currency" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {ui.currency}
                 </label>
-
-                <select
-                  id="currency"
-                  name="currency"
-                  defaultValue={currency}
-                  className="input-islamic"
-                >
+                <select id="currency" name="currency" defaultValue={currency} className="input-islamic">
                   {CURRENCIES.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.id} — {isRTL ? item.symbolAr : item.symbolEn}
@@ -612,19 +766,10 @@ export default async function ZakatPage({
               </div>
 
               <div>
-                <label
-                  htmlFor="nisabBasis"
-                  className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
+                <label htmlFor="nisabBasis" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {ui.nisabBasis}
                 </label>
-
-                <select
-                  id="nisabBasis"
-                  name="nisabBasis"
-                  defaultValue={nisabBasis}
-                  className="input-islamic"
-                >
+                <select id="nisabBasis" name="nisabBasis" defaultValue={nisabBasis} className="input-islamic">
                   <option value="silver">{ui.nisabSilver}</option>
                   <option value="gold">{ui.nisabGold}</option>
                 </select>
@@ -634,13 +779,9 @@ export default async function ZakatPage({
             {/* ===== الأصول الأساسية ===== */}
             <div className="grid gap-5 md:grid-cols-2">
               <div>
-                <label
-                  htmlFor="cash"
-                  className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
+                <label htmlFor="cash" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {ui.cash}
                 </label>
-
                 <input
                   id="cash"
                   name="cash"
@@ -652,20 +793,15 @@ export default async function ZakatPage({
                   placeholder="0"
                   className="input-islamic"
                 />
-
                 <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                   {ui.cashHelp}
                 </p>
               </div>
 
               <div>
-                <label
-                  htmlFor="goods"
-                  className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
+                <label htmlFor="goods" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {ui.goods}
                 </label>
-
                 <input
                   id="goods"
                   name="goods"
@@ -677,7 +813,6 @@ export default async function ZakatPage({
                   placeholder="0"
                   className="input-islamic"
                 />
-
                 <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                   {ui.goodsHelp}
                 </p>
@@ -692,13 +827,9 @@ export default async function ZakatPage({
                 </h3>
 
                 <div className="mb-4">
-                  <label
-                    htmlFor="gold"
-                    className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                  >
+                  <label htmlFor="gold" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     {ui.gold}
                   </label>
-
                   <input
                     id="gold"
                     name="gold"
@@ -710,20 +841,15 @@ export default async function ZakatPage({
                     placeholder="0"
                     className="input-islamic"
                   />
-
                   <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                     {ui.goldHelp}
                   </p>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="goldPrice"
-                    className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                  >
+                  <label htmlFor="goldPrice" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     {ui.goldPrice}
                   </label>
-
                   <input
                     id="goldPrice"
                     name="goldPrice"
@@ -735,7 +861,6 @@ export default async function ZakatPage({
                     placeholder="0"
                     className="input-islamic"
                   />
-
                   <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                     {ui.goldPriceHelp}
                   </p>
@@ -748,13 +873,9 @@ export default async function ZakatPage({
                 </h3>
 
                 <div className="mb-4">
-                  <label
-                    htmlFor="silver"
-                    className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                  >
+                  <label htmlFor="silver" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     {ui.silver}
                   </label>
-
                   <input
                     id="silver"
                     name="silver"
@@ -766,20 +887,15 @@ export default async function ZakatPage({
                     placeholder="0"
                     className="input-islamic"
                   />
-
                   <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                     {ui.silverHelp}
                   </p>
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="silverPrice"
-                    className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                  >
+                  <label htmlFor="silverPrice" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     {ui.silverPrice}
                   </label>
-
                   <input
                     id="silverPrice"
                     name="silverPrice"
@@ -791,7 +907,6 @@ export default async function ZakatPage({
                     placeholder="0"
                     className="input-islamic"
                   />
-
                   <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                     {ui.silverPriceHelp}
                   </p>
@@ -802,13 +917,9 @@ export default async function ZakatPage({
             {/* ===== الديون والمستحقات ===== */}
             <div className="grid gap-5 md:grid-cols-2">
               <div>
-                <label
-                  htmlFor="receivables"
-                  className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
+                <label htmlFor="receivables" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {ui.receivables}
                 </label>
-
                 <input
                   id="receivables"
                   name="receivables"
@@ -820,20 +931,15 @@ export default async function ZakatPage({
                   placeholder="0"
                   className="input-islamic"
                 />
-
                 <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                   {ui.receivablesHelp}
                 </p>
               </div>
 
               <div>
-                <label
-                  htmlFor="debts"
-                  className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                >
+                <label htmlFor="debts" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   {ui.debts}
                 </label>
-
                 <input
                   id="debts"
                   name="debts"
@@ -845,7 +951,6 @@ export default async function ZakatPage({
                   placeholder="0"
                   className="input-islamic"
                 />
-
                 <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                   {ui.debtsHelp}
                 </p>
@@ -864,13 +969,9 @@ export default async function ZakatPage({
 
               <div className="grid gap-5 md:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="crops"
-                    className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                  >
+                  <label htmlFor="crops" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     {ui.crops}
                   </label>
-
                   <input
                     id="crops"
                     name="crops"
@@ -885,19 +986,10 @@ export default async function ZakatPage({
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="irrigation"
-                    className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200"
-                  >
+                  <label htmlFor="irrigation" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     {ui.irrigation}
                   </label>
-
-                  <select
-                    id="irrigation"
-                    name="irrigation"
-                    defaultValue={irrigation}
-                    className="input-islamic"
-                  >
+                  <select id="irrigation" name="irrigation" defaultValue={irrigation} className="input-islamic">
                     <option value="rain">{ui.rain}</option>
                     <option value="irrigated">{ui.irrigated}</option>
                     <option value="mixed">{ui.mixed}</option>
@@ -912,16 +1004,7 @@ export default async function ZakatPage({
                 href={`/${l}/zakat`}
                 className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition-all hover:bg-red-100 active:scale-95 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M3 6h18" />
                   <path d="M8 6V4h8v2" />
                   <path d="M19 6l-1 14H6L5 6" />
@@ -930,16 +1013,7 @@ export default async function ZakatPage({
               </Link>
 
               <button type="submit" className="btn-primary">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="4" y="2" width="16" height="20" rx="2" />
                   <path d="M8 6h8" />
                   <path d="M8 10h2" />
@@ -1092,7 +1166,7 @@ export default async function ZakatPage({
                       {irrigationLabel(irrigation, l, ui)}
                     </p>
                     <p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
-                      {cropRateLabel(irrigation, l, ui)}
+                      {cropRateLabel(irrigation)}
                     </p>
                   </div>
 
@@ -1134,38 +1208,193 @@ export default async function ZakatPage({
           </div>
         )}
 
-        {/* ===== ملاحظات فقهية ===== */}
-        <div className="card mt-10 p-6 md:p-8">
+        {/* ===== صفحات ذات صلة ===== */}
+        <div className="mt-10">
           <h2
-            className="mb-6 text-2xl font-black text-slate-900 dark:text-white"
+            className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📌 {ui.noteTitle}
+            🔗 {ui.relatedTitle}
           </h2>
 
-          <ul className="space-y-4">
-            {[ui.note1, ui.note2, ui.note3, ui.note4].map((note, index) => (
-              <li
-                key={`${note}-${index}`}
-                className="flex items-start gap-3 leading-relaxed text-slate-600 dark:text-slate-300"
-              >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
-                <span>{note}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href={`/${l}/contact`} className="btn-primary">
-              {ui.contact}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link href={`/${l}/inheritance`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📜</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.inheritancePage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.inheritancePageDesc}
+                </p>
+              </div>
             </Link>
 
-            <Link href={`/${l}/fatwa`} className="btn-outline">
-              {ui.fatwa}
+            <Link href={`/${l}/fatwa`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">⚖️</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.fatwaPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.fatwaPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/hajj-guide`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕋</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.hajjPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.hajjPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.contactPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.contactPageDesc}
+                </p>
+              </div>
             </Link>
           </div>
         </div>
+
+        {/* ===== ملاحظات فقهية ===== */}
+        <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
+          <div className="flex items-start gap-4">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
+              📌
+            </span>
+
+            <div>
+              <h2
+                className="mb-4 text-xl font-black text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                {ui.noteTitle}
+              </h2>
+
+              <ul className="space-y-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{ui.note1}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{ui.note2}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{ui.note3}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{ui.note4}</span>
+                </li>
+              </ul>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href={`/${l}/contact`} className="btn-primary">
+                  {ui.contact}
+                </Link>
+                <Link href={`/${l}/fatwa`} className="btn-outline">
+                  {ui.fatwa}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: string | number;
+  color: "primary" | "gold";
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+// ============================================================
+// مكون VirtueCard
+// ============================================================
+
+function VirtueCard({
+  icon,
+  title,
+  desc,
+  color,
+}: {
+  icon: string;
+  title: string;
+  desc: string;
+  color: "primary" | "gold";
+}) {
+  const borderClass =
+    color === "gold"
+      ? "border-gold-300 bg-gold-50/60 dark:border-gold-800/40 dark:bg-gold-950/20"
+      : "border-primary-300 bg-primary-50/60 dark:border-primary-800/40 dark:bg-primary-950/20";
+  const titleColor =
+    color === "gold"
+      ? "text-gold-700 dark:text-gold-300"
+      : "text-primary-700 dark:text-primary-300";
+
+  return (
+    <div className={`rounded-2xl border-2 ${borderClass} p-5 transition-all hover:-translate-y-1`}>
+      <div className="mb-3 flex items-center gap-3">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-2xl shadow-sm dark:bg-night-800">
+          {icon}
+        </span>
+        <h3
+          className={`text-base font-black ${titleColor}`}
+          style={{ fontFamily: "var(--font-amiri)" }}
+        >
+          {title}
+        </h3>
+      </div>
+      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+        {desc}
+      </p>
+    </div>
   );
 }

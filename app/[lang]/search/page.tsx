@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { ADHKAR, PROPHETS, SURAHS, toArabicNumeral } from "@/lib/data";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ============================================================
 // الأنواع
@@ -87,6 +89,29 @@ const UI: Record<
     homeBtn: string;
     note: string;
     types: Record<ResultType, string>;
+    verse: string;
+    verseSource: string;
+    hadith: string;
+    hadithSource: string;
+    surahsCount: string;
+    adhkarCount: string;
+    fatwasCount: string;
+    pagesCount: string;
+    introTitle: string;
+    introDesc: string;
+    relatedTitle: string;
+    quranPage: string;
+    quranPageDesc: string;
+    fatwaPage: string;
+    fatwaPageDesc: string;
+    articlesPage: string;
+    articlesPageDesc: string;
+    faqPage: string;
+    faqPageDesc: string;
+    smartSearch: string;
+    tip1: string;
+    tip2: string;
+    tip3: string;
   }
 > = {
   ar: {
@@ -104,7 +129,7 @@ const UI: Record<
     noResultsDesc:
       "جرّب كلمة أخرى، أو تصفح الأقسام الرئيسية، أو راسلنا إذا كنت تبحث عن شيء محدد.",
     popular: "عمليات بحث شائعة",
-    popularDesc: "ابدأ بأحد هذه المواضيع، أو اكتب搜索ك في الأعلى.",
+    popularDesc: "ابدأ بأحد هذه المواضيع، أو اكتب بحثك في الأعلى.",
     quickPages: "أقسام سريعة",
     open: "فتح",
     contact: "تواصل معنا",
@@ -120,6 +145,30 @@ const UI: Record<
       faq: "سؤال",
       tool: "أداة",
     },
+    verse: "﴿ اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ ﴾",
+    verseSource: "سورة العلق — الآية 1",
+    hadith: "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ",
+    hadithSource: "رواه مسلم",
+    surahsCount: "سورة",
+    adhkarCount: "ذكر",
+    fatwasCount: "فتوى",
+    pagesCount: "صفحة",
+    introTitle: "نصائح للبحث الفعّال",
+    introDesc:
+      "استخدم كلمات مفتاحية واضحة مثل اسم السورة أو الموضوع الفقهي أو اسم النبي. البحث يدعم العربية والإنجليزية، ويتجاهل التشكيل والحركات لتسهيل العثور على النتائج.",
+    relatedTitle: "صفحات ذات صلة",
+    quranPage: "القرآن الكريم",
+    quranPageDesc: "تصفح 114 سورة كاملة.",
+    fatwaPage: "الفتاوى",
+    fatwaPageDesc: "أسئلة فقهية وإجابات.",
+    articlesPage: "المقالات",
+    articlesPageDesc: "مقالات دعوية وتربوية.",
+    faqPage: "الأسئلة الشائعة",
+    faqPageDesc: "إجابات سريعة عن المنصة.",
+    smartSearch: "🔍 بحث ذكي",
+    tip1: "استخدم كلمة واحدة أو كلمتين للنتائج الأفضل",
+    tip2: "يمكنك البحث بالعربية أو الإنجليزية",
+    tip3: "التشكيل والحركات لا تؤثر على نتائج البحث",
   },
   en: {
     title: "Search",
@@ -152,6 +201,30 @@ const UI: Record<
       faq: "FAQ",
       tool: "Tool",
     },
+    verse: "\"Read in the name of your Lord who created.\"",
+    verseSource: "Surah Al-Alaq — Verse 1",
+    hadith: "Whoever takes a path in search of knowledge, Allah will make easy for him a path to Paradise.",
+    hadithSource: "Narrated by Muslim",
+    surahsCount: "Surahs",
+    adhkarCount: "Adhkar",
+    fatwasCount: "Fatwas",
+    pagesCount: "Pages",
+    introTitle: "Tips for Effective Search",
+    introDesc:
+      "Use clear keywords such as surah name, fiqh topic, or prophet name. The search supports Arabic and English, and ignores diacritics to make finding results easier.",
+    relatedTitle: "Related Pages",
+    quranPage: "Holy Quran",
+    quranPageDesc: "Browse all 114 surahs.",
+    fatwaPage: "Fatwas",
+    fatwaPageDesc: "Fiqh questions and answers.",
+    articlesPage: "Articles",
+    articlesPageDesc: "Dawah and educational articles.",
+    faqPage: "FAQ",
+    faqPageDesc: "Quick answers about the platform.",
+    smartSearch: "🔍 Smart Search",
+    tip1: "Use one or two keywords for best results",
+    tip2: "You can search in Arabic or English",
+    tip3: "Diacritics do not affect search results",
   },
 };
 
@@ -496,10 +569,7 @@ const FAQ_TOPICS: TopicItem[] = [
 // ============================================================
 
 function getFirstValue(value?: string | string[]): string {
-  if (Array.isArray(value)) {
-    return value[0] ?? "";
-  }
-
+  if (Array.isArray(value)) return value[0] ?? "";
   return value ?? "";
 }
 
@@ -518,11 +588,7 @@ function normalizeText(value: string): string {
 
 function includesQuery(haystack: string[], query: string): boolean {
   const q = normalizeText(query);
-
-  if (!q) {
-    return false;
-  }
-
+  if (!q) return false;
   return haystack.some((value) => normalizeText(value).includes(q));
 }
 
@@ -532,11 +598,7 @@ function formatNumber(value: number, lang: Lang): string {
 
 function truncateText(value: string, maxLength = 140): string {
   const clean = value.replace(/\s+/g, " ").trim();
-
-  if (clean.length <= maxLength) {
-    return clean;
-  }
-
+  if (clean.length <= maxLength) return clean;
   return `${clean.slice(0, maxLength)}…`;
 }
 
@@ -562,23 +624,15 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
 
   const addResult = (result: SearchResult) => {
     if (results.length >= 80) return;
-
     const exists = results.some((item) => item.id === result.id);
-    if (!exists) {
-      results.push(result);
-    }
+    if (!exists) results.push(result);
   };
 
   // ===== الصفحات =====
   for (const page of PAGES) {
     const haystack = [
-      page.ar,
-      page.en,
-      page.descAr,
-      page.descEn,
-      page.id,
-      ...page.keywordsAr,
-      ...page.keywordsEn,
+      page.ar, page.en, page.descAr, page.descEn, page.id,
+      ...page.keywordsAr, ...page.keywordsEn,
     ];
 
     if (includesQuery(haystack, query)) {
@@ -598,20 +652,13 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
   for (const surah of SURAHS) {
     const typeLabel =
       surah.type === "makki"
-        ? isRTL
-          ? "مكية"
-          : "Meccan"
-        : isRTL
-        ? "مدنية"
-        : "Medinan";
+        ? isRTL ? "مكية" : "Meccan"
+        : isRTL ? "مدنية" : "Medinan";
 
     const haystack = [
-      surah.arabicName,
-      surah.englishName,
-      String(surah.number),
-      String(surah.ayahs),
-      typeLabel,
-      surah.type,
+      surah.arabicName, surah.englishName,
+      String(surah.number), String(surah.ayahs),
+      typeLabel, surah.type,
     ];
 
     if (includesQuery(haystack, query)) {
@@ -619,10 +666,7 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
         id: `quran-${surah.number}`,
         type: "quran",
         title: isRTL ? surah.arabicName : surah.englishName,
-        subtitle: `${formatNumber(surah.number, lang)} • ${formatNumber(
-          surah.ayahs,
-          lang
-        )} ${isRTL ? "آية" : "ayahs"}`,
+        subtitle: `${formatNumber(surah.number, lang)} • ${formatNumber(surah.ayahs, lang)} ${isRTL ? "آية" : "ayahs"}`,
         snippet: typeLabel,
         href: `/${lang}/quran/${surah.number}`,
         icon: "📖",
@@ -633,10 +677,8 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
   // ===== فئات الأذكار =====
   for (const category of ADHKAR) {
     const haystack = [
-      category.arabicTitle,
-      category.englishTitle,
-      category.id,
-      category.icon,
+      category.arabicTitle, category.englishTitle,
+      category.id, category.icon,
     ];
 
     if (includesQuery(haystack, query)) {
@@ -644,12 +686,8 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
         id: `adhkar-category-${category.id}`,
         type: "adhkar",
         title: isRTL ? category.arabicTitle : category.englishTitle,
-        subtitle: `${formatNumber(category.adhkar.length, lang)} ${
-          isRTL ? "ذكر" : "adhkar"
-        }`,
-        snippet: isRTL
-          ? "اضغط لفتح قسم الأذكار"
-          : "Open the adhkar section",
+        subtitle: `${formatNumber(category.adhkar.length, lang)} ${isRTL ? "ذكر" : "adhkar"}`,
+        snippet: isRTL ? "اضغط لفتح قسم الأذكار" : "Open the adhkar section",
         href: `/${lang}/adhkar`,
         icon: category.icon,
       });
@@ -664,11 +702,8 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
       const dhikr = category.adhkar[index];
 
       const haystack = [
-        dhikr.text,
-        dhikr.source,
-        dhikr.virtue ?? "",
-        category.arabicTitle,
-        category.englishTitle,
+        dhikr.text, dhikr.source, dhikr.virtue ?? "",
+        category.arabicTitle, category.englishTitle,
       ];
 
       if (includesQuery(haystack, query)) {
@@ -676,19 +711,14 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
           id: `adhkar-${category.id}-${index}`,
           type: "adhkar",
           title: isRTL ? category.arabicTitle : category.englishTitle,
-          subtitle: `${formatNumber(dhikr.count, lang)} ${
-            isRTL ? "مرة" : "times"
-          }`,
+          subtitle: `${formatNumber(dhikr.count, lang)} ${isRTL ? "مرة" : "times"}`,
           snippet: truncateText(dhikr.text, 160),
           href: `/${lang}/adhkar`,
           icon: "🤲",
         });
 
         individualAdhkarCount += 1;
-
-        if (individualAdhkarCount >= 12) {
-          break outer;
-        }
+        if (individualAdhkarCount >= 12) break outer;
       }
     }
   }
@@ -696,11 +726,8 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
   // ===== قصص الأنبياء =====
   for (const prophet of PROPHETS) {
     const haystack = [
-      prophet.arabicName,
-      prophet.englishName,
-      prophet.title,
-      prophet.id,
-      prophet.icon,
+      prophet.arabicName, prophet.englishName,
+      prophet.title, prophet.id, prophet.icon,
     ];
 
     if (includesQuery(haystack, query)) {
@@ -719,26 +746,18 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
   // ===== الفتاوى =====
   for (const topic of FATWA_TOPICS) {
     const haystack = [
-      topic.ar,
-      topic.en,
-      topic.categoryAr,
-      topic.categoryEn,
-      topic.id,
-      ...(topic.keywordsAr ?? []),
-      ...(topic.keywordsEn ?? []),
+      topic.ar, topic.en, topic.categoryAr, topic.categoryEn, topic.id,
+      ...(topic.keywordsAr ?? []), ...(topic.keywordsEn ?? []),
     ];
 
     if (includesQuery(haystack, query)) {
       const title = isRTL ? topic.ar : topic.en;
-
       addResult({
         id: `fatwa-${topic.id}`,
         type: "fatwa",
         title,
         subtitle: isRTL ? topic.categoryAr : topic.categoryEn,
-        snippet: isRTL
-          ? "اضغط لعرض الفتوى في قسم الفتاوى"
-          : "Open this fatwa in the fatwa section",
+        snippet: isRTL ? "اضغط لعرض الفتوى في قسم الفتاوى" : "Open this fatwa in the fatwa section",
         href: buildSectionSearchHref(lang, "fatwa", title),
         icon: "⚖️",
       });
@@ -748,26 +767,18 @@ function searchAll(query: string, lang: Lang): SearchResult[] {
   // ===== الأسئلة الشائعة =====
   for (const topic of FAQ_TOPICS) {
     const haystack = [
-      topic.ar,
-      topic.en,
-      topic.categoryAr,
-      topic.categoryEn,
-      topic.id,
-      ...(topic.keywordsAr ?? []),
-      ...(topic.keywordsEn ?? []),
+      topic.ar, topic.en, topic.categoryAr, topic.categoryEn, topic.id,
+      ...(topic.keywordsAr ?? []), ...(topic.keywordsEn ?? []),
     ];
 
     if (includesQuery(haystack, query)) {
       const title = isRTL ? topic.ar : topic.en;
-
       addResult({
         id: `faq-${topic.id}`,
         type: "faq",
         title,
         subtitle: isRTL ? topic.categoryAr : topic.categoryEn,
-        snippet: isRTL
-          ? "اضغط لعرض السؤال في الأسئلة الشائعة"
-          : "Open this question in the FAQ section",
+        snippet: isRTL ? "اضغط لعرض السؤال في الأسئلة الشائعة" : "Open this question in the FAQ section",
         href: buildSectionSearchHref(lang, "faq", title),
         icon: "❓",
       });
@@ -789,10 +800,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -813,11 +821,20 @@ export async function generateMetadata({
       url: `/${l}/search`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -838,10 +855,7 @@ export default async function SearchPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -849,28 +863,127 @@ export default async function SearchPage({
 
   const sp = await searchParams;
   const q = getFirstValue(sp.q).trim();
-
   const results = q ? searchAll(q, l) : [];
 
+  // حساب الإحصائيات
+  const totalAdhkar = ADHKAR.reduce((sum, cat) => sum + cat.adhkar.length, 0);
+
+  // JSON-LD: WebSite + SearchAction
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: isRTL ? "منصة إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib Platform",
+        url: `/${l}`,
+        inLanguage: l,
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `/${l}/search?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "WebPage",
+        name: ui.title,
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/search`,
+      },
+    ],
+  };
+
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #0e7490, #d4af37)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="badge-primary mb-5">
+              🔍 {isRTL ? "بحث شامل" : "Comprehensive Search"}
+            </span>
+
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
+
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-gold-800 dark:bg-night-800/80">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+
+            {/* حديث شريف */}
+            <div className="mt-4 rounded-2xl border border-primary-200 bg-primary-50/60 p-4 backdrop-blur-sm dark:border-primary-800 dark:bg-primary-950/20">
+              <p
+                className="mb-1 text-base font-black text-primary-700 md:text-lg dark:text-primary-300"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                «{ui.hadith}»
+              </p>
+              <p className="text-xs text-primary-600 dark:text-primary-400">
+                📜 {ui.hadithSource}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== إحصائيات ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard icon="📖" label={ui.surahsCount} value={formatNumber(114, l)} color="primary" />
+          <StatCard icon="🤲" label={ui.adhkarCount} value={formatNumber(totalAdhkar, l)} color="gold" />
+          <StatCard icon="⚖️" label={ui.fatwasCount} value={formatNumber(FATWA_TOPICS.length, l)} color="primary" />
+          <StatCard icon="📄" label={ui.pagesCount} value={formatNumber(PAGES.length, l)} color="gold" />
+        </div>
+
         {/* ===== بطاقة البحث ===== */}
         <div className="card mb-8 p-6 md:p-7">
           <form
@@ -897,6 +1010,7 @@ export default async function SearchPage({
                 placeholder={ui.placeholder}
                 className="input-islamic !ps-12"
                 aria-label={ui.placeholder}
+                autoFocus
               />
             </div>
 
@@ -918,7 +1032,7 @@ export default async function SearchPage({
 
           {q && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <span className="badge-gold">“{q}”</span>
+              <span className="badge-gold">"{q}"</span>
 
               <Link
                 href={`/${l}/search`}
@@ -942,6 +1056,53 @@ export default async function SearchPage({
             </div>
           )}
         </div>
+
+        {/* ===== نصائح البحث ===== */}
+        {!q && (
+          <div className="card mb-8 overflow-hidden">
+            <div className="gradient-gold h-1.5 w-full" />
+            <div className="p-6 md:p-8">
+              <h2
+                className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                💡 {ui.introTitle}
+              </h2>
+              <p className="mb-5 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+                {ui.introDesc}
+              </p>
+
+              <div className="grid gap-3 md:grid-cols-3">
+                <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-4 dark:border-night-700 dark:bg-night-800/40">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-black text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
+                    1
+                  </span>
+                  <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                    {ui.tip1}
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-4 dark:border-night-700 dark:bg-night-800/40">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-black text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
+                    2
+                  </span>
+                  <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                    {ui.tip2}
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/60 p-4 dark:border-night-700 dark:bg-night-800/40">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-black text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
+                    3
+                  </span>
+                  <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                    {ui.tip3}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ===== لا يوجد بحث: اقتراحات + أقسام سريعة ===== */}
         {!q && (
@@ -1067,6 +1228,66 @@ export default async function SearchPage({
 
         {q && results.length > 0 && (
           <>
+            {/* صفحات ذات صلة */}
+            <div className="mb-8">
+              <h2
+                className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                🔗 {ui.relatedTitle}
+              </h2>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <Link href={`/${l}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                      {ui.quranPage}
+                    </h3>
+                    <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                      {ui.quranPageDesc}
+                    </p>
+                  </div>
+                </Link>
+
+                <Link href={`/${l}/fatwa`} className="card card-interactive group flex items-center gap-3 p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">⚖️</span>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                      {ui.fatwaPage}
+                    </h3>
+                    <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                      {ui.fatwaPageDesc}
+                    </p>
+                  </div>
+                </Link>
+
+                <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                      {ui.articlesPage}
+                    </h3>
+                    <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                      {ui.articlesPageDesc}
+                    </p>
+                  </div>
+                </Link>
+
+                <Link href={`/${l}/faq`} className="card card-interactive group flex items-center gap-3 p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">❓</span>
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                      {ui.faqPage}
+                    </h3>
+                    <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                      {ui.faqPageDesc}
+                    </p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
             <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
               {ui.results}:{" "}
               <span className="text-primary-600 dark:text-primary-400">
@@ -1127,12 +1348,49 @@ export default async function SearchPage({
         )}
 
         {/* ===== ملاحظة ===== */}
-        <div className="card mt-10 p-6 text-center">
-          <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-            {ui.note}
+        <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            📌 {ui.note}
           </p>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: string | number;
+  color: "primary" | "gold";
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }

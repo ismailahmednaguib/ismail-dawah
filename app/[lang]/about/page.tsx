@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ============================================================
 // الأنواع
@@ -67,6 +69,11 @@ type UILang = {
   noteTitle: string;
   note1: string;
   note2: string;
+  statsTitle: string;
+  statsSections: string;
+  statsLanguages: string;
+  statsTools: string;
+  statsFree: string;
 };
 
 // ============================================================
@@ -125,6 +132,11 @@ const UI: Record<Lang, UILang> = {
     note1: "قد يُحدَّث المحتوى دوريًا لتصحيح خطأ أو إضافة قسم جديد.",
     note2:
       "المحتوى العام للتوعية، ولا يغني عن مراجعة أهل العلم في النوازل والمسائل الدقيقة.",
+    statsTitle: "المنصة في أرقام",
+    statsSections: "قسم ومحتوى",
+    statsLanguages: "لغتان",
+    statsTools: "أداة عملية",
+    statsFree: "مجاني 100%",
   },
   en: {
     title: "About Us",
@@ -135,21 +147,21 @@ const UI: Record<Lang, UILang> = {
     quickNav: "Quick navigation",
     aboutTitle: "About the Platform",
     aboutParagraph1:
-      "The Ismail Ahmed Naguib Platform is an educational dawah project that aims to gather beneficial Islamic content in one place, with a simple style that respects the user’s mind and serves Arabic and English readers alike.",
+      "The Ismail Ahmed Naguib Platform is an educational dawah project that aims to gather beneficial Islamic content in one place, with a simple style that respects the user's mind and serves Arabic and English readers alike.",
     aboutParagraph2:
       "We believe dawah needs sincere knowledge, good manner, a comfortable tool, a clean interface, and content that can be understood and applied, not scattered texts or long sermons only.",
     missionTitle: "Our Mission",
     missionDesc: "We strive to:",
     visionTitle: "Our Vision",
     visionParagraph:
-      "To become a simple daily reference for new Muslims, beginner students of knowledge, da‘ees, and Muslim families, in a language the heart understands before the eye.",
+      "To become a simple daily reference for new Muslims, beginner students of knowledge, da'ees, and Muslim families, in a language the heart understands before the eye.",
     valuesTitle: "Our Values",
-    valuesDesc: "These values guide the platform’s content and tools.",
+    valuesDesc: "These values guide the platform's content and tools.",
     founderTitle: "Platform Supervisor",
     founderName: "Ismail Ahmed Naguib",
     founderRole: "Platform owner and content supervisor",
     founderParagraph1:
-      "He works to present simplified Islamic dawah content, combining care for the revealed text, attention to digital experience, and respect for the user’s time.",
+      "He works to present simplified Islamic dawah content, combining care for the revealed text, attention to digital experience, and respect for the user's time.",
     founderParagraph2:
       "The platform is built on the idea that dawah can be organized, beautiful, and easy to access without compromising knowledge, dignity, or truthful transmission.",
     contentTitle: "Content Methodology",
@@ -161,13 +173,18 @@ const UI: Record<Lang, UILang> = {
       "We do not require mandatory registration to browse content, and most progress tools such as tasbih, memorization plan, and daily wird are saved locally on your device. When contact or account features are needed, we collect the minimum data only.",
     ctaTitle: "Want to participate or suggest?",
     ctaDesc:
-      "We welcome your questions, feedback, suggestions, and collaboration from da‘ees, translators, and designers.",
+      "We welcome your questions, feedback, suggestions, and collaboration from da'ees, translators, and designers.",
     contact: "Contact Us",
     faq: "FAQ",
     noteTitle: "Notice",
     note1: "Content may be updated periodically to correct an error or add a new section.",
     note2:
       "General content is for awareness and does not replace consulting qualified scholars in detailed or unusual matters.",
+    statsTitle: "Platform in Numbers",
+    statsSections: "Sections",
+    statsLanguages: "Languages",
+    statsTools: "Practical Tools",
+    statsFree: "100% Free",
   },
 };
 
@@ -194,7 +211,7 @@ const MISSION_POINTS: BulletItem[] = [
     id: "dawah-tools",
     text: {
       ar: "توفير أدوات عملية تدعم الداعية والمستخدم.",
-      en: "Provide practical tools that support the da‘ee and user.",
+      en: "Provide practical tools that support the da'ee and user.",
     },
   },
   {
@@ -283,7 +300,7 @@ const VALUES: ValueItem[] = [
     },
     description: {
       ar: "أن يكون العمل لوجه الله، وابتغاء نفع العباد.",
-      en: "Work should be for Allah’s sake and for the benefit of people.",
+      en: "Work should be for Allah's sake and for the benefit of people.",
     },
   },
   {
@@ -357,209 +374,113 @@ const SECTION_LINKS: LinkItem[] = [
     id: "quran",
     href: "/quran",
     icon: "📖",
-    title: {
-      ar: "القرآن الكريم",
-      en: "Holy Quran",
-    },
-    description: {
-      ar: "تصفح السور والاستماع والقراءة.",
-      en: "Browse surahs, read, and listen.",
-    },
+    title: { ar: "القرآن الكريم", en: "Holy Quran" },
+    description: { ar: "تصفح السور والاستماع والقراءة.", en: "Browse surahs, read, and listen." },
   },
   {
     id: "adhkar",
     href: "/adhkar",
     icon: "🤲",
-    title: {
-      ar: "الأذكار",
-      en: "Adhkar",
-    },
-    description: {
-      ar: "أذكار الصباح والمساء والنوم وبعد الصلاة.",
-      en: "Morning, evening, sleep, and post-prayer adhkar.",
-    },
+    title: { ar: "الأذكار", en: "Adhkar" },
+    description: { ar: "أذكار الصباح والمساء والنوم وبعد الصلاة.", en: "Morning, evening, sleep, and post-prayer adhkar." },
   },
   {
     id: "tasbih",
     href: "/tasbih",
     icon: "📿",
-    title: {
-      ar: "المسبحة الإلكترونية",
-      en: "Digital Tasbih",
-    },
-    description: {
-      ar: "عدّاد تفاعلي للتسبيح والذكر.",
-      en: "Interactive counter for dhikr and tasbih.",
-    },
+    title: { ar: "المسبحة الإلكترونية", en: "Digital Tasbih" },
+    description: { ar: "عدّاد تفاعلي للتسبيح والذكر.", en: "Interactive counter for dhikr and tasbih." },
   },
   {
     id: "prayer-times",
     href: "/prayer-times",
     icon: "🕐",
-    title: {
-      ar: "مواقيت الصلاة",
-      en: "Prayer Times",
-    },
-    description: {
-      ar: "مواقيت الصلاة حسب موقعك.",
-      en: "Prayer times based on your location.",
-    },
+    title: { ar: "مواقيت الصلاة", en: "Prayer Times" },
+    description: { ar: "مواقيت الصلاة حسب موقعك.", en: "Prayer times based on your location." },
   },
   {
     id: "qibla",
     href: "/qibla",
     icon: "🧭",
-    title: {
-      ar: "اتجاه القبلة",
-      en: "Qibla Direction",
-    },
-    description: {
-      ar: "بوصلة القبلة والمسافة إلى مكة.",
-      en: "Qibla compass and distance to Makkah.",
-    },
+    title: { ar: "اتجاه القبلة", en: "Qibla Direction" },
+    description: { ar: "بوصلة القبلة والمسافة إلى مكة.", en: "Qibla compass and distance to Makkah." },
   },
   {
     id: "fatwa",
     href: "/fatwa",
     icon: "⚖️",
-    title: {
-      ar: "الفتاوى",
-      en: "Fatwas",
-    },
-    description: {
-      ar: "أسئلة فقهية وإجابات مختصرة.",
-      en: "Islamic questions and concise answers.",
-    },
+    title: { ar: "الفتاوى", en: "Fatwas" },
+    description: { ar: "أسئلة فقهية وإجابات مختصرة.", en: "Islamic questions and concise answers." },
   },
   {
     id: "prophets-stories",
     href: "/prophets-stories",
     icon: "📚",
-    title: {
-      ar: "قصص الأنبياء",
-      en: "Prophets Stories",
-    },
-    description: {
-      ar: "قصص مختارة ودروس مستفادة.",
-      en: "Selected stories and lessons.",
-    },
+    title: { ar: "قصص الأنبياء", en: "Prophets Stories" },
+    description: { ar: "قصص مختارة ودروس مستفادة.", en: "Selected stories and lessons." },
   },
   {
     id: "quran-memorization",
     href: "/quran-memorization",
     icon: "🎯",
-    title: {
-      ar: "خطة حفظ القرآن",
-      en: "Memorization Plan",
-    },
-    description: {
-      ar: "نظّم وردك اليومي من الحفظ والمراجعة.",
-      en: "Organize daily memorization and revision.",
-    },
+    title: { ar: "خطة حفظ القرآن", en: "Memorization Plan" },
+    description: { ar: "نظّم وردك اليومي من الحفظ والمراجعة.", en: "Organize daily memorization and revision." },
   },
   {
     id: "ruqyah",
     href: "/ruqyah",
     icon: "🛡️",
-    title: {
-      ar: "الرقية الشرعية",
-      en: "Ruqyah",
-    },
-    description: {
-      ar: "آيات وأدعية التحصين والرقية.",
-      en: "Verses and supplications for protection.",
-    },
+    title: { ar: "الرقية الشرعية", en: "Ruqyah" },
+    description: { ar: "آيات وأدعية التحصين والرقية.", en: "Verses and supplications for protection." },
   },
   {
     id: "daily-wird",
     href: "/daily-wird",
     icon: "📅",
-    title: {
-      ar: "الورد اليومي",
-      en: "Daily Wird",
-    },
-    description: {
-      ar: "خطة أسبوعية للقرآن والذكر والعمل الصالح.",
-      en: "Weekly plan for Quran, dhikr, and good deeds.",
-    },
+    title: { ar: "الورد اليومي", en: "Daily Wird" },
+    description: { ar: "خطة أسبوعية للقرآن والذكر والعمل الصالح.", en: "Weekly plan for Quran, dhikr, and good deeds." },
   },
   {
     id: "zakat",
     href: "/zakat",
     icon: "💰",
-    title: {
-      ar: "حاسبة الزكاة",
-      en: "Zakat Calculator",
-    },
-    description: {
-      ar: "احسب زكاة المال حسب النصاب والديون.",
-      en: "Calculate wealth zakat based on nisab and debts.",
-    },
+    title: { ar: "حاسبة الزكاة", en: "Zakat Calculator" },
+    description: { ar: "احسب زكاة المال حسب النصاب والديون.", en: "Calculate wealth zakat based on nisab and debts." },
   },
   {
     id: "inheritance",
     href: "/inheritance",
     icon: "📜",
-    title: {
-      ar: "حاسبة الميراث",
-      en: "Inheritance Calculator",
-    },
-    description: {
-      ar: "قسّم التركة حسب الفرائض المبسطة.",
-      en: "Distribute estate according to simplified faraid.",
-    },
+    title: { ar: "حاسبة الميراث", en: "Inheritance Calculator" },
+    description: { ar: "قسّم التركة حسب الفرائض المبسطة.", en: "Distribute estate according to simplified faraid." },
   },
   {
     id: "hajj-guide",
     href: "/hajj-guide",
     icon: "🕋",
-    title: {
-      ar: "دليل الحج والعمرة",
-      en: "Hajj and Umrah Guide",
-    },
-    description: {
-      ar: "خطوات النسك والأدعية والأخطاء الشائعة.",
-      en: "Rites, supplications, and common mistakes.",
-    },
+    title: { ar: "دليل الحج والعمرة", en: "Hajj and Umrah Guide" },
+    description: { ar: "خطوات النسك والأدعية والأخطاء الشائعة.", en: "Rites, supplications, and common mistakes." },
   },
   {
     id: "dawah-guide",
     href: "/dawah-guide",
     icon: "🤝",
-    title: {
-      ar: "دليل الدعوة",
-      en: "Dawah Guide",
-    },
-    description: {
-      ar: "أصول الدعوة وخطواتها ومهاراتها.",
-      en: "Dawah principles, steps, and skills.",
-    },
+    title: { ar: "دليل الدعوة", en: "Dawah Guide" },
+    description: { ar: "أصول الدعوة وخطواتها ومهاراتها.", en: "Dawah principles, steps, and skills." },
   },
   {
     id: "articles",
     href: "/articles",
     icon: "✍️",
-    title: {
-      ar: "المقالات",
-      en: "Articles",
-    },
-    description: {
-      ar: "مقالات دعوية وتربوية وشرعية مختارة.",
-      en: "Selected dawah, educational, and Islamic articles.",
-    },
+    title: { ar: "المقالات", en: "Articles" },
+    description: { ar: "مقالات دعوية وتربوية وشرعية مختارة.", en: "Selected dawah, educational, and Islamic articles." },
   },
   {
     id: "faq",
     href: "/faq",
     icon: "❓",
-    title: {
-      ar: "الأسئلة الشائعة",
-      en: "FAQ",
-    },
-    description: {
-      ar: "إجابات عن أكثر الأسئلة تكرارًا.",
-      en: "Answers to common questions.",
-    },
+    title: { ar: "الأسئلة الشائعة", en: "FAQ" },
+    description: { ar: "إجابات عن أكثر الأسئلة تكرارًا.", en: "Answers to common questions." },
   },
 ];
 
@@ -597,11 +518,20 @@ export async function generateMetadata({
       url: `/${l}/about`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -635,16 +565,27 @@ export default async function AboutPage({
     name: ui.title,
     description: ui.description,
     inLanguage: l,
+    url: `/${l}/about`,
     mainEntity: {
       "@type": "Organization",
       name: isRTL ? PLATFORM_NAME.ar : PLATFORM_NAME.en,
+      alternateName: isRTL ? PLATFORM_NAME.en : PLATFORM_NAME.ar,
       description: ui.description,
-      url: `/${l}/about`,
+      url: `/${l}`,
+      foundingDate: "2024",
+      slogan: isRTL ? "نورُ العلم.. بين يديك" : "The Light of Knowledge.. In Your Hands",
+      knowsLanguage: ["ar", "en"],
+      founder: {
+        "@type": "Person",
+        name: ui.founderName,
+        jobTitle: ui.founderRole,
+      },
+      sameAs: [],
     },
   };
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -652,19 +593,16 @@ export default async function AboutPage({
         }}
       />
 
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
@@ -674,6 +612,18 @@ export default async function AboutPage({
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-20 w-20 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+              >
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 3a9 9 0 1 0 9 9c0-1.5-.4-3-1.2-4.2A7 7 0 0 1 12 3z" />
+                  <circle cx="17" cy="6" r="1.5" fill="#d4af37" />
+                </svg>
+              </span>
+            </div>
+
             <span className="badge-primary mb-5">
               ℹ️ {isRTL ? PLATFORM_NAME.ar : PLATFORM_NAME.en}
             </span>
@@ -691,6 +641,14 @@ export default async function AboutPage({
           </div>
         </div>
 
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard number="35+" label={ui.statsSections} icon="📚" />
+          <StatCard number="2" label={ui.statsLanguages} icon="🌍" />
+          <StatCard number="15+" label={ui.statsTools} icon="🛠️" />
+          <StatCard number="100%" label={ui.statsFree} icon="✨" />
+        </div>
+
         {/* ===== تنقل سريع ===== */}
         <div className="card mb-8 p-6 md:p-7">
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
@@ -698,62 +656,32 @@ export default async function AboutPage({
           </h2>
 
           <div className="flex flex-wrap gap-3">
-            <a
-              href="#about"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#about" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               🌐 {ui.aboutTitle}
             </a>
-
-            <a
-              href="#mission"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#mission" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               🎯 {ui.missionTitle}
             </a>
-
-            <a
-              href="#values"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#values" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               💎 {ui.valuesTitle}
             </a>
-
-            <a
-              href="#founder"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#founder" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               👤 {ui.founderTitle}
             </a>
-
-            <a
-              href="#content"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#content" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               📚 {ui.contentTitle}
             </a>
-
-            <a
-              href="#sections"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#sections" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               🧩 {ui.sectionsTitle}
             </a>
-
-            <a
-              href="#privacy"
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
-            >
+            <a href="#privacy" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               🔒 {ui.privacyTitle}
             </a>
           </div>
         </div>
 
         {/* ===== عن المنصة ===== */}
-        <div
-          id="about"
-          className="card mb-8 scroll-mt-32 p-6 md:p-8"
-        >
+        <div id="about" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <h2
             className="mb-5 text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
@@ -765,7 +693,6 @@ export default async function AboutPage({
             <p className="leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.aboutParagraph1}
             </p>
-
             <p className="leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.aboutParagraph2}
             </p>
@@ -774,10 +701,7 @@ export default async function AboutPage({
 
         {/* ===== الرسالة والرؤية ===== */}
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
-          <div
-            id="mission"
-            className="card relative scroll-mt-32 overflow-hidden p-6 md:p-8"
-          >
+          <div id="mission" className="card relative scroll-mt-32 overflow-hidden p-6 md:p-8">
             <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
             <h2
@@ -804,10 +728,7 @@ export default async function AboutPage({
             </ul>
           </div>
 
-          <div
-            id="vision"
-            className="card relative scroll-mt-32 overflow-hidden p-6 md:p-8"
-          >
+          <div id="vision" className="card relative scroll-mt-32 overflow-hidden p-6 md:p-8">
             <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
             <h2
@@ -830,37 +751,23 @@ export default async function AboutPage({
         </div>
 
         {/* ===== القيم ===== */}
-        <div
-          id="values"
-          className="mb-8 scroll-mt-32"
-        >
+        <div id="values" className="mb-8 scroll-mt-32">
           <div className="mb-6 text-center">
-            <h2 className="section-title mb-0">
-              {ui.valuesTitle}
-            </h2>
-
+            <h2 className="section-title mb-0">{ui.valuesTitle}</h2>
             <div className="islamic-divider my-0">
               <span className="text-xl text-gold-500">✦</span>
             </div>
-
-            <p className="section-subtitle mx-auto max-w-2xl">
-              {ui.valuesDesc}
-            </p>
+            <p className="section-subtitle mx-auto max-w-2xl">{ui.valuesDesc}</p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {VALUES.map((value) => (
-              <article
-                key={value.id}
-                className="card relative overflow-hidden p-6"
-              >
+              <article key={value.id} className="card relative overflow-hidden p-6">
                 <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
-
                 <div className="mb-4 flex items-start gap-3">
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
                     {value.icon}
                   </span>
-
                   <h3
                     className="text-lg font-black leading-relaxed text-slate-900 dark:text-white"
                     style={{ fontFamily: "var(--font-amiri)" }}
@@ -868,7 +775,6 @@ export default async function AboutPage({
                     {isRTL ? value.title.ar : value.title.en}
                   </h3>
                 </div>
-
                 <p className="leading-relaxed text-slate-600 dark:text-slate-300">
                   {isRTL ? value.description.ar : value.description.en}
                 </p>
@@ -878,36 +784,28 @@ export default async function AboutPage({
         </div>
 
         {/* ===== المشرف ===== */}
-        <div
-          id="founder"
-          className="card mb-8 scroll-mt-32 p-6 md:p-8"
-        >
+        <div id="founder" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-start">
             <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-3xl text-white shadow-lg shadow-primary-500/25">
               👤
             </span>
-
             <div className="min-w-0 flex-1">
               <p className="mb-1 text-sm font-bold text-primary-600 dark:text-primary-400">
                 {ui.founderTitle}
               </p>
-
               <h2
                 className="mb-2 text-2xl font-black text-slate-900 dark:text-white"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
                 {ui.founderName}
               </h2>
-
               <p className="mb-5 text-sm font-bold text-gold-700 dark:text-gold-300">
                 {ui.founderRole}
               </p>
-
               <div className="space-y-4">
                 <p className="leading-relaxed text-slate-600 dark:text-slate-300">
                   {ui.founderParagraph1}
                 </p>
-
                 <p className="leading-relaxed text-slate-600 dark:text-slate-300">
                   {ui.founderParagraph2}
                 </p>
@@ -917,21 +815,16 @@ export default async function AboutPage({
         </div>
 
         {/* ===== منهج المحتوى ===== */}
-        <div
-          id="content"
-          className="card mb-8 scroll-mt-32 p-6 md:p-8"
-        >
+        <div id="content" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <h2
             className="mb-3 text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
             {ui.contentTitle}
           </h2>
-
           <p className="mb-6 leading-relaxed text-slate-600 dark:text-slate-300">
             {ui.contentDesc}
           </p>
-
           <div className="grid gap-4 md:grid-cols-2">
             {CONTENT_METHOD.map((item) => (
               <div
@@ -948,24 +841,14 @@ export default async function AboutPage({
         </div>
 
         {/* ===== أقسام المنصة ===== */}
-        <div
-          id="sections"
-          className="mb-8 scroll-mt-32"
-        >
+        <div id="sections" className="mb-8 scroll-mt-32">
           <div className="mb-6 text-center">
-            <h2 className="section-title mb-0">
-              {ui.sectionsTitle}
-            </h2>
-
+            <h2 className="section-title mb-0">{ui.sectionsTitle}</h2>
             <div className="islamic-divider my-0">
               <span className="text-xl text-gold-500">✦</span>
             </div>
-
-            <p className="section-subtitle mx-auto max-w-2xl">
-              {ui.sectionsDesc}
-            </p>
+            <p className="section-subtitle mx-auto max-w-2xl">{ui.sectionsDesc}</p>
           </div>
-
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {SECTION_LINKS.map((link) => (
               <Link
@@ -976,17 +859,14 @@ export default async function AboutPage({
                 <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
                   {link.icon}
                 </span>
-
                 <div className="min-w-0 flex-1">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {isRTL ? link.title.ar : link.title.en}
                   </h3>
-
                   <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
                     {isRTL ? link.description.ar : link.description.en}
                   </p>
                 </div>
-
                 <svg
                   width="18"
                   height="18"
@@ -1006,15 +886,11 @@ export default async function AboutPage({
         </div>
 
         {/* ===== الخصوصية ===== */}
-        <div
-          id="privacy"
-          className="card mb-8 scroll-mt-32 border-primary-200 bg-primary-50/40 p-6 md:p-8 dark:border-primary-900/30 dark:bg-primary-950/15"
-        >
+        <div id="privacy" className="card mb-8 scroll-mt-32 border-primary-200 bg-primary-50/40 p-6 md:p-8 dark:border-primary-900/30 dark:bg-primary-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
               🔒
             </span>
-
             <div>
               <h2
                 className="mb-3 text-2xl font-black text-slate-900 dark:text-white"
@@ -1022,7 +898,6 @@ export default async function AboutPage({
               >
                 {ui.privacyTitle}
               </h2>
-
               <p className="leading-relaxed text-slate-600 dark:text-slate-300">
                 {ui.privacyParagraph}
               </p>
@@ -1033,23 +908,19 @@ export default async function AboutPage({
         {/* ===== CTA ===== */}
         <div className="card relative mb-8 overflow-hidden p-8 text-center md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
           <h2
             className="mb-3 text-2xl font-black text-slate-900 md:text-3xl dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
             {ui.ctaTitle}
           </h2>
-
           <p className="mx-auto mb-7 max-w-2xl leading-relaxed text-slate-600 dark:text-slate-300">
             {ui.ctaDesc}
           </p>
-
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href={`/${l}/contact`} className="btn-primary">
               {ui.contact}
             </Link>
-
             <Link href={`/${l}/faq`} className="btn-outline">
               {ui.faq}
             </Link>
@@ -1064,11 +935,10 @@ export default async function AboutPage({
           >
             📌 {ui.noteTitle}
           </h2>
-
           <ul className="space-y-3">
             {[ui.note1, ui.note2].map((note, index) => (
               <li
-                key={`${note}-${index}`}
+                key={`note-${index}`}
                 className="flex items-start gap-3 leading-relaxed text-slate-600 dark:text-slate-300"
               >
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
@@ -1078,6 +948,26 @@ export default async function AboutPage({
           </ul>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون مساعد: StatCard
+// ============================================================
+
+function StatCard({ number, label, icon }: { number: string; label: string; icon: string }) {
+  return (
+    <div className="card card-interactive p-5 text-center">
+      <div className="mb-3 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className="text-2xl font-black text-primary-700 dark:text-primary-300">{number}</p>
+      <p className="mt-1 text-xs font-bold text-slate-600 dark:text-slate-400">{label}</p>
+    </div>
   );
 }

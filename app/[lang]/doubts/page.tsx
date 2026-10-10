@@ -178,7 +178,7 @@ const SECTIONS: DoubtSection[] = [
     icon: "",
     title: {
       ar: "مراعاة حال السائل",
-      en: "Considering the Questioner’s State",
+      en: "Considering the Questioner's State",
     },
     intro: {
       ar: "الناس يختلفون: باحث عن الحق، وغاضب من واقع مسلم، ومتأثر بشبهة إعلامية، ومبتلى بوسوسة.",
@@ -247,7 +247,7 @@ const SECTIONS: DoubtSection[] = [
       },
       {
         ar: "ادعُ للسائل بالهداية، فإن القلوب بيد الله.",
-        en: "Supplicate for the questioner’s guidance, for hearts are in Allah’s hand.",
+        en: "Supplicate for the questioner's guidance, for hearts are in Allah's hand.",
       },
     ],
   },
@@ -310,7 +310,7 @@ const DOUBTS: DoubtQA[] = [
     ],
     tip: {
       ar: "لا تجعل السؤال عن الحكمة سببًا لإنكار الرحمة، فالنقص في علمنا لا يعني نقصًا في حكمة الله.",
-      en: "Do not let questioning wisdom become a denial of mercy; deficiency in our knowledge does not mean deficiency in Allah’s wisdom.",
+      en: "Do not let questioning wisdom become a denial of mercy; deficiency in our knowledge does not mean deficiency in Allah's wisdom.",
     },
   },
   {
@@ -359,7 +359,7 @@ const DOUBTS: DoubtQA[] = [
       },
       {
         ar: "كثير من العلماء زادهم العلم إيمانًا لأنهم رأوا في دقة الخلق وآياته دليلًا على علم الخالق وقدرته.",
-        en: "Many scientists increased in faith through knowledge because they saw in creation’s precision and signs evidence of the Creator’s knowledge and power.",
+        en: "Many scientists increased in faith through knowledge because they saw in creation's precision and signs evidence of the Creator's knowledge and power.",
       },
     ],
   },
@@ -384,7 +384,7 @@ const DOUBTS: DoubtQA[] = [
       },
       {
         ar: "العدل في الإسلام لا يعني دائمًا التساوي في كل حكم، بل وضع كل شيء في موضعه المناسب لحكمة الخالق.",
-        en: "Justice in Islam does not always mean identical treatment in every ruling, but placing each matter in its proper place according to the Creator’s wisdom.",
+        en: "Justice in Islam does not always mean identical treatment in every ruling, but placing each matter in its proper place according to the Creator's wisdom.",
       },
     ],
     tip: {
@@ -467,7 +467,7 @@ const DOUBTS: DoubtQA[] = [
       },
       {
         ar: "العنف الذي يحدث باسم الإسلام غالبًا انحراف عن هديه، لا حجة عليه.",
-        en: "Violence occurring in Islam’s name is usually a deviation from its guidance, not an argument against it.",
+        en: "Violence occurring in Islam's name is usually a deviation from its guidance, not an argument against it.",
       },
     ],
   },
@@ -538,7 +538,7 @@ const DOUBTS: DoubtQA[] = [
     answer: [
       {
         ar: "إن كنت غير متمكن من العلم، فالأفضل تركها أولًا والسؤال عن أصل المسألة عند أهل الثقة.",
-        en: "If you are not grounded in knowledge, it is better to leave them first and ask about the issue’s foundation from trustworthy scholars.",
+        en: "If you are not grounded in knowledge, it is better to leave them first and ask about the issue's foundation from trustworthy scholars.",
       },
       {
         ar: "كثير من مقاطع الشبهات تُبنى على بتر النص، أو سوء فهم المصطلح، أو عرض مسألة فقهية معقدة في دقيقة واحدة.",
@@ -629,7 +629,8 @@ export default async function DoubtsPage({
       name: isRTL ? doubt.question.ar : doubt.question.en,
       acceptedAnswer: {
         "@type": "Answer",
-        text: (isRTL ? doubt.answer.ar : doubt.answer.en).join(" "),
+        // ✅ الإصلاح: doubt.answer مصفوفة، نستخدم map لدمج الفقرات
+        text: doubt.answer.map((p) => (isRTL ? p.ar : p.en)).join(" "),
       },
     })),
   };

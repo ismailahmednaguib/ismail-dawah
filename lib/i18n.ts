@@ -6,13 +6,11 @@
 
 /**
  * اللغات المدعومة في المنصة
- * ملاحظة: هذا التعريف هنا لتجنب الاعتماد الدائري مع translations.ts
  */
 export const languages = ['ar', 'en'] as const;
 
 /**
  * نوع اللغة المدعومة
- * يُستخدم في: الصفحات، المكونات، الـ layouts
  */
 export type Lang = (typeof languages)[number];
 
@@ -30,11 +28,19 @@ export const languagesMap: Record<Lang, string> = {
 } as const;
 
 /**
- * أكواد اللغات بصيغة BCP-47 (للـ SEO والـ meta tags)
+ * أكواد اللغات بصيغة BCP-47 (للـ Intl والـ meta tags)
  */
 export const localeMap: Record<Lang, string> = {
   ar: 'ar-EG',
   en: 'en-US',
+} as const;
+
+/**
+ * قيمة lang المناسبة لعنصر <html>
+ */
+export const htmlLangMap: Record<Lang, string> = {
+  ar: 'ar',
+  en: 'en',
 } as const;
 
 /**
@@ -46,12 +52,19 @@ export const directionMap: Record<Lang, 'rtl' | 'ltr'> = {
 } as const;
 
 /**
- * أسماء الدول للعرض (اختياري)
+ * Regex آمن للتعرف على بادئة اللغة في المسار.
+ *
+ * يقبل:
+ * - /ar
+ * - /ar/...
+ * - /en
+ * - /en/...
+ *
+ * ولا يخطئ مع:
+ * - /archive
+ * - /english
  */
-export const countryMap: Record<Lang, string> = {
-  ar: 'مصر',
-  en: 'United States',
-} as const;
+const LANG_PREFIX_REGEX = /^\/(ar|en)(?=\/|$)/;
 
 // ============================================================================
 // 🔍 دوال التحقق
@@ -59,25 +72,16 @@ export const countryMap: Record<Lang, string> = {
 
 /**
  * التحقق من صحة اللغة الممررة في الـ URL
- * تُستخدم في: middleware، الصفحات، الـ layouts
- * @example isValidLang('ar') => true
- * @example isValidLang('fr') => false
  */
 export function isValidLang(lang: string | undefined | null): lang is Lang {
   if (!lang) return false;
   return (languages as readonly string[]).includes(lang);
 }
 
-/**
- * التحقق من أن اللغة عربية (للتحقق السريع من RTL)
- */
 export function isArabic(lang: Lang): boolean {
   return lang === 'ar';
 }
 
-/**
- * التحقق من أن اللغة إنجليزية
- */
 export function isEnglish(lang: Lang): boolean {
   return lang === 'en';
 }
@@ -86,39 +90,75 @@ export function isEnglish(lang: Lang): boolean {
 // 🧭 دوال الاتجاه واللغة
 // ============================================================================
 
-/**
- * الحصول على اتجاه النص حسب اللغة
- * @example getDirection('ar') => 'rtl'
- * @example getDirection('en') => 'ltr'
- */
 export function getDirection(lang: Lang): 'rtl' | 'ltr' {
   return directionMap[lang] || directionMap.ar;
 }
 
-/**
- * الحصول على كود الـ locale الكامل
- * @example getLocale('ar') => 'ar-EG'
- * @example getLocale('en') => 'en-US'
- */
 export function getLocale(lang: Lang): string {
   return localeMap[lang] || localeMap.ar;
 }
 
-/**
- * الحصول على اسم اللغة للعرض
- * @example getLanguageName('ar') => 'العربية'
- */
+export function getHtmlLang(lang: Lang): string {
+  return htmlLangMap[lang] || htmlLangMap.ar;
+}
+
 export function getLanguageName(lang: Lang): string {
   return languagesMap[lang] || languagesMap.ar;
 }
 
-/**
- * الحصول على اللغة البديلة (للتبديل بين اللغات)
- * @example getAlternateLang('ar') => 'en'
- * @example getAlternateLang('en') => 'ar'
- */
 export function getAlternateLang(lang: Lang): Lang {
   return lang === 'ar' ? 'en' : 'ar';
+}
+
+// ============================================================================
+// 🧰 Internal helpers
+// ============================================================================
+
+function normalizePath(path: string): string {
+  let normalized = String(path ?? '/').trim();
+
+  if (!normalized) {
+    return '/';
+  }
+
+  if (!normalized.startsWith('/')) {
+    normalized = `/${normalized}`;
+  }
+
+  // منع الـ double slash
+  normalized = normalized.replace(/\/{2,}/g, '/');
+
+  // إزالة الشرطة الأخيرة إلا إذا كان المسار جذرًا
+  if (normalized.length > 1 && normalized.endsWith('/')) {
+    normalized = normalized.slice(0, -1);
+  }
+
+  return normalized || '/';
+}
+
+function removeLangPrefix(path: string): string {
+  const normalized = normalizePath(path);
+  const withoutLang = normalized.replace(LANG_PREFIX_REGEX, '');
+
+  return withoutLang || '/';
+}
+
+function toDate(value: Date | string | number | null | undefined): Date | null {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+
+  if (typeof value === 'number') {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 // ============================================================================
@@ -126,36 +166,84 @@ export function getAlternateLang(lang: Lang): Lang {
 // ============================================================================
 
 /**
- * توليد رابط بديل للغة الأخرى (يستخدم في LanguageSwitcher)
- * @example getLocalizedPath('/ar/quran', 'en') => '/en/quran'
+ * إرجاع المسار بدون بادئة اللغة.
+ *
+ * مثال:
+ * /ar/quran -> /quran
+ * /en/about -> /about
+ * / -> /
  */
-export function getLocalizedPath(currentPath: string, targetLang: Lang): string {
-  const pathWithoutLang = currentPath.replace(/^\/(ar|en)/, '');
-  return `/${targetLang}${pathWithoutLang}`;
+export function getPathWithoutLang(path: string): string {
+  return removeLangPrefix(path);
 }
 
 /**
- * استخراج اللغة من مسار الـ URL
- * @example getLangFromPath('/ar/quran') => 'ar'
- * @example getLangFromPath('/en/about') => 'en'
+ * التحقق هل المسار يحتوي بادئة لغة؟
+ */
+export function hasLangPrefix(path: string): boolean {
+  return LANG_PREFIX_REGEX.test(normalizePath(path));
+}
+
+/**
+ * تحويل المسار الحالي إلى لغة مستهدفة.
+ *
+ * أمثلة:
+ * getLocalizedPath('/', 'ar') => '/ar'
+ * getLocalizedPath('/', 'en') => '/en'
+ * getLocalizedPath('/ar/quran', 'en') => '/en/quran'
+ * getLocalizedPath('/quran', 'ar') => '/ar/quran'
+ */
+export function getLocalizedPath(currentPath: string, targetLang: Lang): string {
+  const withoutLang = removeLangPrefix(currentPath);
+
+  if (withoutLang === '/') {
+    return `/${targetLang}`;
+  }
+
+  return `/${targetLang}${withoutLang}`;
+}
+
+/**
+ * استخراج اللغة من المسار.
+ *
+ * أمثلة:
+ * /ar/quran => ar
+ * /en/about => en
+ * / => null
  */
 export function getLangFromPath(path: string): Lang | null {
-  const match = path.match(/^\/(ar|en)(\/|$)/);
+  const normalized = normalizePath(path);
+  const match = normalized.match(LANG_PREFIX_REGEX);
+
   if (match && isValidLang(match[1])) {
     return match[1];
   }
+
   return null;
 }
 
 /**
- * توليد قائمة الروابط البديلة لـ hreflang tags
- * تُستخدم في: generateMetadata، sitemap، JSON-LD
+ * إرجاع روابط اللغات البديلة لمسار معين.
+ *
+ * يشمل:
+ * - ar
+ * - en
+ * - x-default
+ *
+ * مهم جدًا لـ SEO في المواقع متعددة اللغة.
  */
-export function getAlternateLanguages(path: string) {
-  const pathWithoutLang = path.replace(/^\/(ar|en)/, '');
+export function getAlternateLanguages(
+  path: string
+): Record<Lang | 'x-default', string> {
+  const withoutLang = removeLangPrefix(path);
+
+  const arPath = withoutLang === '/' ? '/ar' : `/ar${withoutLang}`;
+  const enPath = withoutLang === '/' ? '/en' : `/en${withoutLang}`;
+
   return {
-    ar: `/ar${pathWithoutLang}`,
-    en: `/en${pathWithoutLang}`,
+    ar: arPath,
+    en: enPath,
+    'x-default': arPath,
   };
 }
 
@@ -164,49 +252,151 @@ export function getAlternateLanguages(path: string) {
 // ============================================================================
 
 /**
- * تنسيق التاريخ حسب اللغة
- * @example formatDate(new Date(), 'ar') => '١٠ أكتوبر ٢٠٢٦'
+ * تنسيق تاريخ ميلادي آمن.
  */
-export function formatDate(date: Date, lang: Lang, options?: Intl.DateTimeFormatOptions): string {
-  const defaultOptions: Intl.DateTimeFormatOptions = options || {
+export function formatDate(
+  date: Date | string | number,
+  lang: Lang,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  const parsed = toDate(date);
+
+  if (!parsed) {
+    return '';
+  }
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   };
-  
-  return new Intl.DateTimeFormat(getLocale(lang), defaultOptions).format(date);
+
+  const finalOptions = options ?? defaultOptions;
+
+  try {
+    return new Intl.DateTimeFormat(getLocale(lang), finalOptions).format(parsed);
+  } catch {
+    try {
+      return parsed.toLocaleDateString();
+    } catch {
+      return parsed.toISOString().slice(0, 10);
+    }
+  }
 }
 
 /**
- * تنسيق التاريخ الهجري
- * @example formatHijriDate(new Date(), 'ar') => '٢٩ ربيع الآخر ١٤٤٨'
+ * locales هجرية محتملة حسب الترتيب.
+ *
+ * نحاول أولًا Umm al-Qura لأنه الأدق للمناسبات السعودية/الإسلامية الشائعة،
+ * ثم fallback إلى islamic عام.
  */
-export function formatHijriDate(date: Date, lang: Lang): string {
-  return new Intl.DateTimeFormat(`${getLocale(lang)}-u-ca-islamic`, {
+const HIJRI_LOCALES: Record<Lang, string[]> = {
+  ar: [
+    'ar-SA-u-ca-islamic-umalqura',
+    'ar-EG-u-ca-islamic',
+    'ar-u-ca-islamic',
+    'ar',
+  ],
+  en: [
+    'en-US-u-ca-islamic-umalqura',
+    'en-US-u-ca-islamic',
+    'en-u-ca-islamic',
+    'en',
+  ],
+};
+
+/**
+ * تنسيق تاريخ هجري مع fallback آمن.
+ *
+ * إذا لم يدعم البيئة التقويم الهجري، يرجع تاريخًا ميلاديًا بدل الانهيار.
+ */
+export function formatHijriDate(
+  date: Date | string | number,
+  lang: Lang,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  const parsed = toDate(date);
+
+  if (!parsed) {
+    return '';
+  }
+
+  const defaultHijriOptions: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  }).format(date);
+    era: 'short',
+  };
+
+  const finalOptions = options ?? defaultHijriOptions;
+  const locales = HIJRI_LOCALES[lang] || HIJRI_LOCALES.ar;
+
+  for (const locale of locales) {
+    try {
+      return new Intl.DateTimeFormat(locale, finalOptions).format(parsed);
+    } catch {
+      // جرّب التالي
+    }
+  }
+
+  // fallback نهائي: تاريخ ميلادي
+  return formatDate(parsed, lang, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
 }
 
 /**
- * تنسيق الوقت حسب اللغة
- * @example formatTime(new Date(), 'ar') => '١٢:٤٢ م'
+ * تنسيق وقت آمن.
  */
-export function formatTime(date: Date, lang: Lang): string {
-  return new Intl.DateTimeFormat(getLocale(lang), {
+export function formatTime(
+  date: Date | string | number,
+  lang: Lang,
+  options?: Intl.DateTimeFormatOptions
+): string {
+  const parsed = toDate(date);
+
+  if (!parsed) {
+    return '';
+  }
+
+  const defaultOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
-  }).format(date);
+  };
+
+  const finalOptions = options ?? defaultOptions;
+
+  try {
+    return new Intl.DateTimeFormat(getLocale(lang), finalOptions).format(parsed);
+  } catch {
+    try {
+      return parsed.toLocaleTimeString();
+    } catch {
+      return parsed.toISOString().slice(11, 16);
+    }
+  }
 }
 
 /**
- * تنسيق الأرقام حسب اللغة (أرقام عربية/إنجليزية)
- * @example formatNumber(1234, 'ar') => '١٬٢٣٤'
+ * تنسيق رقم حسب اللغة.
  */
-export function formatNumber(num: number, lang: Lang): string {
-  return new Intl.NumberFormat(getLocale(lang)).format(num);
+export function formatNumber(
+  num: number,
+  lang: Lang,
+  options?: Intl.NumberFormatOptions
+): string {
+  if (!Number.isFinite(num)) {
+    return '';
+  }
+
+  try {
+    return new Intl.NumberFormat(getLocale(lang), options).format(num);
+  } catch {
+    return String(num);
+  }
 }
 
 // ============================================================================
@@ -214,29 +404,20 @@ export function formatNumber(num: number, lang: Lang): string {
 // ============================================================================
 
 /**
- * توليد static params للصفحات ثنائية اللغة
- * تُستخدم في: generateStaticParams()
- * @example generateLangParams() => [{ lang: 'ar' }, { lang: 'en' }]
+ * لتوليد params في generateStaticParams.
  */
 export function generateLangParams(): Array<{ lang: Lang }> {
   return languages.map((lang) => ({ lang }));
 }
 
-/**
- * التحقق من الـ params في الصفحات الديناميكية
- * تُستخدم في: الصفحات التي تستقبل params
- * @example 
- * const { lang } = await params;
- * if (!isValidLangParam(lang)) notFound();
- */
 export function isValidLangParam(lang: string): lang is Lang {
   return isValidLang(lang);
 }
 
 /**
- * الحصول على اللغة من الـ params مع fallback
+ * إرجاع لغة آمنة دائمًا.
  */
-export function getSafeLang(lang: string | undefined): Lang {
+export function getSafeLang(lang: string | undefined | null): Lang {
   return isValidLang(lang) ? lang : defaultLang;
 }
 
@@ -245,43 +426,105 @@ export function getSafeLang(lang: string | undefined): Lang {
 // ============================================================================
 
 /**
- * اختيار النص المناسب حسب اللغة (بديل بسيط عن translations)
- * @example pickText('ar', { ar: 'مرحبا', en: 'Hello' }) => 'مرحبا'
+ * اختيار نص حسب اللغة مع fallback آمن.
+ *
+ * يقبل:
+ * { ar: '...', en: '...' }
+ * { ar: '...' }
+ * { en: '...' }
+ * { default: '...' }
  */
-export function pickText(lang: Lang, text: { ar: string; en: string }): string {
-  return lang === 'ar' ? text.ar : text.en;
+export function pickText(
+  lang: Lang,
+  text: {
+    ar?: string;
+    en?: string;
+    default?: string;
+  }
+): string {
+  const value =
+    text?.[lang] ??
+    text?.ar ??
+    text?.en ??
+    text?.default ??
+    '';
+
+  return String(value);
 }
 
 /**
- * اختيار الأيقونة أو الرمز المناسب حسب اللغة (إن لزم)
+ * اختيار قيمة حسب اللغة مع fallback آمن.
  */
-export function pickByLang<T>(lang: Lang, values: { ar: T; en: T }): T {
-  return lang === 'ar' ? values.ar : values.en;
+export function pickByLang<T>(
+  lang: Lang,
+  values: {
+    ar?: T;
+    en?: T;
+    default?: T;
+  }
+): T {
+  const value =
+    values?.[lang] ??
+    values?.ar ??
+    values?.en ??
+    values?.default;
+
+  return value as T;
 }
 
 /**
- * الحصول على فئات CSS حسب اللغة (للـ RTL)
- * @example getLangClasses('ar') => 'text-right'
+ * كلاسات Tailwind حسب الاتجاه.
+ *
+ * ملاحظة مهمة للتوافق مع الكود القديم:
+ * paddingStart و paddingEnd و marginStart و marginEnd هي prefixes وليس كلاسات كاملة.
+ *
+ * مثال:
+ * `${paddingStart}4` => `pr-4` للعربية
+ * `${paddingEnd}4` => `pl-4` للعربية
+ *
+ * إذا كنت تستخدم Tailwind logical properties حديثًا،
+ * فقد تفضل ps-/pe-/ms-/me- بدل pr-/pl-/mr-/ml-.
  */
-export function getLangClasses(lang: Lang): {
-  textAlign: string;
-  flexDirection: string;
-  paddingStart: string;
-  paddingEnd: string;
-} {
+export interface LangClasses {
+  dir: 'rtl' | 'ltr';
+  isRtl: boolean;
+  textAlign: 'text-right' | 'text-left';
+  flexDirection: 'flex-row';
+  paddingStart: 'pr-' | 'pl-';
+  paddingEnd: 'pl-' | 'pr-';
+  marginStart: 'mr-' | 'ml-';
+  marginEnd: 'ml-' | 'mr-';
+  start: 'right' | 'left';
+  end: 'left' | 'right';
+}
+
+export function getLangClasses(lang: Lang): LangClasses {
   if (lang === 'ar') {
     return {
+      dir: 'rtl',
+      isRtl: true,
       textAlign: 'text-right',
       flexDirection: 'flex-row',
       paddingStart: 'pr-',
       paddingEnd: 'pl-',
+      marginStart: 'mr-',
+      marginEnd: 'ml-',
+      start: 'right',
+      end: 'left',
     };
   }
+
   return {
+    dir: 'ltr',
+    isRtl: false,
     textAlign: 'text-left',
     flexDirection: 'flex-row',
     paddingStart: 'pl-',
     paddingEnd: 'pr-',
+    marginStart: 'ml-',
+    marginEnd: 'mr-',
+    start: 'left',
+    end: 'right',
   };
 }
 
@@ -290,51 +533,96 @@ export function getLangClasses(lang: Lang): {
 // ============================================================================
 
 /**
- * تحويل النص إلى صيغة slug مناسبة للروابط
- * @example slugify('مرحبا بالعالم') => 'mrhba-balaalm' (تقريبي)
- * @example slugify('Hello World') => 'hello-world'
+ * تنظيف النص العربي قبل توليد الـ slug.
  */
-export function slugify(text: string): string {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\u0600-\u06FF\-]/g, '') // يدعم الحروف العربية
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+|-+$/g, '');
+function normalizeArabicForSlug(input: string): string {
+  return String(input ?? '')
+    .normalize('NFKD')
+    .replace(/\p{M}/gu, '') // إزالة التشكيل والعلامات المركبة
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0711]/g, '') // احتياط إضافي
+    .replace(/\u0640/g, '') // إزالة التطويل
+    .replace(/[إأآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .toLowerCase();
 }
 
 /**
- * تقصير النص مع إضافة نقاط (للمقتطفات)
- * @example truncateText('نص طويل جداً...', 50) => 'نص طويل...'
+ * توليد slug آمن للعناوين العربية والإنجليزية.
+ *
+ * أمثلة:
+ * "فضل سورة الكهف" => "فضل-سورة-الكهف"
+ * "The Power of Surah Al-Kahf" => "the-power-of-surah-al-kahf"
+ */
+export function slugify(text: string): string {
+  const normalized = normalizeArabicForSlug(text);
+
+  const slug = normalized
+    .trim()
+    .replace(/['’`"]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return slug || 'content';
+}
+
+/**
+ * قص النص بأمان مع دعم الحروف المركبة والإيموجي.
  */
 export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + '...';
+  if (maxLength <= 0) {
+    return '';
+  }
+
+  const chars = Array.from(String(text ?? ''));
+
+  if (chars.length <= maxLength) {
+    return chars.join('');
+  }
+
+  // نحتفظ بمكان للحذف
+  const sliced = chars.slice(0, Math.max(0, maxLength - 1)).join('').trimEnd();
+
+  return `${sliced}…`;
 }
 
 // ============================================================================
 // 📦 تصديرات إضافية للتوافق مع الملفات القديمة
 // ============================================================================
 
-/**
- * @deprecated استخدم `languages` بدلاً منها
- */
 export const supportedLanguages = languages;
-
-/**
- * @deprecated استخدم `isValidLang` بدلاً منها
- */
 export const validateLang = isValidLang;
-
-/**
- * @deprecated استخدم `getDirection` بدلاً منها
- */
 export const getTextDirection = getDirection;
 
 // ============================================================================
-// 🎯 تصدير افتراضي (اختياري - للاستخدام السريع)
+// 🔤 إعادة تصدير دوال الترجمة من translations.ts
+// للتوافق مع جميع الملفات التي تستورد t من @/lib/i18n
+//
+// ⚠️ تحذير مهم:
+// إذا كان ملف translations.ts يستورد شيئًا من i18n.ts،
+// فقد يحدث circular dependency.
+//
+// في هذه الحالة، الأفضل حذف هذا البلوك واستيراد t مباشرة من:
+// import { t } from "@/lib/translations";
+// ============================================================================
+
+export {
+  t,
+  tWithParams,
+  tProxy,
+  getTranslations,
+  getFieldTranslation,
+  defaultFieldTranslations,
+  type TranslationKey,
+  type TranslationLang,
+} from "./translations";
+
+// ============================================================================
+// 🎯 تصدير افتراضي
 // ============================================================================
 
 const i18n = {
@@ -342,22 +630,44 @@ const i18n = {
   defaultLang,
   languagesMap,
   localeMap,
+  htmlLangMap,
   directionMap,
+
   isValidLang,
+  isArabic,
+  isEnglish,
+
   getDirection,
   getLocale,
+  getHtmlLang,
   getLanguageName,
   getAlternateLang,
+
+  getPathWithoutLang,
+  hasLangPrefix,
   getLocalizedPath,
   getLangFromPath,
+  getAlternateLanguages,
+
   formatDate,
   formatHijriDate,
   formatTime,
   formatNumber,
+
   generateLangParams,
+  isValidLangParam,
   getSafeLang,
+
   pickText,
   pickByLang,
+  getLangClasses,
+
+  slugify,
+  truncateText,
+
+  supportedLanguages,
+  validateLang,
+  getTextDirection,
 };
 
 export default i18n;

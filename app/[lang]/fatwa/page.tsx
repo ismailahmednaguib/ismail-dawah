@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ============================================================
 // أنواع البيانات
@@ -40,14 +42,14 @@ const CATEGORIES: FatwaCategory[] = [
   { id: "fasting", ar: "الصيام", en: "Fasting", icon: "🌙" },
   { id: "zakat", ar: "الزكاة", en: "Zakat", icon: "💰" },
   { id: "hajj", ar: "الحج والعمرة", en: "Hajj & Umrah", icon: "🕋" },
-  { id: "family", ar: "الأسرة", en: "Family", icon: "👨‍👩‍👧‍" },
+  { id: "family", ar: "الأسرة", en: "Family", icon: "👨‍👩‍👧‍👦" },
   { id: "transactions", ar: "المعاملات", en: "Transactions", icon: "🤝" },
   { id: "aqeedah", ar: "العقيدة", en: "Aqeedah", icon: "🧠" },
   { id: "ethics", ar: "الأخلاق والآداب", en: "Ethics & Manners", icon: "🌿" },
 ];
 
 // ============================================================
-// نماذج فتاوى — يمكن توسيعها لاحقًا من Supabase أو JSON
+// نماذج فتاوى
 // ============================================================
 
 const FATWAS: Fatwa[] = [
@@ -92,7 +94,7 @@ const FATWAS: Fatwa[] = [
     categoryId: "zakat",
     question: "كيف تزكى الأموال النقدية؟",
     answer:
-      "تُزكى النقود إذا بلغ مجموعها النصاب، ومر عليها حول قمري. والنصاب يقدر بقيمة ما يعادل 85 جرامًا من الذهب تقريبًا، وتخرج 2.5% من المجموع. ويُضم إلى النقود ما أعد للتجارة من عروض، بينما لا تُزكى_assets الشخصية التي ليست للتجارة مثل السيارة والسكن.",
+      "تُزكى النقود إذا بلغ مجموعها النصاب، ومر عليها حول قمري. والنصاب يقدر بقيمة ما يعادل 85 جرامًا من الذهب تقريبًا، وتخرج 2.5% من المجموع. ويُضم إلى النقود ما أعد للتجارة من عروض، بينما لا تُزكى الأصول الشخصية التي ليست للتجارة مثل السيارة والسكن.",
     tags: ["زكاة", "مال", "نصاب"],
     source: "أحكام الزكاة",
   },
@@ -187,8 +189,24 @@ const UI: Record<
     disclaimerText: string;
     categoriesTitle: string;
     popularTitle: string;
+    popularDesc: string;
     readAnswer: string;
     of: string;
+    verse: string;
+    verseSource: string;
+    totalFatwas: string;
+    totalCategories: string;
+    trustedSources: string;
+    relatedTitle: string;
+    contactPage: string;
+    contactPageDesc: string;
+    dawahPage: string;
+    dawahPageDesc: string;
+    articlesPage: string;
+    articlesPageDesc: string;
+    doubtsPage: string;
+    doubtsPageDesc: string;
+    featuredTitle: string;
   }
 > = {
   ar: {
@@ -213,8 +231,24 @@ const UI: Record<
       "هذه الفتاوى مختصرة للتوعية العامة، ولا تغني عن مراجعة أهل العلم المختصين في النوازل والمسائل الدقيقة.",
     categoriesTitle: "تصنيفات الفتاوى",
     popularTitle: "فتاوى مختارة",
+    popularDesc: "أكثر الأسئلة شيوعًا وإفادة",
     readAnswer: "عرض الإجابة",
     of: "من",
+    verse: "﴿ وَلَوْ رَدُّوهُ إِلَى الرَّسُولِ وَإِلَىٰ أُولِي الْأَمْرِ مِنْهُمْ لَعَلِمَهُ الَّذِينَ يَسْتَنبِطُونَهُ مِنْهُمْ ﴾",
+    verseSource: "سورة النساء — الآية 83",
+    totalFatwas: "فتوى",
+    totalCategories: "تصنيف",
+    trustedSources: "مصادر موثوقة",
+    relatedTitle: "صفحات ذات صلة",
+    contactPage: "تواصل معنا",
+    contactPageDesc: "أرسل سؤالك المباشر.",
+    dawahPage: "دليل الدعوة",
+    dawahPageDesc: "أصول الدعوة ومهاراتها.",
+    articlesPage: "المقالات",
+    articlesPageDesc: "مقالات فقهية وتربوية.",
+    doubtsPage: "الشبهات والردود",
+    doubtsPageDesc: "إجابات عن الشبهات الشائعة.",
+    featuredTitle: "فتاوى مميزة",
   },
   en: {
     title: "Fatwas",
@@ -238,8 +272,24 @@ const UI: Record<
       "These fatwas are brief for general awareness and do not replace consulting qualified scholars in detailed or unusual cases.",
     categoriesTitle: "Fatwa Categories",
     popularTitle: "Selected Fatwas",
+    popularDesc: "Most common and beneficial questions",
     readAnswer: "Show answer",
     of: "of",
+    verse: "\"But if they had referred it back to the Messenger and to those in authority among them, those who can draw out the truth would have known it.\"",
+    verseSource: "Surah An-Nisa — Verse 83",
+    totalFatwas: "Fatwas",
+    totalCategories: "Categories",
+    trustedSources: "Trusted Sources",
+    relatedTitle: "Related Pages",
+    contactPage: "Contact Us",
+    contactPageDesc: "Send your direct question.",
+    dawahPage: "Dawah Guide",
+    dawahPageDesc: "Principles and skills of dawah.",
+    articlesPage: "Articles",
+    articlesPageDesc: "Fiqh and educational articles.",
+    doubtsPage: "Doubts and Responses",
+    doubtsPageDesc: "Answers to common doubts.",
+    featuredTitle: "Featured Fatwas",
   },
 };
 
@@ -251,14 +301,12 @@ function getFirstValue(value?: string | string[]): string {
   if (Array.isArray(value)) {
     return value[0] ?? "";
   }
-
   return value ?? "";
 }
 
 function formatNumber(value: number, lang: Lang): string {
   if (lang === "ar") {
     const arabicNumerals = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-
     return String(value)
       .split("")
       .map((digit) => {
@@ -267,17 +315,12 @@ function formatNumber(value: number, lang: Lang): string {
       })
       .join("");
   }
-
   return String(value);
 }
 
 function categoryLabel(categoryId: string, lang: Lang): string {
   const category = CATEGORIES.find((item) => item.id === categoryId);
-
-  if (!category) {
-    return categoryId;
-  }
-
+  if (!category) return categoryId;
   return lang === "ar" ? category.ar : category.en;
 }
 
@@ -285,13 +328,23 @@ function categoryIcon(categoryId: string): string {
   return CATEGORIES.find((item) => item.id === categoryId)?.icon ?? "📖";
 }
 
+function categoryColor(categoryId: string): string {
+  const colors: Record<string, string> = {
+    prayer: "from-emerald-500 to-emerald-600",
+    fasting: "from-indigo-500 to-indigo-600",
+    zakat: "from-amber-500 to-amber-600",
+    hajj: "from-rose-500 to-rose-600",
+    family: "from-pink-500 to-pink-600",
+    transactions: "from-blue-500 to-blue-600",
+    aqeedah: "from-purple-500 to-purple-600",
+    ethics: "from-teal-500 to-teal-600",
+  };
+  return colors[categoryId] ?? "from-slate-500 to-slate-600";
+}
+
 function matchesQuery(fatwa: Fatwa, query: string): boolean {
-  if (!query) {
-    return true;
-  }
-
+  if (!query) return true;
   const q = query.trim().toLowerCase();
-
   return (
     fatwa.question.toLowerCase().includes(q) ||
     fatwa.answer.toLowerCase().includes(q) ||
@@ -301,22 +354,11 @@ function matchesQuery(fatwa: Fatwa, query: string): boolean {
   );
 }
 
-function buildFatwaQuery(options: {
-  q?: string;
-  category?: string;
-}): string {
+function buildFatwaQuery(options: { q?: string; category?: string }): string {
   const search = new URLSearchParams();
-
-  if (options.q?.trim()) {
-    search.set("q", options.q.trim());
-  }
-
-  if (options.category && options.category !== "all") {
-    search.set("category", options.category);
-  }
-
+  if (options.q?.trim()) search.set("q", options.q.trim());
+  if (options.category && options.category !== "all") search.set("category", options.category);
   const queryString = search.toString();
-
   return queryString ? `?${queryString}` : "";
 }
 
@@ -330,10 +372,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -354,13 +393,26 @@ export async function generateMetadata({
       url: `/${l}/fatwa`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
+}
+
+export function generateStaticParams() {
+  return [{ lang: "ar" }, { lang: "en" }];
 }
 
 // ============================================================
@@ -375,17 +427,13 @@ export default async function FatwaPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
   const isRTL = l === "ar";
 
   const sp = await searchParams;
-
   const q = getFirstValue(sp.q).trim();
   const rawCategory = getFirstValue(sp.category);
   const category =
@@ -394,34 +442,110 @@ export default async function FatwaPage({
       : "all";
 
   const filteredFatwas = FATWAS.filter((fatwa) => {
-    if (category !== "all" && fatwa.categoryId !== category) {
-      return false;
-    }
-
+    if (category !== "all" && fatwa.categoryId !== category) return false;
     return matchesQuery(fatwa, q);
   });
 
-  const activeCategory = CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
+  const activeCategory =
+    CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
+
+  // الفتاوى المميزة (أول 3)
+  const featuredFatwas = FATWAS.slice(0, 3);
+
+  // JSON-LD: FAQPage
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    inLanguage: l,
+    name: ui.title,
+    description: ui.description,
+    mainEntity: FATWAS.map((fatwa) => ({
+      "@type": "Question",
+      name: fatwa.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: fatwa.answer,
+      },
+    })),
+  };
+
+  // حساب عدد المصادر الفريدة
+  const uniqueSources = new Set(FATWAS.map((f) => f.source).filter(Boolean)).size;
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="badge-primary mb-5">
+              ⚖️ {isRTL ? "أسئلة شرعية" : "Islamic Questions"}
+            </span>
+
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
+
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-3 gap-4">
+          <StatCard icon="⚖️" label={ui.totalFatwas} value={FATWAS.length} color="primary" />
+          <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
+          <StatCard icon="📚" label={ui.trustedSources} value={uniqueSources} color="primary" />
+        </div>
+
         {/* ===== بطاقة البحث والفلترة ===== */}
         <div className="card mb-8 p-6 md:p-7">
           <form
@@ -493,11 +617,7 @@ export default async function FatwaPage({
                 {l === "ar" ? activeCategory.ar : activeCategory.en}
               </span>
 
-              {q && (
-                <span className="badge-gold">
-                  “{q}”
-                </span>
-              )}
+              {q && <span className="badge-gold">"{q}"</span>}
 
               <Link
                 href={`/${l}/fatwa`}
@@ -531,10 +651,10 @@ export default async function FatwaPage({
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((item) => {
               const isActive = item.id === category;
-              const href = `/${l}/fatwa${buildFatwaQuery({
-                q,
-                category: item.id,
-              })}`;
+              const href = `/${l}/fatwa${buildFatwaQuery({ q, category: item.id })}`;
+              const count = item.id === "all"
+                ? FATWAS.length
+                : FATWAS.filter((f) => f.categoryId === item.id).length;
 
               return (
                 <Link
@@ -548,11 +668,109 @@ export default async function FatwaPage({
                 >
                   <span>{item.icon}</span>
                   <span>{l === "ar" ? item.ar : item.en}</span>
+                  {item.id !== "all" && count > 0 && (
+                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
+                      isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 dark:bg-night-700 dark:text-slate-300"
+                    }`}>
+                      {formatNumber(count, l)}
+                    </span>
+                  )}
                 </Link>
               );
             })}
           </div>
         </div>
+
+        {/* ===== فتاوى مميزة (عند عدم وجود فلترة) ===== */}
+        {!q && category === "all" && (
+          <div className="mb-10">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2
+                  className="text-2xl font-black text-slate-900 dark:text-white"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  ⭐ {ui.featuredTitle}
+                </h2>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  {ui.popularDesc}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              {featuredFatwas.map((fatwa) => {
+                const color = categoryColor(fatwa.categoryId);
+                const icon = categoryIcon(fatwa.categoryId);
+                const cat = categoryLabel(fatwa.categoryId, l);
+
+                return (
+                  <details key={fatwa.id} className="card group relative overflow-hidden">
+                    <div className={`absolute inset-x-0 top-0 h-2 bg-gradient-to-r ${color}`} />
+
+                    <summary className="flex cursor-pointer list-none flex-col p-6 [&::-webkit-details-marker]:hidden">
+                      <div className="mb-4 flex items-center justify-between">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-3 py-1 text-xs font-bold text-white`}>
+                          {icon} {cat}
+                        </span>
+                        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-night-800">
+                          {icon}
+                        </span>
+                      </div>
+
+                      <h3
+                        className="mb-2 text-lg font-black leading-tight text-slate-900 dark:text-white"
+                        style={{ fontFamily: "var(--font-amiri)" }}
+                      >
+                        {fatwa.question}
+                      </h3>
+
+                      <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                        {fatwa.answer}
+                      </p>
+
+                      <span className="mt-auto inline-flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
+                        {ui.readAnswer}
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="transition-transform duration-300 group-open:rotate-180"
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </span>
+                    </summary>
+
+                    <div className="border-t border-slate-100 p-6 pt-4 dark:border-night-700">
+                      <p className="mb-3 text-sm font-bold text-primary-700 dark:text-primary-300">
+                        {ui.answer}
+                      </p>
+                      <p className="leading-relaxed text-slate-600 dark:text-slate-300">
+                        {fatwa.answer}
+                      </p>
+                      {fatwa.source && (
+                        <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                          📚 {ui.source}: {fatwa.source}
+                        </p>
+                      )}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {fatwa.tags.map((tag) => (
+                          <span key={tag} className="badge-gold text-xs">#{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </details>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ===== عدد النتائج ===== */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -616,18 +834,24 @@ export default async function FatwaPage({
             {filteredFatwas.map((fatwa) => {
               const cat = categoryLabel(fatwa.categoryId, l);
               const icon = categoryIcon(fatwa.categoryId);
+              const color = categoryColor(fatwa.categoryId);
 
               return (
-                <details key={fatwa.id} className="card group p-6">
+                <details key={fatwa.id} className="card group relative overflow-hidden p-6">
+                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${color}`} />
+
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-2">
-                        <span className="badge-primary">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-2.5 py-0.5 text-xs font-bold text-white`}>
                           {icon} {cat}
                         </span>
                       </div>
 
-                      <h3 className="text-lg font-bold leading-relaxed text-slate-900 dark:text-white">
+                      <h3
+                        className="text-lg font-black leading-relaxed text-slate-900 dark:text-white"
+                        style={{ fontFamily: "var(--font-amiri)" }}
+                      >
                         {fatwa.question}
                       </h3>
                     </div>
@@ -660,16 +884,13 @@ export default async function FatwaPage({
 
                     {fatwa.source && (
                       <p className="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                        {ui.source}: {fatwa.source}
+                        📚 {ui.source}: {fatwa.source}
                       </p>
                     )}
 
                     <div className="mt-5 flex flex-wrap gap-2">
                       {fatwa.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="badge-gold text-xs"
-                        >
+                        <span key={tag} className="badge-gold text-xs">
                           #{tag}
                         </span>
                       ))}
@@ -681,6 +902,66 @@ export default async function FatwaPage({
           </div>
         )}
 
+        {/* ===== صفحات ذات صلة ===== */}
+        <div className="mt-12">
+          <h2
+            className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🔗 {ui.relatedTitle}
+          </h2>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.contactPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.contactPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/dawah-guide`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🤝</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.dawahPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.dawahPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.articlesPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.articlesPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/doubts`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">❓</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.doubtsPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.doubtsPageDesc}
+                </p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* ===== تنبيه ===== */}
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 dark:border-gold-800/40 dark:bg-gold-950/20">
           <div className="flex items-start gap-4">
@@ -689,7 +970,10 @@ export default async function FatwaPage({
             </span>
 
             <div>
-              <h3 className="mb-2 text-lg font-black text-slate-900 dark:text-white">
+              <h3
+                className="mb-2 text-lg font-black text-slate-900 dark:text-white"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
                 {ui.disclaimer}
               </h3>
 
@@ -700,6 +984,40 @@ export default async function FatwaPage({
           </div>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon, label, value, color,
+}: {
+  icon: string;
+  label: string;
+  value: number;
+  color: "primary" | "gold";
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }

@@ -2,13 +2,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ============================================================
 // الأنواع
 // ============================================================
-
-type Lang = "ar" | "en";
 
 type LocalizedProphet = {
   name: string;
@@ -22,6 +23,7 @@ type Prophet = {
   id: string;
   icon: string;
   order: number;
+  gradient: string;
   tags: {
     ar: string[];
     en: string[];
@@ -43,6 +45,7 @@ const PROPHETS: Prophet[] = [
     id: "adam",
     icon: "🌍",
     order: 1,
+    gradient: "from-emerald-500 to-emerald-700",
     tags: {
       ar: ["الخلق", "التوبة", "أبو البشر", "العلم"],
       en: ["Creation", "Repentance", "Father of Humanity", "Knowledge"],
@@ -70,13 +73,13 @@ const PROPHETS: Prophet[] = [
       summary:
         "Allah created Adam with His own hand, breathed into him of His spirit, taught him the names, and commanded the angels to prostrate to him as an honor.",
       story: [
-        "Allah created Adam from clay, shaped him beautifully, and breathed into him of His spirit, so he became a living, thinking human being whom the angels honored by prostrating to him by Allah’s command.",
+        "Allah created Adam from clay, shaped him beautifully, and breathed into him of His spirit, so he became a living, thinking human being whom the angels honored by prostrating to him by Allah's command.",
         "Allah taught Adam the names of all things, then presented them to the angels. The angels acknowledged their limitation and recognized the favor of knowledge that Allah gave Adam.",
         "Adam and his wife dwelt in Paradise and were forbidden from a tree. Satan whispered to them until they ate from it, so Allah brought them down to earth. Adam repented, Allah accepted his repentance, and he became a vicegerent to build the earth with obedience.",
       ],
       lessons: [
         "Allah honored mankind with knowledge and stewardship.",
-        "Repentance erases the effect of sin, and a servant must never despair of Allah’s mercy.",
+        "Repentance erases the effect of sin, and a servant must never despair of Allah's mercy.",
         "Satan is a clear enemy, and his whispers must be resisted.",
         "Earth is a place of work and test, while Paradise is the reward.",
       ],
@@ -86,6 +89,7 @@ const PROPHETS: Prophet[] = [
     id: "nuh",
     icon: "🚢",
     order: 2,
+    gradient: "from-blue-500 to-blue-700",
     tags: {
       ar: ["الصبر", "التوحيد", "السفينة", "الطوفان"],
       en: ["Patience", "Tawhid", "Ark", "Flood"],
@@ -94,7 +98,7 @@ const PROPHETS: Prophet[] = [
       name: "نوح عليه السلام",
       title: "صاحب السفينة والداعي إلى التوحيد",
       summary:
-        " دعا نوح قومه إلى عبادة الله وحده زمنا طويلا، وبنى السفينة بأمر الله، ونجا المؤمنون وهلك المكذبون.",
+        "دعا نوح قومه إلى عبادة الله وحده زمنا طويلا، وبنى السفينة بأمر الله، ونجا المؤمنون وهلك المكذبون.",
       story: [
         "أُرسل نوح عليه السلام إلى قوم غرقوا في عبادة الأصنام، فدعاهم إلى التوحيد بالحكمة والصبر، وبيّن لهم أن الخالق وحده هو المستحق للعبادة.",
         "لبث فيهم ألف سنة إلا خمسين عاما يدعوهم ليلا ونهارا، ويخاطب عقولهم، ويرغبهم في أجر الله، لكن أكثرهم استكبروا وأصروا على شركهم.",
@@ -111,14 +115,14 @@ const PROPHETS: Prophet[] = [
       name: "Nuh, peace be upon him",
       title: "Companion of the Ark and Caller to Monotheism",
       summary:
-        "Nuh called his people to worship Allah alone for a long time, built the ark by Allah’s command, and the believers were saved while the deniers perished.",
+        "Nuh called his people to worship Allah alone for a long time, built the ark by Allah's command, and the believers were saved while the deniers perished.",
       story: [
         "Nuh was sent to a people deeply immersed in idol worship. He called them to monotheism with wisdom and patience, explaining that Allah alone deserves worship.",
-        "He remained among them about a thousand years less fifty, inviting them night and day, appealing to their reason and promising Allah’s reward, but most were arrogant and persistent in disbelief.",
-        "Allah inspired him to build the ark. His people mocked him until Allah’s command came and the oven boiled. He carried the believers and those Allah ordered, then the flood came, the disbelievers perished, and the people of faith were saved.",
+        "He remained among them about a thousand years less fifty, inviting them night and day, appealing to their reason and promising Allah's reward, but most were arrogant and persistent in disbelief.",
+        "Allah inspired him to build the ark. His people mocked him until Allah's command came and the oven boiled. He carried the believers and those Allah ordered, then the flood came, the disbelievers perished, and the people of faith were saved.",
       ],
       lessons: [
-        "Patience in da‘wah is a key to success.",
+        "Patience in da'wah is a key to success.",
         "Monotheism is the first message to mankind.",
         "Salvation is by faith and deeds, not lineage.",
         "Mockery of truth cannot last forever.",
@@ -129,6 +133,7 @@ const PROPHETS: Prophet[] = [
     id: "ibrahim",
     icon: "🔥",
     order: 3,
+    gradient: "from-amber-500 to-amber-700",
     tags: {
       ar: ["التوحيد", "الخلة", "الكعبة", "التضحية"],
       en: ["Tawhid", "Friendship with Allah", "Kaaba", "Sacrifice"],
@@ -152,18 +157,18 @@ const PROPHETS: Prophet[] = [
     },
     en: {
       name: "Ibrahim, peace be upon him",
-      title: "Allah’s Friend and Father of Prophets",
+      title: "Allah's Friend and Father of Prophets",
       summary:
         "Allah guided Ibrahim to monotheism, he broke the idols, was saved from the fire, and built the Kaaba with Ismail.",
       story: [
         "Ibrahim grew up among people who worshiped idols and stars. He reflected deeply until Allah guided him to the upright religion of pure monotheism.",
         "He broke the idols except the largest one, to show his people that they neither harm nor benefit. He was judged and thrown into fire, but Allah made it cool and safe for him.",
-        "He migrated for Allah’s sake, was blessed with Ismail and Ishaq, and was commanded to build the Kaaba with Ismail. He became a leader of people in religion and a father of prophets.",
+        "He migrated for Allah's sake, was blessed with Ismail and Ishaq, and was commanded to build the Kaaba with Ismail. He became a leader of people in religion and a father of prophets.",
       ],
       lessons: [
         "Sincere reflection leads to truth.",
         "Trust in Allah saves from the hardest trials.",
-        "Da‘wah may require sacrificing homeland and family.",
+        "Da'wah may require sacrificing homeland and family.",
         "Ibrahim is a model in worship, character, and leadership.",
       ],
     },
@@ -172,8 +177,9 @@ const PROPHETS: Prophet[] = [
     id: "musa",
     icon: "🌊",
     order: 4,
+    gradient: "from-indigo-500 to-indigo-700",
     tags: {
-      ar: ["الTorah", "فرعون", "البحر", "العدل"],
+      ar: ["التوراة", "فرعون", "البحر", "العدل"],
       en: ["Torah", "Pharaoh", "Sea", "Justice"],
     },
     ar: {
@@ -215,9 +221,10 @@ const PROPHETS: Prophet[] = [
     id: "isa",
     icon: "✨",
     order: 5,
+    gradient: "from-sky-500 to-sky-700",
     tags: {
-      ar: ["عيسى", "مريم", "الإنجيل", "المعجزات"],
-      en: ["Isa", "Maryam", "Gospel", "Miracles"],
+      ar: ["مريم", "الإنجيل", "المعجزات", "الكلمة"],
+      en: ["Maryam", "Gospel", "Miracles", "The Word"],
     },
     ar: {
       name: "عيسى عليه السلام",
@@ -227,7 +234,7 @@ const PROPHETS: Prophet[] = [
       story: [
         "اصطفى الله مريم على نساء العالمين، ووهبها عيسى عليه السلام بأمر كن فيكون، فكان ميلاده آية عظيمة على قدرة الله.",
         "نطق عيسى في المهد مدافعا عن أمه، ومقرًا بعبوديته لله، ومعلنًا نبوته ورسالته، ثم أُنزل عليه الإنجيل مصدقا لما بين يديه من التوراة.",
-        "أيّد الله عيسى بمعجزات باذن الله: إبراء الأكمه والأبرص، وإحياء الموتى، وخلق الطير من طين بإذن الله، فدعا بني إسرائيل إلى الإخلاص وعبادة الله وحده.",
+        "أيّد الله عيسى بمعجزات بإذن الله: إبراء الأكمه والأبرص، وإحياء الموتى، وخلق الطير من طين بإذن الله، فدعا بني إسرائيل إلى الإخلاص وعبادة الله وحده.",
       ],
       lessons: [
         "عيسى عبد الله ورسوله، وليس إلها ولا ابن إله.",
@@ -238,19 +245,19 @@ const PROPHETS: Prophet[] = [
     },
     en: {
       name: "Isa, peace be upon him",
-      title: "Allah’s Spirit and Word",
+      title: "Allah's Spirit and Word",
       summary:
         "Isa was born miraculously to Maryam without a father, given the Gospel, supported with miracles, and called to worship Allah alone.",
       story: [
-        "Allah chose Maryam above the women of the worlds and granted her Isa by the command “Be,” so his birth became a great sign of Allah’s power.",
+        "Allah chose Maryam above the women of the worlds and granted her Isa by the command 'Be,' so his birth became a great sign of Allah's power.",
         "Isa spoke in the cradle defending his mother, affirming his servitude to Allah, declaring his prophethood and mission. The Gospel was revealed to him confirming the Torah before it.",
-        "Allah supported Isa with miracles by His permission: healing the blind and leper, raising the dead, and forming birds from clay by Allah’s leave. He called the Children of Israel to sincerity and worship of Allah alone.",
+        "Allah supported Isa with miracles by His permission: healing the blind and leper, raising the dead, and forming birds from clay by Allah's leave. He called the Children of Israel to sincerity and worship of Allah alone.",
       ],
       lessons: [
-        "Isa is Allah’s servant and messenger, not a god nor son of God.",
-        "Miraculous birth shows Allah’s power, not the divinity of the born.",
+        "Isa is Allah's servant and messenger, not a god nor son of God.",
+        "Miraculous birth shows Allah's power, not the divinity of the born.",
         "The Gospel calls to monotheism, asceticism, and sincerity.",
-        "Miracles occur by Allah’s decree, not independently.",
+        "Miracles occur by Allah's decree, not independently.",
       ],
     },
   },
@@ -258,6 +265,7 @@ const PROPHETS: Prophet[] = [
     id: "muhammad",
     icon: "🕌",
     order: 6,
+    gradient: "from-primary-500 to-primary-700",
     tags: {
       ar: ["الرحمة", "القرآن", "الهجرة", "خاتم النبيين"],
       en: ["Mercy", "Quran", "Migration", "Final Prophet"],
@@ -275,7 +283,7 @@ const PROPHETS: Prophet[] = [
       lessons: [
         "الرسالة محمدية خاتمة، والقرآن دستور الأمة.",
         "الرحمة والعدل أساس القيادة النبوية.",
-        "الهجرة تضحيت في سبيل إقامة الدين.",
+        "الهجرة تضحية في سبيل إقامة الدين.",
         "القدوة العملية أقوى من القول المجرد.",
       ],
     },
@@ -290,7 +298,7 @@ const PROPHETS: Prophet[] = [
         "He was harmed yet patient, migrated to Madinah, built a community of justice and brotherhood, and Allah opened Makkah for him. People entered Islam in multitudes, and he passed away after Allah completed the religion.",
       ],
       lessons: [
-        "The Muhammadan message is final, and the Quran is the nation’s constitution.",
+        "The Muhammadan message is final, and the Quran is the nation's constitution.",
         "Mercy and justice are foundations of prophetic leadership.",
         "Migration is sacrifice for establishing religion.",
         "Practical example is stronger than mere speech.",
@@ -301,15 +309,16 @@ const PROPHETS: Prophet[] = [
     id: "yusuf",
     icon: "🌟",
     order: 7,
+    gradient: "from-violet-500 to-violet-700",
     tags: {
-      ar: ["العفّة", "الصبر", "التعبير", "العفو"],
+      ar: ["العفة", "الصبر", "التعبير", "العفو"],
       en: ["Chastity", "Patience", "Interpretation", "Forgiveness"],
     },
     ar: {
       name: "يوسف عليه السلام",
-      title: "صاحب الأحسن القصص",
+      title: "صاحب أحسن القصص",
       summary:
-        "ابتلي يوسف بالغيظ من إخوته، ثم بالعفّة والسجن، حتى مكّنه الله في مصر، وعفا عن إخوته.",
+        "ابتلي يوسف بالغيظ من إخوته، ثم بالعفة والسجن، حتى مكّنه الله في مصر، وعفا عن إخوته.",
       story: [
         "رأى يوسف رؤيا تدل على علو شأنه، فحسده إخوته وألقوه في غيابة الجب، وأخبروا أباه أنه ذئب أكله.",
         "باعه من اشتراه في مصر، راودته امرأة العزيز عن نفسه فاعتصم بالعفاف، ودعا الله أن ينجيه من كيد النساء، فاختار السجن على المعصية.",
@@ -319,18 +328,18 @@ const PROPHETS: Prophet[] = [
         "الصبر على البلاء طريق التمكين.",
         "العفة نجاة في زمن الفتن.",
         "الله يرفع عباده بعد الابتلاء.",
-        "العفو عند المقدمة خلق الأنبياء.",
+        "العفو عند المقدرة خلق الأنبياء.",
       ],
     },
     en: {
       name: "Yusuf, peace be upon him",
       title: "Owner of the Best Story",
       summary:
-        "Yusuf was tested by his brothers’ jealousy, then by chastity and prison, until Allah established him in Egypt and he forgave his brothers.",
+        "Yusuf was tested by his brothers' jealousy, then by chastity and prison, until Allah established him in Egypt and he forgave his brothers.",
       story: [
-        "Yusuf saw a dream indicating his future honor, which aroused his brothers’ jealousy, so they threw him into a well and told their father a wolf had eaten him.",
+        "Yusuf saw a dream indicating his future honor, which aroused his brothers' jealousy, so they threw him into a well and told their father a wolf had eaten him.",
         "He was sold into slavery in Egypt. The noble woman tried to seduce him, but he sought refuge in chastity and prayed to Allah for rescue, choosing prison over sin.",
-        "He interpreted dreams in prison, became known to the king, left prison to manage Egypt’s treasury, reunited with his family, and forgave his brothers saying there is no blame upon you today.",
+        "He interpreted dreams in prison, became known to the king, left prison to manage Egypt's treasury, reunited with his family, and forgave his brothers saying there is no blame upon you today.",
       ],
       lessons: [
         "Patience in trial leads to empowerment.",
@@ -344,6 +353,7 @@ const PROPHETS: Prophet[] = [
     id: "sulayman",
     icon: "👑",
     order: 8,
+    gradient: "from-gold-500 to-gold-700",
     tags: {
       ar: ["الملك", "النمل", "بلقيس", "الشكر"],
       en: ["Kingdom", "Ants", "Bilqis", "Gratitude"],
@@ -354,9 +364,9 @@ const PROPHETS: Prophet[] = [
       summary:
         "آتى الله سليمان ملكا لا ينبغي لأحد من بعده، وسخر له الريح والجن والطير، فكان شاكرا عادلا.",
       story: [
-        "ورث سليمان داود عليهما السلام، وأعطاه الله نبيا و ملكا، وسخر له الريح تجري بأمره، والجن يعملون بين يديه.",
+        "ورث سليمان داود عليهما السلام، وأعطاه الله نبيا وملكًا، وسخر له الريح تجري بأمره، والجن يعملون بين يديه.",
         "علّمه الله منطق الطير، فسمع هدهدة تخبره بملكة سبأ وقومها يعبدون الشمس، فكتب إليها كتابا يدعوها إلى الإسلام.",
-        "جاءت بلقيس بعد أن رأى آية الله في كرسيها، فأسلمت مع سليمان لله رب العالمين، وكان شكره نماذج في الاعتراف بالنعمة.",
+        "جاءت بلقيس بعد أن رأت آية الله في كرسيها، فأسلمت مع سليمان لله رب العالمين، وكان شكره نماذج في الاعتراف بالنعمة.",
       ],
       lessons: [
         "النعمة أمانة، والشكر حفظ لها.",
@@ -373,12 +383,12 @@ const PROPHETS: Prophet[] = [
       story: [
         "Sulayman inherited Dawud, peace be upon them, and Allah made him a prophet and king. The wind ran by his command, and jinn worked before him.",
         "Allah taught him the language of birds. He heard a hoopoe informing him about the Queen of Sheba and her people worshiping the sun, so he wrote her a letter inviting her to Islam.",
-        "Bilqis came after seeing Allah’s sign with her throne, and she submitted with Sulayman to Allah Lord of the worlds. His gratitude became a model of recognizing blessing.",
+        "Bilqis came after seeing Allah's sign with her throne, and she submitted with Sulayman to Allah Lord of the worlds. His gratitude became a model of recognizing blessing.",
       ],
       lessons: [
         "Blessing is a trust, and gratitude preserves it.",
         "Justice is the foundation of rule even with cosmic subjection.",
-        "Wisdom in da‘wah reaches rulers.",
+        "Wisdom in da'wah reaches rulers.",
         "Humility before Allah prevents arrogance with power.",
       ],
     },
@@ -387,6 +397,7 @@ const PROPHETS: Prophet[] = [
     id: "dawud",
     icon: "⚔️",
     order: 9,
+    gradient: "from-stone-500 to-stone-700",
     tags: {
       ar: ["الزبور", "العدل", "الصوت", "العبادة"],
       en: ["Psalms", "Justice", "Voice", "Worship"],
@@ -399,7 +410,7 @@ const PROPHETS: Prophet[] = [
       story: [
         "كان داود من أنبياء بني إسرائيل، وأيده الله بالنبوة والكتاب، وأعطاه صوتا حسنا في التلاوة والذكر.",
         "حكم بالعدل بين الناس، وفهم خصومتهم، وألهمه الله الفصل في القضايا، فكان مثالا للقاضي الحكيم.",
-        "ليّن الله له الحديد فصنع الدروع، وعلمه الله صنعة war, وشكر ربه، وكان يصوم يوما ويفطر يوما، وينام جزءا من الليل ويقوم جزءا.",
+        "ليّن الله له الحديد فصنع الدروع، وعلمه الله صنعة الحدادة، وشكر ربه، وكان يصوم يوما ويفطر يوما، وينام جزءا من الليل ويقوم جزءا.",
       ],
       lessons: [
         "الجمع بين العبادة والمسؤولية ممكن.",
@@ -430,6 +441,7 @@ const PROPHETS: Prophet[] = [
     id: "yunus",
     icon: "🐋",
     order: 10,
+    gradient: "from-cyan-500 to-cyan-700",
     tags: {
       ar: ["الحوت", "الدعاء", "التوبة", "الرحمة"],
       en: ["Whale", "Supplication", "Repentance", "Mercy"],
@@ -457,14 +469,14 @@ const PROPHETS: Prophet[] = [
       summary:
         "Yunus left his people after their rejection, was tested by the whale, called upon Allah in darkness, and Allah saved him and later guided his people.",
       story: [
-        "Yunus was sent to the people of Nineveh. He called them to monotheism, but they did not respond, so he left them in anger without Allah’s permission.",
-        "He boarded a ship, it was stormy, and they drew lots over whom to cast into the sea. The lot fell on Yunus, so he was thrown and the whale swallowed him by Allah’s command.",
+        "Yunus was sent to the people of Nineveh. He called them to monotheism, but they did not respond, so he left them in anger without Allah's permission.",
+        "He boarded a ship, it was stormy, and they drew lots over whom to cast into the sea. The lot fell on Yunus, so he was thrown and the whale swallowed him by Allah's command.",
         "He called in the darkness: There is no deity except You, exalted are You, indeed I have been of the wrongdoers. Allah answered him, cast him onto the shore, and his people believed afterward, so Allah gave them enjoyment for a time.",
       ],
       lessons: [
-        "Haste in da‘wah may lead to trial.",
+        "Haste in da'wah may lead to trial.",
         "Sincere supplication saves from distress.",
-        "Never despair of Allah’s mercy however great sins.",
+        "Never despair of Allah's mercy however great sins.",
         "Allah may guide people after outward loss.",
       ],
     },
@@ -495,6 +507,25 @@ const UI: Record<
     lessonsTitle: string;
     tagsTitle: string;
     note: string;
+    verse: string;
+    verseSource: string;
+    prophetsCount: string;
+    lessonsCount: string;
+    languages: string;
+    searchLabel: string;
+    introTitle: string;
+    introDesc: string;
+    relatedTitle: string;
+    quranPage: string;
+    quranPageDesc: string;
+    tafsirPage: string;
+    tafsirPageDesc: string;
+    articlesPage: string;
+    articlesPageDesc: string;
+    doubtsPage: string;
+    doubtsPageDesc: string;
+    allProphets: string;
+    order: string;
   }
 > = {
   ar: {
@@ -516,10 +547,30 @@ const UI: Record<
     lessonsTitle: "الدروس المستفادة",
     tagsTitle: "الوسوم",
     note: "هذه القصص مختصرة للتوعية والتعليم، ويُرجع في التفصيل إلى المصادر المعتمدة من القرآن والسنة وأهل العلم.",
+    verse: "﴿ وَكُلًّا نَّقُصُّ عَلَيْكَ مِنْ أَنبَاءِ الرُّسُلِ مَا نُثَبِّتُ بِهِ فُؤَادَكَ ﴾",
+    verseSource: "سورة هود — الآية 120",
+    prophetsCount: "نبي ورسول",
+    lessonsCount: "درس مستفاد",
+    languages: "لغتان",
+    searchLabel: "بحث ذكي",
+    introTitle: "لماذا قصص الأنبياء؟",
+    introDesc:
+      "قال تعالى: ﴿لَقَدْ كَانَ فِي قَصَصِهِمْ عِبْرَةٌ لِأُولِي الْأَلْبَابِ﴾. قصص الأنبياء ليست مجرد حكايات تاريخية، بل هي مدرسة متكاملة في التوحيد والصبر والدعوة والأخلاق. كل نبي علّمنا درساً فريداً: آدم في التوبة، ونوح في الصبر، وإبراهيم في التوكل، وموسى في مواجهة الطغيان، ويوسف في العفة والعفو، ومحمد ﷺ في الرحمة والقيادة.",
+    relatedTitle: "صفحات ذات صلة",
+    quranPage: "القرآن الكريم",
+    quranPageDesc: "اقرأ كتاب الله كاملاً.",
+    tafsirPage: "التفسير",
+    tafsirPageDesc: "فهم معاني الآيات.",
+    articlesPage: "المقالات",
+    articlesPageDesc: "مقالات في السيرة والقصص.",
+    doubtsPage: "الشبهات والردود",
+    doubtsPageDesc: "إجابات عن الشبهات.",
+    allProphets: "جميع الأنبياء",
+    order: "الترتيب",
   },
   en: {
     title: "Prophets Stories",
-    subtitle: "Selected stories of Allah’s prophets with lessons",
+    subtitle: "Selected stories of Allah's prophets with lessons",
     home: "Home",
     description:
       "The prophets stories section presents concise profiles of several prophets, peace be upon them, with simplified stories and lessons, bilingual support, and search.",
@@ -536,6 +587,26 @@ const UI: Record<
     lessonsTitle: "Lessons",
     tagsTitle: "Tags",
     note: "These stories are concise for education and awareness. For details, refer to authoritative sources from the Quran, Sunnah, and qualified scholars.",
+    verse: "\"And each [story] We relate to you from the news of the messengers by which We make firm your heart.\"",
+    verseSource: "Surah Hud — Verse 120",
+    prophetsCount: "Prophets",
+    lessonsCount: "Lessons",
+    languages: "Languages",
+    searchLabel: "Smart Search",
+    introTitle: "Why Prophets' Stories?",
+    introDesc:
+      "Allah says: 'There was certainly in their stories a lesson for those of understanding.' The prophets' stories are not mere historical tales but a complete school of monotheism, patience, da'wah, and ethics. Each prophet taught us a unique lesson: Adam in repentance, Nuh in patience, Ibrahim in trust, Musa in confronting tyranny, Yusuf in chastity and forgiveness, and Muhammad ﷺ in mercy and leadership.",
+    relatedTitle: "Related Pages",
+    quranPage: "Holy Quran",
+    quranPageDesc: "Read the complete Book of Allah.",
+    tafsirPage: "Tafsir Field",
+    tafsirPageDesc: "Understanding verse meanings.",
+    articlesPage: "Articles",
+    articlesPageDesc: "Seerah and stories articles.",
+    doubtsPage: "Doubts and Responses",
+    doubtsPageDesc: "Answers to common doubts.",
+    allProphets: "All Prophets",
+    order: "Order",
   },
 };
 
@@ -544,17 +615,13 @@ const UI: Record<
 // ============================================================
 
 function getFirstValue(value?: string | string[]): string {
-  if (Array.isArray(value)) {
-    return value[0] ?? "";
-  }
-
+  if (Array.isArray(value)) return value[0] ?? "";
   return value ?? "";
 }
 
 function formatNumber(value: number, lang: Lang): string {
   if (lang === "ar") {
     const arabicNumerals = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-
     return String(value)
       .split("")
       .map((digit) => {
@@ -563,7 +630,6 @@ function formatNumber(value: number, lang: Lang): string {
       })
       .join("");
   }
-
   return String(value);
 }
 
@@ -572,9 +638,7 @@ function normalizeSearch(value: string): string {
 }
 
 function matchesQuery(prophet: Prophet, query: string, lang: Lang): boolean {
-  if (!query) {
-    return true;
-  }
+  if (!query) return true;
 
   const q = normalizeSearch(query);
   const local = prophet[lang];
@@ -608,10 +672,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (lang !== "ar" && lang !== "en") {
-    return {};
-  }
+  if (lang !== "ar" && lang !== "en") return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -631,12 +692,21 @@ export async function generateMetadata({
       description: ui.description,
       url: `/${l}/prophets-stories`,
       locale: l === "ar" ? "ar_EG" : "en_US",
-      type: "website",
+      type: "article",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -657,10 +727,7 @@ export default async function ProphetsStoriesPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (lang !== "ar" && lang !== "en") {
-    notFound();
-  }
+  if (lang !== "ar" && lang !== "en") notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -673,25 +740,126 @@ export default async function ProphetsStoriesPage({
     matchesQuery(prophet, q, l)
   ).sort((a, b) => a.order - b.order);
 
+  const totalLessons = PROPHETS.reduce(
+    (sum, p) => sum + p.ar.lessons.length,
+    0
+  );
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        name: ui.title,
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/prophets-stories`,
+        numberOfItems: PROPHETS.length,
+      },
+      ...PROPHETS.map((prophet, index) => ({
+        "@type": "Article",
+        position: index + 1,
+        headline: prophet[l].name,
+        description: prophet[l].summary,
+        inLanguage: l,
+        url: `/${l}/prophets-stories#${prophet.id}`,
+        articleSection: isRTL ? "قصص الأنبياء" : "Prophets Stories",
+        keywords: prophet.tags[l].join(", "),
+      })),
+    ],
+  };
+
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
+          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #0e7490, #d4af37)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="badge-primary mb-5">
+              📚 {isRTL ? "عبر ودروس" : "Lessons and Wisdom"}
+            </span>
+
+            <h1
+              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {ui.title}
+            </h1>
+
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.description}
+            </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-gold-800 dark:bg-night-800/80">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard icon="🕌" label={ui.prophetsCount} value={PROPHETS.length} color="primary" />
+          <StatCard icon="💡" label={ui.lessonsCount} value={`${formatNumber(totalLessons, l)}+`} color="gold" />
+          <StatCard icon="🌍" label={ui.languages} value={2} color="primary" />
+          <StatCard icon="🔍" label={ui.searchLabel} value="✓" color="gold" />
+        </div>
+
+        {/* ===== مقدمة ===== */}
+        <div className="card mb-10 overflow-hidden">
+          <div className="gradient-gold h-1.5 w-full" />
+          <div className="p-6 md:p-8">
+            <h2
+              className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              💡 {ui.introTitle}
+            </h2>
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.introDesc}
+            </p>
+          </div>
+        </div>
+
         {/* ===== البحث ===== */}
         <div className="card mb-8 p-6 md:p-7">
           <form
@@ -739,9 +907,7 @@ export default async function ProphetsStoriesPage({
 
           {q && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <span className="badge-gold">
-                “{q}”
-              </span>
+              <span className="badge-gold">"{q}"</span>
 
               <Link
                 href={`/${l}/prophets-stories`}
@@ -787,30 +953,39 @@ export default async function ProphetsStoriesPage({
         </div>
 
         {/* ===== عدد النتائج ===== */}
-        <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
-          {ui.results}:{" "}
-          <span className="text-primary-600 dark:text-primary-400">
-            {formatNumber(filteredProphets.length, l)}
-          </span>{" "}
-          {ui.of}{" "}
-          <span className="text-slate-700 dark:text-slate-200">
-            {formatNumber(PROPHETS.length, l)}
-          </span>
-        </p>
+        <div className="mb-6 flex items-center justify-between">
+          <h2
+            className="text-2xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            📖 {ui.allProphets}
+          </h2>
+          <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+            {ui.results}:{" "}
+            <span className="text-primary-600 dark:text-primary-400">
+              {formatNumber(filteredProphets.length, l)}
+            </span>{" "}
+            {ui.of}{" "}
+            <span className="text-slate-700 dark:text-slate-200">
+              {formatNumber(PROPHETS.length, l)}
+            </span>
+          </p>
+        </div>
 
         {/* ===== لا توجد نتائج ===== */}
         {filteredProphets.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mb-4 text-5xl">📚</div>
-
-            <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
+            <div className="mb-6 flex justify-center">
+              <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100 text-5xl dark:bg-night-800">
+                🔍
+              </span>
+            </div>
+            <h3 className="mb-2 text-2xl font-black text-slate-900 dark:text-white">
               {ui.noResults}
             </h3>
-
             <p className="mb-6 text-slate-500 dark:text-slate-400">
               {ui.noResultsDesc}
             </p>
-
             <Link href={`/${l}/prophets-stories`} className="btn-primary">
               {ui.clearFilters}
             </Link>
@@ -824,14 +999,25 @@ export default async function ProphetsStoriesPage({
                 <article
                   key={prophet.id}
                   id={prophet.id}
-                  className="card scroll-mt-32 p-6 md:p-7"
+                  className="card group relative scroll-mt-32 overflow-hidden p-6 md:p-7"
                 >
+                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${prophet.gradient}`} />
+
                   <div className="flex items-start gap-4">
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                    <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${prophet.gradient} text-2xl text-white shadow-lg`}>
                       {prophet.icon}
                     </span>
 
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-[10px] font-black text-slate-600 dark:bg-night-700 dark:text-slate-300">
+                          {prophet.order}
+                        </span>
+                        <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                          {ui.order} #{prophet.order}
+                        </span>
+                      </div>
+
                       <h2
                         className="text-xl font-black text-slate-900 md:text-2xl dark:text-white"
                         style={{ fontFamily: "var(--font-amiri)" }}
@@ -849,7 +1035,7 @@ export default async function ProphetsStoriesPage({
                     {local.summary}
                   </p>
 
-                  <details className="group mt-5">
+                  <details className="group/details mt-5">
                     <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-xl border border-primary-100 bg-primary-50/60 px-4 py-3 text-sm font-bold text-primary-800 transition-all hover:bg-primary-100/70 dark:border-primary-900/40 dark:bg-primary-950/20 dark:text-primary-200 dark:hover:bg-primary-900/30 [&::-webkit-details-marker]:hidden">
                       <span>{ui.readStory}</span>
 
@@ -862,16 +1048,20 @@ export default async function ProphetsStoriesPage({
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="transition-transform duration-300 group-open:rotate-180"
+                        className="transition-transform duration-300 group-open/details:rotate-180"
                       >
                         <path d="M6 9l6 6 6-6" />
                       </svg>
                     </summary>
 
                     <div className="mt-5 space-y-6 border-t border-slate-100 pt-5 dark:border-night-700">
+                      {/* القصة */}
                       <div>
-                        <h3 className="mb-3 text-base font-black text-slate-900 dark:text-white">
-                          {ui.storyTitle}
+                        <h3
+                          className="mb-3 text-base font-black text-slate-900 dark:text-white"
+                          style={{ fontFamily: "var(--font-amiri)" }}
+                        >
+                          📖 {ui.storyTitle}
                         </h3>
 
                         <div className="space-y-3">
@@ -886,9 +1076,13 @@ export default async function ProphetsStoriesPage({
                         </div>
                       </div>
 
+                      {/* الدروس */}
                       <div>
-                        <h3 className="mb-3 text-base font-black text-slate-900 dark:text-white">
-                          {ui.lessonsTitle}
+                        <h3
+                          className="mb-3 text-base font-black text-slate-900 dark:text-white"
+                          style={{ fontFamily: "var(--font-amiri)" }}
+                        >
+                          💡 {ui.lessonsTitle}
                         </h3>
 
                         <ul className="space-y-2">
@@ -904,9 +1098,10 @@ export default async function ProphetsStoriesPage({
                         </ul>
                       </div>
 
+                      {/* الوسوم */}
                       <div>
                         <p className="mb-2 text-xs font-bold text-slate-500 dark:text-slate-400">
-                          {ui.tagsTitle}
+                          🏷️ {ui.tagsTitle}
                         </p>
 
                         <div className="flex flex-wrap gap-2">
@@ -928,13 +1123,110 @@ export default async function ProphetsStoriesPage({
           </div>
         )}
 
+        {/* ===== صفحات ذات صلة ===== */}
+        <div className="mt-12">
+          <h2
+            className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🔗 {ui.relatedTitle}
+          </h2>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link href={`/${l}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.quranPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.quranPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/fields/tafsir`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🔍</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.tafsirPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.tafsirPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.articlesPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.articlesPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/doubts`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">❓</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.doubtsPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.doubtsPageDesc}
+                </p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* ===== ملاحظة ===== */}
-        <div className="card mt-10 p-6 text-center">
-          <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-            {ui.note}
+        <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
+          <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+            📌 {ui.note}
           </p>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: number | string;
+  color: "primary" | "gold";
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }

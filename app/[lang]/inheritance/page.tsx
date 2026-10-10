@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -80,13 +82,11 @@ const CURRENCIES: CurrencyOption[] = [
 function gcd(a: number, b: number): number {
   a = Math.abs(a);
   b = Math.abs(b);
-
   while (b) {
     const t = b;
     b = a % b;
     a = t;
   }
-
   return a || 1;
 }
 
@@ -95,9 +95,7 @@ class Fraction {
   readonly d: number;
 
   constructor(n: number = 0, d: number = 1) {
-    if (d === 0) {
-      throw new Error("Denominator cannot be zero");
-    }
+    if (d === 0) throw new Error("Denominator cannot be zero");
 
     let num = n;
     let den = d;
@@ -131,10 +129,7 @@ class Fraction {
   }
 
   div(other: Fraction): Fraction {
-    if (other.isZero()) {
-      return new Fraction(0);
-    }
-
+    if (other.isZero()) return new Fraction(0);
     return new Fraction(this.n * other.d, this.d * other.n);
   }
 
@@ -225,6 +220,21 @@ const UI: Record<
     fullBrothersLabel: string;
     fullSistersLabel: string;
     optional: string;
+    verse: string;
+    verseSource: string;
+    currenciesCount: string;
+    heirsCount: string;
+    awlRadd: string;
+    instant: string;
+    relatedTitle: string;
+    zakatPage: string;
+    zakatPageDesc: string;
+    fatwaPage: string;
+    fatwaPageDesc: string;
+    hajjPage: string;
+    hajjPageDesc: string;
+    contactPage: string;
+    contactPageDesc: string;
   }
 > = {
   ar: {
@@ -302,6 +312,21 @@ const UI: Record<
     fullBrothersLabel: "الإخوة الأشقاء",
     fullSistersLabel: "الأخوات الشقيقات",
     optional: "اختياري",
+    verse: "﴿ يُوصِيكُمُ اللَّهُ فِي أَوْلَادِكُمْ لِلذَّكَرِ مِثْلُ حَظِّ الْأُنثَيَيْنِ ﴾",
+    verseSource: "سورة النساء — الآية 11",
+    currenciesCount: "عملة مدعومة",
+    heirsCount: "أنواع الورثة",
+    awlRadd: "العول والرد",
+    instant: "حساب فوري",
+    relatedTitle: "صفحات ذات صلة",
+    zakatPage: "حاسبة الزكاة",
+    zakatPageDesc: "احسب زكاة أموالك.",
+    fatwaPage: "الفتاوى",
+    fatwaPageDesc: "أسئلة فقهية عن المواريث.",
+    hajjPage: "دليل الحج والعمرة",
+    hajjPageDesc: "مناسك الحج والعمرة.",
+    contactPage: "تواصل معنا",
+    contactPageDesc: "أرسل استفسارك المباشر.",
   },
   en: {
     title: "Inheritance Calculator",
@@ -378,6 +403,21 @@ const UI: Record<
     fullBrothersLabel: "Full Brothers",
     fullSistersLabel: "Full Sisters",
     optional: "optional",
+    verse: "\"Allah instructs you concerning your children: for the male, what is equal to the share of two females.\"",
+    verseSource: "Surah An-Nisa — Verse 11",
+    currenciesCount: "Supported Currencies",
+    heirsCount: "Heir Types",
+    awlRadd: "Awl & Radd",
+    instant: "Instant",
+    relatedTitle: "Related Pages",
+    zakatPage: "Zakat Calculator",
+    zakatPageDesc: "Calculate your wealth zakat.",
+    fatwaPage: "Fatwas",
+    fatwaPageDesc: "Fiqh questions about inheritance.",
+    hajjPage: "Hajj & Umrah Guide",
+    hajjPageDesc: "Rites of Hajj and Umrah.",
+    contactPage: "Contact Us",
+    contactPageDesc: "Send your direct inquiry.",
   },
 };
 
@@ -389,35 +429,21 @@ function getFirstValue(value?: string | string[]): string {
   if (Array.isArray(value)) {
     return value[0] ?? "";
   }
-
   return value ?? "";
 }
 
 function parseNumber(value?: string | string[]): number {
   const raw = getFirstValue(value).replace(/,/g, "").trim();
-
-  if (!raw) {
-    return 0;
-  }
-
+  if (!raw) return 0;
   const parsed = Number(raw);
-
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
 function parseCount(value?: string | string[]): number {
   const raw = getFirstValue(value).replace(/,/g, "").trim();
-
-  if (!raw) {
-    return 0;
-  }
-
+  if (!raw) return 0;
   const parsed = Number(raw);
-
-  if (!Number.isFinite(parsed) || parsed < 0) {
-    return 0;
-  }
-
+  if (!Number.isFinite(parsed) || parsed < 0) return 0;
   return Math.min(200, Math.floor(parsed));
 }
 
@@ -431,13 +457,11 @@ function parseGender(value?: string | string[]): DeceasedGender {
 
 function parseCurrency(value?: string | string[]): string {
   const raw = getFirstValue(value).toUpperCase();
-
   return CURRENCIES.some((currency) => currency.id === raw) ? raw : "EGP";
 }
 
 function formatNumber(value: number, lang: Lang): string {
   const safe = Number.isFinite(value) ? value : 0;
-
   try {
     return new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en-US", {
       maximumFractionDigits: 2,
@@ -453,10 +477,7 @@ function formatPercent(share: Fraction, lang: Lang): string {
 }
 
 function formatAmount(value: number, lang: Lang, currencyId: string): string {
-  if (!Number.isFinite(value)) {
-    return "—";
-  }
-
+  if (!Number.isFinite(value)) return "—";
   try {
     return new Intl.NumberFormat(lang === "ar" ? "ar-EG" : "en-US", {
       style: "currency",
@@ -538,23 +559,18 @@ function calculateInheritance(input: {
   // ===== الزوج / الزوجة =====
   if (hasSpouse) {
     if (deceasedGender === "male") {
-      // الزوجة
       shares.spouse = hasDescendant ? f(1, 8) : f(1, 4);
     } else {
-      // الزوج
       shares.spouse = hasDescendant ? f(1, 4) : f(1, 2);
     }
   }
 
   // ===== الأب =====
-  // الأب له السدس مع وجود فرع وارث، وإلا فهو عصبة.
   if (hasFather && hasDescendant) {
     shares.father = f(1, 6);
   }
 
   // ===== الأم =====
-  // مسألة عمرية: زوج/زوجة + أب + أم، لا فرع ولا إخوة:
-  // للأم ثلث الباقي بعد نصير الزوجين.
   const specialUmariyyah =
     hasSpouse &&
     hasFather &&
@@ -579,7 +595,6 @@ function calculateInheritance(input: {
   }
 
   // ===== الأخوات الشقيقات =====
-  // يفترضن بالفرض إذا لم يوجد فرع وارث ذكر ولا أب ولا أخ شقيق.
   if (
     !siblingsBlocked &&
     fullSisters > 0 &&
@@ -595,87 +610,64 @@ function calculateInheritance(input: {
 
   if (fixedSum.toNumber() > 1 + 1e-12) {
     const factor = ONE.div(fixedSum);
-
     (Object.keys(shares) as HeirKey[]).forEach((key) => {
       shares[key] = shares[key].mul(factor);
     });
-
     fixedSum = ONE;
     appliedAwl = true;
     warnings.push(ui.awl);
   }
 
   let residue = ONE.sub(fixedSum);
-
-  if (residue.n < 0) {
-    residue = ZERO;
-  }
+  if (residue.n < 0) residue = ZERO;
 
   let appliedRadd = false;
 
   // ===== توزيع الباقي: العصبة ثم الرد =====
   if (residue.toNumber() > 1e-12) {
     if (sons > 0) {
-      // الأبناء يعصبون البنات: للذكر مثل حظ الأنثيين
       const parts = 2 * sons + daughters;
-
       if (parts > 0) {
         const sonsShare = residue.mul(f(2 * sons, parts));
         const daughtersShare = residue.mul(f(daughters, parts));
-
         shares.sons = shares.sons.add(sonsShare);
         shares.daughters = shares.daughters.add(daughtersShare);
         residue = ZERO;
-
-        if (daughters > 0) {
-          warnings.push(ui.sonsDaughtersRule);
-        }
+        if (daughters > 0) warnings.push(ui.sonsDaughtersRule);
       }
     } else if (hasFather) {
-      // الأب يأخذ الباقي عصبة
       shares.father = shares.father.add(residue);
       residue = ZERO;
     } else if (fullBrothers > 0 && !siblingsBlocked) {
-      // الإخوة الأشقاء يعصبون الأخوات الشقيقات
       const parts = 2 * fullBrothers + fullSisters;
-
       if (parts > 0) {
         const brothersShare = residue.mul(f(2 * fullBrothers, parts));
         const sistersShare = residue.mul(f(fullSisters, parts));
-
         shares.fullBrothers = shares.fullBrothers.add(brothersShare);
         shares.fullSisters = shares.fullSisters.add(sistersShare);
         residue = ZERO;
-
-        if (fullSisters > 0) {
-          warnings.push(ui.brothersSistersRule);
-        }
+        if (fullSisters > 0) warnings.push(ui.brothersSistersRule);
       }
     } else {
-      // الرد على غير الزوجين إن وجدوا
       const raddCandidates: HeirKey[] = [
         "father",
         "mother",
         "daughters",
         "fullSisters",
       ];
-
       const candidates = raddCandidates.filter(
         (key) => shares[key].toNumber() > 1e-12
       );
-
       if (candidates.length > 0) {
         const total = candidates.reduce(
           (acc, key) => acc.add(shares[key]),
           ZERO
         );
-
         if (total.toNumber() > 0) {
           candidates.forEach((key) => {
             const portion = shares[key].div(total);
             shares[key] = shares[key].add(residue.mul(portion));
           });
-
           appliedRadd = true;
           warnings.push(ui.radd);
         }
@@ -683,7 +675,6 @@ function calculateInheritance(input: {
         shares.spouse = shares.spouse.add(residue);
         warnings.push(ui.spouseOnly);
       }
-
       residue = ZERO;
     }
   }
@@ -702,10 +693,7 @@ function calculateInheritance(input: {
     count: number,
     share: Fraction
   ) => {
-    if (share.toNumber() <= 1e-12) {
-      return;
-    }
-
+    if (share.toNumber() <= 1e-12) return;
     rows.push({
       key,
       labelAr,
@@ -726,46 +714,17 @@ function calculateInheritance(input: {
     );
   }
 
-  if (hasFather) {
-    addRow("father", ui.father, "Father", 1, shares.father);
-  }
-
-  if (hasMother) {
-    addRow("mother", ui.mother, "Mother", 1, shares.mother);
-  }
-
-  if (sons > 0) {
-    addRow("sons", ui.sonsLabel, ui.sonsLabel, sons, shares.sons);
-  }
-
+  if (hasFather) addRow("father", ui.father, "Father", 1, shares.father);
+  if (hasMother) addRow("mother", ui.mother, "Mother", 1, shares.mother);
+  if (sons > 0) addRow("sons", ui.sonsLabel, ui.sonsLabel, sons, shares.sons);
   if (daughters > 0) {
-    addRow(
-      "daughters",
-      ui.daughtersLabel,
-      ui.daughtersLabel,
-      daughters,
-      shares.daughters
-    );
+    addRow("daughters", ui.daughtersLabel, ui.daughtersLabel, daughters, shares.daughters);
   }
-
   if (fullBrothers > 0) {
-    addRow(
-      "fullBrothers",
-      ui.fullBrothersLabel,
-      ui.fullBrothersLabel,
-      fullBrothers,
-      shares.fullBrothers
-    );
+    addRow("fullBrothers", ui.fullBrothersLabel, ui.fullBrothersLabel, fullBrothers, shares.fullBrothers);
   }
-
   if (fullSisters > 0) {
-    addRow(
-      "fullSisters",
-      ui.fullSistersLabel,
-      ui.fullSistersLabel,
-      fullSisters,
-      shares.fullSisters
-    );
+    addRow("fullSisters", ui.fullSistersLabel, ui.fullSistersLabel, fullSisters, shares.fullSisters);
   }
 
   return {
@@ -787,10 +746,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -811,11 +767,20 @@ export async function generateMetadata({
       url: `/${l}/inheritance`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -836,10 +801,7 @@ export default async function InheritancePage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -872,30 +834,74 @@ export default async function InheritancePage({
     ui,
   });
 
+  // JSON-LD
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        name: ui.title,
+        applicationCategory: "FinanceApplication",
+        operatingSystem: "Web",
+        description: ui.description,
+        inLanguage: l,
+        offers: {
+          "@type": "Offer",
+          price: "0",
+          priceCurrency: "USD",
+        },
+      },
+      {
+        "@type": "Article",
+        headline: ui.title,
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/inheritance`,
+        articleSection: isRTL ? "المعاملات" : "Transactions",
+        keywords: isRTL
+          ? "الميراث, الفرائض, العول, الرد, التركات"
+          : "inheritance, faraid, awl, radd, estate",
+      },
+    ],
+  };
+
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <Header lang={l} />
+
       <TopBar
         title={ui.title}
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                </svg>
+              </span>
+            </div>
+
             <span className="badge-primary mb-5">
               📜 {isRTL ? "الفرائض" : "Faraid"}
             </span>
@@ -910,7 +916,28 @@ export default async function InheritancePage({
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.description}
             </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard icon="💱" label={ui.currenciesCount} value={CURRENCIES.length} color="primary" />
+          <StatCard icon="👥" label={ui.heirsCount} value={7} color="gold" />
+          <StatCard icon="⚖️" label={ui.awlRadd} value="✓" color="primary" />
+          <StatCard icon="⚡" label={ui.instant} value="✓" color="gold" />
         </div>
 
         {/* ===== النموذج ===== */}
@@ -1396,6 +1423,66 @@ export default async function InheritancePage({
           </div>
         )}
 
+        {/* ===== صفحات ذات صلة ===== */}
+        <div className="mt-10">
+          <h2
+            className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🔗 {ui.relatedTitle}
+          </h2>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Link href={`/${l}/zakat`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">💰</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.zakatPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.zakatPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/fatwa`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">⚖️</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.fatwaPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.fatwaPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/hajj-guide`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕋</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.hajjPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.hajjPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.contactPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.contactPageDesc}
+                </p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
         {/* ===== ملاحظات فقهية ===== */}
         <div className="card mt-10 p-6 md:p-8">
           <h2
@@ -1430,6 +1517,43 @@ export default async function InheritancePage({
           </div>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+}: {
+  icon: string;
+  label: string;
+  value: number | string;
+  color: "primary" | "gold";
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }

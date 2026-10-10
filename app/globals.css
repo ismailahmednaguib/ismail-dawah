@@ -4,6 +4,26 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ================================================================
+   🎨 مصادر الخطوط
+   إذا كنت تستخدم next/font، خلي الـ variable اسمها:
+   --font-cairo-source
+   --font-amiri-source
+   --font-scheherazade-source
+   ================================================================ */
+:root {
+  --font-cairo-source: "Cairo";
+  --font-amiri-source: "Amiri";
+  --font-scheherazade-source: "Scheherazade New";
+
+  color-scheme: light;
+}
+
+:root.dark,
+body.dark {
+  color-scheme: dark;
+}
+
+/* ================================================================
    🎨 نظام التصميم — الثيم الفيروزي الإسلامي الحديث
    ================================================================ */
 @theme {
@@ -46,9 +66,26 @@
   --color-night-950: #060d1a;
 
   /* ---------- الخطوط ---------- */
-  --font-cairo: var(--font-cairo), "Cairo", ui-sans-serif, system-ui, sans-serif;
-  --font-amiri: var(--font-amiri), "Amiri", "Traditional Arabic", serif;
-  --font-quran: var(--font-scheherazade), "Scheherazade New", "Traditional Arabic", serif;
+  --font-sans: var(--font-cairo);
+
+  --font-cairo:
+    var(--font-cairo-source),
+    "Cairo",
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
+
+  --font-amiri:
+    var(--font-amiri-source),
+    "Amiri",
+    "Traditional Arabic",
+    serif;
+
+  --font-quran:
+    var(--font-scheherazade-source),
+    "Scheherazade New",
+    "Traditional Arabic",
+    serif;
 
   /* ---------- الزوايا الدائرية ---------- */
   --radius-sm: 0.5rem;
@@ -71,30 +108,58 @@
   --animate-slide-down: slide-down 0.4s ease-out both;
   --animate-float: float 6s ease-in-out infinite;
   --animate-shimmer: shimmer 2.5s linear infinite;
+}
 
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* ================================================================
+   🎬 Keyframes
+   ================================================================ */
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
-
-  @keyframes slide-up {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
   }
+}
 
-  @keyframes slide-down {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
-  @keyframes shimmer {
-    0% { background-position: -1000px 0; }
-    100% { background-position: 1000px 0; }
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
   }
 }
 
@@ -102,8 +167,20 @@
    📐 الأساسيات
    ================================================================ */
 @layer base {
-  * {
-    border-color: var(--color-primary-100);
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-primary-200);
+  }
+
+  .dark *,
+  .dark ::before,
+  .dark ::after,
+  body.dark,
+  body.dark *,
+  body.dark ::before,
+  body.dark ::after {
+    border-color: rgb(6 182 212 / 0.18);
   }
 
   html {
@@ -121,7 +198,8 @@
     overflow-x: hidden;
   }
 
-  .dark body {
+  .dark body,
+  body.dark {
     background-color: var(--color-night-900);
     color: #e2e8f0;
   }
@@ -131,7 +209,18 @@
     color: #ffffff;
   }
 
-  /* شريط التمرير المخصص */
+  /* ---------- Scrollbar: Firefox ---------- */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-500) #f1f5f9;
+  }
+
+  .dark *,
+  body.dark * {
+    scrollbar-color: var(--color-primary-600) var(--color-night-950);
+  }
+
+  /* ---------- Scrollbar: WebKit ---------- */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -141,7 +230,10 @@
     background-color: #f1f5f9;
   }
 
-  .dark ::-webkit-scrollbar-track {
+  .dark ::-webkit-scrollbar-track,
+  body.dark ::-webkit-scrollbar-track,
+  .dark::-webkit-scrollbar-track,
+  body.dark::-webkit-scrollbar-track {
     background-color: var(--color-night-950);
   }
 
@@ -150,22 +242,44 @@
     border-radius: 10px;
   }
 
+  .dark ::-webkit-scrollbar-thumb,
+  body.dark ::-webkit-scrollbar-thumb,
+  .dark::-webkit-scrollbar-thumb,
+  body.dark::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #0891b2, #164e63);
+  }
+
   ::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-primary-600);
   }
 
-  /* العناوين */
-  h1, h2, h3, h4, h5, h6 {
+  /* ---------- Focus Accessibility ---------- */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+
+  .dark :focus-visible,
+  body.dark :focus-visible {
+    outline-color: var(--color-primary-400);
+  }
+
+  /* ---------- العناوين ---------- */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-weight: 700;
     font-family: var(--font-amiri);
   }
 }
 
 /* ================================================================
-   🧩 المكونات الجاهزة — CSS raw (بدون @apply لـ component classes)
+   🧩 المكونات الجاهزة
    ================================================================ */
 @layer components {
-
   /* ---------- الحاويات ---------- */
   .container-page {
     margin-inline: auto;
@@ -202,11 +316,16 @@
     border-radius: 1.5rem;
     border: 1px solid rgb(207 250 254 / 0.6);
     background-color: #ffffff;
-    transition: all 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease,
+      background-color 0.3s ease;
     box-shadow: var(--shadow-card);
   }
 
-  .dark .card {
+  .dark .card,
+  body.dark .card {
     border-color: rgb(7 89 133 / 0.5);
     background-color: var(--color-night-800);
   }
@@ -217,7 +336,8 @@
     border-color: var(--color-primary-200);
   }
 
-  .dark .card:hover {
+  .dark .card:hover,
+  body.dark .card:hover {
     border-color: rgb(6 182 212 / 0.3);
   }
 
@@ -227,11 +347,16 @@
     border-radius: 1.5rem;
     border: 1px solid rgb(207 250 254 / 0.6);
     background-color: #ffffff;
-    transition: all 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease,
+      background-color 0.3s ease;
     box-shadow: var(--shadow-card);
   }
 
-  .dark .card-interactive {
+  .dark .card-interactive,
+  body.dark .card-interactive {
     border-color: rgb(7 89 133 / 0.5);
     background-color: var(--color-night-800);
   }
@@ -242,7 +367,8 @@
     border-color: var(--color-primary-200);
   }
 
-  .dark .card-interactive:hover {
+  .dark .card-interactive:hover,
+  body.dark .card-interactive:hover {
     border-color: rgb(6 182 212 / 0.3);
   }
 
@@ -258,7 +384,13 @@
     gap: 0.5rem;
     border-radius: 0.75rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
   }
@@ -275,10 +407,18 @@
     gap: 0.5rem;
     border-radius: 0.75rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background 0.3s ease,
+      opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
-    background: linear-gradient(to left, var(--color-primary-500), var(--color-primary-700));
+    background: linear-gradient(
+      to left,
+      var(--color-primary-500),
+      var(--color-primary-700)
+    );
     padding: 0.75rem 1.5rem;
     color: #ffffff;
     box-shadow: 0 4px 18px -4px rgb(6 182 212 / 0.5);
@@ -287,7 +427,11 @@
   .btn-primary:hover {
     box-shadow: 0 10px 30px -6px rgb(6 182 212 / 0.6);
     transform: translateY(-2px);
-    background: linear-gradient(to left, var(--color-primary-600), var(--color-primary-800));
+    background: linear-gradient(
+      to left,
+      var(--color-primary-600),
+      var(--color-primary-800)
+    );
   }
 
   .btn-primary:disabled {
@@ -302,10 +446,18 @@
     gap: 0.5rem;
     border-radius: 0.75rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background 0.3s ease,
+      opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
-    background: linear-gradient(to left, var(--color-gold-400), var(--color-gold-600));
+    background: linear-gradient(
+      to left,
+      var(--color-gold-400),
+      var(--color-gold-600)
+    );
     padding: 0.75rem 1.5rem;
     color: #ffffff;
     box-shadow: 0 4px 18px -4px rgb(212 175 55 / 0.5);
@@ -328,7 +480,12 @@
     gap: 0.5rem;
     border-radius: 0.75rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      transform 0.3s ease,
+      opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
     border: 2px solid var(--color-primary-500);
@@ -337,7 +494,8 @@
     color: var(--color-primary-700);
   }
 
-  .dark .btn-outline {
+  .dark .btn-outline,
+  body.dark .btn-outline {
     color: var(--color-primary-300);
   }
 
@@ -358,14 +516,18 @@
     gap: 0.5rem;
     border-radius: 0.75rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
     padding: 0.5rem 1rem;
     color: #475569;
   }
 
-  .dark .btn-ghost {
+  .dark .btn-ghost,
+  body.dark .btn-ghost {
     color: #cbd5e1;
   }
 
@@ -374,7 +536,8 @@
     color: var(--color-primary-700);
   }
 
-  .dark .btn-ghost:hover {
+  .dark .btn-ghost:hover,
+  body.dark .btn-ghost:hover {
     background-color: rgb(22 78 99 / 0.3);
     color: var(--color-primary-300);
   }
@@ -400,7 +563,8 @@
     }
   }
 
-  .dark .section-title {
+  .dark .section-title,
+  body.dark .section-title {
     color: var(--color-primary-50);
   }
 
@@ -409,7 +573,8 @@
     color: #64748b;
   }
 
-  .dark .section-subtitle {
+  .dark .section-subtitle,
+  body.dark .section-subtitle {
     color: #94a3b8;
   }
 
@@ -462,7 +627,8 @@
     color: var(--color-primary-800);
   }
 
-  .dark .badge-primary {
+  .dark .badge-primary,
+  body.dark .badge-primary {
     border-color: var(--color-primary-700);
     background-color: rgb(22 78 99 / 0.4);
     color: var(--color-primary-300);
@@ -481,7 +647,8 @@
     color: var(--color-gold-700);
   }
 
-  .dark .badge-gold {
+  .dark .badge-gold,
+  body.dark .badge-gold {
     border-color: rgb(146 113 19 / 0.5);
     background-color: rgb(66 32 6 / 0.3);
     color: var(--color-gold-400);
@@ -496,7 +663,11 @@
     padding: 0.75rem 1rem;
     color: #0f172a;
     outline: none;
-    transition: all 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   .input-islamic::placeholder {
@@ -508,15 +679,32 @@
     box-shadow: 0 0 0 4px var(--color-primary-100);
   }
 
-  .dark .input-islamic {
+  .input-islamic:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .dark .input-islamic,
+  body.dark .input-islamic {
     border-color: var(--color-night-700);
     background-color: var(--color-night-800);
     color: #ffffff;
   }
 
-  .dark .input-islamic:focus {
+  .dark .input-islamic::placeholder,
+  body.dark .input-islamic::placeholder {
+    color: #94a3b8;
+  }
+
+  .dark .input-islamic:focus,
+  body.dark .input-islamic:focus {
     border-color: var(--color-primary-500);
     box-shadow: 0 0 0 4px rgb(22 78 99 / 0.5);
+  }
+
+  textarea.input-islamic {
+    min-height: 8rem;
+    resize: vertical;
   }
 
   /* ---------- النص القرآني ---------- */
@@ -535,18 +723,21 @@
     }
   }
 
-  .dark .quran-text {
+  .dark .quran-text,
+  body.dark .quran-text {
     color: var(--color-primary-100);
   }
 
   /* ---------- تأثير الزجاج ---------- */
   .glass {
+    -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
     background: rgb(255 255 255 / 0.85);
     border-bottom: 1px solid rgb(6 182 212 / 0.1);
   }
 
-  .dark .glass {
+  .dark .glass,
+  body.dark .glass {
     background: rgb(10 22 40 / 0.85);
     border-bottom: 1px solid rgb(6 182 212 / 0.15);
   }
@@ -576,9 +767,32 @@
     color: var(--color-primary-600);
   }
 
-  .dark .icon-circle {
+  .dark .icon-circle,
+  body.dark .icon-circle {
     background-color: rgb(22 78 99 / 0.4);
     color: var(--color-primary-400);
+  }
+}
+
+/* ================================================================
+   🧰 Utilities إضافية مفيدة
+   ================================================================ */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
   }
 }
 

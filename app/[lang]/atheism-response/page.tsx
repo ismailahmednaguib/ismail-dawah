@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const dynamic = "force-static";
 
@@ -48,6 +50,24 @@ type UILang = {
   fatwa: string;
   articles: string;
   dawahGuide: string;
+  verse: string;
+  verseSource: string;
+  foundations: string;
+  doubts: string;
+  articles2: string;
+  introTitle: string;
+  introDesc: string;
+  approachTitle: string;
+  approachDesc: string;
+  relatedTitle: string;
+  doubtsPage: string;
+  doubtsPageDesc: string;
+  articlesPage: string;
+  articlesPageDesc: string;
+  dawahPage: string;
+  dawahPageDesc: string;
+  fatwaPage: string;
+  fatwaPageDesc: string;
 };
 
 // ============================================================
@@ -78,6 +98,26 @@ const UI: Record<Lang, UILang> = {
     fatwa: "الفتاوى",
     articles: "المقالات",
     dawahGuide: "دليل الدعوة",
+    verse: "﴿ أَمْ خُلِقُوا مِنْ غَيْرِ شَيْءٍ أَمْ هُمُ الْخَالِقُونَ ﴾",
+    verseSource: "سورة الطور — الآية 35",
+    foundations: "6 أسس",
+    doubts: "6 شبهات",
+    articles2: "إجابة مفحمة",
+    introTitle: "مقدمة في منهج الرد",
+    introDesc:
+      "الرد على الإلحاد ليس معركة كلامية، بل هو حوار هادئ يبدأ بالفطرة، ويستعين بالعقل، ويستنير بالوحي. المؤمن الحق لا يخاف الأسئلة، بل يرحب بها لأنها فرصة للبيان.",
+    approachTitle: "منهجنا في الرد",
+    approachDesc:
+      "نعتمد ثلاثة محاور: الفطرة السليمة، والعقل الصريح، والنقل الصحيح. ولا نتجاوز حدودنا إلى ما لا علم لنا به.",
+    relatedTitle: "صفحات ذات صلة",
+    doubtsPage: "الشبهات والردود",
+    doubtsPageDesc: "شبهات متنوعة حول الإسلام والقرآن والمرأة والعلم.",
+    articlesPage: "المقالات",
+    articlesPageDesc: "مقالات دعوية وتربوية وشرعية مختارة.",
+    dawahPage: "دليل الدعوة",
+    dawahPageDesc: "أصول الدعوة إلى الله وأساليبها ومهاراتها.",
+    fatwaPage: "الفتاوى",
+    fatwaPageDesc: "أسئلة فقهية وإجابات مختصرة.",
   },
   en: {
     title: "Responding to Atheism",
@@ -93,7 +133,7 @@ const UI: Record<Lang, UILang> = {
     answer: "Answer",
     noteTitle: "Methodological note",
     note1:
-      "Responding to atheism should not be done mockery or accusation, but with wisdom, good advice, and evidence.",
+      "Responding to atheism should not be done with mockery or accusation, but with wisdom, good advice, and evidence.",
     note2:
       "Not every question indicates atheism; it may be passing doubt or a search for truth. The remedy is dialogue, not takfir.",
     note3:
@@ -102,6 +142,26 @@ const UI: Record<Lang, UILang> = {
     fatwa: "Fatwas",
     articles: "Articles",
     dawahGuide: "Dawah Guide",
+    verse: "\"Or were they created by nothing, or were they the creators [of themselves]?\"",
+    verseSource: "Surah At-Tur — Verse 35",
+    foundations: "6 Foundations",
+    doubts: "6 Doubts",
+    articles2: "Clear Answers",
+    introTitle: "Introduction to the Method of Response",
+    introDesc:
+      "Responding to atheism is not a verbal battle, but a calm dialogue that begins with the fitrah, relies on reason, and is illuminated by revelation. The true believer does not fear questions, but welcomes them as an opportunity for clarification.",
+    approachTitle: "Our Approach",
+    approachDesc:
+      "We rely on three pillars: sound fitrah, clear reason, and authentic revelation. We do not exceed our limits into what we have no knowledge of.",
+    relatedTitle: "Related Pages",
+    doubtsPage: "Doubts and Responses",
+    doubtsPageDesc: "Various doubts about Islam, the Quran, women, and science.",
+    articlesPage: "Articles",
+    articlesPageDesc: "Selected dawah, educational, and Islamic articles.",
+    dawahPage: "Dawah Guide",
+    dawahPageDesc: "Dawah principles, methods, and skills.",
+    fatwaPage: "Fatwas",
+    fatwaPageDesc: "Islamic questions and concise answers.",
   },
 };
 
@@ -252,7 +312,7 @@ const SECTIONS: Section[] = [
   },
   {
     id: "problem-evil",
-    icon: "️",
+    icon: "⚡",
     title: {
       ar: "شبهة الشر والألم",
       en: "The Problem of Evil and Pain",
@@ -422,12 +482,21 @@ export async function generateMetadata({
       description: ui.description,
       url: `/${l}/atheism-response`,
       locale: l === "ar" ? "ar_EG" : "en_US",
-      type: "website",
+      type: "article",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -457,20 +526,42 @@ export default async function AtheismResponsePage({
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Article",
-    headline: ui.title,
-    description: ui.description,
-    inLanguage: l,
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: ui.title,
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/atheism-response`,
+        articleSection: isRTL ? "العقيدة" : "Creed",
+        keywords: isRTL
+          ? "الإلحاد, الرد على الشبهات, وجود الله, الفطرة"
+          : "atheism, responding to doubts, existence of God, fitrah",
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: FAQS.map((qa) => ({
+          "@type": "Question",
+          name: isRTL ? qa.question.ar : qa.question.en,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: qa.answer.map((p) => (isRTL ? p.ar : p.en)).join(" "),
+          },
+        })),
+      },
+    ],
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"}>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd),
         }}
       />
+
+      <Header lang={l} />
 
       <TopBar
         title={ui.title}
@@ -489,11 +580,22 @@ export default async function AtheismResponsePage({
       />
 
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-.52.07-1.04.07-1.56.07-1.95 0-3.79-.5-5.39-1.39C7.44 17.11 9.61 16 12 16s4.56 1.11 5.95 2.61c-1.6.89-3.44 1.39-5.39 1.39-.52 0-1.04 0-1.56-.07zM17.88 18.2c-.16-.4-.35-.79-.57-1.15-.22-.37-.48-.71-.77-1.02-.29-.32-.61-.61-.97-.86-.36-.25-.75-.47-1.17-.64-.42-.17-.86-.3-1.32-.39-.46-.08-.93-.12-1.42-.12s-.96.04-1.42.12c-.46.09-.9.22-1.32.39-.42.17-.81.39-1.17.64-.36.25-.68.54-.97.86-.29.31-.55.65-.77 1.02-.22.36-.41.75-.57 1.15-1.42-1.34-2.3-3.23-2.3-5.33 0-3.87 3.13-7 7-7s7 3.13 7 7c0 2.1-.88 3.99-2.3 5.33z" />
+                </svg>
+              </span>
+            </div>
+
             <span className="badge-primary mb-5">
               🧠 {isRTL ? "شبهات وردود" : "Doubts and Responses"}
             </span>
@@ -508,6 +610,88 @@ export default async function AtheismResponsePage({
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.description}
             </p>
+
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-3 gap-4">
+          <div className="card p-5 text-center">
+            <div className="mb-2 flex justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                🏛️
+              </span>
+            </div>
+            <p className="text-xl font-black text-primary-700 dark:text-primary-300">
+              {ui.foundations}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              {isRTL ? "أساس" : "Foundations"}
+            </p>
+          </div>
+
+          <div className="card p-5 text-center">
+            <div className="mb-2 flex justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                ❓
+              </span>
+            </div>
+            <p className="text-xl font-black text-primary-700 dark:text-primary-300">
+              {ui.doubts}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              {isRTL ? "شبهة" : "Doubts"}
+            </p>
+          </div>
+
+          <div className="card p-5 text-center">
+            <div className="mb-2 flex justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                💡
+              </span>
+            </div>
+            <p className="text-xl font-black text-primary-700 dark:text-primary-300">
+              {ui.articles2}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              {isRTL ? "عقلية" : "Rational"}
+            </p>
+          </div>
+        </div>
+
+        {/* ===== مقدمة منهجية ===== */}
+        <div className="card mb-8 overflow-hidden">
+          <div className="gradient-gold h-1.5 w-full" />
+          <div className="p-6 md:p-8">
+            <h2
+              className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              📚 {ui.introTitle}
+            </h2>
+            <p className="mb-4 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.introDesc}
+            </p>
+            <div className="rounded-2xl border border-primary-100 bg-primary-50/60 p-5 dark:border-primary-900/30 dark:bg-primary-950/15">
+              <p className="mb-2 text-sm font-black text-primary-700 dark:text-primary-300">
+                🎯 {ui.approachTitle}
+              </p>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                {ui.approachDesc}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -712,40 +896,31 @@ export default async function AtheismResponsePage({
           </div>
         </div>
 
-        {/* ===== روابط مفيدة ===== */}
-        <div className="card mt-8 p-6 md:p-8">
-          <h2 className="mb-5 text-xl font-black text-slate-900 dark:text-white">
-            {isRTL ? "روابط مفيدة" : "Useful links"}
+        {/* ===== صفحات ذات صلة ===== */}
+        <div className="mt-10">
+          <h2
+            className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🔗 {ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link
-              href={`/${l}/contact`}
+              href={`/${l}/doubts`}
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📬
+                🧠
               </span>
 
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
-                  {ui.contact}
+                  {ui.doubtsPage}
                 </h3>
-              </div>
-            </Link>
-
-            <Link
-              href={`/${l}/fatwa`}
-              className="card card-interactive group flex items-center gap-3 p-5"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ⚖️
-              </span>
-
-              <div className="min-w-0">
-                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
-                  {ui.fatwa}
-                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.doubtsPageDesc}
+                </p>
               </div>
             </Link>
 
@@ -759,8 +934,11 @@ export default async function AtheismResponsePage({
 
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
-                  {ui.articles}
+                  {ui.articlesPage}
                 </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.articlesPageDesc}
+                </p>
               </div>
             </Link>
 
@@ -774,13 +952,36 @@ export default async function AtheismResponsePage({
 
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
-                  {ui.dawahGuide}
+                  {ui.dawahPage}
                 </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.dawahPageDesc}
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href={`/${l}/fatwa`}
+              className="card card-interactive group flex items-center gap-3 p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
+                ⚖️
+              </span>
+
+              <div className="min-w-0">
+                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {ui.fatwaPage}
+                </h3>
+                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
+                  {ui.fatwaPageDesc}
+                </p>
               </div>
             </Link>
           </div>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
   );
 }

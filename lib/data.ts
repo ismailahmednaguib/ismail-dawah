@@ -2,6 +2,101 @@
 // البيانات الثابتة للمنصة
 
 // ============================================================
+// 🧱 أدوات الأمان والبحث
+// ============================================================
+
+/**
+ * تجميد عميق للكائنات والمصفوفات لمنع التعديل غير المقصود.
+ */
+function deepFreeze(value: unknown): void {
+  if (value === null || typeof value !== "object") {
+    return;
+  }
+
+  const obj = value as object;
+
+  if (Object.isFrozen(obj)) {
+    return;
+  }
+
+  Object.freeze(obj);
+
+  for (const child of Object.values(obj)) {
+    deepFreeze(child);
+  }
+}
+
+/**
+ * يجمّد القيمة ويعيدها بنفس النوع للحفاظ على التوافق مع الأنواع القديمة.
+ */
+function freezeAs<T>(value: T): T {
+  deepFreeze(value);
+  return value;
+}
+
+/**
+ * تطبيع النص العربي للبحث:
+ * - إزالة التشكيل
+ * - توحيد الألف والهمزات
+ * - توحيد الياء والتاء المربوطة
+ * - إزالة التطويل
+ * - تحويل الإنجليزية إلى small
+ */
+export function normalizeArabic(input: unknown): string {
+  if (typeof input !== "string") {
+    return "";
+  }
+
+  return input
+    .replace(/\uFEFF/g, "")
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED\u0711]/g, "")
+    .replace(/\u0640/g, "")
+    .replace(/[إأآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ؤ/g, "و")
+    .replace(/ئ/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * تحويل الأرقام إلى أرقام عربية.
+ */
+export function toArabicNumeral(num: number | string): string {
+  const arabicNumerals = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+
+  return String(num)
+    .split("")
+    .map((digit) => (/[0-9]/.test(digit) ? arabicNumerals[Number(digit)] : digit))
+    .join("");
+}
+
+/**
+ * تحويل الأرقام العربية إلى إنجليزية.
+ */
+export function toEnglishNumeral(num: number | string): string {
+  const map: Record<string, string> = {
+    "٠": "0",
+    "١": "1",
+    "٢": "2",
+    "٣": "3",
+    "٤": "4",
+    "٥": "5",
+    "٦": "6",
+    "٧": "7",
+    "٨": "8",
+    "٩": "9",
+  };
+
+  return String(num)
+    .split("")
+    .map((digit) => map[digit] ?? digit)
+    .join("");
+}
+
+// ============================================================
 // 📖 بيانات السور القرآنية (114 سورة)
 // ============================================================
 
@@ -13,7 +108,7 @@ export interface Surah {
   type: "makki" | "madani";
 }
 
-export const SURAHS: Surah[] = [
+export const SURAHS: Surah[] = freezeAs([
   { number: 1, arabicName: "الفاتحة", englishName: "Al-Fatiha", ayahs: 7, type: "makki" },
   { number: 2, arabicName: "البقرة", englishName: "Al-Baqarah", ayahs: 286, type: "madani" },
   { number: 3, arabicName: "آل عمران", englishName: "Ali 'Imran", ayahs: 200, type: "madani" },
@@ -128,7 +223,7 @@ export const SURAHS: Surah[] = [
   { number: 112, arabicName: "الإخلاص", englishName: "Al-Ikhlas", ayahs: 4, type: "makki" },
   { number: 113, arabicName: "الفلق", englishName: "Al-Falaq", ayahs: 5, type: "makki" },
   { number: 114, arabicName: "الناس", englishName: "An-Nas", ayahs: 6, type: "makki" },
-];
+]);
 
 // ============================================================
 // 🤲 بيانات الأذكار
@@ -149,7 +244,7 @@ export interface DhikrCategory {
   adhkar: Dhikr[];
 }
 
-export const ADHKAR: DhikrCategory[] = [
+export const ADHKAR: DhikrCategory[] = freezeAs([
   {
     id: "morning",
     arabicTitle: "أذكار الصباح",
@@ -157,7 +252,7 @@ export const ADHKAR: DhikrCategory[] = [
     icon: "🌅",
     adhkar: [
       {
-        text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+        text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيءٍ قَدِيرٌ",
         count: 1,
         source: "رواه مسلم",
       },
@@ -287,7 +382,7 @@ export const ADHKAR: DhikrCategory[] = [
       },
     ],
   },
-];
+]);
 
 // ============================================================
 // 🕌 بيانات الصلوات
@@ -300,33 +395,49 @@ export interface PrayerInfo {
   icon: string;
 }
 
-export const PRAYERS: PrayerInfo[] = [
+export const PRAYERS: PrayerInfo[] = freezeAs([
   { id: "fajr", arabicName: "الفجر", englishName: "Fajr", icon: "🌄" },
   { id: "sunrise", arabicName: "الشروق", englishName: "Sunrise", icon: "🌅" },
   { id: "dhuhr", arabicName: "الظهر", englishName: "Dhuhr", icon: "☀️" },
   { id: "asr", arabicName: "العصر", englishName: "Asr", icon: "🌤️" },
   { id: "maghrib", arabicName: "المغرب", englishName: "Maghrib", icon: "🌇" },
   { id: "isha", arabicName: "العشاء", englishName: "Isha", icon: "🌃" },
-];
+]);
 
 // ============================================================
 // 📅 بيانات التقويم الهجري
 // ============================================================
 
-export const HIJRI_MONTHS: string[] = [
-  "محرم", "صفر", "ربيع الأول", "ربيع الآخر",
-  "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان",
-  "رمضان", "شوال", "ذو القعدة", "ذو الحجة",
-];
+export const HIJRI_MONTHS: string[] = freezeAs([
+  "محرم",
+  "صفر",
+  "ربيع الأول",
+  "ربيع الآخر",
+  "جمادى الأولى",
+  "جمادى الآخرة",
+  "رجب",
+  "شعبان",
+  "رمضان",
+  "شوال",
+  "ذو القعدة",
+  "ذو الحجة",
+]);
 
-export const ISLAMIC_EVENTS: Array<{
+export interface IslamicEvent {
   date: string;
   arabicTitle: string;
   englishTitle: string;
   description?: string;
-}> = [
+}
+
+export const ISLAMIC_EVENTS: IslamicEvent[] = freezeAs([
   { date: "1-1", arabicTitle: "رأس السنة الهجرية", englishTitle: "Islamic New Year" },
-  { date: "10-1", arabicTitle: "يوم عاشوراء", englishTitle: "Ashura", description: "صيام يوم عاشوراء يكفر سنة ماضية" },
+  {
+    date: "10-1",
+    arabicTitle: "يوم عاشوراء",
+    englishTitle: "Ashura",
+    description: "صيام يوم عاشوراء يكفر سنة ماضية",
+  },
   { date: "12-3", arabicTitle: "المولد النبوي", englishTitle: "Prophet's Birthday" },
   { date: "27-7", arabicTitle: "الإسراء والمعراج", englishTitle: "Isra and Mi'raj" },
   { date: "15-8", arabicTitle: "ليلة النصف من شعبان", englishTitle: "Mid-Sha'ban" },
@@ -335,7 +446,7 @@ export const ISLAMIC_EVENTS: Array<{
   { date: "1-10", arabicTitle: "عيد الفطر", englishTitle: "Eid al-Fitr" },
   { date: "9-12", arabicTitle: "يوم عرفة", englishTitle: "Day of Arafah" },
   { date: "10-12", arabicTitle: "عيد الأضحى", englishTitle: "Eid al-Adha" },
-];
+]);
 
 // ============================================================
 // 📢 بيانات المجالات الدعوية
@@ -349,7 +460,7 @@ export interface DawahField {
   icon: string;
 }
 
-export const DAWAH_FIELDS: DawahField[] = [
+export const DAWAH_FIELDS: DawahField[] = freezeAs([
   {
     id: "online",
     arabicTitle: "الدعوة الإلكترونية",
@@ -392,7 +503,7 @@ export const DAWAH_FIELDS: DawahField[] = [
     description: "إنتاج محتوى دعوي مرئي ومسموع",
     icon: "📺",
   },
-];
+]);
 
 // ============================================================
 // 🎯 بيانات التسبيح
@@ -406,7 +517,7 @@ export interface TasbihPhrase {
   virtue?: string;
 }
 
-export const TASBIH_PHRASES: TasbihPhrase[] = [
+export const TASBIH_PHRASES: TasbihPhrase[] = freezeAs([
   {
     id: "subhan",
     arabicText: "سُبْحَانَ اللَّهِ",
@@ -445,9 +556,9 @@ export const TASBIH_PHRASES: TasbihPhrase[] = [
     arabicText: "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
     englishText: "O Allah, send blessings upon our Prophet Muhammad",
     count: 100,
-    virtue: "من صلى عليه واحدة صلى الله عليه بها عشراً",
+    virtue: "من صلى عليه واحدة صلى الله عليه بها عشرا",
   },
-];
+]);
 
 // ============================================================
 // 🛡️ بيانات الرقية الشرعية
@@ -458,14 +569,14 @@ export interface RuqyahVerse {
   text: string;
 }
 
-export const RUQYAH_VERSES: RuqyahVerse[] = [
+export const RUQYAH_VERSES: RuqyahVerse[] = freezeAs([
   {
     reference: "الفاتحة",
-    text: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ * الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ * الرَّحْمَنِ الرَّحِيمِ * مَالِكِ يَوْمِ الدِّينِ * إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ * اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ * صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+    text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ * الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ * الرَّحْمَٰنِ الرَّحِيمِ * مَالِكِ يَوْمِ الدِّينِ * إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ * اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ * صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
   },
   {
     reference: "البقرة 255",
-    text: "اللَّهُ لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ وَلَا يَئُودُهُ حِفْظُهُمَا وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+    text: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
   },
   {
     reference: "الإخلاص",
@@ -477,9 +588,9 @@ export const RUQYAH_VERSES: RuqyahVerse[] = [
   },
   {
     reference: "الناس",
-    text: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ * مَلِكِ النَّاسِ * إِلَهِ النَّاسِ * مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ * الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ * مِنَ الْجِنَّةِ وَالنَّاسِ",
+    text: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ * مَلِكِ النَّاسِ * إِلَٰهِ النَّاسِ * مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ * الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ * مِنَ الْجِنَّةِ وَالنَّاسِ",
   },
-];
+]);
 
 // ============================================================
 // 📚 بيانات قصص الأنبياء
@@ -493,7 +604,7 @@ export interface ProphetStory {
   icon: string;
 }
 
-export const PROPHETS: ProphetStory[] = [
+export const PROPHETS: ProphetStory[] = freezeAs([
   { id: "adam", arabicName: "آدم", englishName: "Adam", title: "أبو البشر", icon: "🌍" },
   { id: "nuh", arabicName: "نوح", englishName: "Noah", title: "صاحب السفينة", icon: "🚢" },
   { id: "ibrahim", arabicName: "إبراهيم", englishName: "Abraham", title: "خليل الرحمن", icon: "🔥" },
@@ -504,58 +615,358 @@ export const PROPHETS: ProphetStory[] = [
   { id: "sulayman", arabicName: "سليمان", englishName: "Solomon", title: "صاحب الملك", icon: "👑" },
   { id: "dawud", arabicName: "داود", englishName: "David", title: "صاحب المزامير", icon: "⚔️" },
   { id: "yunus", arabicName: "يونس", englishName: "Jonah", title: "صاحب الحوت", icon: "🐋" },
-];
+]);
 
 // ============================================================
-// دوال مساعدة
+// 🧠 دوال مساعدة آمنة ومنظمة
 // ============================================================
 
-/**
- * تحويل الأرقام إلى أرقام عربية
- */
-export function toArabicNumeral(num: number | string): string {
-  const arabicNumerals = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-  return String(num)
-    .split("")
-    .map((d) => (/[0-9]/.test(d) ? arabicNumerals[parseInt(d)] : d))
-    .join("");
-}
+export const DATA_VERSION = "2026.10.11";
 
 /**
- * الحصول على سورة بالرقم
+ * الحصول على سورة برقمها.
  */
 export function getSurahByNumber(num: number): Surah | undefined {
-  return SURAHS.find((s) => s.number === num);
+  if (!Number.isInteger(num) || num < 1 || num > 114) {
+    return undefined;
+  }
+
+  return SURAHS.find((surah) => surah.number === num);
 }
 
 /**
- * البحث في السور
+ * البحث في السور.
+ * يدعم:
+ * - الاسم العربي مع تجاهل التشكيل
+ * - الاسم الإنجليزي
+ * - رقم السورة
  */
-export function searchSurahs(query: string): Surah[] {
-  const q = query.trim().toLowerCase();
-  return SURAHS.filter(
-    (s) =>
-      s.arabicName.includes(query) ||
-      s.englishName.toLowerCase().includes(q) ||
-      String(s.number) === query
-  );
+export function searchSurahs(query: string, limit = 20): Surah[] {
+  const q = normalizeArabic(query);
+
+  if (!q) {
+    return [];
+  }
+
+  const isNumeric = /^\d+$/.test(q);
+
+  return SURAHS.filter((surah) => {
+    if (isNumeric) {
+      const number = String(surah.number);
+
+      if (number === q || number.startsWith(q)) {
+        return true;
+      }
+    }
+
+    return (
+      normalizeArabic(surah.arabicName).includes(q) ||
+      surah.englishName.toLowerCase().includes(q)
+    );
+  }).slice(0, limit);
 }
 
 /**
- * الحصول على فئة أذكار بالمعرف
+ * اسم السورة حسب اللغة.
+ */
+export function getSurahDisplayName(
+  surah: Surah,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? surah.englishName : surah.arabicName;
+}
+
+/**
+ * نوع السورة مترجم.
+ */
+export function getSurahTypeLabel(
+  type: Surah["type"],
+  lang: "ar" | "en" = "ar"
+): string {
+  if (lang === "en") {
+    return type === "makki" ? "Makki" : "Madani";
+  }
+
+  return type === "makki" ? "مكية" : "مدنية";
+}
+
+/**
+ * الحصول على فئة أذكار بالمعرف.
  */
 export function getAdhkarById(id: string): DhikrCategory | undefined {
-  return ADHKAR.find((c) => c.id === id);
+  return ADHKAR.find((category) => category.id === id);
 }
 
 /**
- * الحصول على جميع الأذكار المسطحة
+ * عنوان فئة الذكر حسب اللغة.
  */
-export function getAllAdhkar(): Array<Dhikr & { category: string }> {
-  return ADHKAR.flatMap((cat) =>
-    cat.adhkar.map((d) => ({ ...d, category: cat.arabicTitle }))
+export function getDhikrCategoryTitle(
+  category: DhikrCategory,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? category.englishTitle : category.arabicTitle;
+}
+
+export type FlatDhikr = Dhikr & {
+  categoryId: string;
+  category: string;
+  categoryEn: string;
+  icon: string;
+};
+
+/**
+ * جميع الأذكار مسطّحة مع معلومات الفئة.
+ *
+ * ملاحظة توافق:
+ * خاصية `category` موجودة كما في الكود القديم،
+ * لكن أُضيفت `categoryId` و`categoryEn` و`icon` لتسهيل الاستخدام.
+ */
+export function getAllAdhkar(): FlatDhikr[] {
+  return ADHKAR.flatMap((category) =>
+    category.adhkar.map((dhikr) => ({
+      ...dhikr,
+      categoryId: category.id,
+      category: category.arabicTitle,
+      categoryEn: category.englishTitle,
+      icon: category.icon,
+    }))
   );
 }
-// ===== Stub مؤقتة لـ sitemap =====
 
-export const fields = DAWAH_FIELDS;
+/**
+ * البحث في الأذكار.
+ */
+export function searchAdhkar(
+  query: string,
+  options: {
+    categoryId?: string;
+    limit?: number;
+  } = {}
+): FlatDhikr[] {
+  const q = normalizeArabic(query);
+
+  if (!q) {
+    return [];
+  }
+
+  const limit = options.limit ?? 30;
+
+  return getAllAdhkar()
+    .filter((dhikr) => {
+      if (options.categoryId && dhikr.categoryId !== options.categoryId) {
+        return false;
+      }
+
+      return (
+        normalizeArabic(dhikr.text).includes(q) ||
+        normalizeArabic(dhikr.source).includes(q) ||
+        normalizeArabic(dhikr.virtue ?? "").includes(q) ||
+        normalizeArabic(dhikr.category).includes(q) ||
+        dhikr.categoryEn.toLowerCase().includes(q)
+      );
+    })
+    .slice(0, limit);
+}
+
+/**
+ * الصلوات المفروضة فقط، بدون الشروق.
+ */
+export const OBLIGATORY_PRAYER_IDS: string[] = freezeAs([
+  "fajr",
+  "dhuhr",
+  "asr",
+  "maghrib",
+  "isha",
+]);
+
+/**
+ * الحصول على صلاة بالمعرف.
+ */
+export function getPrayerById(id: string): PrayerInfo | undefined {
+  return PRAYERS.find((prayer) => prayer.id === id);
+}
+
+/**
+ * اسم الصلاة حسب اللغة.
+ */
+export function getPrayerName(
+  prayer: PrayerInfo,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? prayer.englishName : prayer.arabicName;
+}
+
+/**
+ * الفروض فقط.
+ */
+export function getObligatoryPrayers(): PrayerInfo[] {
+  return OBLIGATORY_PRAYER_IDS.map((id) =>
+    PRAYERS.find((prayer) => prayer.id === id)
+  ).filter((prayer): prayer is PrayerInfo => Boolean(prayer));
+}
+
+/**
+ * تحليل تاريخ هجري بصيغة:
+ * - 1-1
+ * - 01-01
+ * - 1/1
+ * - 10-1
+ */
+export function parseHijriDate(
+  value: string
+): { month: number; day: number } | null {
+  const clean = String(value || "").trim();
+
+  const match = /^(\d{1,2})\s*[-/]\s*(\d{1,2})$/.exec(clean);
+
+  if (!match) {
+    return null;
+  }
+
+  const month = Number(match[1]);
+  const day = Number(match[2]);
+
+  if (month < 1 || month > 12 || day < 1 || day > 30) {
+    return null;
+  }
+
+  return { month, day };
+}
+
+/**
+ * تنسيق تاريخ هجري.
+ */
+export function formatHijriDate(month: number, day: number): string {
+  return `${month}-${day}`;
+}
+
+/**
+ * الحصول على مناسبة هجرية بتاريخ معين.
+ */
+export function getIslamicEventByDate(
+  month: number,
+  day: number
+): IslamicEvent | undefined {
+  return ISLAMIC_EVENTS.find((event) => {
+    const parsed = parseHijriDate(event.date);
+
+    return parsed?.month === month && parsed?.day === day;
+  });
+}
+
+/**
+ * مناسبات شهر هجري معين.
+ */
+export function getIslamicEventsForMonth(month: number): IslamicEvent[] {
+  return ISLAMIC_EVENTS.filter((event) => {
+    const parsed = parseHijriDate(event.date);
+
+    return parsed?.month === month;
+  });
+}
+
+/**
+ * عنوان المناسبة حسب اللغة.
+ */
+export function getIslamicEventTitle(
+  event: IslamicEvent,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? event.englishTitle : event.arabicTitle;
+}
+
+/**
+ * الحصول على مجال دعوي بالمعرف.
+ */
+export function getDawahFieldById(id: string): DawahField | undefined {
+  return DAWAH_FIELDS.find((field) => field.id === id);
+}
+
+/**
+ * عنوان المجال الدعوي حسب اللغة.
+ */
+export function getDawahFieldTitle(
+  field: DawahField,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? field.englishTitle : field.arabicTitle;
+}
+
+/**
+ * الحصول على عبارة تسبيح بالمعرف.
+ */
+export function getTasbihPhraseById(id: string): TasbihPhrase | undefined {
+  return TASBIH_PHRASES.find((phrase) => phrase.id === id);
+}
+
+/**
+ * نص التسبيح حسب اللغة.
+ */
+export function getTasbihText(
+  phrase: TasbihPhrase,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? phrase.englishText : phrase.arabicText;
+}
+
+/**
+ * الحصول على آية/سورة من الرقية بالمرجع.
+ */
+export function getRuqyahVerseByReference(
+  reference: string
+): RuqyahVerse | undefined {
+  const q = normalizeArabic(reference);
+
+  if (!q) {
+    return undefined;
+  }
+
+  return RUQYAH_VERSES.find((verse) =>
+    normalizeArabic(verse.reference).includes(q)
+  );
+}
+
+/**
+ * الحصول على قصة نبي بالمعرف.
+ */
+export function getProphetById(id: string): ProphetStory | undefined {
+  return PROPHETS.find((prophet) => prophet.id === id);
+}
+
+/**
+ * اسم النبي حسب اللغة.
+ */
+export function getProphetName(
+  prophet: ProphetStory,
+  lang: "ar" | "en" = "ar"
+): string {
+  return lang === "en" ? prophet.englishName : prophet.arabicName;
+}
+
+/**
+ * ملخص سريع للبيانات الثابتة.
+ * مفيد للوحة الأدمن أو صفحة التشخيص.
+ */
+export function getStaticDataSummary() {
+  return {
+    version: DATA_VERSION,
+    surahs: SURAHS.length,
+    adhkarCategories: ADHKAR.length,
+    adhkarItems: getAllAdhkar().length,
+    prayers: PRAYERS.length,
+    obligatoryPrayers: getObligatoryPrayers().length,
+    hijriMonths: HIJRI_MONTHS.length,
+    islamicEvents: ISLAMIC_EVENTS.length,
+    dawahFields: DAWAH_FIELDS.length,
+    tasbihPhrases: TASBIH_PHRASES.length,
+    ruqyahVerses: RUQYAH_VERSES.length,
+    prophets: PROPHETS.length,
+  };
+}
+
+/**
+ * للتوافق مع الكود القديم فقط.
+ *
+ * @deprecated استخدم DAWAH_FIELDS بدلًا من fields.
+ */
+export const fields: DawahField[] = DAWAH_FIELDS;

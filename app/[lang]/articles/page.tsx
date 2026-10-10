@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +23,7 @@ type Category = {
   ar: string;
   en: string;
   icon: string;
+  color: string;
 };
 
 type Article = {
@@ -29,6 +32,7 @@ type Article = {
   date: string;
   readMinutes: number;
   icon: string;
+  featured?: boolean;
   tags: {
     ar: string[];
     en: string[];
@@ -76,6 +80,15 @@ type UILang = {
   fatwa: string;
   dawahGuide: string;
   hajjGuide: string;
+  featuredTitle: string;
+  featuredDesc: string;
+  allArticles: string;
+  share: string;
+  bookmark: string;
+  minRead: string;
+  articlesCount: string;
+  categoriesCount: string;
+  freeAccess: string;
 };
 
 // ============================================================
@@ -89,13 +102,13 @@ const PAGE_SIZE = 6;
 // ============================================================
 
 const CATEGORIES: Category[] = [
-  { id: "all", ar: "كل المقالات", en: "All Articles", icon: "📚" },
-  { id: "dawah", ar: "الدعوة", en: "Dawah", icon: "🤝" },
-  { id: "quran", ar: "القرآن", en: "Quran", icon: "📖" },
-  { id: "fiqh", ar: "الفقه", en: "Fiqh", icon: "⚖️" },
-  { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "🌿" },
-  { id: "stories", ar: "القصص", en: "Stories", icon: "📜" },
-  { id: "family", ar: "الأسرة", en: "Family", icon: "🏡" },
+  { id: "all", ar: "كل المقالات", en: "All Articles", icon: "📚", color: "from-slate-500 to-slate-600" },
+  { id: "dawah", ar: "الدعوة", en: "Dawah", icon: "🤝", color: "from-primary-500 to-primary-600" },
+  { id: "quran", ar: "القرآن", en: "Quran", icon: "📖", color: "from-green-500 to-green-600" },
+  { id: "fiqh", ar: "الفقه", en: "Fiqh", icon: "⚖️", color: "from-blue-500 to-blue-600" },
+  { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "🌿", color: "from-emerald-500 to-emerald-600" },
+  { id: "stories", ar: "القصص", en: "Stories", icon: "📜", color: "from-amber-500 to-amber-600" },
+  { id: "family", ar: "الأسرة", en: "Family", icon: "🏡", color: "from-rose-500 to-rose-600" },
 ];
 
 // ============================================================
@@ -109,6 +122,7 @@ const ARTICLES: Article[] = [
     date: "2026-09-28",
     readMinutes: 6,
     icon: "🤝",
+    featured: true,
     tags: {
       ar: ["دعوة", "حكمة", "أخلاق"],
       en: ["dawah", "wisdom", "manners"],
@@ -127,7 +141,7 @@ const ARTICLES: Article[] = [
         "ومن الأسس المهمة الحكمة ومراعاة حال المدعو، فالجاهل يحتاج تعليمًا، والمحتاج يحتاج تيسيرًا، والمستفز يحتاج صبرًا. كما أن الرفق يفتح القلوب، بينما الخشونة قد تغلق أبوابًا كانت مفتوحة.",
       ],
       en: [
-        "The first foundation of dawah is sincerity, intending Allah’s pleasure and the guidance of creation, not fame or winning arguments. Knowledge follows, so the caller knows what he invites to, its evidence, and the limits of the issue.",
+        "The first foundation of dawah is sincerity, intending Allah's pleasure and the guidance of creation, not fame or winning arguments. Knowledge follows, so the caller knows what he invites to, its evidence, and the limits of the issue.",
         "Another key foundation is wisdom and considering the state of the person being invited. The ignorant needs teaching, the needy needs ease, and the provoked needs patience. Gentleness opens hearts, while harshness may close doors that were open.",
       ],
     },
@@ -138,6 +152,7 @@ const ARTICLES: Article[] = [
     date: "2026-09-21",
     readMinutes: 5,
     icon: "📖",
+    featured: true,
     tags: {
       ar: ["قرآن", "تدبر", "قلوب"],
       en: ["quran", "reflection", "hearts"],
@@ -147,7 +162,7 @@ const ARTICLES: Article[] = [
       en: "How to Reflect on the Quran in Daily Life",
     },
     excerpt: {
-      ar: "التدبر ليس علمًا خاصًا بالعلماء فقط، بل هو مفتاحعيش القلب مع القرآن.",
+      ar: "التدبر ليس علمًا خاصًا بالعلماء فقط، بل هو مفتاح عيش القلب مع القرآن.",
       en: "Reflection is not limited to scholars; it is a key to living the heart with the Quran.",
     },
     content: {
@@ -173,7 +188,7 @@ const ARTICLES: Article[] = [
     },
     title: {
       ar: "أحكام صلاة المسافر: تيسير لا تفريط",
-      en: "Rulings of Traveler’s Prayer: Ease, Not Negligence",
+      en: "Rulings of Traveler's Prayer: Ease, Not Negligence",
     },
     excerpt: {
       ar: "شرع الله للمسافر رخصًا تعينه على العبادة، لكن ينبغي فهم ضوابطها حتى لا تتحول إلى تهاون.",
@@ -215,7 +230,7 @@ const ARTICLES: Article[] = [
       ],
       en: [
         "Many people guard their tongues in gatherings but release them in comments and posts. The true believer watches Allah in secret and openly, in writing as in speech.",
-        "Rules of digital safety include: do not publish what you do not know, do not argue in anger, do not spread people’s faults, and do not share news before verification. A word may be charity, or it may be a sword whose owner slides into the Fire.",
+        "Rules of digital safety include: do not publish what you do not know, do not argue in anger, do not spread people's faults, and do not share news before verification. A word may be charity, or it may be a sword whose owner slides into the Fire.",
       ],
     },
   },
@@ -243,7 +258,7 @@ const ARTICLES: Article[] = [
         "وفيها أيضًا درس في التضحية: أبو بكر رضي الله عنه قدم ماله ووقته وراحته، والأنصار فتحوا ديارهم وقلوبهم. فالمجتمع المسلم لا يُبنى بالشعارات، بل بالبذل والاستمرار.",
       ],
       en: [
-        "True trust with taking means appeared in the migration: the Prophet chose his companion, planned the route, hid in the cave, yet his heart was filled with certainty in Allah’s words: Do not grieve; indeed Allah is with us.",
+        "True trust with taking means appeared in the migration: the Prophet chose his companion, planned the route, hid in the cave, yet his heart was filled with certainty in Allah's words: Do not grieve; indeed Allah is with us.",
         "It also teaches sacrifice: Abu Bakr offered his wealth, time, and comfort, and the Ansar opened their homes and hearts. The Muslim society is not built by slogans, but by giving and persistence.",
       ],
     },
@@ -268,7 +283,7 @@ const ARTICLES: Article[] = [
     },
     content: {
       ar: [
-        "أول وسيلة في التربية هي القدوة: حين يرى الابن أباه وأم يحافظان على الصلاة في وقتها، تتشكل عنده صورة حية أن الصلاة ليست عادة اجتماعية، بل علاقة مع الله.",
+        "أول وسيلة في التربية هي القدوة: حين يرى الابن أباه وأمه يحافظان على الصلاة في وقتها، تتشكل عنده صورة حية أن الصلاة ليست عادة اجتماعية، بل علاقة مع الله.",
         "ثم يأتي التدرج والرفق: علّمهم معنى الوضوء، وشوّقهم بالمكافأة، ولا تجعل الصلاة عقابًا. فالطفل الذي يرتبط بالصلاة بالرحمة، يكبر وهي سكينة في قلبه.",
       ],
       en: [
@@ -301,8 +316,8 @@ const ARTICLES: Article[] = [
         "ومن الحكمة ألا يدخل الداعية في كل شبهة، خاصة ما لا علم له فيه. فليس كل سؤال يستحق جوابًا فوريًا، وقد يكون أفضل الرد: سأتحقق وأرد عليك، أو أحولك إلى أهل الاختصاص.",
       ],
       en: [
-        "Many doubts are built on misunderstanding, incomplete transmission, or faulty analogy. Therefore, the da‘ee should ask: what did this person understand? What evidence did he rely on? Then remove confusion by clarification, not defamation.",
-        "Wisdom also requires that the da‘ee not enter every doubt, especially those beyond his knowledge. Not every question deserves an immediate answer, and sometimes the best response is: I will verify and reply, or I will refer you to specialists.",
+        "Many doubts are built on misunderstanding, incomplete transmission, or faulty analogy. Therefore, the da'ee should ask: what did this person understand? What evidence did he rely on? Then remove confusion by clarification, not defamation.",
+        "Wisdom also requires that the da'ee not enter every doubt, especially those beyond his knowledge. Not every question deserves an immediate answer, and sometimes the best response is: I will verify and reply, or I will refer you to specialists.",
       ],
     },
   },
@@ -326,12 +341,12 @@ const ARTICLES: Article[] = [
     },
     content: {
       ar: [
-        "من أنجح الطرق: تحديد ورد يومي صغير لكن مستمر، مثل ثلاث آيات أو خمس آيات. ثم ربط الحفظ بوقت ثابت، بعد الفجر مثلًا، لأن القلبكون أصفى والذاكرة أنشط.",
+        "من أنجح الطرق: تحديد ورد يومي صغير لكن مستمر، مثل ثلاث آيات أو خمس آيات. ثم ربط الحفظ بوقت ثابت، بعد الفجر مثلًا، لأن القلب يكون أصفى والذاكرة أنشط.",
         "كما أن المراجعة أهم من الحفظ الجديد في كثير من الأحيان. فاحفظ الجديد، ثم راجع القديم كل يوم، واجعل لك أسبوعًا لمراجعة ما حفظته في الشهر. هكذا يثبت القرآن بإذن الله.",
       ],
       en: [
         "Among the most successful methods is setting a small but consistent daily portion, such as three or five verses. Then attach memorization to a fixed time, for example after Fajr, because the heart is clearer and memory is more active.",
-        "Revision is often more important than new memorization. Memorize the new portion, revise the old daily, and set aside a weekly review of the month’s memorization. Thus the Quran becomes firm, by Allah’s permission.",
+        "Revision is often more important than new memorization. Memorize the new portion, revise the old daily, and set aside a weekly review of the month's memorization. Thus the Quran becomes firm, by Allah's permission.",
       ],
     },
   },
@@ -423,16 +438,22 @@ const UI: Record<Lang, UILang> = {
     previous: "السابق",
     next: "التالي",
     noteTitle: "تنبيه",
-    note1:
-      "هذه المقالات للتوعية العامة، ولا تغني عن مراجعة أهل العلم في المسائل الدقيقة.",
-    note2:
-      "يُرجى نقل المحتوى مع ذكر المصدر، وعدم إخراج النصوص عن سياقها.",
-    note3:
-      "لو وجدت خطأً أو أردت اقتراح موضوع، راسلنا عبر صفحة تواصل معنا.",
+    note1: "هذه المقالات للتوعية العامة، ولا تغني عن مراجعة أهل العلم في المسائل الدقيقة.",
+    note2: "يُرجى نقل المحتوى مع ذكر المصدر، وعدم إخراج النصوص عن سياقها.",
+    note3: "لو وجدت خطأً أو أردت اقتراح موضوع، راسلنا عبر صفحة تواصل معنا.",
     contact: "تواصل معنا",
     fatwa: "الفتاوى",
     dawahGuide: "دليل الدعوة",
     hajjGuide: "دليل الحج",
+    featuredTitle: "مقالات مميزة",
+    featuredDesc: "أهم المقالات المختارة لك",
+    allArticles: "جميع المقالات",
+    share: "مشاركة",
+    bookmark: "حفظ",
+    minRead: "دقائق",
+    articlesCount: "مقال",
+    categoriesCount: "تصنيف",
+    freeAccess: "وصول مجاني",
   },
   en: {
     title: "Articles",
@@ -457,16 +478,22 @@ const UI: Record<Lang, UILang> = {
     previous: "Previous",
     next: "Next",
     noteTitle: "Notice",
-    note1:
-      "These articles are for general awareness and do not replace consulting qualified scholars in detailed matters.",
-    note2:
-      "Please share content with attribution and do not take texts out of context.",
-    note3:
-      "If you find an error or want to suggest a topic, contact us through the Contact Us page.",
+    note1: "These articles are for general awareness and do not replace consulting qualified scholars in detailed matters.",
+    note2: "Please share content with attribution and do not take texts out of context.",
+    note3: "If you find an error or want to suggest a topic, contact us through the Contact Us page.",
     contact: "Contact Us",
     fatwa: "Fatwas",
     dawahGuide: "Dawah Guide",
     hajjGuide: "Hajj Guide",
+    featuredTitle: "Featured Articles",
+    featuredDesc: "Top articles selected for you",
+    allArticles: "All Articles",
+    share: "Share",
+    bookmark: "Bookmark",
+    minRead: "min",
+    articlesCount: "Articles",
+    categoriesCount: "Categories",
+    freeAccess: "Free Access",
   },
 };
 
@@ -478,7 +505,6 @@ function getFirstValue(value?: string | string[]): string {
   if (Array.isArray(value)) {
     return value[0] ?? "";
   }
-
   return value ?? "";
 }
 
@@ -489,7 +515,6 @@ function normalize(value: string): string {
 function formatNumber(value: number, lang: Lang): string {
   if (lang === "ar") {
     const arabicNumerals = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
-
     return String(value)
       .split("")
       .map((digit) => {
@@ -498,17 +523,12 @@ function formatNumber(value: number, lang: Lang): string {
       })
       .join("");
   }
-
   return String(value);
 }
 
 function formatDate(iso: string, lang: Lang): string {
   const parsed = new Date(iso);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return iso;
-  }
-
+  if (Number.isNaN(parsed.getTime())) return iso;
   try {
     return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en-US", {
       dateStyle: "medium",
@@ -520,11 +540,7 @@ function formatDate(iso: string, lang: Lang): string {
 
 function categoryLabel(categoryId: string, lang: Lang): string {
   const category = CATEGORIES.find((item) => item.id === categoryId);
-
-  if (!category) {
-    return categoryId;
-  }
-
+  if (!category) return categoryId;
   return lang === "ar" ? category.ar : category.en;
 }
 
@@ -532,13 +548,13 @@ function categoryIcon(categoryId: string): string {
   return CATEGORIES.find((item) => item.id === categoryId)?.icon ?? "📄";
 }
 
+function categoryColor(categoryId: string): string {
+  return CATEGORIES.find((item) => item.id === categoryId)?.color ?? "from-slate-500 to-slate-600";
+}
+
 function articleMatches(article: Article, query: string): boolean {
-  if (!query) {
-    return true;
-  }
-
+  if (!query) return true;
   const q = normalize(query);
-
   const haystack = [
     article.title.ar,
     article.title.en,
@@ -549,45 +565,25 @@ function articleMatches(article: Article, query: string): boolean {
     ...article.content.ar,
     ...article.content.en,
   ];
-
   return haystack.some((text) => normalize(text).includes(q));
 }
 
 function parsePage(value?: string | string[]): number {
   const raw = getFirstValue(value);
   const parsed = Number(raw);
-
-  if (!Number.isFinite(parsed) || parsed < 1) {
-    return 1;
-  }
-
+  if (!Number.isFinite(parsed) || parsed < 1) return 1;
   return Math.floor(parsed);
 }
 
 function buildHref(
   lang: Lang,
-  options: {
-    q?: string;
-    category?: string;
-    page?: number;
-  }
+  options: { q?: string; category?: string; page?: number }
 ): string {
   const search = new URLSearchParams();
-
-  if (options.q?.trim()) {
-    search.set("q", options.q.trim());
-  }
-
-  if (options.category && options.category !== "all") {
-    search.set("category", options.category);
-  }
-
-  if (options.page && options.page > 1) {
-    search.set("page", String(options.page));
-  }
-
+  if (options.q?.trim()) search.set("q", options.q.trim());
+  if (options.category && options.category !== "all") search.set("category", options.category);
+  if (options.page && options.page > 1) search.set("page", String(options.page));
   const queryString = search.toString();
-
   return `/${lang}/articles${queryString ? `?${queryString}` : ""}`;
 }
 
@@ -601,11 +597,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
-
+  if (!isValidLang(lang)) return {};
   const l = lang as Lang;
   const ui = UI[l];
 
@@ -614,10 +606,7 @@ export async function generateMetadata({
     description: ui.description,
     alternates: {
       canonical: `/${l}/articles`,
-      languages: {
-        ar: "/ar/articles",
-        en: "/en/articles",
-      },
+      languages: { ar: "/ar/articles", en: "/en/articles" },
     },
     openGraph: {
       title: ui.title,
@@ -625,11 +614,20 @@ export async function generateMetadata({
       url: `/${l}/articles`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -650,15 +648,11 @@ export default async function ArticlesPage({
   searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
   const isRTL = l === "ar";
-
   const sp = await searchParams;
 
   const q = getFirstValue(sp.q).trim();
@@ -671,27 +665,19 @@ export default async function ArticlesPage({
   const requestedPage = parsePage(sp.page);
 
   const filteredArticles = ARTICLES.filter((article) => {
-    if (category !== "all" && article.categoryId !== category) {
-      return false;
-    }
-
+    if (category !== "all" && article.categoryId !== category) return false;
     return articleMatches(article, q);
   });
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredArticles.length / PAGE_SIZE)
-  );
-
+  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / PAGE_SIZE));
   const currentPage = Math.min(requestedPage, totalPages);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const pageArticles = filteredArticles.slice(
-    startIndex,
-    startIndex + PAGE_SIZE
-  );
+  const pageArticles = filteredArticles.slice(startIndex, startIndex + PAGE_SIZE);
 
-  const activeCategory =
-    CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
+  const activeCategory = CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
+
+  // المقالات المميزة
+  const featuredArticles = ARTICLES.filter((a) => a.featured).slice(0, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -699,6 +685,7 @@ export default async function ArticlesPage({
     headline: ui.title,
     description: ui.description,
     inLanguage: l,
+    url: `/${l}/articles`,
     blogPost: ARTICLES.map((article) => ({
       "@type": "BlogPosting",
       headline: isRTL ? article.title.ar : article.title.en,
@@ -710,13 +697,13 @@ export default async function ArticlesPage({
   };
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      <Header lang={l} />
 
       <TopBar
         title={ui.title}
@@ -724,25 +711,29 @@ export default async function ArticlesPage({
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
+        {/* ===== Hero ===== */}
         <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
-            <span className="badge-primary mb-5">
-              ✍️ {isRTL ? "مقالات مختارة" : "Selected Articles"}
-            </span>
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-20 w-20 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+              >
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                </svg>
+              </span>
+            </div>
+
+            <span className="badge-primary mb-5">✍️ {isRTL ? "مقالات مختارة" : "Selected Articles"}</span>
 
             <h1
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
@@ -756,6 +747,82 @@ export default async function ArticlesPage({
             </p>
           </div>
         </div>
+
+        {/* ===== إحصائيات سريعة ===== */}
+        <div className="mb-8 grid grid-cols-3 gap-4">
+          <div className="card p-5 text-center">
+            <div className="mb-2 flex justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                📝
+              </span>
+            </div>
+            <p className="text-xl font-black text-primary-700 dark:text-primary-300">
+              {formatNumber(ARTICLES.length, l)}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              {ui.articlesCount}
+            </p>
+          </div>
+
+          <div className="card p-5 text-center">
+            <div className="mb-2 flex justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                📂
+              </span>
+            </div>
+            <p className="text-xl font-black text-primary-700 dark:text-primary-300">
+              {formatNumber(CATEGORIES.length - 1, l)}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              {ui.categoriesCount}
+            </p>
+          </div>
+
+          <div className="card p-5 text-center">
+            <div className="mb-2 flex justify-center">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+                ✨
+              </span>
+            </div>
+            <p className="text-xl font-black text-primary-700 dark:text-primary-300">
+              {ui.freeAccess}
+            </p>
+            <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+              100%
+            </p>
+          </div>
+        </div>
+
+        {/* ===== مقالات مميزة ===== */}
+        {featuredArticles.length > 0 && category === "all" && !q && (
+          <div className="mb-10">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2
+                  className="text-2xl font-black text-slate-900 dark:text-white"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  ⭐ {ui.featuredTitle}
+                </h2>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  {ui.featuredDesc}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              {featuredArticles.map((article) => (
+                <FeaturedArticleCard
+                  key={article.id}
+                  article={article}
+                  lang={l}
+                  isRTL={isRTL}
+                  ui={ui}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ===== البحث والفلترة ===== */}
         <div className="card mb-8 p-6 md:p-7">
@@ -775,7 +842,6 @@ export default async function ArticlesPage({
                 <circle cx="11" cy="11" r="8" />
                 <path d="M21 21l-4.3-4.3" />
               </svg>
-
               <input
                 type="search"
                 name="q"
@@ -790,7 +856,6 @@ export default async function ArticlesPage({
               <label className="sr-only" htmlFor="articles-category">
                 {ui.category}
               </label>
-
               <select
                 id="articles-category"
                 name="category"
@@ -825,13 +890,10 @@ export default async function ArticlesPage({
             <div className="mt-5 flex flex-wrap items-center gap-3">
               {category !== "all" && (
                 <span className="badge-primary">
-                  {activeCategory.icon}{" "}
-                  {isRTL ? activeCategory.ar : activeCategory.en}
+                  {activeCategory.icon} {isRTL ? activeCategory.ar : activeCategory.en}
                 </span>
               )}
-
-              {q && <span className="badge-gold">“{q}”</span>}
-
+              {q && <span className="badge-gold">"{q}"</span>}
               <Link
                 href={`/${l}/articles`}
                 className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
@@ -860,16 +922,10 @@ export default async function ArticlesPage({
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
             {ui.categoriesTitle}
           </h2>
-
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((item) => {
               const isActive = item.id === category;
-              const href = buildHref(l, {
-                q,
-                category: item.id,
-                page: 1,
-              });
-
+              const href = buildHref(l, { q, category: item.id, page: 1 });
               return (
                 <Link
                   key={item.id}
@@ -900,118 +956,29 @@ export default async function ArticlesPage({
           </span>
         </p>
 
-        {/* ===== لا توجد نتائج ===== */}
+        {/* ===== المقالات ===== */}
         {filteredArticles.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="mb-4 text-5xl">📭</div>
-
             <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
             </h2>
-
-            <p className="mb-6 text-slate-500 dark:text-slate-400">
-              {ui.noResultsDesc}
-            </p>
-
+            <p className="mb-6 text-slate-500 dark:text-slate-400">{ui.noResultsDesc}</p>
             <Link href={`/${l}/articles`} className="btn-primary">
               {ui.clearFilters}
             </Link>
           </div>
         ) : (
           <div className="grid gap-5 lg:grid-cols-2">
-            {pageArticles.map((article) => {
-              const content = isRTL ? article.content.ar : article.content.en;
-              const tags = isRTL ? article.tags.ar : article.tags.en;
-
-              return (
-                <details
-                  key={article.id}
-                  id={article.id}
-                  className="card group scroll-mt-32 p-6 md:p-7"
-                >
-                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
-                    <div className="min-w-0">
-                      <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                        <span className="badge-primary">
-                          {categoryIcon(article.categoryId)}{" "}
-                          {categoryLabel(article.categoryId, l)}
-                        </span>
-
-                        <span>
-                          {ui.publishedAt}: {formatDate(article.date, l)}
-                        </span>
-
-                        <span>
-                          {formatNumber(article.readMinutes, l)}{" "}
-                          {ui.readTime}
-                        </span>
-                      </div>
-
-                      <h3
-                        className="mb-2 text-xl font-black leading-relaxed text-slate-900 md:text-2xl dark:text-white"
-                        style={{ fontFamily: "var(--font-amiri)" }}
-                      >
-                        {isRTL ? article.title.ar : article.title.en}
-                      </h3>
-
-                      <p className="leading-relaxed text-slate-600 dark:text-slate-300">
-                        {isRTL ? article.excerpt.ar : article.excerpt.en}
-                      </p>
-
-                      <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
-                        {ui.readArticle}
-
-                        <svg
-                          width="18"
-                          height="18"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="transition-transform duration-300 group-open:rotate-180"
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </span>
-                    </div>
-
-                    <span className="mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                      {article.icon}
-                    </span>
-                  </summary>
-
-                  <div className="mt-5 space-y-4 border-t border-slate-100 pt-5 dark:border-night-700">
-                    {content.map((paragraph, index) => (
-                      <p
-                        key={`${article.id}-${index}`}
-                        className="leading-relaxed text-slate-600 dark:text-slate-300"
-                      >
-                        {paragraph}
-                      </p>
-                    ))}
-
-                    <div>
-                      <p className="mb-2 text-xs font-bold text-slate-500 dark:text-slate-400">
-                        {ui.tags}
-                      </p>
-
-                      <div className="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                          <span
-                            key={`${article.id}-${tag}`}
-                            className="badge-gold text-xs"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </details>
-              );
-            })}
+            {pageArticles.map((article) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                lang={l}
+                isRTL={isRTL}
+                ui={ui}
+              />
+            ))}
           </div>
         )}
 
@@ -1019,21 +986,12 @@ export default async function ArticlesPage({
         {totalPages > 1 && (
           <div className="mt-10 text-center">
             <p className="mb-4 text-sm font-bold text-slate-500 dark:text-slate-400">
-              {ui.page} {formatNumber(currentPage, l)} {ui.of}{" "}
-              {formatNumber(totalPages, l)}
+              {ui.page} {formatNumber(currentPage, l)} {ui.of} {formatNumber(totalPages, l)}
             </p>
-
-            <nav
-              className="flex flex-wrap items-center justify-center gap-2"
-              aria-label={ui.page}
-            >
+            <nav className="flex flex-wrap items-center justify-center gap-2" aria-label={ui.page}>
               {currentPage > 1 ? (
                 <Link
-                  href={buildHref(l, {
-                    q,
-                    category,
-                    page: currentPage - 1,
-                  })}
+                  href={buildHref(l, { q, category, page: currentPage - 1 })}
                   className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700"
                 >
                   <svg
@@ -1070,45 +1028,33 @@ export default async function ArticlesPage({
                 </span>
               )}
 
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                (page) => {
-                  const isActive = page === currentPage;
-                  const href = buildHref(l, {
-                    q,
-                    category,
-                    page,
-                  });
-
-                  if (isActive) {
-                    return (
-                      <span
-                        key={page}
-                        className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-3 text-sm font-black text-white shadow-lg shadow-primary-500/25"
-                      >
-                        {formatNumber(page, l)}
-                      </span>
-                    );
-                  }
-
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => {
+                const isActive = page === currentPage;
+                const href = buildHref(l, { q, category, page });
+                if (isActive) {
                   return (
-                    <Link
+                    <span
                       key={page}
-                      href={href}
-                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700"
+                      className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl bg-gradient-to-r from-primary-500 to-primary-600 px-3 text-sm font-black text-white shadow-lg shadow-primary-500/25"
                     >
                       {formatNumber(page, l)}
-                    </Link>
+                    </span>
                   );
                 }
-              )}
+                return (
+                  <Link
+                    key={page}
+                    href={href}
+                    className="inline-flex h-10 min-w-10 items-center justify-center rounded-xl border border-slate-200 bg-white px-3 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700"
+                  >
+                    {formatNumber(page, l)}
+                  </Link>
+                );
+              })}
 
               {currentPage < totalPages ? (
                 <Link
-                  href={buildHref(l, {
-                    q,
-                    category,
-                    page: currentPage + 1,
-                  })}
+                  href={buildHref(l, { q, category, page: currentPage + 1 })}
                   className="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700"
                 >
                   {ui.next}
@@ -1156,11 +1102,10 @@ export default async function ArticlesPage({
           >
             📌 {ui.noteTitle}
           </h2>
-
           <ul className="space-y-3">
             {[ui.note1, ui.note2, ui.note3].map((note, index) => (
               <li
-                key={`${note}-${index}`}
+                key={`note-${index}`}
                 className="flex items-start gap-3 leading-relaxed text-slate-600 dark:text-slate-300"
               >
                 <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary-500" />
@@ -1175,61 +1120,33 @@ export default async function ArticlesPage({
           <h2 className="mb-5 text-xl font-black text-slate-900 dark:text-white">
             {isRTL ? "روابط مفيدة" : "Useful links"}
           </h2>
-
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link
-              href={`/${l}/contact`}
-              className="card card-interactive group flex items-center gap-3 p-5"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📬
-              </span>
-
+            <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.contact}
                 </h3>
               </div>
             </Link>
-
-            <Link
-              href={`/${l}/fatwa`}
-              className="card card-interactive group flex items-center gap-3 p-5"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ⚖️
-              </span>
-
+            <Link href={`/${l}/fatwa`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">⚖️</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.fatwa}
                 </h3>
               </div>
             </Link>
-
-            <Link
-              href={`/${l}/dawah-guide`}
-              className="card card-interactive group flex items-center gap-3 p-5"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🤝
-              </span>
-
+            <Link href={`/${l}/dawah-guide`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🤝</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.dawahGuide}
                 </h3>
               </div>
             </Link>
-
-            <Link
-              href={`/${l}/hajj-guide`}
-              className="card card-interactive group flex items-center gap-3 p-5"
-            >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🕋
-              </span>
-
+            <Link href={`/${l}/hajj-guide`} className="card card-interactive group flex items-center gap-3 p-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕋</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.hajjGuide}
@@ -1239,6 +1156,173 @@ export default async function ArticlesPage({
           </div>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون بطاقة مقال مميز
+// ============================================================
+
+function FeaturedArticleCard({
+  article,
+  lang,
+  isRTL,
+  ui,
+}: {
+  article: Article;
+  lang: Lang;
+  isRTL: boolean;
+  ui: UILang;
+}) {
+  const color = categoryColor(article.categoryId);
+
+  return (
+    <details className="card group relative overflow-hidden">
+      <div className={`absolute inset-x-0 top-0 h-2 bg-gradient-to-r ${color}`} />
+
+      <summary className="flex cursor-pointer list-none flex-col p-6 [&::-webkit-details-marker]:hidden">
+        <div className="mb-4 flex items-center justify-between">
+          <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-3 py-1 text-xs font-bold text-white`}>
+            {article.icon} {categoryLabel(article.categoryId, lang)}
+          </span>
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-night-800">
+            {article.icon}
+          </span>
+        </div>
+
+        <h3
+          className="mb-2 text-lg font-black leading-tight text-slate-900 dark:text-white"
+          style={{ fontFamily: "var(--font-amiri)" }}
+        >
+          {isRTL ? article.title.ar : article.title.en}
+        </h3>
+
+        <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {isRTL ? article.excerpt.ar : article.excerpt.en}
+        </p>
+
+        <div className="mt-auto flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <span>{formatDate(article.date, lang)}</span>
+          <span>{article.readMinutes} {ui.minRead}</span>
+        </div>
+
+        <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
+          {ui.readArticle}
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="transition-transform duration-300 group-open:rotate-180"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      </summary>
+
+      <div className="border-t border-slate-100 p-6 pt-4 dark:border-night-700">
+        {(isRTL ? article.content.ar : article.content.en).map((paragraph, index) => (
+          <p key={index} className="mb-3 leading-relaxed text-slate-600 dark:text-slate-300">
+            {paragraph}
+          </p>
+        ))}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {(isRTL ? article.tags.ar : article.tags.en).map((tag) => (
+            <span key={tag} className="badge-gold text-xs">#{tag}</span>
+          ))}
+        </div>
+      </div>
+    </details>
+  );
+}
+
+// ============================================================
+// مكون بطاقة مقال عادي
+// ============================================================
+
+function ArticleCard({
+  article,
+  lang,
+  isRTL,
+  ui,
+}: {
+  article: Article;
+  lang: Lang;
+  isRTL: boolean;
+  ui: UILang;
+}) {
+  const content = isRTL ? article.content.ar : article.content.en;
+  const tags = isRTL ? article.tags.ar : article.tags.en;
+
+  return (
+    <details id={article.id} className="card group scroll-mt-32 p-6 md:p-7">
+      <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0">
+          <div className="mb-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <span className="badge-primary">
+              {categoryIcon(article.categoryId)} {categoryLabel(article.categoryId, lang)}
+            </span>
+            <span>{ui.publishedAt}: {formatDate(article.date, lang)}</span>
+            <span>{formatNumber(article.readMinutes, lang)} {ui.readTime}</span>
+          </div>
+
+          <h3
+            className="mb-2 text-xl font-black leading-relaxed text-slate-900 md:text-2xl dark:text-white"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            {isRTL ? article.title.ar : article.title.en}
+          </h3>
+
+          <p className="leading-relaxed text-slate-600 dark:text-slate-300">
+            {isRTL ? article.excerpt.ar : article.excerpt.en}
+          </p>
+
+          <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
+            {ui.readArticle}
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="transition-transform duration-300 group-open:rotate-180"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </span>
+        </div>
+
+        <span className="mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {article.icon}
+        </span>
+      </summary>
+
+      <div className="mt-5 space-y-4 border-t border-slate-100 pt-5 dark:border-night-700">
+        {content.map((paragraph, index) => (
+          <p key={`${article.id}-${index}`} className="leading-relaxed text-slate-600 dark:text-slate-300">
+            {paragraph}
+          </p>
+        ))}
+
+        <div>
+          <p className="mb-2 text-xs font-bold text-slate-500 dark:text-slate-400">{ui.tags}</p>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span key={`${article.id}-${tag}`} className="badge-gold text-xs">#{tag}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </details>
   );
 }

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 // ============================================================
 // الأنواع
@@ -48,6 +50,16 @@ type UILang = {
   noteTitle: string;
   note1: string;
   note2: string;
+  verse: string;
+  verseSource: string;
+  hadith: string;
+  hadithSource: string;
+  sectionsCount: string;
+  languagesCount: string;
+  lastUpdateLabel: string;
+  freeAlways: string;
+  ctaTitle: string;
+  ctaDesc: string;
 };
 
 // ============================================================
@@ -88,6 +100,17 @@ const UI: Record<Lang, UILang> = {
       "قد تُحدَّث هذه الشروط من وقت لآخر حسب تطوير المنصة أو تغيير الخدمات المستخدمة.",
     note2:
       "استمرارك في استخدام المنصة بعد نشر التعديلات يعني قبولك للنسخة المحدثة من الشروط.",
+    verse: "﴿ يَا أَيُّهَا الَّذِينَ آمَنُوا أَوْفُوا بِالْعُقُودِ ﴾",
+    verseSource: "سورة المائدة — الآية 1",
+    hadith: "الْمُسْلِمُونَ عَلَى شُرُوطِهِمْ",
+    hadithSource: "رواه أبو داود والحاكم وصححه",
+    sectionsCount: "بند",
+    languagesCount: "لغتان",
+    lastUpdateLabel: "آخر تحديث",
+    freeAlways: "مجاني دائماً",
+    ctaTitle: "هل عندك سؤال عن الشروط؟",
+    ctaDesc:
+      "نرحب بملاحظاتك واستفساراتك، ونحاول توضيح أي بند يحتاج إلى شرح.",
   },
   en: {
     title: "Terms and Conditions",
@@ -111,6 +134,17 @@ const UI: Record<Lang, UILang> = {
       "These terms may be updated from time to time according to platform development or service changes.",
     note2:
       "Continued use of the platform after changes are published means acceptance of the updated terms.",
+    verse: "\"O you who have believed, fulfill [all] contracts.\"",
+    verseSource: "Surah Al-Ma'idah — Verse 1",
+    hadith: "Muslims are bound by their conditions.",
+    hadithSource: "Narrated by Abu Dawud and Al-Hakim",
+    sectionsCount: "Sections",
+    languagesCount: "Languages",
+    lastUpdateLabel: "Last Update",
+    freeAlways: "Always Free",
+    ctaTitle: "Have a question about the terms?",
+    ctaDesc:
+      "We welcome your feedback and questions, and we try to clarify any provision that needs explanation.",
   },
 };
 
@@ -122,10 +156,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "acceptance",
     icon: "📜",
-    title: {
-      ar: "قبول الشروط",
-      en: "Acceptance of Terms",
-    },
+    title: { ar: "قبول الشروط", en: "Acceptance of Terms" },
     paragraphs: [
       {
         ar: "باستخدامك لهذه المنصة، فإنك تقر بأنك قد قرأت هذه الشروط وفهمتها، وتوافق على الالتزام بها.",
@@ -140,10 +171,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "platform-use",
     icon: "🌐",
-    title: {
-      ar: "استخدام المنصة",
-      en: "Use of the Platform",
-    },
+    title: { ar: "استخدام المنصة", en: "Use of the Platform" },
     paragraphs: [
       {
         ar: "تُقدَّم المنصة لأغراض تعليمية ودعوية وإعلامية نابعة من المحتوى الإسلامي العام. ويحق للمشرف عليها تطوير الأقسام أو تعديلها أو إيقافها في أي وقت.",
@@ -155,27 +183,15 @@ const SECTIONS: TermsSection[] = [
       },
     ],
     bullets: [
-      {
-        ar: "استخدم المنصة بطريقة مشروعة ونافعة.",
-        en: "Use the platform in a lawful and beneficial manner.",
-      },
-      {
-        ar: "لا تحاول اختراق الموقع أو اختبار ثغراته بدون إذن.",
-        en: "Do not attempt to hack the site or test vulnerabilities without permission.",
-      },
-      {
-        ar: "لا تستخدم أدوات آلية تسبب حملًا غير طبيعي على الخوادم.",
-        en: "Do not use automated tools that cause abnormal load on servers.",
-      },
+      { ar: "استخدم المنصة بطريقة مشروعة ونافعة.", en: "Use the platform in a lawful and beneficial manner." },
+      { ar: "لا تحاول اختراق الموقع أو اختبار ثغراته بدون إذن.", en: "Do not attempt to hack the site or test vulnerabilities without permission." },
+      { ar: "لا تستخدم أدوات آلية تسبب حملًا غير طبيعي على الخوادم.", en: "Do not use automated tools that cause abnormal load on servers." },
     ],
   },
   {
     id: "acceptable-use",
     icon: "✅",
-    title: {
-      ar: "الاستخدام المقبول",
-      en: "Acceptable Use",
-    },
+    title: { ar: "الاستخدام المقبول", en: "Acceptable Use" },
     paragraphs: [
       {
         ar: "نرحب باستخدام المنصة للتعلم، والتذكير، ونشر الخير، وإعداد المواد الدعوية البسيطة، بشرط ذكر المصدر والالتزام بأمانة النقل.",
@@ -183,31 +199,19 @@ const SECTIONS: TermsSection[] = [
       },
       {
         ar: "يجب أن يكون الاستخدام متوافقًا مع تعاليم الإسلام، والآداب العامة، والأنظمة المعمول بها في بلد المستخدم.",
-        en: "Use must comply with Islamic teachings, public ethics, and applicable laws in the user’s country.",
+        en: "Use must comply with Islamic teachings, public ethics, and applicable laws in the user's country.",
       },
     ],
     bullets: [
-      {
-        ar: "يُسمح بالاقتباس مع ذكر المصدر.",
-        en: "Quoting is allowed with attribution.",
-      },
-      {
-        ar: "يُسمح بمشاركة الروابط المفيدة.",
-        en: "Sharing useful links is allowed.",
-      },
-      {
-        ar: "يُسمح باستخدام المحتوى في التعليم الشخصي أو الأسري.",
-        en: "Using content for personal or family education is allowed.",
-      },
+      { ar: "يُسمح بالاقتباس مع ذكر المصدر.", en: "Quoting is allowed with attribution." },
+      { ar: "يُسمح بمشاركة الروابط المفيدة.", en: "Sharing useful links is allowed." },
+      { ar: "يُسمح باستخدام المحتوى في التعليم الشخصي أو الأسري.", en: "Using content for personal or family education is allowed." },
     ],
   },
   {
     id: "content-rights",
     icon: "✍️",
-    title: {
-      ar: "المحتوى وحقوق النشر",
-      en: "Content and Copyright",
-    },
+    title: { ar: "المحتوى وحقوق النشر", en: "Content and Copyright" },
     paragraphs: [
       {
         ar: "المحتوى الأصلي في المنصة مملوك للمشرف أو مرخص له به، ولا يعني توفره للاستخدام العام أنه يجوز نسخه تجاريًا أو إدعاؤه كملكية شخصية.",
@@ -219,27 +223,15 @@ const SECTIONS: TermsSection[] = [
       },
     ],
     bullets: [
-      {
-        ar: "لا تُزل إشارة المصدر عند النشر.",
-        en: "Do not remove source attribution when publishing.",
-      },
-      {
-        ar: "لا تُحرّف النصوص عن معناها الشرعي.",
-        en: "Do not distort texts from their Islamic meaning.",
-      },
-      {
-        ar: "لا تبع المحتوى الأصلي مباشرة أو ضمن حزمة مدفوعة بدون إذن.",
-        en: "Do not sell original content directly or within a paid package without permission.",
-      },
+      { ar: "لا تُزل إشارة المصدر عند النشر.", en: "Do not remove source attribution when publishing." },
+      { ar: "لا تُحرّف النصوص عن معناها الشرعي.", en: "Do not distort texts from their Islamic meaning." },
+      { ar: "لا تبع المحتوى الأصلي مباشرة أو ضمن حزمة مدفوعة بدون إذن.", en: "Do not sell original content directly or within a paid package without permission." },
     ],
   },
   {
     id: "religious-notice",
     icon: "⚖️",
-    title: {
-      ar: "تنبيه شرعي ومعلوماتي",
-      en: "Religious and Informational Notice",
-    },
+    title: { ar: "تنبيه شرعي ومعلوماتي", en: "Religious and Informational Notice" },
     paragraphs: [
       {
         ar: "المحتوى المنشور في المنصة هو للتوعية العامة والتبسيط التعليمي، ولا يُعد فتوى رسمية في النوازل أو المسائل الدقيقة.",
@@ -251,27 +243,15 @@ const SECTIONS: TermsSection[] = [
       },
     ],
     bullets: [
-      {
-        ar: "لا تعتمد على صفحة واحدة في حكم شرعي شامل.",
-        en: "Do not rely on a single page for a comprehensive religious ruling.",
-      },
-      {
-        ar: "راجع الفتاوى مع سياق السؤال وحال المستفتي.",
-        en: "Review fatwas together with the question context and the asker’s condition.",
-      },
-      {
-        ar: "المحتوى الطبي لا يغني عن الطبيب.",
-        en: "Medical-related content does not replace a doctor.",
-      },
+      { ar: "لا تعتمد على صفحة واحدة في حكم شرعي شامل.", en: "Do not rely on a single page for a comprehensive religious ruling." },
+      { ar: "راجع الفتاوى مع سياق السؤال وحال المستفتي.", en: "Review fatwas together with the question context and the asker's condition." },
+      { ar: "المحتوى الطبي لا يغني عن الطبيب.", en: "Medical-related content does not replace a doctor." },
     ],
   },
   {
     id: "accounts",
     icon: "👤",
-    title: {
-      ar: "الحسابات والتسجيل",
-      en: "Accounts and Registration",
-    },
+    title: { ar: "الحسابات والتسجيل", en: "Accounts and Registration" },
     paragraphs: [
       {
         ar: "المنصة الحالية تتيح تصفح معظم المحتوى بدون حساب. وإذا أُضيفت ميزات حساب مستقبلًا، فيجب تقديم بيانات صحيحة والاحتفاظ ببيانات الدخول بأمان.",
@@ -286,10 +266,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "user-submissions",
     icon: "💬",
-    title: {
-      ar: "ما ترسله إلينا",
-      en: "What You Send Us",
-    },
+    title: { ar: "ما ترسله إلينا", en: "What You Send Us" },
     paragraphs: [
       {
         ar: "عند إرسال سؤال أو ملاحظة أو اقتراح عبر نموذج التواصل، فإنك تمنحنا حق استخدام هذه المعلومات لتحسين المحتوى أو الرد عليك، مع عدم نشر بياناتك الشخصية بدون سبب مشروع.",
@@ -304,10 +281,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "external-services",
     icon: "🔗",
-    title: {
-      ar: "الروابط والخدمات الخارجية",
-      en: "External Links and Services",
-    },
+    title: { ar: "الروابط والخدمات الخارجية", en: "External Links and Services" },
     paragraphs: [
       {
         ar: "قد تحتوي المنصة على روابط خارجية أو تعتمد على خدمات خارجية مثل الاستضافة، أو قواعد البيانات، أو واجهات القرآن، أو مواقيت الصلاة، أو إرسال البريد.",
@@ -322,10 +296,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "privacy-link",
     icon: "🔒",
-    title: {
-      ar: "العلاقة بسياسة الخصوصية",
-      en: "Relationship with Privacy Policy",
-    },
+    title: { ar: "العلاقة بسياسة الخصوصية", en: "Relationship with Privacy Policy" },
     paragraphs: [
       {
         ar: "تكمّل هذه الشروط سياسة الخصوصية. فبينما تنظم الشروط طريقة الاستخدام، توضح سياسة الخصوصية كيفية التعامل مع البيانات.",
@@ -333,17 +304,14 @@ const SECTIONS: TermsSection[] = [
       },
       {
         ar: "معظم أدوات التقدم مثل المسبحة وخطة الحفظ والورد اليومي تُحفظ محليًا على جهاز المستخدم ما دام ذلك ممكنًا.",
-        en: "Most progress tools such as tasbih, memorization plan, and daily wird are stored locally on the user’s device whenever possible.",
+        en: "Most progress tools such as tasbih, memorization plan, and daily wird are stored locally on the user's device whenever possible.",
       },
     ],
   },
   {
     id: "prohibited-use",
     icon: "🚫",
-    title: {
-      ar: "الاستخدامات الممنوعة",
-      en: "Prohibited Uses",
-    },
+    title: { ar: "الاستخدامات الممنوعة", en: "Prohibited Uses" },
     paragraphs: [
       {
         ar: "يُمنع استخدام المنصة في أي غرض مخالف للشريعة أو النظام أو الآداب العامة.",
@@ -351,39 +319,18 @@ const SECTIONS: TermsSection[] = [
       },
     ],
     bullets: [
-      {
-        ar: "نشر الفتاوى بغير أهلية أو تحريف النصوص.",
-        en: "Issuing fatwas without qualification or distorting texts.",
-      },
-      {
-        ar: "السبام أو الرسائل الجماعية المضللة.",
-        en: "Spam or misleading mass messages.",
-      },
-      {
-        ar: "انتحال شخصية المشرف أو الجهات الرسمية.",
-        en: "Impersonating the administrator or official entities.",
-      },
-      {
-        ar: "تنزيل المحتوى بكميات كبيرة لأغراض تجارية غير مصرح بها.",
-        en: "Bulk downloading content for unauthorized commercial purposes.",
-      },
-      {
-        ar: "إيذاء المستخدمين أو التحرش أو نشر الكراهية.",
-        en: "Harming users, harassment, or spreading hatred.",
-      },
-      {
-        ar: "إدخال برمجيات خبيثة أو محاولة تعطيل الخدمة.",
-        en: "Introducing malicious software or attempting to disrupt the service.",
-      },
+      { ar: "نشر الفتاوى بغير أهلية أو تحريف النصوص.", en: "Issuing fatwas without qualification or distorting texts." },
+      { ar: "السبام أو الرسائل الجماعية المضللة.", en: "Spam or misleading mass messages." },
+      { ar: "انتحال شخصية المشرف أو الجهات الرسمية.", en: "Impersonating the administrator or official entities." },
+      { ar: "تنزيل المحتوى بكميات كبيرة لأغراض تجارية غير مصرح بها.", en: "Bulk downloading content for unauthorized commercial purposes." },
+      { ar: "إيذاء المستخدمين أو التحرش أو نشر الكراهية.", en: "Harming users, harassment, or spreading hatred." },
+      { ar: "إدخال برمجيات خبيثة أو محاولة تعطيل الخدمة.", en: "Introducing malicious software or attempting to disrupt the service." },
     ],
   },
   {
     id: "availability",
     icon: "🛠️",
-    title: {
-      ar: "توفر الخدمة والتغييرات",
-      en: "Service Availability and Changes",
-    },
+    title: { ar: "توفر الخدمة والتغييرات", en: "Service Availability and Changes" },
     paragraphs: [
       {
         ar: "نبذل الجهد للحفاظ على استمرار المنصة وتحديثها، لكن لا نضمن أن الخدمة ستكون متاحة دائمًا بدون انقطاع أو خطأ.",
@@ -398,10 +345,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "termination",
     icon: "⏹️",
-    title: {
-      ar: "إنهاء الاستخدام",
-      en: "Termination of Use",
-    },
+    title: { ar: "إنهاء الاستخدام", en: "Termination of Use" },
     paragraphs: [
       {
         ar: "يحق للمشرف تقييد أو إيقاف الوصول إلى المنصة في حال ثبوت إساءة استخدام واضحة، أو مخالفة جوهرية لهذه الشروط.",
@@ -416,10 +360,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "changes",
     icon: "🔄",
-    title: {
-      ar: "تعديل الشروط",
-      en: "Changes to Terms",
-    },
+    title: { ar: "تعديل الشروط", en: "Changes to Terms" },
     paragraphs: [
       {
         ar: "قد نحدّث هذه الشروط عند إضافة ميزات جديدة، أو تغيير خدمات خارجية، أو تحسين الحماية، أو تصحيح صياغة.",
@@ -434,10 +375,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "law",
     icon: "🏛️",
-    title: {
-      ar: "القانون والنزاعات",
-      en: "Law and Disputes",
-    },
+    title: { ar: "القانون والنزاعات", en: "Law and Disputes" },
     paragraphs: [
       {
         ar: "يخضع استخدام المنصة للقوانين والأنظمة المعمول بها، مع مراعاة طبيعة المحتوى الدعوي والتعليمي.",
@@ -452,10 +390,7 @@ const SECTIONS: TermsSection[] = [
   {
     id: "contact",
     icon: "📬",
-    title: {
-      ar: "التواصل بخصوص الشروط",
-      en: "Contact Regarding Terms",
-    },
+    title: { ar: "التواصل بخصوص الشروط", en: "Contact Regarding Terms" },
     paragraphs: [
       {
         ar: "إذا كان لديك سؤال حول بند من هذه الشروط، أو أردت إذنًا لاستخدام معين، يرجى التواصل معنا عبر صفحة تواصل معنا.",
@@ -478,10 +413,7 @@ const RELATED_LINKS: RelatedLink[] = [
     id: "contact",
     href: "/contact",
     icon: "📬",
-    title: {
-      ar: "تواصل معنا",
-      en: "Contact Us",
-    },
+    title: { ar: "تواصل معنا", en: "Contact Us" },
     description: {
       ar: "لإرسال سؤال أو طلب بخصوص الشروط.",
       en: "To send a question or request regarding the terms.",
@@ -491,10 +423,7 @@ const RELATED_LINKS: RelatedLink[] = [
     id: "privacy",
     href: "/privacy",
     icon: "🔐",
-    title: {
-      ar: "سياسة الخصوصية",
-      en: "Privacy Policy",
-    },
+    title: { ar: "سياسة الخصوصية", en: "Privacy Policy" },
     description: {
       ar: "كيف نتعامل مع بياناتك عند استخدام المنصة.",
       en: "How we handle your data when using the platform.",
@@ -504,10 +433,7 @@ const RELATED_LINKS: RelatedLink[] = [
     id: "faq",
     href: "/faq",
     icon: "❓",
-    title: {
-      ar: "الأسئلة الشائعة",
-      en: "FAQ",
-    },
+    title: { ar: "الأسئلة الشائعة", en: "FAQ" },
     description: {
       ar: "إجابات سريعة عن استخدام المنصة.",
       en: "Quick answers about using the platform.",
@@ -517,10 +443,7 @@ const RELATED_LINKS: RelatedLink[] = [
     id: "about",
     href: "/about",
     icon: "ℹ️",
-    title: {
-      ar: "من نحن",
-      en: "About",
-    },
+    title: { ar: "من نحن", en: "About" },
     description: {
       ar: "تعرّف على المنصة ورسالتها وقيمها.",
       en: "Learn about the platform, mission, and values.",
@@ -534,11 +457,7 @@ const RELATED_LINKS: RelatedLink[] = [
 
 function formatDate(iso: string, lang: Lang): string {
   const date = new Date(iso);
-
-  if (Number.isNaN(date.getTime())) {
-    return iso;
-  }
-
+  if (Number.isNaN(date.getTime())) return iso;
   try {
     return new Intl.DateTimeFormat(lang === "ar" ? "ar-EG" : "en-US", {
       year: "numeric",
@@ -560,10 +479,7 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
   const ui = UI[l];
@@ -584,11 +500,20 @@ export async function generateMetadata({
       url: `/${l}/terms`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: "/icons/icon-512.png",
+          width: 512,
+          height: 512,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: ["/icons/icon-512.png"],
     },
   };
 }
@@ -607,33 +532,70 @@ export default async function TermsPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const ui = UI[l];
   const isRTL = l === "ar";
 
+  // JSON-LD
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: ui.title,
-    description: ui.description,
-    inLanguage: l,
-    url: `/${l}/terms`,
-    dateModified: LAST_UPDATED_ISO,
+    "@graph": [
+      {
+        "@type": "WebPage",
+        name: ui.title,
+        description: ui.description,
+        inLanguage: l,
+        url: `/${l}/terms`,
+        dateModified: LAST_UPDATED_ISO,
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: isRTL ? "هل المحتوى مجاني؟" : "Is the content free?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: isRTL
+                ? "نعم، جميع محتوى المنصة مجاني بالكامل، ولا توجد اشتراكات أو مدفوعات."
+                : "Yes, all platform content is completely free, with no subscriptions or payments.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: isRTL ? "هل يمكنني استخدام المحتوى في الدعوة؟" : "Can I use the content for dawah?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: isRTL
+                ? "نعم، يُسمح باستخدام المحتوى للدعوة والتعليم مع ذكر المصدر وعدم تحريف النصوص عن معناها الشرعي."
+                : "Yes, content may be used for dawah and education with source attribution and without distorting texts from their Islamic meaning.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: isRTL ? "كيف أبلغ عن مخالفة؟" : "How do I report a violation?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: isRTL
+                ? "يمكنك التواصل معنا عبر صفحة التواصل ووصف المخالفة بوضوح، وسنعالج البلاغ في أقرب وقت."
+                : "You can contact us through the contact page and clearly describe the violation, and we will handle the report as soon as possible.",
+            },
+          },
+        ],
+      },
+    ],
   };
 
   return (
-    <main>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      <Header lang={l} />
 
       <TopBar
         title={ui.title}
@@ -641,22 +603,28 @@ export default async function TermsPage({
         backHref={`/${l}`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
+        {/* ===== Hero محسّن ===== */}
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span
+                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
+                style={{ background: "linear-gradient(135deg, #0e7490, #d4af37)" }}
+              >
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                </svg>
+              </span>
+            </div>
+
             <span className="badge-primary mb-5">
               📜 {isRTL ? PLATFORM_NAME.ar : PLATFORM_NAME.en}
             </span>
@@ -672,10 +640,50 @@ export default async function TermsPage({
               {ui.description}
             </p>
 
-            <p className="mt-6 text-sm font-bold text-slate-500 dark:text-slate-400">
-              {ui.lastUpdated}: {formatDate(LAST_UPDATED_ISO, l)}
+            {/* آية كريمة */}
+            <div className="mt-8 rounded-2xl border border-gold-200 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-gold-800 dark:bg-night-800/80">
+              <p
+                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {ui.verse}
+              </p>
+              <p className="text-xs text-gold-600 dark:text-gold-400">
+                {ui.verseSource}
+              </p>
+            </div>
+
+            {/* حديث شريف */}
+            <div className="mt-4 rounded-2xl border border-primary-200 bg-primary-50/60 p-4 backdrop-blur-sm dark:border-primary-800 dark:bg-primary-950/20">
+              <p
+                className="mb-1 text-base font-black text-primary-700 md:text-lg dark:text-primary-300"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                «{ui.hadith}»
+              </p>
+              <p className="text-xs text-primary-600 dark:text-primary-400">
+                📜 {ui.hadithSource}
+              </p>
+            </div>
+
+            <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-bold text-slate-600 backdrop-blur-sm dark:bg-night-800/80 dark:text-slate-300">
+              📅 {ui.lastUpdated}: {formatDate(LAST_UPDATED_ISO, l)}
             </p>
           </div>
+        </div>
+
+        {/* ===== إحصائيات ===== */}
+        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <StatCard icon="📋" label={ui.sectionsCount} value={SECTIONS.length} color="primary" />
+          <StatCard icon="🌍" label={ui.languagesCount} value={2} color="gold" />
+          <StatCard
+            icon="📅"
+            label={ui.lastUpdateLabel}
+            value={formatDate(LAST_UPDATED_ISO, l)}
+            color="primary"
+            isSmall
+          />
+          <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 
         {/* ===== تنقل سريع ===== */}
@@ -715,10 +723,7 @@ export default async function TermsPage({
         {/* ===== بنود الشروط ===== */}
         <div className="mb-10">
           <div className="mb-6 text-center">
-            <h2 className="section-title mb-0">
-              {ui.sectionsTitle}
-            </h2>
-
+            <h2 className="section-title mb-0">{ui.sectionsTitle}</h2>
             <div className="islamic-divider my-0">
               <span className="text-xl text-gold-500">✦</span>
             </div>
@@ -839,24 +844,20 @@ export default async function TermsPage({
             className="mb-3 text-2xl font-black text-slate-900 md:text-3xl dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            {isRTL ? "هل عندك سؤال عن الشروط؟" : "Have a question about the terms?"}
+            {ui.ctaTitle}
           </h2>
 
           <p className="mx-auto mb-7 max-w-2xl leading-relaxed text-slate-600 dark:text-slate-300">
-            {isRTL
-              ? "نرحب بملاحظاتك واستفساراتك، ونحاول توضيح أي بند يحتاج إلى شرح."
-              : "We welcome your feedback and questions, and we try to clarify any provision that needs explanation."}
+            {ui.ctaDesc}
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href={`/${l}/contact`} className="btn-primary">
               {ui.contact}
             </Link>
-
             <Link href={`/${l}/faq`} className="btn-outline">
               {ui.faq}
             </Link>
-
             <Link href={`/${l}/about`} className="btn-outline">
               {ui.about}
             </Link>
@@ -883,7 +884,6 @@ export default async function TermsPage({
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
                   <span>{ui.note1}</span>
                 </li>
-
                 <li className="flex items-start gap-2">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
                   <span>{ui.note2}</span>
@@ -893,6 +893,47 @@ export default async function TermsPage({
           </div>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon,
+  label,
+  value,
+  color,
+  isSmall = false,
+}: {
+  icon: string;
+  label: string;
+  value: number | string;
+  color: "primary" | "gold";
+  isSmall?: boolean;
+}) {
+  const colorClasses = {
+    primary: "text-primary-700 dark:text-primary-300",
+    gold: "text-gold-700 dark:text-gold-300",
+  };
+
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
+          {icon}
+        </span>
+      </div>
+      <p className={`${isSmall ? "text-sm" : "text-2xl"} font-black ${colorClasses[color]}`}>
+        {value}
+      </p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }

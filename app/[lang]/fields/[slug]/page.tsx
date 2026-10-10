@@ -1,501 +1,1020 @@
-// app/[lang]/fields/page.tsx
+// app/[lang]/fields/[slug]/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 
-export const dynamic = "force-static";
+// ============================================================
+// الأنواع
+// ============================================================
 
-type Localized = {
-  ar: string;
-  en: string;
-};
-
-type FieldItem = {
+type Field = {
   id: string;
-  href: string;
+  slug: string;
   icon: string;
-  title: Localized;
-  description: Localized;
-  tags: Localized[];
+  color: string;
+  title: { ar: string; en: string };
+  subtitle: { ar: string; en: string };
+  description: { ar: string; en: string };
+  verse: { ar: string; en: string };
+  verseSource: { ar: string; en: string };
+  topics: { ar: string[]; en: string[] };
+  books: {
+    title: { ar: string; en: string };
+    author: { ar: string; en: string };
+  }[];
+  faqs: {
+    q: { ar: string; en: string };
+    a: { ar: string; en: string };
+  }[];
+  relatedSlugs: string[];
 };
 
-type UILang = {
-  title: string;
-  subtitle: string;
-  home: string;
-  description: string;
-  fieldsTitle: string;
-  fieldsDesc: string;
-  explore: string;
-  noteTitle: string;
-  note1: string;
-  note2: string;
-};
+type Localized = { ar: string; en: string };
 
-const UI: Record<Lang, UILang> = {
-  ar: {
-    title: "مجالات المنصة",
-    subtitle: "استكشف مجالات المحتوى الدعوي والعلمي",
-    home: "الرئيسية",
-    description:
-      "صفحة تجمع مجالات منصة إسماعيل أحمد نجيب الدعوية: القرآن، الفقه، الدعوة، الأسرة، الشباب، المرأة، الرد على الشبهات، والأدوات العملية.",
-    fieldsTitle: "المجالات",
-    fieldsDesc:
-      "اختر المجال الذي تريد التعمق فيه، وستجد روابط مباشرة للأقسام المناسبة.",
-    explore: "استكشف",
-    noteTitle: "ملاحظة",
-    note1:
-      "بعض المجالات قد تكون صفحاتها قيد التطوير، لكن الروابط المباشرة تقودك لأقرب قسم متاح.",
-    note2:
-      "المحتوى العام للتوعية، ولا يغني عن مراجعة أهل العلم في المسائل الدقيقة.",
-  },
-  en: {
-    title: "Platform Fields",
-    subtitle: "Explore dawah and Islamic knowledge fields",
-    home: "Home",
-    description:
-      "A page gathering the fields of the Ismail Ahmed Naguib Dawah Platform: Quran, fiqh, dawah, family, youth, women, responding to doubts, and practical tools.",
-    fieldsTitle: "Fields",
-    fieldsDesc:
-      "Choose the field you want to explore, and you will find direct links to relevant sections.",
-    explore: "Explore",
-    noteTitle: "Notice",
-    note1:
-      "Some fields may still be under development, but direct links lead to the closest available section.",
-    note2:
-      "General content is for awareness and does not replace consulting qualified scholars in precise matters.",
-  },
-};
+// ============================================================
+// البيانات الكاملة لـ 17 مجالاً
+// ============================================================
 
-const FIELDS: FieldItem[] = [
+const FIELDS: Field[] = [
   {
-    id: "quran",
-    href: "/quran",
-    icon: "📖",
-    title: {
-      ar: "القرآن الكريم",
-      en: "Holy Quran",
-    },
+    id: "aqeedah",
+    slug: "aqeedah",
+    icon: "🕌",
+    color: "from-indigo-500 to-indigo-600",
+    title: { ar: "العقيدة", en: "Creed (Aqeedah)" },
+    subtitle: { ar: "أصول الإيمان والتوحيد", en: "Foundations of Faith and Tawhid" },
     description: {
-      ar: "تصفح السور، تعلم التلاوة، وخطة الحفظ والمراجعة.",
-      en: "Browse surahs, learn recitation, and follow memorization plans.",
+      ar: "العقيدة هي أساس الدين، وتشمل الإيمان بالله وملائكته وكتبه ورسله واليوم الآخر والقدر خيره وشره. وهي العلم الذي يصحح به المسلم إيمانه ويبعد عن الشرك والبدع.",
+      en: "Creed is the foundation of religion, encompassing belief in Allah, His angels, books, messengers, the Last Day, and divine decree. It is the science that corrects a Muslim's faith and protects from shirk and innovations.",
     },
-    tags: [
-      { ar: "تلاوة", en: "Recitation" },
-      { ar: "حفظ", en: "Memorization" },
-      { ar: "تدبر", en: "Reflection" },
+    verse: {
+      ar: "﴿ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ﴾",
+      en: "\"Allah - there is no deity except Him, the Ever-Living, the Self-Sustaining.\"",
+    },
+    verseSource: { ar: "سورة البقرة — الآية 255 (آية الكرسي)", en: "Surah Al-Baqarah — Verse 255 (Ayat al-Kursi)" },
+    topics: {
+      ar: ["التوحيد وأنواعه", "أسماء الله الحسنى وصفاته", "الإيمان بالملائكة", "الإيمان بالكتب والرسل", "الإيمان باليوم الآخر", "الإيمان بالقدر"],
+      en: ["Tawhid and its types", "Allah's Beautiful Names and Attributes", "Belief in Angels", "Belief in Books and Messengers", "Belief in the Last Day", "Belief in Divine Decree"],
+    },
+    books: [
+      { title: { ar: "كتاب التوحيد", en: "Book of Tawhid" }, author: { ar: "محمد بن عبد الوهاب", en: "Muhammad ibn Abdul-Wahhab" } },
+      { title: { ar: "العقيدة الواسطية", en: "Al-Aqeedah Al-Wasitiyyah" }, author: { ar: "ابن تيمية", en: "Ibn Taymiyyah" } },
+      { title: { ar: "شرح الطحاوية", en: "Sharh al-Tahawiyyah" }, author: { ar: "ابن أبي العز", en: "Ibn Abi al-Izz" } },
     ],
-  },
-  {
-    id: "adhkar",
-    href: "/adhkar",
-    icon: "🤲",
-    title: {
-      ar: "الأذكار والرقية",
-      en: "Adhkar and Ruqyah",
-    },
-    description: {
-      ar: "أذكار الصباح والمساء، النوم، بعد الصلاة، والرقية الشرعية.",
-      en: "Morning, evening, sleep, post-prayer adhkar, and prophetic ruqyah.",
-    },
-    tags: [
-      { ar: "ذكر", en: "Dhikr" },
-      { ar: "تحصين", en: "Protection" },
-      { ar: "دعاء", en: "Supplication" },
+    faqs: [
+      {
+        q: { ar: "ما الفرق بين التوحيد والاعتقاد؟", en: "What is the difference between tawhid and aqeedah?" },
+        a: { ar: "التوحيد جزء من العقيدة، وهو إفراد الله بالعبادة والربوبية والأسماء والصفات. والعقيدة تشمل التوحيد والإيمان بأركان الإيمان الستة وغيرها من الأصول.", en: "Tawhid is part of aqeedah - it is singling out Allah in worship, lordship, and names/attributes. Aqeedah includes tawhid, belief in the six pillars of faith, and other fundamentals." },
+      },
+      {
+        q: { ar: "هل يجوز دراسة العقيدة بدون معلم؟", en: "Can I study aqeedah without a teacher?" },
+        a: { ar: "يمكن البدء بالكتب المبسطة المعتمدة، لكن يُفضل مصاحبة عالم أو طالب علم لضبط الفهم وتجنب الشبهات.", en: "You can start with simplified authentic books, but it's best to study with a scholar or student of knowledge to ensure correct understanding." },
+      },
     ],
+    relatedSlugs: ["hadith", "tafsir", "atheism"],
   },
   {
     id: "fiqh",
-    href: "/fatwa",
+    slug: "fiqh",
     icon: "⚖️",
-    title: {
-      ar: "الفقه والفتاوى",
-      en: "Fiqh and Fatwas",
-    },
+    color: "from-emerald-500 to-emerald-600",
+    title: { ar: "الفقه", en: "Jurisprudence (Fiqh)" },
+    subtitle: { ar: "الأحكام الشرعية العملية", en: "Practical Islamic Rulings" },
     description: {
-      ar: "أسئلة فقهية مختصرة في الطهارة، الصلاة، الصيام، الزكاة، والأسرة.",
-      en: "Concise fiqh questions on purity, prayer, fasting, zakat, and family.",
+      ar: "الفقه هو العلم بالأحكام الشرعية العملية المكتسب من أدلتها التفصيلية. يشمل العبادات والمعاملات والأحوال الشخصية، وهو ما يحتاجه المسلم في حياته اليومية.",
+      en: "Fiqh is the knowledge of practical Islamic rulings derived from detailed evidence. It covers worship, transactions, and personal status - what Muslims need in daily life.",
     },
-    tags: [
-      { ar: "عبادات", en: "Worship" },
-      { ar: "معاملات", en: "Transactions" },
-      { ar: "أسرة", en: "Family" },
+    verse: { ar: "﴿ يُرِيدُ اللَّهُ بِكُمُ الْيُسْرَ وَلَا يُرِيدُ بِكُمُ الْعُسْرَ ﴾", en: "\"Allah intends for you ease and does not intend for you hardship.\"" },
+    verseSource: { ar: "سورة البقرة — الآية 185", en: "Surah Al-Baqarah — Verse 185" },
+    topics: {
+      ar: ["فقه العبادات", "فقه المعاملات", "فقه الأسرة", "فقه الجنايات", "فقه الحدود", "القواعد الفقهية"],
+      en: ["Worship Jurisprudence", "Transaction Jurisprudence", "Family Jurisprudence", "Criminal Jurisprudence", "Penal Jurisprudence", "Legal Maxims"],
+    },
+    books: [
+      { title: { ar: "فقه السنة", en: "Fiqh al-Sunnah" }, author: { ar: "سيد سابق", en: "Sayyid Sabiq" } },
+      { title: { ar: "المغني", en: "Al-Mughni" }, author: { ar: "ابن قدامة", en: "Ibn Qudamah" } },
+      { title: { ar: "المجموع", en: "Al-Majmu'" }, author: { ar: "النووي", en: "An-Nawawi" } },
     ],
+    faqs: [
+      {
+        q: { ar: "ما الفرق بين الفقه والشريعة؟", en: "What is the difference between fiqh and shariah?" },
+        a: { ar: "الشريعة هي الوحي الإلهي (القرآن والسنة)، أما الفقه فهو فهم العلماء واستنباطهم للأحكام من هذه الأدلة، لذلك تعددت المذاهب الفقهية.", en: "Shariah is the divine revelation (Quran and Sunnah), while fiqh is the scholars' understanding and derivation of rulings from these evidences, which is why multiple schools exist." },
+      },
+    ],
+    relatedSlugs: ["family", "transactions", "aqeedah"],
+  },
+  {
+    id: "tafsir",
+    slug: "tafsir",
+    icon: "📖",
+    color: "from-green-500 to-green-600",
+    title: { ar: "التفسير", en: "Exegesis (Tafsir)" },
+    subtitle: { ar: "فهم معاني القرآن الكريم", en: "Understanding the Meanings of the Quran" },
+    description: {
+      ar: "التفسير هو العلم ببيان معاني القرآن الكريم، وشرح آياته، واستخراج أحكامه وعبره. وهو من أشرف العلوم لأنه يتعلق بكلام الله تعالى.",
+      en: "Tafsir is the science of explaining the Quran's meanings, clarifying its verses, and deriving its rulings and lessons. It is among the noblest sciences as it relates to Allah's speech.",
+    },
+    verse: { ar: "﴿ كِتَابٌ أَنزَلْنَاهُ إِلَيْكَ مُبَارَكٌ لِّيَدَّبَّرُوا آيَاتِهِ ﴾", en: "\"A blessed Book which We have revealed to you that they might reflect upon its verses.\"" },
+    verseSource: { ar: "سورة ص — الآية 29", en: "Surah Sad — Verse 29" },
+    topics: {
+      ar: ["التفسير بالمأثور", "التفسير بالرأي", "أسباب النزول", "الناسخ والمنسوخ", "المحكم والمتشابه", "إعراب القرآن"],
+      en: ["Tafsir by Narration", "Tafsir by Reasoning", "Reasons for Revelation", "Abrogating and Abrogated", "Clear and Ambiguous Verses", "Quran Grammar"],
+    },
+    books: [
+      { title: { ar: "تفسير ابن كثير", en: "Tafsir Ibn Kathir" }, author: { ar: "ابن كثير", en: "Ibn Kathir" } },
+      { title: { ar: "تفسير السعدي", en: "Tafsir As-Sa'di" }, author: { ar: "عبد الرحمن السعدي", en: "Abdur-Rahman as-Sa'di" } },
+      { title: { ar: "الجامع لأحكام القرآن", en: "Al-Jami' li Ahkam al-Quran" }, author: { ar: "القرطبي", en: "Al-Qurtubi" } },
+    ],
+    faqs: [
+      {
+        q: { ar: "هل أحتاج إلى معرفة العربية لفهم التفسير؟", en: "Do I need Arabic to understand tafsir?" },
+        a: { ar: "الترجمات المعتمدة تكفي للمبتدئ، لكن التعمق يحتاج إلى اللغة العربية لمعرفة الدلالات والبلاغة.", en: "Authentic translations suffice for beginners, but deep study requires Arabic to understand nuances and rhetoric." },
+      },
+    ],
+    relatedSlugs: ["quran-sciences", "aqeedah", "hadith"],
+  },
+  {
+    id: "hadith",
+    slug: "hadith",
+    icon: "📜",
+    color: "from-amber-500 to-amber-600",
+    title: { ar: "الحديث", en: "Hadith" },
+    subtitle: { ar: "السنة النبوية وعلومها", en: "The Prophetic Sunnah and Its Sciences" },
+    description: {
+      ar: "علم الحديث يدرس ما نُقل عن النبي ﷺ من قول أو فعل أو تقرير أو صفة، ويشمل علم الرجال والجرح والتعديل والمتن والإسناد.",
+      en: "Hadith science studies what was transmitted from the Prophet ﷺ of speech, action, approval, or attributes. It includes narrator criticism, authentication, matn analysis, and chains.",
+    },
+    verse: { ar: "﴿ وَمَا آتَاكُمُ الرَّسُولُ فَخُذُوهُ وَمَا نَهَاكُمْ عَنْهُ فَانتَهُوا ﴾", en: "\"Whatever the Messenger has given you - take; and what he has forbidden you - refrain from.\"" },
+    verseSource: { ar: "سورة الحشر — الآية 7", en: "Surah Al-Hashr — Verse 7" },
+    topics: {
+      ar: ["مصطلح الحديث", "الجرح والتعديل", "علم الرجال", "علل الحديث", "كتب الصحاح والسنن", "فقه الحديث"],
+      en: ["Hadith Terminology", "Narrator Criticism", "Rijal Science", "Hidden Defects", "Books of Sahih and Sunan", "Hadith Jurisprudence"],
+    },
+    books: [
+      { title: { ar: "صحيح البخاري", en: "Sahih Al-Bukhari" }, author: { ar: "الإمام البخاري", en: "Imam Al-Bukhari" } },
+      { title: { ar: "صحيح مسلم", en: "Sahih Muslim" }, author: { ar: "الإمام مسلم", en: "Imam Muslim" } },
+      { title: { ar: "نخبة الفكر", en: "Nukhbat al-Fikar" }, author: { ar: "ابن حجر", en: "Ibn Hajar" } },
+    ],
+    faqs: [
+      {
+        q: { ar: "كيف أعرف أن الحديث صحيح؟", en: "How do I know a hadith is authentic?" },
+        a: { ar: "بمراجعة تخريج العلماء مثل ابن حجر والألباني، والنظر في الإسناد والمتن، والاعتماد على كتب الصحاح والسنن المعتمدة.", en: "By checking scholars' authentication like Ibn Hajar and Al-Albani, examining the chain and text, and relying on authentic books." },
+      },
+    ],
+    relatedSlugs: ["aqeedah", "fiqh", "seerah"],
+  },
+  {
+    id: "seerah",
+    slug: "seerah",
+    icon: "🌙",
+    color: "from-teal-500 to-teal-600",
+    title: { ar: "السيرة النبوية", en: "Prophetic Biography" },
+    subtitle: { ar: "حياة خير البشر ﷺ", en: "The Life of the Best of Creation ﷺ" },
+    description: {
+      ar: "السيرة النبوية دراسة لحياة النبي محمد ﷺ من مولده إلى وفاته، بما فيها من غزوات وأحداث وشمائل، لاستخلاص الدروس والعبر.",
+      en: "Seerah studies the life of Prophet Muhammad ﷺ from birth to death, including battles, events, and character traits, to extract lessons.",
+    },
+    verse: { ar: "﴿ لَّقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ حَسَنَةٌ ﴾", en: "\"There has certainly been for you in the Messenger of Allah an excellent pattern.\"" },
+    verseSource: { ar: "سورة الأحزاب — الآية 21", en: "Surah Al-Ahzab — Verse 21" },
+    topics: {
+      ar: ["المولد والنشأة", "البعثة والدعوة في مكة", "الهجرة إلى المدينة", "الغزوات والسرايا", "حجة الوداع", "شمائله وأخلاقه"],
+      en: ["Birth and Upbringing", "Prophethood and Call in Mecca", "Migration to Medina", "Battles and Expeditions", "Farewell Hajj", "His Character and Traits"],
+    },
+    books: [
+      { title: { ar: "الرحيق المختوم", en: "The Sealed Nectar" }, author: { ar: "المباركفوري", en: "Al-Mubarakpuri" } },
+      { title: { ar: "السيرة النبوية", en: "The Prophetic Biography" }, author: { ar: "ابن هشام", en: "Ibn Hisham" } },
+      { title: { ar: "فقه السيرة", en: "Fiqh as-Seerah" }, author: { ar: "البوطي", en: "Al-Buti" } },
+    ],
+    faqs: [
+      {
+        q: { ar: "ما الفرق بين السيرة والحديث؟", en: "What's the difference between seerah and hadith?" },
+        a: { ar: "السيرة تتناول حياة النبي ﷺ الزمنية وأحداثها، والحديث يدرس أقواله وأفعاله وتقريراته كأدلة شرعية.", en: "Seerah covers the Prophet's ﷺ chronological life and events, while hadith studies his statements and actions as legal evidences." },
+      },
+    ],
+    relatedSlugs: ["history", "hadith", "dawah"],
   },
   {
     id: "dawah",
-    href: "/dawah-guide",
-    icon: "🤝",
-    title: {
-      ar: "الدعوة والحكمة",
-      en: "Dawah and Wisdom",
-    },
+    slug: "dawah",
+    icon: "📢",
+    color: "from-primary-500 to-primary-600",
+    title: { ar: "الدعوة", en: "Dawah" },
+    subtitle: { ar: "الدعوة إلى الله بحكمة وموعظة حسنة", en: "Calling to Allah with Wisdom" },
     description: {
-      ar: "أصول الدعوة، مهارات الحوار، التعامل مع الشبهات، وخدمة المسلم الجديد.",
-      en: "Dawah principles, dialogue skills, handling doubts, and serving new Muslims.",
+      ar: "الدعوة إلى الله هي مهمة الأنبياء وورثتهم، وتشمل البلاغ والبيان والحجة والموعظة الحسنة بأساليب متنوعة تراعي أحوال المدعوين.",
+      en: "Dawah to Allah is the mission of prophets and their inheritors, including conveying, clarifying, arguing, and advising with wisdom, considering the states of those being called.",
     },
-    tags: [
-      { ar: "حوار", en: "Dialogue" },
-      { ar: "شبهات", en: "Doubts" },
-      { ar: "مسلم جديد", en: "New Muslim" },
+    verse: { ar: "﴿ ادْعُ إِلَىٰ سَبِيلِ رَبِّكَ بِالْحِكْمَةِ وَالْمَوْعِظَةِ الْحَسَنَةِ ﴾", en: "\"Invite to the way of your Lord with wisdom and good instruction.\"" },
+    verseSource: { ar: "سورة النحل — الآية 125", en: "Surah An-Nahl — Verse 125" },
+    topics: {
+      ar: ["أصول الدعوة", "مهارات الداعية", "فقه الدعوة", "الدعوة في العصر الرقمي", "الدعوة لغير المسلمين", "الدعوة في الأقليات"],
+      en: ["Dawah Principles", "Da'ee Skills", "Dawah Jurisprudence", "Digital Dawah", "Dawah to Non-Muslims", "Dawah in Minorities"],
+    },
+    books: [
+      { title: { ar: "الدعوة إلى الله", en: "Calling to Allah" }, author: { ar: "عبد العزيز آل الشيخ", en: "Abdul-Aziz Al Sheikh" } },
+      { title: { ar: "فن الدعوة", en: "The Art of Dawah" }, author: { ar: "محمد قطب", en: "Muhammad Qutb" } },
+      { title: { ar: "منهج الأنبياء في الدعوة", en: "Prophetic Method in Dawah" }, author: { ar: "عائض القرني", en: "A'id al-Qarni" } },
     ],
+    faqs: [
+      {
+        q: { ar: "هل الدعوة واجبة على كل مسلم؟", en: "Is dawah obligatory on every Muslim?" },
+        a: { ar: "الدعوة بالمعروف واجب كفائي، لكن كل مسلم مطالب بنشر الخير حسب قدرته وعلمه.", en: "Dawah with goodness is a collective obligation, but every Muslim is expected to spread goodness according to their ability and knowledge." },
+      },
+    ],
+    relatedSlugs: ["ethics", "atheism", "contemporary"],
   },
   {
-    id: "aqeedah",
-    href: "/atheism-response",
-    icon: "🧠",
-    title: {
-      ar: "العقيدة والردود",
-      en: "Creed and Responses",
-    },
+    id: "history",
+    slug: "history",
+    icon: "🏛️",
+    color: "from-stone-500 to-stone-600",
+    title: { ar: "التاريخ الإسلامي", en: "Islamic History" },
+    subtitle: { ar: "تاريخ الأمة وحضارتها", en: "History of the Ummah and Its Civilization" },
     description: {
-      ar: "التوحيد، الرد على الإلحاد، الشبهات العقدية، وأسس الإيمان.",
-      en: "Tawhid, responding to atheism, creedal doubts, and foundations of faith.",
+      ar: "دراسة تاريخ الأمة الإسلامية من الخلافة الراشدة إلى العصر الحديث، بما فيها من إنجازات وسقوط ودروس، للاستفادة منها في الحاضر.",
+      en: "Studying Islamic history from the Rightly Guided Caliphate to the modern era, including achievements, falls, and lessons for the present.",
     },
-    tags: [
-      { ar: "توحيد", en: "Tawhid" },
-      { ar: "إلحاد", en: "Atheism" },
-      { ar: "شبهات", en: "Doubts" },
+    verse: { ar: "﴿ فَاعْتَبِرُوا يَا أُولِي الْأَبْصَارِ ﴾", en: "\"So take warning, O people of vision.\"" },
+    verseSource: { ar: "سورة الحشر — الآية 2", en: "Surah Al-Hashr — Verse 2" },
+    topics: {
+      ar: ["الخلفاء الراشدون", "الدولة الأموية", "الدولة العباسية", "الأندلس", "الدولة العثمانية", "العصر الحديث"],
+      en: ["Rightly Guided Caliphs", "Umayyad Caliphate", "Abbasid Caliphate", "Andalusia", "Ottoman Empire", "Modern Era"],
+    },
+    books: [
+      { title: { ar: "تاريخ الطبري", en: "History of al-Tabari" }, author: { ar: "ابن جرير الطبري", en: "Ibn Jarir al-Tabari" } },
+      { title: { ar: "البداية والنهاية", en: "Al-Bidayah wa al-Nihayah" }, author: { ar: "ابن كثير", en: "Ibn Kathir" } },
+      { title: { ar: "قصص الأنبياء", en: "Stories of the Prophets" }, author: { ar: "ابن كثير", en: "Ibn Kathir" } },
     ],
+    faqs: [
+      {
+        q: { ar: "لماذا ندرس التاريخ الإسلامي؟", en: "Why study Islamic history?" },
+        a: { ar: "للتأسي بالصالحين، وتجنب أخطاء السابقين، وفهم واقعنا، واستلهام الحلول من تجارب الأمة.", en: "To follow the righteous, avoid past mistakes, understand our reality, and draw solutions from the Ummah's experiences." },
+      },
+    ],
+    relatedSlugs: ["seerah", "thought", "politics"],
+  },
+  {
+    id: "ethics",
+    slug: "ethics",
+    icon: "💫",
+    color: "from-cyan-500 to-cyan-600",
+    title: { ar: "الأخلاق", en: "Ethics" },
+    subtitle: { ar: "تزكية النفس والسلوك", en: "Self-Purification and Conduct" },
+    description: {
+      ar: "الأخلاق الإسلامية جوهر الرسالة، وتشمل الصدق والأمانة والرحمة والصبر والتواضع، وهي معيار كمال الإيمان.",
+      en: "Islamic ethics are the essence of the message, including truthfulness, trustworthiness, mercy, patience, and humility - the measure of perfect faith.",
+    },
+    verse: { ar: "﴿ وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ ﴾", en: "\"And indeed, you are of a great moral character.\"" },
+    verseSource: { ar: "سورة القلم — الآية 4", en: "Surah Al-Qalam — Verse 4" },
+    topics: {
+      ar: ["تزكية النفس", "الآداب الاجتماعية", "أخلاق المسلم مع ربه", "أخلاق المسلم مع الناس", "الرقائق والمواعظ", "الأمراض القلبية"],
+      en: ["Self-Purification", "Social Etiquette", "Ethics with One's Lord", "Ethics with People", "Heart-Softening Narrations", "Diseases of the Heart"],
+    },
+    books: [
+      { title: { ar: "إحياء علوم الدين", en: "Revival of Religious Sciences" }, author: { ar: "الغزالي", en: "Al-Ghazali" } },
+      { title: { ar: "الترغيب والترهيب", en: "Encouragement and Warning" }, author: { ar: "المنذري", en: "Al-Mundhiri" } },
+      { title: { ar: "رياض الصالحين", en: "Gardens of the Righteous" }, author: { ar: "النووي", en: "An-Nawawi" } },
+    ],
+    faqs: [
+      {
+        q: { ar: "هل الأخلاق جزء من الإيمان؟", en: "Are ethics part of faith?" },
+        a: { ar: "نعم، الأخلاق من صميم الإيمان. قال ﷺ: «أكمل المؤمنين إيماناً أحسنهم خلقاً».", en: "Yes, ethics are core to faith. The Prophet ﷺ said: 'The most complete believers in faith are those best in character.'" },
+      },
+    ],
+    relatedSlugs: ["family", "dawah", "seerah"],
   },
   {
     id: "family",
-    href: "/women-fatwas",
-    icon: "🏡",
-    title: {
-      ar: "الأسرة والمرأة",
-      en: "Family and Women",
-    },
+    slug: "family",
+    icon: "👨‍👩‍👧‍👦",
+    color: "from-pink-500 to-pink-600",
+    title: { ar: "الأسرة", en: "Family" },
+    subtitle: { ar: "أحكام الزواج والتربية والأسرة", en: "Marriage, Parenting, and Family" },
     description: {
-      ar: "أحكام وأسئلة تخص المرأة، الزواج، التربية، وحقوق الأسرة.",
-      en: "Rulings and questions related to women, marriage, upbringing, and family rights.",
+      ar: "الأسرة لبنة المجتمع الأولى، ويشمل هذا المجال أحكام الزواج والطلاق والحضانة وتربية الأبناء وحقوق الزوجين.",
+      en: "The family is the first building block of society. This field covers marriage, divorce, custody, parenting, and spousal rights.",
     },
-    tags: [
-      { ar: "زواج", en: "Marriage" },
-      { ar: "تربية", en: "Upbringing" },
-      { ar: "حقوق", en: "Rights" },
+    verse: { ar: "﴿ وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا ﴾", en: "\"And of His signs is that He created for you from yourselves mates that you may find tranquility in them.\"" },
+    verseSource: { ar: "سورة الروم — الآية 21", en: "Surah Ar-Rum — Verse 21" },
+    topics: {
+      ar: ["اختيار الزوج والزوجة", "حقوق الزوجين", "تربية الأبناء", "الطلاق وأحكامه", "النفقة والحضانة", "العلاقات الأسرية"],
+      en: ["Choosing a Spouse", "Spousal Rights", "Parenting", "Divorce and Its Rulings", "Maintenance and Custody", "Family Relationships"],
+    },
+    books: [
+      { title: { ar: "تحفة الأحوذي", en: "Tuhfat al-Ahwadhi" }, author: { ar: "المباركفوري", en: "Al-Mubarakpuri" } },
+      { title: { ar: "تربية الأولاد في الإسلام", en: "Raising Children in Islam" }, author: { ar: "محمد جميل زينو", en: "Muhammad Jamil Zino" } },
+      { title: { ar: "الأسرة المسلمة", en: "The Muslim Family" }, author: { ar: "حسن أيوب", en: "Hassan Ayyub" } },
     ],
+    faqs: [
+      {
+        q: { ar: "ما أهم شروط اختيار الزوجة؟", en: "What are the key criteria for choosing a wife?" },
+        a: { ar: "الدين والخلق هما الأهم، لقوله ﷺ: «تنكح المرأة لأربع... فاظفر بذات الدين تربت يداك».", en: "Religion and character are most important. The Prophet ﷺ said: 'A woman is married for four reasons... so choose the one with religion.'" },
+      },
+    ],
+    relatedSlugs: ["fiqh", "women", "youth"],
   },
   {
     id: "youth",
-    href: "/youth-issues",
+    slug: "youth",
     icon: "🌱",
-    title: {
-      ar: "قضايا الشباب",
-      en: "Youth Issues",
-    },
+    color: "from-lime-500 to-lime-600",
+    title: { ar: "الشباب", en: "Youth" },
+    subtitle: { ar: "قضايا وهموم وحلول", en: "Issues, Concerns, and Solutions" },
     description: {
-      ar: "الضغوط، الهوية، العلاقات، المعاصي، والتوبة في عمر الشباب.",
-      en: "Pressure, identity, relationships, sins, and repentance in youth.",
+      ar: "الشباب عماد الأمة ومستقبلها، ويواجهون تحديات فريدة في العصر الحديث من هوية وعلاقات وتعليم وعمل، وهذا المجال يقدم رؤية إسلامية لهذه القضايا.",
+      en: "Youth are the backbone and future of the Ummah, facing unique modern challenges of identity, relationships, education, and work. This field offers an Islamic vision for these issues.",
     },
-    tags: [
-      { ar: "توبة", en: "Repentance" },
-      { ar: "هوية", en: "Identity" },
-      { ar: "ضغوط", en: "Pressure" },
+    verse: { ar: "﴿ إِنَّهُمْ فِتْيَةٌ آمَنُوا بِرَبِّهِمْ وَزِدْنَاهُمْ هُدًى ﴾", en: "\"Indeed, they were youths who believed in their Lord, and We increased them in guidance.\"" },
+    verseSource: { ar: "سورة الكهف — الآية 13", en: "Surah Al-Kahf — Verse 13" },
+    topics: {
+      ar: ["الهوية والانتماء", "العلاقات والصداقة", "التعليم والدراسة", "العمل والمستقبل", "التحديات الرقمية", "الصحة النفسية"],
+      en: ["Identity and Belonging", "Relationships and Friendship", "Education and Studies", "Work and Future", "Digital Challenges", "Mental Health"],
+    },
+    books: [
+      { title: { ar: "شباب الصحابة", en: "Youth of the Companions" }, author: { ar: "محمد علي قطب", en: "Muhammad Ali Qutb" } },
+      { title: { ar: "الشباب بين الماضي والحاضر", en: "Youth: Past and Present" }, author: { ar: "محمد قطب", en: "Muhammad Qutb" } },
+      { title: { ar: "مشكلات الشباب", en: "Youth Problems" }, author: { ar: "علي الطنطاوي", en: "Ali al-Tantawi" } },
     ],
+    faqs: [
+      {
+        q: { ar: "كيف أتعامل مع ضغط الأقران؟", en: "How do I handle peer pressure?" },
+        a: { ar: "بالثقة بالهوية الإسلامية، واختيار الصحبة الصالحة، والتدرج في قول 'لا' لما يخالف الشرع مع اللين والحكمة.", en: "By being confident in Islamic identity, choosing righteous companions, and gradually saying 'no' to what contradicts shariah with gentleness and wisdom." },
+      },
+    ],
+    relatedSlugs: ["family", "ethics", "contemporary"],
   },
   {
-    id: "stories",
-    href: "/prophets-stories",
-    icon: "📜",
-    title: {
-      ar: "القصص والسنن",
-      en: "Stories and Sunan",
-    },
+    id: "women",
+    slug: "women",
+    icon: "🧕",
+    color: "from-rose-500 to-rose-600",
+    title: { ar: "المرأة", en: "Women" },
+    subtitle: { ar: "قضايا المرأة المسلمة وأحكامها", en: "Issues of the Muslim Woman" },
     description: {
-      ar: "قصص الأنبياء، السنن الإلهية، والعبر من تاريخ الأمم.",
-      en: "Prophets’ stories, divine laws, and lessons from the history of nations.",
+      ar: "المرأة نصف المجتمع ومربية الأجيال، وهذا المجال يناقش قضاياها الفقهية والأسرية والاجتماعية والدعوية بخصوصية واهتمام.",
+      en: "Women are half of society and the educators of generations. This field discusses their fiqh, family, social, and dawah issues with care and privacy.",
     },
-    tags: [
-      { ar: "أنبياء", en: "Prophets" },
-      { ar: "عبر", en: "Lessons" },
-      { ar: "تاريخ", en: "History" },
+    verse: { ar: "﴿ وَلَهُنَّ مِثْلُ الَّذِي عَلَيْهِنَّ بِالْمَعْرُوفِ ﴾", en: "\"And they (women) have rights similar to those (of men) upon them in a fair manner.\"" },
+    verseSource: { ar: "سورة البقرة — الآية 228", en: "Surah Al-Baqarah — Verse 228" },
+    topics: {
+      ar: ["أحكام الطهارة والصلاة", "الحجاب واللباس", "العمل والدراسة", "الزواج والأمومة", "الدعوة النسائية", "النساء في التاريخ الإسلامي"],
+      en: ["Purification and Prayer Rulings", "Hijab and Clothing", "Work and Study", "Marriage and Motherhood", "Women's Dawah", "Women in Islamic History"],
+    },
+    books: [
+      { title: { ar: "فتاوى المرأة المسلمة", en: "Fatwas of the Muslim Woman" }, author: { ar: "محمد صالح المنجد", en: "Muhammad Al-Munajjid" } },
+      { title: { ar: "نساء حول الرسول", en: "Women Around the Messenger" }, author: { ar: "محمد علي قطب", en: "Muhammad Ali Qutb" } },
+      { title: { ar: "المرأة في الإسلام", en: "Women in Islam" }, author: { ar: "عائض القرني", en: "A'id al-Qarni" } },
     ],
+    faqs: [
+      {
+        q: { ar: "هل يمكن للمرأة العمل في الإسلام؟", en: "Can women work in Islam?" },
+        a: { ar: "نعم، بضوابط شرعية كالحجاب وعدم الاختلاط المحرم، وكون العمل لا يتعارض مع واجباتها الأسرية.", en: "Yes, with Islamic conditions like hijab, avoiding unlawful mixing, and work not conflicting with family duties." },
+      },
+    ],
+    relatedSlugs: ["family", "fiqh", "ethics"],
   },
   {
-    id: "tools",
-    href: "/prayer-times",
-    icon: "🧰",
-    title: {
-      ar: "الأدوات العملية",
-      en: "Practical Tools",
-    },
+    id: "contemporary",
+    slug: "contemporary",
+    icon: "🌍",
+    color: "from-blue-500 to-blue-600",
+    title: { ar: "القضايا المعاصرة", en: "Contemporary Issues" },
+    subtitle: { ar: "النوازل والمستجدات الفقهية", en: "Modern Issues and New Fiqh Matters" },
     description: {
-      ar: "مواقيت الصلاة، القبلة، المسبحة، الزكاة، الميراث، والتقويم.",
-      en: "Prayer times, qibla, tasbih, zakat, inheritance, and calendar.",
+      ar: "قضايا مستجدة لم تكن في عصر النبوة تحتاج إلى اجتهاد فقهي مبني على الأصول، مثل العملات الرقمية والتبرع بالأعضاء والذكاء الاصطناعي.",
+      en: "New issues that did not exist in the Prophetic era require ijtihad based on principles, such as cryptocurrencies, organ donation, and AI.",
     },
-    tags: [
-      { ar: "صلاة", en: "Prayer" },
-      { ar: "زكاة", en: "Zakat" },
-      { ar: "قبلة", en: "Qibla" },
+    verse: { ar: "﴿ وَمَا كَانَ لِمُؤْمِنٍ وَلَا مُؤْمِنَةٍ إِذَا قَضَى اللَّهُ وَرَسُولُهُ أَمْرًا أَن يَكُونَ لَهُمُ الْخِيَرَةُ ﴾", en: "\"It is not for a believing man or a believing woman, when Allah and His Messenger have decided a matter, that they should have any choice.\"" },
+    verseSource: { ar: "سورة الأحزاب — الآية 36", en: "Surah Al-Ahzab — Verse 36" },
+    topics: {
+      ar: ["العملات الرقمية", "الطب والتبرع بالأعضاء", "الذكاء الاصطناعي", "وسائل التواصل", "الأقليات المسلمة", "القضايا البيئية"],
+      en: ["Cryptocurrencies", "Medicine and Organ Donation", "Artificial Intelligence", "Social Media", "Muslim Minorities", "Environmental Issues"],
+    },
+    books: [
+      { title: { ar: "فقه النوازل", en: "Fiqh of New Issues" }, author: { ar: "البوطي", en: "Al-Buti" } },
+      { title: { ar: "قضايا فقهية معاصرة", en: "Contemporary Fiqh Issues" }, author: { ar: "وهبة الزحيلي", en: "Wahbah al-Zuhayli" } },
+      { title: { ar: "فتاوى معاصرة", en: "Modern Fatwas" }, author: { ar: "القرضاوي", en: "Al-Qaradawi" } },
     ],
+    faqs: [
+      {
+        q: { ar: "هل العملات الرقمية حلال؟", en: "Are cryptocurrencies halal?" },
+        a: { ar: "الأمر مختلف فيه بين العلماء، ويعتمد على نوع العملة والاستخدام. استشر العلماء المختصين في كل حالة.", en: "Scholars differ, depending on the type of currency and use. Consult specialized scholars for each case." },
+      },
+    ],
+    relatedSlugs: ["fiqh", "thought", "politics"],
   },
   {
-    id: "hajj",
-    href: "/hajj-guide",
-    icon: "🕋",
-    title: {
-      ar: "الحج والعمرة",
-      en: "Hajj and Umrah",
-    },
+    id: "quran-sciences",
+    slug: "quran-sciences",
+    icon: "📚",
+    color: "from-emerald-500 to-teal-600",
+    title: { ar: "علوم القرآن", en: "Quranic Sciences" },
+    subtitle: { ar: "العلوم المتعلقة بالقرآن الكريم", en: "Sciences Related to the Noble Quran" },
     description: {
-      ar: "خطوات النسك، الأدعية، المحظورات، والأخطاء الشائعة.",
-      en: "Rites steps, supplications, prohibitions, and common mistakes.",
+      ar: "علوم القرآن تشمل علوم النزول والجمع والرسم والإعجاز والقراءات وأسباب النزول والمكي والمدني وغيرها.",
+      en: "Quranic sciences include revelation, compilation, script, inimitability, recitations, reasons for revelation, Meccan/Medinan classification, and more.",
     },
-    tags: [
-      { ar: "مناسك", en: "Rites" },
-      { ar: "دعاء", en: "Du'a" },
-      { ar: "مكة", en: "Makkah" },
+    verse: { ar: "﴿ إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ ﴾", en: "\"Indeed, it is We who sent down the Qur'an and indeed, We will be its guardian.\"" },
+    verseSource: { ar: "سورة الحجر — الآية 9", en: "Surah Al-Hijr — Verse 9" },
+    topics: {
+      ar: ["نزول القرآن وجمعه", "رسم المصحف", "القراءات", "الإعجاز القرآني", "المكي والمدني", "أسباب النزول"],
+      en: ["Revelation and Compilation", "Mushaf Script", "Recitations", "Quranic Miraculousness", "Meccan and Medinan", "Reasons for Revelation"],
+    },
+    books: [
+      { title: { ar: "الإتقان في علوم القرآن", en: "Al-Itqan fi Ulum al-Quran" }, author: { ar: "السيوطي", en: "As-Suyuti" } },
+      { title: { ar: "البرهان في علوم القرآن", en: "Al-Burhan fi Ulum al-Quran" }, author: { ar: "الزركشي", en: "Az-Zarkashi" } },
+      { title: { ar: "مباحث في علوم القرآن", en: "Topics in Quranic Sciences" }, author: { ar: "مناع القطان", en: "Manna' Al-Qattan" } },
     ],
+    faqs: [
+      {
+        q: { ar: "هل القرآن محفوظ فعلاً؟", en: "Is the Quran truly preserved?" },
+        a: { ar: "نعم، حفظه الله تعالى بنفسه، ونقل بالتواتر جيلاً بعد جيل، وأجمع العلماء على سلامته من التحريف.", en: "Yes, Allah preserved it Himself, transmitted by mass narration generation after generation, and scholars unanimously agree it is free from distortion." },
+      },
+    ],
+    relatedSlugs: ["tafsir", "hadith", "aqeedah"],
   },
   {
-    id: "articles",
-    href: "/articles",
-    icon: "✍️",
-    title: {
-      ar: "المقالات",
-      en: "Articles",
-    },
+    id: "comparison",
+    slug: "comparison",
+    icon: "🔍",
+    color: "from-violet-500 to-violet-600",
+    title: { ar: "الأديان المقارنة", en: "Comparative Religion" },
+    subtitle: { ar: "دراسة الأديان الأخرى ومقارنتها بالإسلام", en: "Studying Other Religions vs. Islam" },
     description: {
-      ar: "مقالات دعوية وتربوية وشرعية مختصرة.",
-      en: "Concise dawah, educational, and Islamic articles.",
+      ar: "علم يدرس الأديان السماوية والوضعية، ويقارنها بالإسلام بمنهجية علمية، لإظهار محاسن الإسلام وتميزه، والرد على الطعون.",
+      en: "A science that studies heavenly and man-made religions and compares them to Islam methodologically, to show Islam's merits and respond to criticisms.",
     },
-    tags: [
-      { ar: "كتابة", en: "Writing" },
-      { ar: "تربية", en: "Education" },
-      { ar: "دعوة", en: "Dawah" },
+    verse: { ar: "﴿ لَكُمْ دِينُكُمْ وَلِيَ دِينِ ﴾", en: "\"For you is your religion, and for me is my religion.\"" },
+    verseSource: { ar: "سورة الكافرون — الآية 6", en: "Surah Al-Kafirun — Verse 6" },
+    topics: {
+      ar: ["اليهودية", "المسيحية", "الهندوسية", "البوذية", "الأديان الوضعية", "الحوار بين الأديان"],
+      en: ["Judaism", "Christianity", "Hinduism", "Buddhism", "Man-Made Religions", "Interfaith Dialogue"],
+    },
+    books: [
+      { title: { ar: "هداية الحيارى", en: "Guidance of the Perplexed" }, author: { ar: "ابن القيم", en: "Ibn al-Qayyim" } },
+      { title: { ar: "إظهار الحق", en: "Izhar al-Haqq" }, author: { ar: "رحمة الله الكيرانوي", en: "Rahmatullah Kairanawi" } },
+      { title: { ar: "الأديان والمذاهب المعاصرة", en: "Contemporary Religions and Sects" }, author: { ar: "أحمد الشلبي", en: "Ahmad al-Shalabi" } },
     ],
+    faqs: [
+      {
+        q: { ar: "هل يصح دراسة الأديان الأخرى؟", en: "Is it permissible to study other religions?" },
+        a: { ar: "نعم، لأهل العلم الراسخين للرد على الطعون والدعوة إلى الإسلام، أما العامة فقد تشوش عليهم.", en: "Yes, for firmly grounded scholars to respond to criticisms and make dawah, but ordinary people may be confused by it." },
+      },
+    ],
+    relatedSlugs: ["atheism", "dawah", "aqeedah"],
   },
   {
-    id: "khatm",
-    href: "/khatm-dua",
-    icon: "🌙",
-    title: {
-      ar: "ختم الدعاء",
-      en: "Khatm Dua",
-    },
+    id: "atheism",
+    slug: "atheism",
+    icon: "🧠",
+    color: "from-red-500 to-red-600",
+    title: { ar: "الإلحاد والشبهات", en: "Atheism & Doubts" },
+    subtitle: { ar: "الرد على الإلحاد والشبهات المعاصرة", en: "Responding to Atheism and Modern Doubts" },
     description: {
-      ar: "برامج جماعية للفقر إلى الله، رفع الحوائج، والتوبة والاستغفار.",
-      en: "Collective programs of neediness to Allah, raising needs, repentance, and istighfar.",
+      ar: "مجال متخصص في الرد على الشبهات الإلحادية والعلمانية والفلسفية التي تنتشر في العصر الحديث، بأدلة عقلية ونقلية.",
+      en: "A specialized field responding to atheist, secular, and philosophical doubts spread in the modern era with rational and textual evidences.",
     },
-    tags: [
-      { ar: "دعاء", en: "Supplication" },
-      { ar: "توبة", en: "Repentance" },
-      { ar: "جماعي", en: "Collective" },
+    verse: { ar: "﴿ أَمْ خُلِقُوا مِنْ غَيْرِ شَيْءٍ أَمْ هُمُ الْخَالِقُونَ ﴾", en: "\"Or were they created by nothing, or were they the creators of themselves?\"" },
+    verseSource: { ar: "سورة الطور — الآية 35", en: "Surah At-Tur — Verse 35" },
+    topics: {
+      ar: ["وجود الله", "مشكلة الشر", "الإلحاد العلمي", "الإلحاد الأخلاقي", "العلمانية", "التنوير والحداثة"],
+      en: ["Existence of God", "Problem of Evil", "Scientific Atheism", "Moral Atheism", "Secularism", "Enlightenment and Modernity"],
+    },
+    books: [
+      { title: { ar: "دعائم الإيمان", en: "Pillars of Faith" }, author: { ar: "عبد الرحمن حبنكة الميداني", en: "Abdurrahman Habannaka" } },
+      { title: { ar: "الرد على الملاحدة", en: "Reply to Atheists" }, author: { ar: "ماجد عرسان الكيلاني", en: "Majed Arsan al-Kilani" } },
+      { title: { ar: "صراع مع الملاحدة", en: "Struggle with Atheists" }, author: { ar: "عبد الرحمن حبنكة الميداني", en: "Abdurrahman Habannaka" } },
     ],
+    faqs: [
+      {
+        q: { ar: "هل العلم يناقض الإيمان؟", en: "Does science contradict faith?" },
+        a: { ar: "العلم الحقيقي لا يناقض الإيمان، بل كثير من العلماء ازدادوا إيماناً بالعلم. التناقض المزعوم يأتي من سوء الفهم.", en: "True science does not contradict faith; many scientists increased in faith through science. The alleged contradiction comes from misunderstanding." },
+      },
+    ],
+    relatedSlugs: ["aqeedah", "dawah", "thought"],
+  },
+  {
+    id: "thought",
+    slug: "thought",
+    icon: "💡",
+    color: "from-yellow-500 to-yellow-600",
+    title: { ar: "الفكر الإسلامي", en: "Islamic Thought" },
+    subtitle: { ar: "التيارات الفكرية والمذاهب", en: "Intellectual Currents and Schools" },
+    description: {
+      ar: "دراسة التيارات الفكرية الإسلامية المعاصرة، والمذاهب الفكرية، والإشكاليات المطروحة على الساحة، مع تقييمها من منظور إسلامي أصيل.",
+      en: "Studying contemporary Islamic intellectual currents, schools of thought, and issues on the scene, with evaluation from an authentic Islamic perspective.",
+    },
+    verse: { ar: "﴿ قُلْ هَلْ يَسْتَوِي الَّذِينَ يَعْلَمُونَ وَالَّذِينَ لَا يَعْلَمُونَ ﴾", en: "\"Say: Are those who know equal to those who do not know?\"" },
+    verseSource: { ar: "سورة الزمر — الآية 9", en: "Surah Az-Zumar — Verse 9" },
+    topics: {
+      ar: ["الإسلام السياسي", "الإسلام الليبرالي", "التجديد الديني", "التصوف", "السلفية", "الفكر الإسلامي الحديث"],
+      en: ["Political Islam", "Liberal Islam", "Religious Renewal", "Sufism", "Salafism", "Modern Islamic Thought"],
+    },
+    books: [
+      { title: { ar: "شبهات حول الإسلام", en: "Doubts about Islam" }, author: { ar: "محمد قطب", en: "Muhammad Qutb" } },
+      { title: { ar: "مستقبل الإسلام", en: "The Future of Islam" }, author: { ar: "مالك بن نبي", en: "Malik Bennabi" } },
+      { title: { ar: "كيف نفهم الإسلام", en: "How to Understand Islam" }, author: { ar: "سيد قطب", en: "Sayyid Qutb" } },
+    ],
+    faqs: [
+      {
+        q: { ar: "هل كل التيارات الإسلامية صحيحة؟", en: "Are all Islamic currents correct?" },
+        a: { ar: "لا، يجب عرض الأفكار على الكتاب والسنة بفهم السلف الصالح، وما خالفهما يُردّ.", en: "No, ideas must be presented to the Quran and Sunnah as understood by the pious predecessors, and whatever contradicts them is rejected." },
+      },
+    ],
+    relatedSlugs: ["atheism", "contemporary", "politics"],
+  },
+  {
+    id: "politics",
+    slug: "politics",
+    icon: "🏛️",
+    color: "from-slate-500 to-slate-600",
+    title: { ar: "السياسة الشرعية", en: "Islamic Politics" },
+    subtitle: { ar: "أحكام الحكم والإمارة", en: "Rulings of Governance and Leadership" },
+    description: {
+      ar: "السياسة الشرعية هي إدارة شؤون الأمة بما يحقق المصالح ويدرأ المفاسد وفق أحكام الشريعة، وتشمل أحكام الحاكم والمحكوم والعلاقات الدولية.",
+      en: "Islamic politics is managing the affairs of the Ummah to achieve benefits and ward off harms according to shariah rulings, including governor-governed relations and international relations.",
+    },
+    verse: { ar: "﴿ وَأَمْرُهُمْ شُورَىٰ بَيْنَهُمْ ﴾", en: "\"And whose affair is [determined by] consultation among themselves.\"" },
+    verseSource: { ar: "سورة الشورى — الآية 38", en: "Surah Ash-Shura — Verse 38" },
+    topics: {
+      ar: ["أحكام الإمامة", "الشورى", "العلاقات الدولية", "الجهاد", "البيعة والطاعة", "الدولة الإسلامية"],
+      en: ["Rulings of Leadership", "Consultation", "International Relations", "Jihad", "Allegiance and Obedience", "Islamic State"],
+    },
+    books: [
+      { title: { ar: "الأحكام السلطانية", en: "Al-Ahkam As-Sultaniyyah" }, author: { ar: "الماوردي", en: "Al-Mawardi" } },
+      { title: { ar: "السياسة الشرعية", en: "Islamic Politics" }, author: { ar: "ابن تيمية", en: "Ibn Taymiyyah" } },
+      { title: { ar: "أصول النظام السياسي", en: "Foundations of Political System" }, author: { ar: "محمد ضياء الدين الرايس", en: "Muhammad Dia' ad-Din ar-Rayyis" } },
+    ],
+    faqs: [
+      {
+        q: { ar: "ما حكم طاعة الحاكم؟", en: "What is the ruling on obeying the ruler?" },
+        a: { ar: "الطاعة في المعروف واجبة، ولا طاعة لمخلوق في معصية الخالق.", en: "Obedience in goodness is obligatory, and there is no obedience to creation in disobeying the Creator." },
+      },
+    ],
+    relatedSlugs: ["history", "contemporary", "fiqh"],
   },
 ];
+
+// ============================================================
+// نصوص الواجهة العامة
+// ============================================================
+
+const UI: Record<Lang, {
+  home: string;
+  explore: string;
+  topicsTitle: string;
+  topicsDesc: string;
+  booksTitle: string;
+  booksDesc: string;
+  faqTitle: string;
+  relatedTitle: string;
+  relatedFields: string;
+  nextField: string;
+  prevField: string;
+  author: string;
+  allFields: string;
+  notFoundTitle: string;
+  notFoundDesc: string;
+  backToFields: string;
+}> = {
+  ar: {
+    home: "الرئيسية",
+    explore: "استكشف",
+    topicsTitle: "المواضيع الرئيسية",
+    topicsDesc: "أهم المواضيع التي يغطيها هذا المجال",
+    booksTitle: "كتب مقترحة",
+    booksDesc: "أهم المراجع في هذا المجال",
+    faqTitle: "أسئلة شائعة",
+    relatedTitle: "مجالات ذات صلة",
+    relatedFields: "مجالات مرتبطة",
+    nextField: "المجال التالي",
+    prevField: "المجال السابق",
+    author: "المؤلف",
+    allFields: "جميع المجالات",
+    notFoundTitle: "المجال غير موجود",
+    notFoundDesc: "عذراً، لم نتمكن من العثور على هذا المجال.",
+    backToFields: "العودة للمجالات",
+  },
+  en: {
+    home: "Home",
+    explore: "Explore",
+    topicsTitle: "Main Topics",
+    topicsDesc: "Key topics covered in this field",
+    booksTitle: "Recommended Books",
+    booksDesc: "Important references in this field",
+    faqTitle: "Frequently Asked Questions",
+    relatedTitle: "Related Fields",
+    relatedFields: "Related fields",
+    nextField: "Next Field",
+    prevField: "Previous Field",
+    author: "Author",
+    allFields: "All Fields",
+    notFoundTitle: "Field Not Found",
+    notFoundDesc: "Sorry, we couldn't find this field.",
+    backToFields: "Back to Fields",
+  },
+};
+
+// ============================================================
+// Metadata
+// ============================================================
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ lang: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }): Promise<Metadata> {
-  const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    return {};
-  }
+  const { lang, slug } = await params;
+  if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
-  const ui = UI[l];
+  const field = FIELDS.find((f) => f.slug === slug);
+  if (!field) return {};
 
   return {
-    title: ui.title,
-    description: ui.description,
+    title: field.title[l],
+    description: field.description[l],
     alternates: {
-      canonical: `/${l}/fields`,
+      canonical: `/${l}/fields/${slug}`,
       languages: {
-        ar: "/ar/fields",
-        en: "/en/fields",
+        ar: `/ar/fields/${slug}`,
+        en: `/en/fields/${slug}`,
       },
     },
     openGraph: {
-      title: ui.title,
-      description: ui.description,
-      url: `/${l}/fields`,
+      title: field.title[l],
+      description: field.description[l],
+      url: `/${l}/fields/${slug}`,
       locale: l === "ar" ? "ar_EG" : "en_US",
-      type: "website",
+      type: "article",
+      images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: field.title[l] }],
     },
     twitter: {
-      card: "summary",
-      title: ui.title,
-      description: ui.description,
+      card: "summary_large_image",
+      title: field.title[l],
+      description: field.description[l],
+      images: ["/icons/icon-512.png"],
     },
   };
 }
 
 export function generateStaticParams() {
-  return [{ lang: "ar" }, { lang: "en" }];
+  return FIELDS.flatMap((field) => [
+    { lang: "ar", slug: field.slug },
+    { lang: "en", slug: field.slug },
+  ]);
 }
 
-export default async function FieldsPage({
+// ============================================================
+// الصفحة
+// ============================================================
+
+export default async function FieldPage({
   params,
 }: {
-  params: Promise<{ lang: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { lang } = await params;
-
-  if (!isValidLang(lang)) {
-    notFound();
-  }
+  const { lang, slug } = await params;
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
-  const ui = UI[l];
   const isRTL = l === "ar";
+  const ui = UI[l];
+
+  const field = FIELDS.find((f) => f.slug === slug);
+  if (!field) notFound();
+
+  const currentIndex = FIELDS.findIndex((f) => f.slug === slug);
+  const prevField = currentIndex > 0 ? FIELDS[currentIndex - 1] : null;
+  const nextField = currentIndex < FIELDS.length - 1 ? FIELDS[currentIndex + 1] : null;
+  const relatedFields = FIELDS.filter((f) => field.relatedSlugs.includes(f.slug));
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: ui.title,
-    description: ui.description,
-    inLanguage: l,
+    "@graph": [
+      {
+        "@type": "Article",
+        headline: field.title[l],
+        description: field.description[l],
+        inLanguage: l,
+        url: `/${l}/fields/${slug}`,
+        articleSection: isRTL ? "العلوم الشرعية" : "Islamic Sciences",
+        keywords: field.topics[l].join(", "),
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: field.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.q[l],
+          acceptedAnswer: { "@type": "Answer", text: faq.a[l] },
+        })),
+      },
+    ],
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"}>
+    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      <Header lang={l} />
+
       <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
+        title={field.title[l]}
+        subtitle={field.subtitle[l]}
+        backHref={`/${l}/fields`}
         showBookmark={false}
         breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
+          { label: ui.home, href: `/${l}` },
+          { label: ui.allFields, href: `/${l}/fields` },
+          { label: field.title[l] },
         ]}
       />
 
       <section className="container-page py-10 md:py-14">
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+        {/* ===== Hero مخصص ===== */}
+        <div className={`card relative mb-8 overflow-hidden border-2 border-transparent p-8 md:p-12 bg-gradient-to-br ${field.color} text-white`}>
+          <div className="absolute inset-0 bg-black/20" />
 
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="badge-primary mb-5">
-              🧩 {isRTL ? "خريطة المحتوى" : "Content Map"}
-            </span>
+          <div className="relative mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/20 text-5xl backdrop-blur-sm shadow-2xl">
+                {field.icon}
+              </span>
+            </div>
 
             <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
+              className="mb-4 text-3xl font-black leading-tight md:text-5xl"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              {ui.title}
+              {field.title[l]}
             </h1>
 
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
+            <p className="mb-6 text-lg leading-relaxed opacity-95">
+              {field.subtitle[l]}
+            </p>
+
+            <div className="inline-block rounded-2xl bg-white/10 p-5 backdrop-blur-sm">
+              <p
+                className="mb-2 text-xl font-black md:text-2xl"
+                style={{ fontFamily: "var(--font-quran)" }}
+              >
+                {field.verse[l]}
+              </p>
+              <p className="text-xs opacity-90">
+                {field.verseSource[l]}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ===== الوصف ===== */}
+        <div className="card mb-8 overflow-hidden">
+          <div className={`gradient-primary h-1.5 w-full bg-gradient-to-r ${field.color}`} />
+          <div className="p-6 md:p-8">
+            <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-200">
+              {field.description[l]}
             </p>
           </div>
         </div>
 
+        {/* ===== إحصائيات ===== */}
+        <div className="mb-10 grid grid-cols-3 gap-4">
+          <StatCard icon="📚" value={field.topics[l].length} label={isRTL ? "مواضيع" : "Topics"} color={field.color} />
+          <StatCard icon="📖" value={field.books.length} label={isRTL ? "كتب" : "Books"} color={field.color} />
+          <StatCard icon="❓" value={field.faqs.length} label={isRTL ? "أسئلة" : "Questions"} color={field.color} />
+        </div>
+
+        {/* ===== المواضيع الرئيسية ===== */}
         <div className="mb-12">
           <div className="mb-6 text-center">
-            <h2 className="section-title mb-0">{ui.fieldsTitle}</h2>
-
+            <h2 className="section-title mb-0">{ui.topicsTitle}</h2>
             <div className="islamic-divider my-0">
               <span className="text-xl text-gold-500">✦</span>
             </div>
-
-            <p className="section-subtitle mx-auto max-w-2xl">
-              {ui.fieldsDesc}
-            </p>
+            <p className="section-subtitle mx-auto max-w-2xl">{ui.topicsDesc}</p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {FIELDS.map((field) => (
-              <Link
-                key={field.id}
-                href={`/${l}${field.href}`}
-                className="card card-interactive group relative overflow-hidden p-6"
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {field.topics[l].map((topic, index) => (
+              <div
+                key={index}
+                className="card card-interactive group relative overflow-hidden p-5"
               >
-                <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
-
-                <div className="mb-4 flex items-start gap-4">
-                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                    {field.icon}
+                <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${field.color}`} />
+                <div className="flex items-start gap-3">
+                  <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${field.color} text-sm font-black text-white shadow-md`}>
+                    {index + 1}
                   </span>
+                  <h3
+                    className="text-base font-black text-slate-900 dark:text-white"
+                    style={{ fontFamily: "var(--font-amiri)" }}
+                  >
+                    {topic}
+                  </h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-                  <div className="min-w-0">
+        {/* ===== الكتب المقترحة ===== */}
+        <div className="mb-12">
+          <div className="mb-6 text-center">
+            <h2 className="section-title mb-0">{ui.booksTitle}</h2>
+            <div className="islamic-divider my-0">
+              <span className="text-xl text-gold-500">✦</span>
+            </div>
+            <p className="section-subtitle mx-auto max-w-2xl">{ui.booksDesc}</p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {field.books.map((book, index) => (
+              <div
+                key={index}
+                className="card relative overflow-hidden p-6"
+              >
+                <div className="gradient-gold absolute inset-x-0 top-0 h-1" />
+                <div className="mb-4 flex justify-center">
+                  <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gold-100 text-3xl dark:bg-gold-900/40">
+                    📖
+                  </span>
+                </div>
+                <h3
+                  className="mb-2 text-center text-lg font-black text-slate-900 dark:text-white"
+                  style={{ fontFamily: "var(--font-amiri)" }}
+                >
+                  {book.title[l]}
+                </h3>
+                <p className="text-center text-sm text-slate-500 dark:text-slate-400">
+                  {ui.author}: {book.author[l]}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ===== الأسئلة الشائعة ===== */}
+        <div className="mb-12">
+          <div className="mb-6 text-center">
+            <h2 className="section-title mb-0">{ui.faqTitle}</h2>
+            <div className="islamic-divider my-0">
+              <span className="text-xl text-gold-500">✦</span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {field.faqs.map((faq, index) => (
+              <details key={index} className="card group p-6 md:p-7">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
+                  <h3
+                    className="text-lg font-black leading-relaxed text-slate-900 md:text-xl dark:text-white"
+                    style={{ fontFamily: "var(--font-amiri)" }}
+                  >
+                    ❓ {faq.q[l]}
+                  </h3>
+                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700 transition-transform duration-300 group-open:rotate-45 dark:bg-primary-900/40 dark:text-primary-300">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 5v14" />
+                      <path d="M5 12h14" />
+                    </svg>
+                  </span>
+                </summary>
+                <div className="mt-5 border-t border-slate-100 pt-5 dark:border-night-700">
+                  <p className="leading-relaxed text-slate-600 dark:text-slate-300">
+                    {faq.a[l]}
+                  </p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        {/* ===== مجالات ذات صلة ===== */}
+        {relatedFields.length > 0 && (
+          <div className="mb-12">
+            <div className="mb-6 text-center">
+              <h2 className="section-title mb-0">{ui.relatedTitle}</h2>
+              <div className="islamic-divider my-0">
+                <span className="text-xl text-gold-500">✦</span>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {relatedFields.map((relField) => (
+                <Link
+                  key={relField.id}
+                  href={`/${l}/fields/${relField.slug}`}
+                  className="card card-interactive group relative overflow-hidden p-6"
+                >
+                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${relField.color}`} />
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${relField.color} text-2xl text-white shadow-md`}>
+                      {relField.icon}
+                    </span>
                     <h3
-                      className="text-xl font-black leading-relaxed text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300"
+                      className="text-lg font-black text-slate-900 dark:text-white"
                       style={{ fontFamily: "var(--font-amiri)" }}
                     >
-                      {isRTL ? field.title.ar : field.title.en}
+                      {relField.title[l]}
                     </h3>
-
-                    <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">
-                      {isRTL ? field.description.ar : field.description.en}
-                    </p>
                   </div>
-                </div>
-
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {field.tags.map((tag, index) => (
-                    <span
-                      key={`${field.id}-tag-${index}`}
-                      className="badge-gold text-xs"
-                    >
-                      {isRTL ? tag.ar : tag.en}
-                    </span>
-                  ))}
-                </div>
-
-                <span className="inline-flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">
-                  {ui.explore}
-
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
-                  >
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </span>
-              </Link>
-            ))}
+                  <p className="line-clamp-2 text-sm text-slate-600 dark:text-slate-300">
+                    {relField.subtitle[l]}
+                  </p>
+                </Link>
+              ))}
+            </div>
           </div>
+        )}
+
+        {/* ===== التنقل بين المجالات ===== */}
+        <div className="mb-10 grid gap-4 md:grid-cols-2">
+          {prevField && (
+            <Link
+              href={`/${l}/fields/${prevField.slug}`}
+              className="card card-interactive group flex items-center gap-4 p-5"
+            >
+              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${prevField.color} text-2xl text-white shadow-md`}>
+                {prevField.icon}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  ← {ui.prevField}
+                </p>
+                <p className="truncate font-black text-slate-900 dark:text-white">
+                  {prevField.title[l]}
+                </p>
+              </div>
+            </Link>
+          )}
+
+          {nextField && (
+            <Link
+              href={`/${l}/fields/${nextField.slug}`}
+              className="card card-interactive group flex items-center gap-4 p-5 text-end md:text-start"
+            >
+              <div className="min-w-0 flex-1 text-end md:text-start">
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                  {ui.nextField} →
+                </p>
+                <p className="truncate font-black text-slate-900 dark:text-white">
+                  {nextField.title[l]}
+                </p>
+              </div>
+              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${nextField.color} text-2xl text-white shadow-md`}>
+                {nextField.icon}
+              </span>
+            </Link>
+          )}
         </div>
 
-        <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
-          <h2
-            className="mb-5 text-xl font-black text-slate-900 dark:text-white"
-            style={{ fontFamily: "var(--font-amiri)" }}
-          >
-            📌 {ui.noteTitle}
-          </h2>
-
-          <ul className="space-y-3">
-            {[ui.note1, ui.note2].map((note, index) => (
-              <li
-                key={`${note}-${index}`}
-                className="flex items-start gap-3 leading-relaxed text-slate-700 dark:text-slate-200"
-              >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
-                <span>{note}</span>
-              </li>
-            ))}
-          </ul>
+        {/* ===== CTA العودة ===== */}
+        <div className="text-center">
+          <Link href={`/${l}/fields`} className="btn-primary inline-flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isRTL ? "rotate-180" : ""}>
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            {ui.allFields}
+          </Link>
         </div>
       </section>
+
+      <Footer lang={l} />
     </main>
+  );
+}
+
+// ============================================================
+// مكون StatCard
+// ============================================================
+
+function StatCard({
+  icon, value, label, color,
+}: {
+  icon: string;
+  value: number | string;
+  label: string;
+  color: string;
+}) {
+  return (
+    <div className="card p-5 text-center">
+      <div className="mb-2 flex justify-center">
+        <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-2xl text-white shadow-md`}>
+          {icon}
+        </span>
+      </div>
+      <p className="text-2xl font-black text-slate-900 dark:text-white">{value}</p>
+      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
+        {label}
+      </p>
+    </div>
   );
 }
