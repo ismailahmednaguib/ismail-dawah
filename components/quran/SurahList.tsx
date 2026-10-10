@@ -136,8 +136,28 @@ function toArabicNumeral(num: number): string {
   return num
     .toString()
     .split("")
-    .map((d) => arabicNumerals[parseInt(d)])
+    .map((d) => arabicNumerals[Number.parseInt(d, 10)])
     .join("");
+}
+
+/**
+ * ترجمة آمنة مع fallback.
+ * تمنع فشل البناء إذا كان مفتاح الترجمة غير معرّف في lib/i18n.
+ */
+function translateOr(lang: Lang, key: string, fallback: string): string {
+  try {
+    const value = (
+      t as unknown as (lang: Lang, key: string) => string | undefined
+    )(lang, key);
+
+    if (typeof value === "string" && value.trim() && value !== key) {
+      return value;
+    }
+  } catch {
+    // ignore
+  }
+
+  return fallback;
 }
 
 export default function SurahList({ lang }: { lang: Lang }) {
@@ -145,20 +165,65 @@ export default function SurahList({ lang }: { lang: Lang }) {
   const [filter, setFilter] = useState<"all" | "makki" | "madani">("all");
 
   const filtered = useMemo(() => {
+    const rawQuery = search.trim();
+    const lowerQuery = rawQuery.toLowerCase();
+
     return SURAHS.filter((surah) => {
       // فلترة النوع
-      if (filter !== "all" && surah.type !== filter) return false;
+      if (filter !== "all" && surah.type !== filter) {
+        return false;
+      }
 
       // البحث
-      if (!search.trim()) return true;
-      const q = search.trim().toLowerCase();
+      if (!rawQuery) {
+        return true;
+      }
+
       return (
-        surah.arabicName.includes(search) ||
-        surah.englishName.toLowerCase().includes(q) ||
-        surah.number.toString() === search
+        surah.arabicName.includes(rawQuery) ||
+        surah.englishName.toLowerCase().includes(lowerQuery) ||
+        surah.number.toString() === rawQuery
       );
     });
   }, [search, filter]);
+
+  const searchPlaceholder = translateOr(
+    lang,
+    "quran.search.placeholder",
+    lang === "ar" ? "ابحث عن سورة..." : "Search surah..."
+  );
+
+  const allLabel = translateOr(
+    lang,
+    "quran.all",
+    lang === "ar" ? "الكل" : "All"
+  );
+
+  const makkiLabel = translateOr(
+    lang,
+    "quran.makki",
+    lang === "ar" ? "مكية" : "Makki"
+  );
+
+  const madaniLabel = translateOr(
+    lang,
+    "quran.madani",
+    lang === "ar" ? "مدنية" : "Madani"
+  );
+
+  const noResultsLabel = translateOr(
+    lang,
+    "quran.no_results",
+    lang === "ar" ? "لا توجد نتائج" : "No results found"
+  );
+
+  const resultsCountLabel =
+    lang === "ar"
+      ? `عدد السور: ${toArabicNumeral(filtered.length)}`
+      : `Surahs: ${filtered.length}`;
+
+  const ayahsLabel = (count: number) =>
+    lang === "ar" ? `${toArabicNumeral(count)} آية` : `${count} ayahs`;
 
   return (
     <div>
@@ -172,28 +237,32 @@ export default function SurahList({ lang }: { lang: Lang }) {
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            aria-hidden="true"
           >
             <circle cx="11" cy="11" r="8" />
             <path d="M21 21l-4.3-4.3" />
           </svg>
+
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t(lang, "quran.search.placeholder")}
+            placeholder={searchPlaceholder}
             className="input-islamic !ps-12"
+            aria-label={searchPlaceholder}
           />
         </div>
 
         {/* الفلترة */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[
-            { key: "all" as const, label: lang === "ar" ? "الكل" : "All" },
-            { key: "makki" as const, label: t(lang, "quran.makki") },
-            { key: "madani" as const, label: t(lang, "quran.madani") },
+            { key: "all" as const, label: allLabel },
+            { key: "makki" as const, label: makkiLabel },
+            { key: "madani" as const, label: madaniLabel },
           ].map((opt) => (
             <button
               key={opt.key}
+              type="button"
               onClick={() => setFilter(opt.key)}
               className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
                 filter === opt.key
@@ -209,16 +278,14 @@ export default function SurahList({ lang }: { lang: Lang }) {
 
       {/* عدّاد النتائج */}
       <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
-        {lang === "ar"
-          ? `عدد السور: ${toArabicNumeral(filtered.length)}`
-          : `Surahs: ${filtered.length}`}
+        {resultsCountLabel}
       </p>
 
       {/* قائمة السور */}
       {filtered.length === 0 ? (
         <div className="card p-12 text-center">
           <p className="text-lg text-slate-500 dark:text-slate-400">
-            {lang === "ar" ? "لا توجد نتائج" : "No results found"}
+            {noResultsLabel}
           </p>
         </div>
       ) : (
@@ -240,12 +307,9 @@ export default function SurahList({ lang }: { lang: Lang }) {
                   <h3 className="truncate text-lg font-bold text-slate-800 dark:text-white">
                     {lang === "ar" ? surah.arabicName : surah.englishName}
                   </h3>
+
                   <div className="mt-1 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                    <span>
-                      {lang === "ar"
-                        ? `${toArabicNumeral(surah.ayahs)} آية`
-                        : `${surah.ayahs} ayahs`}
-                    </span>
+                    <span>{ayahsLabel(surah.ayahs)}</span>
                     <span>•</span>
                     <span
                       className={
@@ -254,9 +318,7 @@ export default function SurahList({ lang }: { lang: Lang }) {
                           : "text-primary-600 dark:text-primary-400"
                       }
                     >
-                      {surah.type === "makki"
-                        ? t(lang, "quran.makki")
-                        : t(lang, "quran.madani")}
+                      {surah.type === "makki" ? makkiLabel : madaniLabel}
                     </span>
                   </div>
                 </div>
@@ -268,6 +330,7 @@ export default function SurahList({ lang }: { lang: Lang }) {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
+                  aria-hidden="true"
                 >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
