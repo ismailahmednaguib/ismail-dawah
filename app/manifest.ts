@@ -12,8 +12,7 @@ const SITE_URL =
     : "https://ismailahmednaguib.vercel.app");
 
 // ============================================================
-// Icons
-// وحّدها مع layout.tsx
+// Icons & Colors
 // ============================================================
 
 const ICONS = {
@@ -23,35 +22,49 @@ const ICONS = {
   appleTouchIcon: "/apple-touch-icon.png",
 };
 
-// ============================================================
-// Colors
-// ============================================================
-
 const COLORS = {
   background: "#f8fafc",
   theme: "#0e7490",
 };
 
 // ============================================================
-// Locales
+// Types
 // ============================================================
 
-type Locale = "ar" | "en";
+type ManifestLang = "ar" | "en";
 
-type LocaleContent = {
+type MaybeParams = {
+  lang?: string;
+};
+
+type ManifestContext = {
+  params?: Promise<MaybeParams> | MaybeParams;
+};
+
+type Shortcut = {
+  name: string;
+  short_name: string;
+  description?: string;
+  url: string;
+};
+
+type ManifestText = {
   name: string;
   short_name: string;
   description: string;
-  shortcuts: NonNullable<MetadataRoute.Manifest["shortcuts"]>;
+  shortcuts: Shortcut[];
 };
 
-const texts: Record<Locale, LocaleContent> = {
+// ============================================================
+// Manifest text per language
+// ============================================================
+
+const MANIFEST_TEXT: Record<ManifestLang, ManifestText> = {
   ar: {
     name: "منصة إسماعيل أحمد نجيب الدعوية",
     short_name: "إسماعيل نجيب",
     description:
       "منصة إسلامية دعوية شاملة: القرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، المسبحة، خطة الحفظ، الزكاة، الحج، الدعوة، والمقالات.",
-
     shortcuts: [
       {
         name: "القرآن الكريم",
@@ -115,7 +128,6 @@ const texts: Record<Locale, LocaleContent> = {
     short_name: "Ismail Naguib",
     description:
       "A comprehensive Islamic dawah platform: Quran, adhkar, fatwas, prayer times, qibla, tasbih, memorization plan, zakat, Hajj guide, dawah tools, and articles.",
-
     shortcuts: [
       {
         name: "Holy Quran",
@@ -126,7 +138,8 @@ const texts: Record<Locale, LocaleContent> = {
       {
         name: "Adhkar",
         short_name: "Adhkar",
-        description: "Morning, evening, sleep, and after-prayer remembrances",
+        description:
+          "Morning, evening, sleep, and after-prayer remembrances",
         url: "/en/adhkar",
       },
       {
@@ -168,7 +181,8 @@ const texts: Record<Locale, LocaleContent> = {
       {
         name: "Search",
         short_name: "Search",
-        description: "Search Quran, adhkar, fatwas, stories, and pages",
+        description:
+          "Search Quran, adhkar, fatwas, stories, and pages",
         url: "/en/search",
       },
     ],
@@ -176,48 +190,48 @@ const texts: Record<Locale, LocaleContent> = {
 };
 
 // ============================================================
-// Manifest
+// Safe lang resolver
 // ============================================================
 
-export default async function manifest({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}): Promise<MetadataRoute.Manifest> {
-  const { lang } = await params;
+async function resolveLang(ctx?: ManifestContext): Promise<ManifestLang> {
+  try {
+    const params = await ctx?.params;
+    return params?.lang === "en" ? "en" : "ar";
+  } catch {
+    return "ar";
+  }
+}
 
-  const locale: Locale = lang === "en" ? "en" : "ar";
-  const content = texts[locale];
+// ============================================================
+// Manifest generator
+// ============================================================
 
-  const dir: "rtl" | "ltr" = locale === "ar" ? "rtl" : "ltr";
+export default async function manifest(
+  ctx?: ManifestContext
+): Promise<MetadataRoute.Manifest> {
+  const lang = await resolveLang(ctx);
+  const text = MANIFEST_TEXT[lang];
 
   return {
-    id: `${SITE_URL}/${locale}`,
+    id: `${SITE_URL}/${lang}`,
+    name: text.name,
+    short_name: text.short_name,
+    description: text.description,
 
-    name: content.name,
-    short_name: content.short_name,
-    description: content.description,
-
-    start_url: `/${locale}`,
+    start_url: `/${lang}`,
     scope: "/",
 
     display: "standalone",
     display_override: ["standalone", "browser"],
-
     orientation: "portrait-primary",
 
     background_color: COLORS.background,
     theme_color: COLORS.theme,
 
-    lang: locale,
-    dir,
+    lang,
+    dir: lang === "ar" ? "rtl" : "ltr",
 
-    categories: [
-      "education",
-      "reference",
-      "lifestyle",
-      "utilities",
-    ],
+    categories: ["education", "reference", "lifestyle", "utilities"],
 
     icons: [
       {
@@ -246,8 +260,8 @@ export default async function manifest({
       },
     ],
 
-    shortcuts: content.shortcuts,
+    shortcuts: text.shortcuts,
 
     prefer_related_applications: false,
-  };
+  } as MetadataRoute.Manifest;
 }

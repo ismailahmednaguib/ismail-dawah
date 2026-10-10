@@ -1,22 +1,18 @@
 {
-  "id": "https://ismailahmednaguib.vercel.app/",
-  "name": "منصة إسماعيل أحمد نجيب الدعوية",
-  "short_name": "إسماعيل نجيب",
-  "description": "منصة إسلامية دعوية شاملة تجمع القرآن، الأذكار، الفتاوى، قصص الأنبياء، مواقيت الصلاة، اتجاه القبلة، المسبحة، خطة حفظ القرآن، الرقية الشرعية، الورد اليومي، حاسبة الزكاة، الميراث، دليل الحج والعمرة، دليل الدعوة، المقالات، والأسئلة الشائعة.",
-  "start_url": "/ar?source=pwa",
+  "name": "إسماعيل أحمد نجيب | منصة دعوية شاملة",
+  "short_name": "إسماعيل أحمد نجيب",
+  "description": "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد.",
+  "id": "/",
+  "start_url": "/ar",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
-  "background_color": "#ffffff",
-  "theme_color": "#0f766e",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#0a1628",
+  "theme_color": "#0e7490",
   "lang": "ar",
   "dir": "rtl",
-  "categories": [
-    "education",
-    "lifestyle",
-    "reference",
-    "utilities"
-  ],
+  "categories": ["education", "religion", "lifestyle"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -37,115 +33,6 @@
       "purpose": "maskable"
     }
   ],
-  "shortcuts": [
-    {
-      "name": "القرآن الكريم",
-      "short_name": "القرآن",
-      "description": "تصفح السور والاستماع والقراءة",
-      "url": "/ar/quran",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "الأذكار",
-      "short_name": "الأذكار",
-      "description": "أذكار الصباح والمساء والنوم وبعد الصلاة",
-      "url": "/ar/adhkar",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "مواقيت الصلاة",
-      "short_name": "الصلاة",
-      "description": "مواقيت الصلاة حسب موقعك",
-      "url": "/ar/prayer-times",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "اتجاه القبلة",
-      "short_name": "القبلة",
-      "description": "بوصلة اتجاه القبلة والمسافة إلى مكة",
-      "url": "/ar/qibla",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "المسبحة",
-      "short_name": "المسبحة",
-      "description": "عدّاد تفاعلي للتسبيح والذكر",
-      "url": "/ar/tasbih",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "خطة حفظ القرآن",
-      "short_name": "الحفظ",
-      "description": "نظّم وردك اليومي من الحفظ والمراجعة",
-      "url": "/ar/quran-memorization",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "حاسبة الزكاة",
-      "short_name": "الزكاة",
-      "description": "احسب زكاة المال حسب النصاب والديون",
-      "url": "/ar/zakat",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "دليل الحج والعمرة",
-      "short_name": "الحج",
-      "description": "خطوات النسك والأدعية والأخطاء الشائعة",
-      "url": "/ar/hajj-guide",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "البحث",
-      "short_name": "بحث",
-      "description": "ابحث في القرآن والأذكار والفتاوى والقصص والصفحات",
-      "url": "/ar/search",
-      "icons": [
-        {
-          "src": "/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
-  ],
+  "screenshots": [],
   "prefer_related_applications": false
 }

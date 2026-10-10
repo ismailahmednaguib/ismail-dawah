@@ -6,6 +6,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CopyLinkButton from "@/components/download/CopyLinkButton";
 
 export const dynamic = "force-static";
 
@@ -106,8 +107,10 @@ const UI: Record<Lang, UILang> = {
     backHome: "العودة للرئيسية",
     noteTitle: "ملاحظات مهمة",
     note1: "هذا الملف لتطبيق أندرويد فقط، ولا يعمل على iPhone أو iPad.",
-    note2: "بعد التحميل، قد يطلب منك الهاتف السماح بتثبيت التطبيقات من مصادر غير معروفة، وهذا طبيعي عند تثبيت APK خارج Google Play.",
-    note3: "لو كان عندك نسخة قديمة مثبتة، يُفضّل حذفها أولًا ثم تثبيت النسخة الجديدة إذا ظهر خطأ في التوقيع.",
+    note2:
+      "بعد التحميل، قد يطلب منك الهاتف السماح بتثبيت التطبيقات من مصادر غير معروفة، وهذا طبيعي عند تثبيت APK خارج Google Play.",
+    note3:
+      "لو كان عندك نسخة قديمة مثبتة، يُفضّل حذفها أولًا ثم تثبيت النسخة الجديدة إذا ظهر خطأ في التوقيع.",
     note4: "هذه نسخة تجريبية، وقد يتم تحديثها بإذن الله بإصدارات أفضل.",
     installPwa: "تثبيت كتطبيق ويب (PWA)",
     installPwaDesc: "بدون تحميل - يعمل مباشرة من المتصفح",
@@ -119,11 +122,14 @@ const UI: Record<Lang, UILang> = {
     step1Title: "حمّل الملف",
     step1Desc: "اضغط على زر التحميل أعلاه لحفظ ملف APK على هاتفك.",
     step2Title: "افتح الملف",
-    step2Desc: "اذهب إلى مجلد التنزيلات واضغط على ملف ismail-dawah.apk.",
+    step2Desc:
+      "اذهب إلى مجلد التنزيلات واضغط على ملف ismail-dawah.apk.",
     step3Title: "اسمح بالتثبيت",
-    step3Desc: "إذا طلب الهاتف، اسمح بتثبيت التطبيقات من مصادر غير معروفة.",
+    step3Desc:
+      "إذا طلب الهاتف، اسمح بتثبيت التطبيقات من مصادر غير معروفة.",
     step4Title: "استمتع بالتطبيق",
-    step4Desc: "افتح التطبيق من شاشتك الرئيسية واستمتع بكل المميزات.",
+    step4Desc:
+      "افتح التطبيق من شاشتك الرئيسية واستمتع بكل المميزات.",
     features: "مميزات التطبيق",
     feature1: "تصفح كامل للمحتوى الإسلامي",
     feature2: "مواقيت الصلاة حسب موقعك",
@@ -133,11 +139,14 @@ const UI: Record<Lang, UILang> = {
     feature6: "يعمل بدون إنترنت (PWA)",
     faqTitle: "أسئلة شائعة",
     faq1Q: "لماذا لا يوجد تطبيق على Google Play؟",
-    faq1A: "التطبيق حالياً في مرحلة تجريبية، ونسعى لإضافته لـ Google Play قريباً بإذن الله.",
+    faq1A:
+      "التطبيق حالياً في مرحلة تجريبية، ونسعى لإضافته لـ Google Play قريباً بإذن الله.",
     faq2Q: "هل التطبيق آمن؟",
-    faq2A: "نعم، التطبيق مفتوح المصدر وموقّع بمفتاح خاص، ولا يحتوي على أي برمجيات ضارة.",
+    faq2A:
+      "نعم، التطبيق مفتوح المصدر وموقّع بمفتاح خاص، ولا يحتوي على أي برمجيات ضارة.",
     faq3Q: "لماذا لا يعمل على iPhone؟",
-    faq3A: "Apple لا تسمح بتثبيت ملفات APK. يمكن لمستخدمي iPhone استخدام نسخة الويب كتطبيق (PWA).",
+    faq3A:
+      "Apple لا تسمح بتثبيت ملفات APK. يمكن لمستخدمي iPhone استخدام نسخة الويب كتطبيق (PWA).",
     faq4Q: "كم حجم الملف؟",
     faq4A: `حجم الملف حوالي ${FILE_SIZE} وهو خفيف جداً مقارنة بالتطبيقات الأخرى.`,
     onlyAndroid: "متوفر لأندرويد فقط",
@@ -145,7 +154,8 @@ const UI: Record<Lang, UILang> = {
   },
   en: {
     title: "Download App",
-    subtitle: "Download the Android app for Ismail Ahmed Naguib Platform",
+    subtitle:
+      "Download the Android app for Ismail Ahmed Naguib Platform",
     home: "Home",
     description:
       "Download page for the Ismail Ahmed Naguib Dawah Platform Android app. The app opens the platform as a standalone application on your phone.",
@@ -160,10 +170,14 @@ const UI: Record<Lang, UILang> = {
     directLink: "Direct download link",
     backHome: "Back to Home",
     noteTitle: "Important notes",
-    note1: "This file is for Android only and does not work on iPhone or iPad.",
-    note2: "After downloading, your phone may ask you to allow installation from unknown sources. This is normal when installing an APK outside Google Play.",
-    note3: "If you have an older version installed, it is recommended to remove it first and then install the new version if a signature error appears.",
-    note4: "This is a beta version and may be updated with better releases, inshaAllah.",
+    note1:
+      "This file is for Android only and does not work on iPhone or iPad.",
+    note2:
+      "After downloading, your phone may ask you to allow installation from unknown sources. This is normal when installing an APK outside Google Play.",
+    note3:
+      "If you have an older version installed, it is recommended to remove it first and then install the new version if a signature error appears.",
+    note4:
+      "This is a beta version and may be updated with better releases, inshaAllah.",
     installPwa: "Install as Web App (PWA)",
     installPwaDesc: "No download needed - works directly from browser",
     or: "or",
@@ -172,13 +186,17 @@ const UI: Record<Lang, UILang> = {
     scanToDownload: "Scan to download",
     installationSteps: "Installation Steps",
     step1Title: "Download the file",
-    step1Desc: "Click the download button above to save the APK file to your phone.",
+    step1Desc:
+      "Click the download button above to save the APK file to your phone.",
     step2Title: "Open the file",
-    step2Desc: "Go to your Downloads folder and tap on ismail-dawah.apk.",
+    step2Desc:
+      "Go to your Downloads folder and tap on ismail-dawah.apk.",
     step3Title: "Allow installation",
-    step3Desc: "If prompted, allow installation from unknown sources on your phone.",
+    step3Desc:
+      "If prompted, allow installation from unknown sources on your phone.",
     step4Title: "Enjoy the app",
-    step4Desc: "Open the app from your home screen and enjoy all features.",
+    step4Desc:
+      "Open the app from your home screen and enjoy all features.",
     features: "App Features",
     feature1: "Full Islamic content browsing",
     feature2: "Prayer times based on your location",
@@ -188,11 +206,14 @@ const UI: Record<Lang, UILang> = {
     feature6: "Works offline (PWA)",
     faqTitle: "Frequently Asked Questions",
     faq1Q: "Why isn't the app on Google Play?",
-    faq1A: "The app is currently in beta. We aim to publish it on Google Play soon, inshaAllah.",
+    faq1A:
+      "The app is currently in beta. We aim to publish it on Google Play soon, inshaAllah.",
     faq2Q: "Is the app safe?",
-    faq2A: "Yes, the app is signed with a private key and contains no malicious software.",
+    faq2A:
+      "Yes, the app is signed with a private key and contains no malicious software.",
     faq3Q: "Why doesn't it work on iPhone?",
-    faq3A: "Apple does not allow APK installation. iPhone users can use the Web App (PWA) version.",
+    faq3A:
+      "Apple does not allow APK installation. iPhone users can use the Web App (PWA) version.",
     faq4Q: "How large is the file?",
     faq4A: `The file size is about ${FILE_SIZE}, which is very light compared to other apps.`,
     onlyAndroid: "Available for Android only",
@@ -282,7 +303,9 @@ export default async function DownloadPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: isRTL ? "منصة إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib Platform",
+    name: isRTL
+      ? "منصة إسماعيل أحمد نجيب"
+      : "Ismail Ahmed Naguib Platform",
     applicationCategory: "EducationalApplication",
     applicationSubCategory: "Islamic",
     operatingSystem: "Android 8.0+",
@@ -300,13 +323,6 @@ export default async function DownloadPage({
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      ratingCount: "120",
-      bestRating: "5",
-      worstRating: "1",
     },
   };
 
@@ -338,7 +354,10 @@ export default async function DownloadPage({
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+    <main
+      dir={isRTL ? "rtl" : "ltr"}
+      className="min-h-screen bg-cream-dark dark:bg-gray-900"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -375,9 +394,17 @@ export default async function DownloadPage({
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
+                style={{
+                  background: "linear-gradient(135deg, #06b6d4, #0e7490)",
+                }}
               >
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
                   <path d="M12 3a9 9 0 1 0 9 9c0-1.5-.4-3-1.2-4.2A7 7 0 0 1 12 3z" />
                   <circle cx="17" cy="6" r="1.5" fill="#d4af37" />
                 </svg>
@@ -410,7 +437,11 @@ export default async function DownloadPage({
                 <InfoCard label={ui.fileName} value={FILE_NAME} icon="📄" />
                 <InfoCard label={ui.version} value={VERSION} icon="🏷️" />
                 <InfoCard label={ui.fileSize} value={FILE_SIZE} icon="💾" />
-                <InfoCard label={ui.requirements} value={REQUIREMENTS} icon="⚙️" />
+                <InfoCard
+                  label={ui.requirements}
+                  value={REQUIREMENTS}
+                  icon="⚙️"
+                />
               </div>
 
               {/* زر التحميل الرئيسي */}
@@ -429,6 +460,7 @@ export default async function DownloadPage({
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    aria-hidden="true"
                   >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                     <polyline points="7 10 12 15 17 10" />
@@ -445,7 +477,9 @@ export default async function DownloadPage({
               {/* الفاصل */}
               <div className="my-5 flex items-center gap-3">
                 <div className="h-px flex-1 bg-slate-200 dark:bg-night-700" />
-                <span className="text-xs font-bold text-slate-400">{ui.or}</span>
+                <span className="text-xs font-bold text-slate-400">
+                  {ui.or}
+                </span>
                 <div className="h-px flex-1 bg-slate-200 dark:bg-night-700" />
               </div>
 
@@ -484,30 +518,12 @@ export default async function DownloadPage({
               </div>
 
               <div className="mt-auto space-y-3">
-                <button
-                  onClick={() => {
-                    if (typeof navigator !== "undefined" && navigator.clipboard) {
-                      navigator.clipboard.writeText(DIRECT_APK_URL);
-                      alert(ui.copied);
-                    }
-                  }}
+                <CopyLinkButton
+                  url={DIRECT_APK_URL}
+                  label={ui.copyLink}
+                  copiedLabel={ui.copied}
                   className="btn-outline w-full justify-center gap-2"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
-                  {ui.copyLink}
-                </button>
+                />
 
                 <a
                   href={DIRECT_APK_URL}
@@ -588,15 +604,17 @@ export default async function DownloadPage({
           </h2>
 
           <ul className="space-y-3">
-            {[ui.note1, ui.note2, ui.note3, ui.note4].map((note, index) => (
-              <li
-                key={`note-${index}`}
-                className="flex items-start gap-3 leading-relaxed text-slate-700 dark:text-slate-200"
-              >
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
-                <span>{note}</span>
-              </li>
-            ))}
+            {[ui.note1, ui.note2, ui.note3, ui.note4].map(
+              (note, index) => (
+                <li
+                  key={`note-${index}`}
+                  className="flex items-start gap-3 leading-relaxed text-slate-700 dark:text-slate-200"
+                >
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-500" />
+                  <span>{note}</span>
+                </li>
+              )
+            )}
           </ul>
         </div>
 
@@ -630,6 +648,7 @@ export default async function DownloadPage({
               strokeLinecap="round"
               strokeLinejoin="round"
               className={isRTL ? "" : "rotate-180"}
+              aria-hidden="true"
             >
               <path d="M19 12H5" />
               <path d="m12 19-7-7 7-7" />
@@ -706,7 +725,13 @@ function StepCard({
   );
 }
 
-function FeatureCard({ icon, title }: { icon: string; title: string }) {
+function FeatureCard({
+  icon,
+  title,
+}: {
+  icon: string;
+  title: string;
+}) {
   return (
     <div className="card card-interactive flex items-center gap-4 p-5">
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
@@ -717,7 +742,13 @@ function FeatureCard({ icon, title }: { icon: string; title: string }) {
   );
 }
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
+function FaqItem({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
   return (
     <details className="card group p-6">
       <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
@@ -734,6 +765,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
+            aria-hidden="true"
           >
             <path d="M12 5v14" />
             <path d="M5 12h14" />
@@ -790,18 +822,14 @@ function QRCode({ value }: { value: string }) {
       viewBox="0 0 160 160"
       className="block"
       role="img"
-      aria-label="QR Code for download"
+      aria-label={`QR Code for download: ${value}`}
     >
+      <title>{value}</title>
       <rect width="160" height="160" fill="white" />
       <path d={cells} fill="black" />
       {/* أيقونة المنصة في المنتصف */}
       <circle cx="80" cy="80" r="14" fill="white" />
-      <circle
-        cx="80"
-        cy="80"
-        r="12"
-        fill="#0e7490"
-      />
+      <circle cx="80" cy="80" r="12" fill="#0e7490" />
       <circle cx="85" cy="76" r="2" fill="#d4af37" />
     </svg>
   );
