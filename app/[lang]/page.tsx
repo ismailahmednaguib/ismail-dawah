@@ -1,12 +1,19 @@
 // app/[lang]/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Newsletter from "@/components/Newsletter";
 
-export const dynamic = "force-dynamic";
+// بدل force-dynamic: الصفحة تتخزن ساعة (الآية بتتغير يومياً)
+export const revalidate = 3600;
 
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"
+).replace(/\/$/, "");
 // ============================================================
 // الأنواع
 // ============================================================
@@ -325,7 +332,7 @@ export async function generateMetadata({
 
   const l = lang as Lang;
   const ui = UI[l];
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app";
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app";
 
   return {
     title: {
@@ -336,21 +343,21 @@ export async function generateMetadata({
     alternates: {
       canonical: `/${l}`,
       languages: {
-        ar: `${baseUrl}/ar`,
-        en: `${baseUrl}/en`,
-        "x-default": `${baseUrl}/ar`,
+        ar: `${SITE_URL}/ar`,
+        en: `${SITE_URL}/en`,
+        "x-default": `${SITE_URL}/ar`,
       },
     },
     openGraph: {
       title: ui.metaTitle,
       description: ui.metaDesc,
-      url: `${baseUrl}/${l}`,
+      url: `${SITE_URL}/${l}`,
       siteName: ui.metaTitle,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
       images: [
         {
-          url: "/icons/icon-512.png",
+          url: "/icon-512.png.",
           width: 512,
           height: 512,
           alt: ui.metaTitle,
@@ -361,7 +368,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: ui.metaTitle,
       description: ui.metaDesc,
-      images: ["/icons/icon-512.png"],
+      images: ["/icon-512.png"],
     },
   };
 }
@@ -380,24 +387,25 @@ export default async function HomePage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  if (!isValidLang(lang)) return null;
+  if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
   const isRTL = l === "ar";
   const ui = UI[l];
+  const verse = await getVerseOfTheDay(l);
 
   // JSON-LD
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: ui.metaTitle,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app"}/${l}`,
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/${l}`,
     inLanguage: l,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app"}/${l}/search?q={search_term_string}`,
+        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/${l}/search?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -576,19 +584,17 @@ export default async function HomePage({
               {ui.verseLabel}
             </p>
 
-            <div className="mb-6 text-5xl text-gold-500">﴿</div>
 
             <p
               className="mb-6 text-2xl font-black leading-[2.2] text-slate-900 md:text-3xl dark:text-white"
               style={{ fontFamily: "var(--font-quran)" }}
             >
-              {ui.verseText}
+              {verse.text}
             </p>
 
-            <div className="mb-6 text-5xl text-gold-500">﴾</div>
 
             <p className="text-sm font-bold text-gold-700 dark:text-gold-300">
-              {ui.verseSource}
+              {verse.source}
             </p>
           </div>
         </div>
@@ -618,55 +624,8 @@ export default async function HomePage({
 
       {/* ============ النشرة البريدية ============ */}
       <section className="container-page pb-16 md:pb-20">
-        <div className="card relative overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-2xl text-center">
-            <div className="mb-4 flex justify-center">
-              <span className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500 to-gold-500 text-4xl text-white shadow-lg">
-                📬
-              </span>
-            </div>
-
-            <h2
-              className="mb-3 text-2xl font-black text-slate-900 md:text-3xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.newsletterTitle}
-            </h2>
-
-            <p className="mb-6 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.newsletterDesc}
-            </p>
-
-            <form
-              action={`/${l}/api/newsletter`}
-              method="POST"
-              className="flex flex-col gap-3 sm:flex-row"
-            >
-              <input
-                type="email"
-                name="email"
-                required
-                placeholder={ui.newsletterPlaceholder}
-                className="flex-1 rounded-2xl border-2 border-slate-200 bg-white px-5 py-4 text-base font-bold text-slate-900 outline-none transition-all focus:border-primary-500 dark:border-night-700 dark:bg-night-800 dark:text-white dark:focus:border-primary-400"
-                dir="ltr"
-              />
-              <button
-                type="submit"
-                className="btn-primary whitespace-nowrap"
-              >
-                {ui.newsletterBtn}
-              </button>
-            </form>
-
-            <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-              🔒 {ui.newsletterNote}
-            </p>
-          </div>
-        </div>
-      </section>
-
+  <Newsletter lang={l} />
+</section>
       {/* ============ تطبيق أندرويد ============ */}
       <section className="container-page pb-16 md:pb-20">
         <div className="card relative overflow-hidden border-2 border-primary-200 p-8 md:p-10 dark:border-primary-800">
@@ -745,8 +704,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      <Footer lang={l} />
-    </main>
+<Footer lang={l} showNewsletter={false} />    </main>
   );
 }
 
