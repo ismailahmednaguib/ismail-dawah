@@ -2,8 +2,14 @@
 import { createClient } from "@supabase/supabase-js";
 import { pbkdf2Sync, randomBytes } from "node:crypto";
 import readline from "node:readline";
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+
+// حاول تحميل .env.local إذا كان dotenv مثبتًا
+try {
+  const dotenv = (await import("dotenv")).default;
+  dotenv.config({ path: ".env.local" });
+} catch {
+  // إذا كنت تستخدم node --env-file=.env.local فلا مشكلة
+}
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -12,6 +18,10 @@ const rl = readline.createInterface({
 
 function question(query) {
   return new Promise((resolve) => rl.question(query, resolve));
+}
+
+function getEnv(name) {
+  return process.env[name]?.trim() || "";
 }
 
 const PBKDF2_ITERATIONS = 100_000;
@@ -36,21 +46,169 @@ function hashPassword(password) {
   };
 }
 
-function getEnv(name) {
-  const value = process.env[name]?.trim();
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
+function idForQuery(id) {
+  if (/^\d+$/.test(String(id))) {
+    const num = Number(id);
+    if (Number.isSafeInteger(num)) return num;
   }
-  return value;
+  return id;
+}
+
+function isMissingColumnError(error, column) {
+  const message = String(error?.message || "");
+  return (
+    new RegExp(column, "i").test(message) &&
+    (/column.*does not exist/i.test(message) ||
+      /Could not find the column/i.test(message) ||
+      /schema.*does not exist/i.test(message))
+  );
+}
+
+function isMissingTableError(error) {
+  const message = String(error?.message || "");
+  return (
+    /does not exist/i.test(message) ||
+    /Could not find the table/i.test(message) ||
+    /relation/i.test(message) ||
+    /schema/i.test(message)
+  );
+}
+
+async function findRowByEmail(client, table, email) {
+  const attempts = [
+    client.from(table).select("*").ilike("email", email).maybeSingle(),
+    client.from(table).select("*").eq("email", email).maybeSingle(),
+  ];
+
+  for (const builder of attempts) {
+    const result = await builder;
+
+    if (!result.error) {
+      return result.data || null;
+    }
+
+    if (isMissingTableError(result.error)) {
+      return null;
+    }
+
+    if (isMissingColumnError(result.error, "email")) {
+      continue;
+    }
+
+    console.error(`[ResetAdmin] ${table} lookup error:`, result.error);
+    return null;
+  }
+
+  return null;
+}
+
+async function tryUpdate(client, table, id, payloads, label) {
+  for (const payload of payloads) {
+    const result = await client
+      .from(table)
+      .update(payload)
+      .eq("id", idForQuery(id));
+
+    if (!result.error) {
+      console.log(`✅ Updated ${table}.${label}`);
+      return true;
+    }
+
+    if (isMissingTableError(result.error)) {
+      console.warn(`⚠️ Table ${table} missing`);
+      return false;
+    }
+
+    const message = String(result.error.message || "");
+
+    const missingColumns = [
+      "password_hash",
+      "password",
+      "hashed_password",
+      "salt",
+      "role",
+      "is_active",
+      "updated_at",
+    ];
+
+    const hasMissingColumn = missingColumns.some((column) =>
+      isMissingColumnError(result.error, column)
+    );
+
+    if (hasMissingColumn) {
+      continue;
+    }
+
+    console.warn(`⚠️ Update ${table}.${label} failed:`, message);
+  }
+
+  return false;
+}
+
+async function tryUpsertAdmin(client, id, email) {
+  const payloads = [
+    {
+      id,
+      email,
+      is_active: true,
+    },
+    {
+      id,
+      email,
+    },
+    {
+      id,
+      is_active: true,
+    },
+    {
+      id,
+    },
+  ];
+
+  for (const payload of payloads) {
+    const result = await client
+      .from("admin_users")
+      .upsert(payload, { onConflict: "id" });
+
+    if (!result.error) {
+      console.log("✅ Synced admin_users");
+      return true;
+    }
+
+    if (isMissingTableError(result.error)) {
+      console.warn("⚠️ admin_users table missing, skipping");
+      return false;
+    }
+
+    const missingColumns = ["email", "is_active"];
+    const hasMissingColumn = missingColumns.some((column) =>
+      isMissingColumnError(result.error, column)
+    );
+
+    if (hasMissingColumn) {
+      continue;
+    }
+
+    console.warn("⚠️ admin_users upsert failed:", result.error.message);
+  }
+
+  return false;
 }
 
 async function main() {
   const url =
-    getEnv("SUPABASE_URL") || getEnv("NEXT_PUBLIC_SUPABASE_URL");
+    getEnv("SUPABASE_URL") ||
+    getEnv("NEXT_PUBLIC_SUPABASE_URL");
 
   const key =
     getEnv("SUPABASE_SERVICE_KEY") ||
     getEnv("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!url || !key) {
+    throw new Error(
+      "Missing SUPABASE_URL/NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_KEY/SUPABASE_SERVICE_ROLE_KEY in .env.local"
+    );
+  }
 
   const emailInput = await question("Admin Email: ");
   const passwordInput = await question("New Admin Password: ");
@@ -61,11 +219,11 @@ async function main() {
     throw new Error("Email is required");
   }
 
-  if (!passwordInput || passwordInput.length < 10) {
-    throw new Error("Password must be at least 10 characters");
+  if (!passwordInput || passwordInput.length < 8) {
+    throw new Error("Password must be at least 8 characters");
   }
 
-  const supabase = createClient(url, key, {
+  const client = createClient(url, key, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,
@@ -75,121 +233,122 @@ async function main() {
 
   const { salt, hash, combined } = hashPassword(passwordInput);
 
-  console.log("\nUpdating admin password in users table...\n");
+  console.log("\nSearching admin/user records...\n");
 
-  // 1) جرّب تحديث users بأعمدة منفصلة: password + salt
-  let usersResult = await supabase
-    .from("users")
-    .update({
-      password: hash,
-      salt,
-      role: "admin",
-      is_active: true,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("email", email);
+  const adminRow = await findRowByEmail(client, "admin_users", email);
+  const userRow = await findRowByEmail(client, "users", email);
 
-  if (usersResult.error) {
-    console.warn("First update failed:", usersResult.error.message);
+  if (!adminRow && !userRow) {
+    throw new Error(
+      `No account found in admin_users or users for email: ${email}`
+    );
+  }
 
-    // 2) جرّب بدون updated_at
-    usersResult = await supabase
-      .from("users")
-      .update({
+  const targetId = userRow?.id ?? adminRow?.id;
+
+  if (!targetId) {
+    throw new Error("Could not determine user id");
+  }
+
+  console.log(`Target user id: ${targetId}\n`);
+
+  // 1) تحديث admin_users إن وُجد
+  if (adminRow) {
+    await tryUpdate(client, "admin_users", adminRow.id, [
+      {
+        password_hash: hash,
+        salt,
+        is_active: true,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        password_hash: hash,
+        salt,
+        is_active: true,
+      },
+      {
+        password: hash,
+        salt,
+        is_active: true,
+      },
+      {
+        password: combined,
+        is_active: true,
+      },
+      {
+        password_hash: combined,
+        is_active: true,
+      },
+      {
+        hashed_password: hash,
+        salt,
+        is_active: true,
+      },
+      {
+        is_active: true,
+      },
+    ], "password");
+  }
+
+  // 2) تحديث users إن وُجد
+  if (userRow) {
+    await tryUpdate(client, "users", userRow.id, [
+      {
+        password_hash: hash,
+        salt,
+        role: "admin",
+        is_active: true,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        password_hash: hash,
+        salt,
+        role: "admin",
+        is_active: true,
+      },
+      {
         password: hash,
         salt,
         role: "admin",
         is_active: true,
-      })
-      .eq("email", email);
-  }
-
-  if (usersResult.error) {
-    console.warn("Second update failed:", usersResult.error.message);
-
-    // 3) جرّب combined password في عمود password فقط
-    usersResult = await supabase
-      .from("users")
-      .update({
+      },
+      {
         password: combined,
         role: "admin",
         is_active: true,
-      })
-      .eq("email", email);
-  }
-
-  if (usersResult.error) {
-    console.warn("Third update failed:", usersResult.error.message);
-
-    // 4) جرّب بدون is_active لو العمود غير موجود
-    usersResult = await supabase
-      .from("users")
-      .update({
-        password: hash,
+      },
+      {
+        password_hash: combined,
+        role: "admin",
+        is_active: true,
+      },
+      {
+        hashed_password: hash,
         salt,
         role: "admin",
-      })
-      .eq("email", email);
+        is_active: true,
+      },
+      {
+        role: "admin",
+        is_active: true,
+      },
+    ], "password");
   }
 
-  if (usersResult.error) {
-    console.error("\nFailed to update users table:");
-    console.error(usersResult.error);
-    rl.close();
-    process.exit(1);
-  }
-
-  console.log("✅ users table updated.");
-
-  // 5) لو عندك admin_users، فعّله أيضًا
-  const userQuery = await supabase
-    .from("users")
-    .select("id,email,role,is_active")
-    .eq("email", email)
-    .maybeSingle();
-
-  if (!userQuery.error && userQuery.data?.id) {
-    const userId = userQuery.data.id;
-
-    let adminResult = await supabase
-      .from("admin_users")
-      .upsert(
-        {
-          id: userId,
-          email,
-          is_active: true,
-        },
-        { onConflict: "id" }
-      );
-
-    if (adminResult.error) {
-      console.warn("admin_users upsert failed:", adminResult.error.message);
-
-      adminResult = await supabase
-        .from("admin_users")
-        .update({
-          email,
-          is_active: true,
-        })
-        .eq("id", userId);
-    }
-
-    if (!adminResult.error) {
-      console.log("✅ admin_users table updated.");
-    } else {
-      console.warn("⚠️ Could not update admin_users:", adminResult.error.message);
-    }
+  // 3) لو المستخدم في users فقط، ضمه إلى admin_users إن كان الجدول موجودًا
+  if (!adminRow && userRow) {
+    await tryUpsertAdmin(client, userRow.id, email);
   }
 
   console.log("\nDone.");
   console.log(`Admin email: ${email}`);
-  console.log("Try login again with the new password.");
+  console.log("Now try login again with the new password.");
 
   rl.close();
 }
 
 main().catch((error) => {
-  console.error(error);
+  console.error("\n❌ Error:", error.message || error);
   rl.close();
   process.exit(1);
 });
