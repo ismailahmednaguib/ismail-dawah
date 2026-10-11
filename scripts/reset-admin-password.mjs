@@ -2,6 +2,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { pbkdf2Sync, randomBytes } from "node:crypto";
 import readline from "node:readline";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 
 const rl = readline.createInterface({
   input: process.stdin,

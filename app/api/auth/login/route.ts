@@ -1,10 +1,20 @@
 // app/api/login/route.ts
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import crypto from "crypto";
-
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse } from "next/server";
+import {
+  createAdminClient,
+  verifyPassword,
+  hashPasswordCombinedAsync,
+  setAdminSessionCookies,
+  setUserSessionCookies,
+  normalizeAuthEmail,
+  isValidAuthEmail,
+  ADMIN_SESSION_MAX_AGE,
+  USER_SESSION_MAX_AGE,
+  type Role,
+} from "@/lib/auth";
 
 // ============================================================
 // Configuration
@@ -12,37 +22,17 @@ export const dynamic = "force-dynamic";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-// مدة جلسة الأدمن بالثواني — افتراضيًا 8 ساعات
-const ADMIN_SESSION_MAX_AGE = Number(
-  process.env.ADMIN_SESSION_MAX_AGE || 8 * 60 * 60
-);
-
-// مدة جلسة المستخدم العادي بالثواني — افتراضيًا 30 يوم
-const USER_SESSION_MAX_AGE = Number(
-  process.env.USER_SESSION_MAX_AGE || 30 * 24 * 60 * 60
-);
-
 const MAX_BODY_BYTES = 20_000; // 20KB
+const DB_TIMEOUT_MS = 8_000;
+const AUDIT_TIMEOUT_MS = 3_000;
 
-const RATE_WINDOW_MS = 15 * 60 * 1000; // 15 دقيقة
+const RATE_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const MAX_ATTEMPTS_PER_EMAIL = 5;
 const MAX_ATTEMPTS_PER_IP = 10;
-
-type Role = "admin" | "user";
-
-type LoginBody = {
-  email?: unknown;
-  password?: unknown;
-};
-
-type RowResult<T = Record<string, any>> = {
-  data: T | null;
-  error: any | null;
-};
+const MAX_RATE_STORE_SIZE = 2_000;
 
 // ============================================================
-// In-memory Rate Limiter
-// ملاحظة: في الإنتاج مع Serverless يُفضَّل استخدام Redis/Upstash
+// Types
 // ============================================================
 
 type RateRecord = {
@@ -50,9 +40,38 @@ type RateRecord = {
   resetAt: number;
 };
 
-const rateLimitStore = new Map<string, RateRecord>();
+type LoginBody = {
+  email?: unknown;
+  password?: unknown;
+  lang?: unknown;
+};
 
-function cleanupRateLimitStore() {
+type PublicUser = {
+  id: string;
+  email: string;
+  name: string | null;
+  role: Role;
+};
+
+// ============================================================
+// Global in-memory Rate Limiter
+// في الإنتاج مع Serverless يُفضَّل Redis/Upstash
+// ============================================================
+
+const globalRef = globalThis as typeof globalThis & {
+  __loginRateLimit?: Map<string, RateRecord>;
+};
+
+const rateLimitStore =
+  globalRef.__loginRateLimit ?? new Map<string, RateRecord>();
+
+globalRef.__loginRateLimit = rateLimitStore;
+
+function cleanupRateLimitStore(): void {
+  if (rateLimitStore.size <= MAX_RATE_STORE_SIZE) {
+    return;
+  }
+
   const now = Date.now();
 
   for (const [key, record] of rateLimitStore.entries()) {
@@ -62,7 +81,10 @@ function cleanupRateLimitStore() {
   }
 }
 
-function consumeRateLimit(ip: string, email: string): {
+function consumeRateLimit(
+  ip: string,
+  email: string
+): {
   limited: boolean;
   retryAfter: number;
 } {
@@ -71,8 +93,8 @@ function consumeRateLimit(ip: string, email: string): {
   const now = Date.now();
 
   const entries: Array<[string, number]> = [
-    [`ip:${ip}`, MAX_ATTEMPTS_PER_IP],
-    [`email:${email.toLowerCase()}`, MAX_ATTEMPTS_PER_EMAIL],
+    [`login-ip:${ip}`, MAX_ATTEMPTS_PER_IP],
+    [`login-email:${email.toLowerCase()}`, MAX_ATTEMPTS_PER_EMAIL],
   ];
 
   let limited = false;
@@ -105,13 +127,18 @@ function consumeRateLimit(ip: string, email: string): {
   return { limited, retryAfter };
 }
 
+function resetEmailRateLimit(email: string): void {
+  const key = `login-email:${email.toLowerCase()}`;
+  rateLimitStore.delete(key);
+}
+
 // ============================================================
-// Helpers
+// General Helpers
 // ============================================================
 
 function getClientIP(req: NextRequest): string {
   return (
-    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     req.headers.get("x-real-ip") ||
     req.headers.get("cf-connecting-ip") ||
     "unknown"
@@ -119,162 +146,454 @@ function getClientIP(req: NextRequest): string {
 }
 
 function getUserAgent(req: NextRequest): string {
-  return req.headers.get("user-agent") || "unknown";
+  return (req.headers.get("user-agent") || "unknown").slice(0, 500);
 }
 
-function normalizeEmail(value: unknown): string {
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  return value.trim().toLowerCase();
+function normalizeLang(value: unknown): "ar" | "en" {
+  const lang = String(value || "").trim().toLowerCase();
+  return lang === "en" ? "en" : "ar";
 }
 
-function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-function getSecretForRole(role: Role): string {
-  const appSecret = process.env.APP_SESSION_SECRET;
-  const jwtSecret = process.env.JWT_SECRET;
+function getRedirectForRole(role: Role, lang: "ar" | "en"): string {
+  const base = lang === "en" ? "/en" : "/ar";
 
   if (role === "admin") {
     return (
-      process.env.ADMIN_SESSION_SECRET ||
-      appSecret ||
-      jwtSecret ||
-      ""
+      process.env.NEXT_PUBLIC_ADMIN_HOME_URL?.trim() ||
+      `${base}/admin`
     );
   }
 
   return (
-    process.env.USER_SESSION_SECRET ||
-    appSecret ||
-    jwtSecret ||
-    ""
+    process.env.NEXT_PUBLIC_USER_HOME_URL?.trim() ||
+    `${base}/account`
   );
 }
 
-function signSession(payload: Record<string, unknown>, secret: string): string {
-  const header = Buffer.from(
-    JSON.stringify({ alg: "HS256", typ: "session" })
-  ).toString("base64url");
+function idForQuery(id: string): string | number {
+  if (/^\d+$/.test(id)) {
+    const num = Number(id);
 
-  const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
+    if (Number.isSafeInteger(num)) {
+      return num;
+    }
+  }
 
-  const signature = crypto
-    .createHmac("sha256", secret)
-    .update(`${header}.${body}`)
-    .digest("base64url");
-
-  return `${header}.${body}.${signature}`;
+  return id;
 }
 
-async function verifyPasswordFlexible(
-  password: string,
-  storedHash?: string | null,
-  storedSalt?: string | null
-): Promise<boolean> {
-  if (!password || !storedHash) {
+function getStringValue(row: any, keys: string[]): string | null {
+  for (const key of keys) {
+    const value = row?.[key];
+
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return null;
+}
+
+function getPasswordParts(row: any): {
+  hash: string | null;
+  salt: string | null;
+} {
+  const hash = getStringValue(row, [
+    "password_hash",
+    "password",
+    "hashed_password",
+    "crypt",
+  ]);
+
+  const salt = getStringValue(row, ["salt"]);
+
+  return { hash, salt };
+}
+
+function getRowRole(row: any): Role | null {
+  const value = getStringValue(row, ["role", "user_role", "type"])?.toLowerCase();
+
+  if (value === "admin" || value === "user") {
+    return value;
+  }
+
+  return null;
+}
+
+function isRowActive(row: any): boolean {
+  if (row?.is_active === false || row?.active === false) {
     return false;
   }
 
-  // 1) bcrypt — الأفضل والأحدث
-  if (storedHash.startsWith("$2")) {
-    try {
-      const bcryptModule: any = await import("bcryptjs");
-      const bcrypt = bcryptModule.default ?? bcryptModule;
+  const status = String(row?.status || "").trim().toLowerCase();
 
-      if (typeof bcrypt.compare === "function") {
-        return await bcrypt.compare(password, storedHash);
-      }
-    } catch {
-      return false;
-    }
+  if (
+    status === "inactive" ||
+    status === "disabled" ||
+    status === "banned" ||
+    status === "suspended"
+  ) {
+    return false;
   }
 
-  // 2) fallback متوافق مع النظام القديم: SHA-256 + salt
-  if (storedSalt) {
-    try {
-      const computed = crypto
-        .createHash("sha256")
-        .update(password + storedSalt)
-        .digest("hex");
-
-      if (computed.length !== storedHash.length) {
-        return false;
-      }
-
-      return crypto.timingSafeEqual(
-        Buffer.from(computed, "hex"),
-        Buffer.from(storedHash, "hex")
-      );
-    } catch {
-      return false;
-    }
-  }
-
-  return false;
+  return true;
 }
 
-async function maybeUpgradePassword(
-  supabase: any,
-  table: "admin_users" | "users",
-  userId: string,
-  password: string,
-  currentHash?: string | null
-): Promise<void> {
-  // لو Hash بالفعل bcrypt، لا حاجة للترقية
-  if (!currentHash || currentHash.startsWith("$2")) {
-    return;
+function getTokenVersion(row: any): number | undefined {
+  const raw = row?.token_version ?? row?.auth_version ?? row?.password_version;
+  const num = Number(raw);
+
+  return Number.isFinite(num) ? num : undefined;
+}
+
+function publicUser(row: any, role: Role): PublicUser {
+  return {
+    id: String(row?.id ?? ""),
+    email: String(row?.email ?? ""),
+    name:
+      getStringValue(row, ["name", "full_name", "display_name"]) ?? null,
+    role,
+  };
+}
+
+function sessionExtras(row: any): Record<string, unknown> {
+  const extras: Record<string, unknown> = {};
+
+  const email = getStringValue(row, ["email"]);
+  if (email) {
+    extras.email = email;
   }
 
-  try {
-    const bcryptModule: any = await import("bcryptjs");
-    const bcrypt = bcryptModule.default ?? bcryptModule;
+  const tv = getTokenVersion(row);
+  if (typeof tv === "number") {
+    extras.tv = tv;
+  }
 
-    if (typeof bcrypt.hash !== "function") {
+  return extras;
+}
+
+function withSecurityHeaders(res: NextResponse): NextResponse {
+  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  res.headers.set("Pragma", "no-cache");
+  res.headers.set("Vary", "Cookie, Origin, Authorization");
+  res.headers.set("X-Content-Type-Options", "nosniff");
+  res.headers.set("X-Frame-Options", "DENY");
+  res.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+  if (isProduction) {
+    res.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  }
+
+  return res;
+}
+
+function unauthorizedResponse(): NextResponse {
+  return withSecurityHeaders(
+    NextResponse.json(
+      {
+        ok: false,
+        error: "invalid_credentials",
+        message: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      },
+      { status: 401 }
+    )
+  );
+}
+
+function inactiveResponse(): NextResponse {
+  return withSecurityHeaders(
+    NextResponse.json(
+      {
+        ok: false,
+        error: "inactive_account",
+        message: "هذا الحساب غير مفعّل. تواصل مع المسؤول.",
+      },
+      { status: 403 }
+    )
+  );
+}
+
+function serverErrorResponse(message = "حدث خطأ في الخادم. حاول لاحقًا."): NextResponse {
+  return withSecurityHeaders(
+    NextResponse.json(
+      {
+        ok: false,
+        error: "server_error",
+        message,
+      },
+      { status: 500 }
+    )
+  );
+}
+
+function rateLimitedResponse(retryAfter: number): NextResponse {
+  return withSecurityHeaders(
+    NextResponse.json(
+      {
+        ok: false,
+        error: "rate_limited",
+        message: "عدد المحاولات كثير جدًا. حاول لاحقًا.",
+        retryAfter,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(retryAfter || Math.ceil(RATE_WINDOW_MS / 1000)),
+          "X-RateLimit-Limit": String(MAX_ATTEMPTS_PER_IP),
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    )
+  );
+}
+
+// ============================================================
+// Query Helpers
+// ============================================================
+
+function withTimeout<T>(
+  promise: PromiseLike<T>,
+  ms: number,
+  label: string
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`${label} timeout`));
+    }, ms);
+
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function runQuery(
+  builder: any,
+  label: string
+): Promise<{
+  data: any | null;
+  error: any | null;
+}> {
+  try {
+    const result = await withTimeout(
+      builder as PromiseLike<any>,
+      DB_TIMEOUT_MS,
+      label
+    );
+
+    return {
+      data: result?.data ?? null,
+      error: result?.error ?? null,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error,
+    };
+  }
+}
+
+function getErrorMessage(error: unknown): string {
+  return String((error as any)?.message || error || "");
+}
+
+function isMissingTableError(error: unknown): boolean {
+  const message = getErrorMessage(error);
+
+  return (
+    /does not exist/i.test(message) ||
+    /Could not find the table/i.test(message) ||
+    /relation/i.test(message) ||
+    /schema/i.test(message)
+  );
+}
+
+function isMissingColumnError(error: unknown, column: string): boolean {
+  const message = getErrorMessage(error);
+
+  return (
+    new RegExp(column, "i").test(message) &&
+    (/column.*does not exist/i.test(message) ||
+      /Could not find the column/i.test(message) ||
+      /schema.*does not exist/i.test(message))
+  );
+}
+
+// ============================================================
+// DB Lookup
+// ============================================================
+
+async function findRowByEmail(
+  client: any,
+  table: "admin_users" | "users",
+  email: string
+): Promise<any | null> {
+  const attempts = [
+    () => client.from(table).select("*").ilike("email", email).maybeSingle(),
+    () => client.from(table).select("*").eq("email", email).maybeSingle(),
+  ];
+
+  for (const createBuilder of attempts) {
+    const result = await runQuery(createBuilder(), `find_${table}_by_email`);
+
+    if (!result.error) {
+      return result.data;
+    }
+
+    if (isMissingTableError(result.error)) {
+      return null;
+    }
+
+    if (isMissingColumnError(result.error, "email")) {
+      continue;
+    }
+
+    console.error(`[Login] ${table} lookup error:`, result.error);
+    return null;
+  }
+
+  return null;
+}
+
+async function getAdminStatusById(
+  client: any,
+  userId: string
+): Promise<{
+  exists: boolean;
+  active: boolean;
+}> {
+  const result = await runQuery(
+    client
+      .from("admin_users")
+      .select("*")
+      .eq("id", idForQuery(userId))
+      .maybeSingle(),
+    "admin_status_by_id"
+  );
+
+  if (!result.error) {
+    if (!result.data) {
+      return { exists: false, active: false };
+    }
+
+    return {
+      exists: true,
+      active: isRowActive(result.data),
+    };
+  }
+
+  if (isMissingTableError(result.error)) {
+    return { exists: false, active: false };
+  }
+
+  if (isMissingColumnError(result.error, "id")) {
+    return { exists: false, active: false };
+  }
+
+  console.warn("[Login] admin_users status check error:", result.error);
+  return { exists: false, active: false };
+}
+
+// ============================================================
+// Password Upgrade (best-effort)
+// ============================================================
+
+async function maybeUpgradePassword(
+  client: any,
+  table: "admin_users" | "users",
+  row: any,
+  password: string
+): Promise<void> {
+  try {
+    const { hash, salt } = getPasswordParts(row);
+
+    if (!hash) {
       return;
     }
 
-    const newHash = await bcrypt.hash(password, 12);
+    // لا ترقية إذا كان bcrypt بالفعل
+    if (hash.startsWith("$2")) {
+      return;
+    }
 
-    await supabase
-      .from(table)
-      .update({
-        password_hash: newHash,
-        salt: null,
-      })
-      .eq("id", userId);
-  } catch {
-    // فشل الترقية لا يجب أن يكسر تسجيل الدخول
+    // نرقّي فقط SHA-256 القديم المملّح، لأنه أضعف
+    const isLegacySaltedSha256 = Boolean(salt && hash.length === 64);
+
+    if (!isLegacySaltedSha256) {
+      return;
+    }
+
+    const newHash = await hashPasswordCombinedAsync(password);
+    const id = idForQuery(String(row.id));
+
+    const payloads = [
+      { password_hash: newHash, salt: null },
+      { password: newHash, salt: null },
+      { hashed_password: newHash, salt: null },
+      { password_hash: newHash },
+      { password: newHash },
+      { hashed_password: newHash },
+    ];
+
+    for (const payload of payloads) {
+      const result = await runQuery(
+        client.from(table).update(payload as any).eq("id", id),
+        `upgrade_password_${table}`
+      );
+
+      if (!result.error) {
+        return;
+      }
+
+      if (isMissingTableError(result.error)) {
+        return;
+      }
+
+      if (
+        isMissingColumnError(result.error, "password_hash") ||
+        isMissingColumnError(result.error, "password") ||
+        isMissingColumnError(result.error, "hashed_password") ||
+        isMissingColumnError(result.error, "salt")
+      ) {
+        continue;
+      }
+
+      console.warn(`[Login] password upgrade error for ${table}:`, result.error);
+      return;
+    }
+  } catch (error) {
+    console.warn("[Login] password upgrade unexpected error:", error);
   }
 }
 
-async function logAttempt(params: {
-  role?: Role | null;
-  email: string;
-  ip: string;
-  userAgent: string;
-  success: boolean;
-  reason?: string;
-}): Promise<void> {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_KEY;
+// ============================================================
+// Audit Log (best-effort)
+// ============================================================
 
-  if (!url || !key) {
+async function logAttempt(
+  client: any,
+  params: {
+    role?: Role | null;
+    email: string;
+    ip: string;
+    userAgent: string;
+    success: boolean;
+    reason?: string;
+  }
+): Promise<void> {
+  if (!client) {
     return;
   }
 
-  try {
-    const supabase = createClient(url, key, {
-      auth: {
-        persistSession: false,
-      },
-    });
-
-    await supabase.from("auth_login_attempts").insert({
+  const rows = [
+    {
       role: params.role ?? null,
       email: params.email,
       ip: params.ip,
@@ -282,99 +601,99 @@ async function logAttempt(params: {
       success: params.success,
       failure_reason: params.reason ?? null,
       created_at: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error("[Login] Failed to write audit log:", error);
+    },
+    {
+      role: params.role ?? null,
+      email: params.email,
+      ip: params.ip,
+      success: params.success,
+      failure_reason: params.reason ?? null,
+      created_at: new Date().toISOString(),
+    },
+    {
+      email: params.email,
+      success: params.success,
+      failure_reason: params.reason ?? null,
+      created_at: new Date().toISOString(),
+    },
+    {
+      email: params.email,
+      success: params.success,
+    },
+  ];
+
+  for (const row of rows) {
+    try {
+      const result = await withTimeout(
+        client.from("auth_login_attempts").insert(row) as PromiseLike<any>,
+        AUDIT_TIMEOUT_MS,
+        "login_audit"
+      );
+
+      const error = (result as any)?.error;
+
+      if (!error) {
+        return;
+      }
+
+      if (isMissingTableError(error)) {
+        return;
+      }
+
+      if (
+        isMissingColumnError(error, "role") ||
+        isMissingColumnError(error, "ip") ||
+        isMissingColumnError(error, "user_agent") ||
+        isMissingColumnError(error, "failure_reason") ||
+        isMissingColumnError(error, "created_at")
+      ) {
+        continue;
+      }
+
+      console.warn("[Login] audit log error:", error);
+      return;
+    } catch (error) {
+      console.warn("[Login] audit log unexpected error:", error);
+      return;
+    }
   }
 }
 
-async function fetchAdminByEmail(
-  supabase: any,
-  email: string
-): Promise<RowResult> {
-  // حاول أولًا مع is_active
-  const first = await supabase
-    .from("admin_users")
-    .select("id, email, name, password_hash, salt, is_active")
-    .eq("email", email)
-    .maybeSingle();
+// ============================================================
+// Body Parser
+// ============================================================
 
-  if (!first.error) {
-    return { data: first.data, error: null };
-  }
+async function readLoginBody(req: NextRequest): Promise<LoginBody | null> {
+  const contentType = (req.headers.get("content-type") || "").toLowerCase();
 
-  const message = String(first.error?.message || "");
+  try {
+    if (
+      contentType.includes("application/x-www-form-urlencoded") ||
+      contentType.includes("multipart/form-data")
+    ) {
+      const formData = await req.formData();
 
-  // لو عمود is_active غير موجود، أعد المحاولة بدونه
-  if (/is_active/i.test(message)) {
-    const second = await supabase
-      .from("admin_users")
-      .select("id, email, name, password_hash, salt")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (!second.error) {
-      return { data: second.data, error: null };
+      return {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        lang: formData.get("lang"),
+      };
     }
 
-    return { data: null, error: second.error };
+    return (await req.json()) as LoginBody;
+  } catch {
+    try {
+      const formData = await req.formData();
+
+      return {
+        email: formData.get("email"),
+        password: formData.get("password"),
+        lang: formData.get("lang"),
+      };
+    } catch {
+      return null;
+    }
   }
-
-  // لو جدول admin_users غير موجود، نكمل كأنه لا يوجد أدمن بهذا الإيميل
-  if (
-    /does not exist/i.test(message) ||
-    /Could not find the table/i.test(message) ||
-    /relation/i.test(message)
-  ) {
-    return { data: null, error: null };
-  }
-
-  return { data: null, error: first.error };
-}
-
-function setAuthCookie(
-  res: NextResponse,
-  name: string,
-  value: string,
-  maxAge: number,
-  sameSite: "strict" | "lax" = "lax"
-): void {
-  res.cookies.set(name, value, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? sameSite : "lax",
-    maxAge,
-    path: "/",
-  });
-}
-
-function publicUser(row: Record<string, any>, role: Role) {
-  return {
-    id: row.id,
-    email: row.email,
-    name: row.name ?? null,
-    role,
-  };
-}
-
-function unauthorizedResponse() {
-  return NextResponse.json(
-    {
-      ok: false,
-      error: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-    },
-    { status: 401 }
-  );
-}
-
-function serverErrorResponse() {
-  return NextResponse.json(
-    {
-      ok: false,
-      error: "خطأ في الخادم. حاول لاحقًا.",
-    },
-    { status: 500 }
-  );
 }
 
 // ============================================================
@@ -386,7 +705,7 @@ export async function POST(req: NextRequest) {
   const userAgent = getUserAgent(req);
 
   try {
-    // 1) منع Body ضخم
+    // 1) Body size guard
     const contentLengthHeader = req.headers.get("content-length");
     const contentLength = Number(contentLengthHeader || "0");
 
@@ -394,59 +713,77 @@ export async function POST(req: NextRequest) {
       Number.isFinite(contentLength) &&
       contentLength > MAX_BODY_BYTES
     ) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "الطلب كبير جدًا",
-        },
-        { status: 413 }
+      return withSecurityHeaders(
+        NextResponse.json(
+          {
+            ok: false,
+            error: "payload_too_large",
+            message: "الطلب كبير جدًا.",
+          },
+          { status: 413 }
+        )
       );
     }
 
-    // 2) قراءة الـ body
-    let body: LoginBody;
+    // 2) Read body
+    const body = await readLoginBody(req);
 
-    try {
-      body = (await req.json()) as LoginBody;
-    } catch {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "صيغة الطلب غير صحيحة",
-        },
-        { status: 400 }
+    if (!body) {
+      return withSecurityHeaders(
+        NextResponse.json(
+          {
+            ok: false,
+            error: "bad_request",
+            message: "صيغة الطلب غير صحيحة.",
+          },
+          { status: 400 }
+        )
       );
     }
 
-    const email = normalizeEmail(body.email);
-    const password = typeof body.password === "string" ? body.password : "";
+    const email = normalizeAuthEmail(body.email);
+    const password =
+      typeof body.password === "string" ? body.password : "";
 
-    // 3) تحقق أساسي
+    const lang = normalizeLang(
+      body.lang ||
+        req.nextUrl.searchParams.get("lang") ||
+        req.cookies.get("NEXT_LOCALE")?.value ||
+        req.headers.get("x-language")
+    );
+
+    // 3) Basic validation
     if (!email || !password) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "البريد الإلكتروني وكلمة المرور مطلوبان",
-        },
-        { status: 400 }
+      return withSecurityHeaders(
+        NextResponse.json(
+          {
+            ok: false,
+            error: "missing_credentials",
+            message: "البريد الإلكتروني وكلمة المرور مطلوبان.",
+          },
+          { status: 400 }
+        )
       );
     }
 
-    if (!isValidEmail(email)) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "صيغة البريد الإلكتروني غير صحيحة",
-        },
-        { status: 400 }
+    if (!isValidAuthEmail(email)) {
+      return withSecurityHeaders(
+        NextResponse.json(
+          {
+            ok: false,
+            error: "invalid_email",
+            message: "صيغة البريد الإلكتروني غير صحيحة.",
+          },
+          { status: 400 }
+        )
       );
     }
 
-    // 4) Rate Limiting
+    // 4) Rate limit
     const rate = consumeRateLimit(ip, email);
 
     if (rate.limited) {
-      await logAttempt({
+      await logAttempt(null, {
         email,
         ip,
         userAgent,
@@ -454,68 +791,49 @@ export async function POST(req: NextRequest) {
         reason: "rate_limited",
       });
 
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "عدد المحاولات كثير جدًا. حاول لاحقًا.",
-          retryAfter: rate.retryAfter,
-        },
-        {
-          status: 429,
-          headers: {
-            "Retry-After": String(rate.retryAfter || 900),
-          },
-        }
-      );
+      return rateLimitedResponse(rate.retryAfter);
     }
 
-    // 5) Supabase config
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    // 5) Supabase client
+    let client: any;
 
-    if (!supabaseUrl || !supabaseKey) {
-      console.error("[Login] Supabase is not configured.");
-      return serverErrorResponse();
+    try {
+      client = createAdminClient();
+    } catch (error) {
+      console.error("[Login] Supabase client error:", error);
+      return serverErrorResponse("الإعدادات الخادمية غير مكتملة.");
     }
-
-    const supabase = createClient(supabaseUrl, supabaseKey, {
-      auth: {
-        persistSession: false,
-      },
-    });
 
     // ========================================================
-    // أولًا: محاولة الأدمن من admin_users
+    // First: Admin from admin_users
     // ========================================================
 
-    const adminResult = await fetchAdminByEmail(supabase, email);
+    const adminRow = await findRowByEmail(client, "admin_users", email);
 
-    if (adminResult.error) {
-      console.error("[Login] Admin lookup error:", adminResult.error);
+    if (adminRow) {
+      if (!isRowActive(adminRow)) {
+        await logAttempt(client, {
+          role: "admin",
+          email,
+          ip,
+          userAgent,
+          success: false,
+          reason: "account_disabled",
+        });
 
-      await logAttempt({
-        role: "admin",
-        email,
-        ip,
-        userAgent,
-        success: false,
-        reason: "admin_db_error",
-      });
+        return inactiveResponse();
+      }
 
-      return serverErrorResponse();
-    }
+      const { hash, salt } = getPasswordParts(adminRow);
 
-    if (adminResult.data) {
-      const adminUser = adminResult.data;
-
-      const validPassword = await verifyPasswordFlexible(
+      const passwordOk = await verifyPassword(
         password,
-        adminUser.password_hash,
-        adminUser.salt
+        hash || "",
+        salt ?? undefined
       );
 
-      if (!validPassword) {
-        await logAttempt({
+      if (!passwordOk) {
+        await logAttempt(client, {
           role: "admin",
           email,
           ip,
@@ -527,69 +845,11 @@ export async function POST(req: NextRequest) {
         return unauthorizedResponse();
       }
 
-      if (adminUser.is_active === false) {
-        await logAttempt({
-          role: "admin",
-          email,
-          ip,
-          userAgent,
-          success: false,
-          reason: "account_disabled",
-        });
+      await maybeUpgradePassword(client, "admin_users", adminRow, password);
 
-        return NextResponse.json(
-          {
-            ok: false,
-            error: "هذا الحساب غير مفعّل. تواصل مع المسؤول.",
-          },
-          { status: 403 }
-        );
-      }
+      resetEmailRateLimit(email);
 
-      const adminSecret = getSecretForRole("admin");
-
-      if (!adminSecret) {
-        console.error("[Login] Missing ADMIN_SESSION_SECRET.");
-        return serverErrorResponse();
-      }
-
-      const now = Math.floor(Date.now() / 1000);
-
-      const adminPayload = {
-        userId: adminUser.id,
-        email: adminUser.email,
-        role: "admin",
-        ip,
-        userAgent: userAgent.slice(0, 200),
-        iat: now,
-        exp: now + ADMIN_SESSION_MAX_AGE,
-        jti: crypto.randomUUID(),
-      };
-
-      const adminToken = signSession(adminPayload, adminSecret);
-
-      // أيضًا نشغّل user_session للأدمن حتى تتوافق مع endpoints القديمة
-      const userSecret = getSecretForRole("user") || adminSecret;
-
-      const userPayloadForAdmin = {
-        ...adminPayload,
-        role: "admin",
-      };
-
-      const userTokenForAdmin = signSession(
-        userPayloadForAdmin,
-        userSecret
-      );
-
-      await maybeUpgradePassword(
-        supabase,
-        "admin_users",
-        adminUser.id,
-        password,
-        adminUser.password_hash
-      );
-
-      await logAttempt({
+      await logAttempt(client, {
         role: "admin",
         email,
         ip,
@@ -599,59 +859,29 @@ export async function POST(req: NextRequest) {
 
       const res = NextResponse.json({
         ok: true,
-        user: publicUser(adminUser, "admin"),
+        role: "admin",
+        redirect: getRedirectForRole("admin", lang),
+        user: publicUser(adminRow, "admin"),
       });
 
-      setAuthCookie(
-        res,
-        "admin_session",
-        adminToken,
-        ADMIN_SESSION_MAX_AGE,
-        "strict"
-      );
+      try {
+        setAdminSessionCookies(res, String(adminRow.id), sessionExtras(adminRow));
+      } catch (error) {
+        console.error("[Login] set admin cookies error:", error);
+        return serverErrorResponse("تعذر إنشاء جلسة الأدمن.");
+      }
 
-      setAuthCookie(
-        res,
-        "user_session",
-        userTokenForAdmin,
-        ADMIN_SESSION_MAX_AGE,
-        "lax"
-      );
-
-      res.headers.set("Cache-Control", "no-store");
-      res.headers.set("X-Content-Type-Options", "nosniff");
-      res.headers.set("X-Frame-Options", "DENY");
-
-      return res;
+      return withSecurityHeaders(res);
     }
 
     // ========================================================
-    // ثانيًا: محاولة المستخدم العادي من users
+    // Second: User from users
     // ========================================================
 
-    const userResult = await supabase
-      .from("users")
-      .select("id, email, name, password_hash, salt")
-      .eq("email", email)
-      .maybeSingle();
+    const userRow = await findRowByEmail(client, "users", email);
 
-    if (userResult.error) {
-      console.error("[Login] User lookup error:", userResult.error);
-
-      await logAttempt({
-        role: "user",
-        email,
-        ip,
-        userAgent,
-        success: false,
-        reason: "user_db_error",
-      });
-
-      return serverErrorResponse();
-    }
-
-    if (!userResult.data) {
-      await logAttempt({
+    if (!userRow) {
+      await logAttempt(client, {
         role: "user",
         email,
         ip,
@@ -660,21 +890,33 @@ export async function POST(req: NextRequest) {
         reason: "user_not_found",
       });
 
-      // رسالة موحدة حتى لا نكشف إذا كان الإيميل موجودًا أم لا
       return unauthorizedResponse();
     }
 
-    const regularUser = userResult.data;
+    if (!isRowActive(userRow)) {
+      await logAttempt(client, {
+        role: getRowRole(userRow) ?? "user",
+        email,
+        ip,
+        userAgent,
+        success: false,
+        reason: "account_disabled",
+      });
 
-    const validPassword = await verifyPasswordFlexible(
+      return inactiveResponse();
+    }
+
+    const { hash, salt } = getPasswordParts(userRow);
+
+    const passwordOk = await verifyPassword(
       password,
-      regularUser.password_hash,
-      regularUser.salt
+      hash || "",
+      salt ?? undefined
     );
 
-    if (!validPassword) {
-      await logAttempt({
-        role: "user",
+    if (!passwordOk) {
+      await logAttempt(client, {
+        role: getRowRole(userRow) ?? "user",
         email,
         ip,
         userAgent,
@@ -685,38 +927,32 @@ export async function POST(req: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const userSecret = getSecretForRole("user");
+    let role: Role = getRowRole(userRow) ?? "user";
 
-    if (!userSecret) {
-      console.error("[Login] Missing USER_SESSION_SECRET.");
-      return serverErrorResponse();
+    // If users.role says admin, verify admin_users status if table exists
+    if (role === "admin") {
+      const adminStatus = await getAdminStatusById(client, String(userRow.id));
+
+      if (adminStatus.exists && !adminStatus.active) {
+        await logAttempt(client, {
+          role: "admin",
+          email,
+          ip,
+          userAgent,
+          success: false,
+          reason: "admin_disabled",
+        });
+
+        return inactiveResponse();
+      }
     }
 
-    const now = Math.floor(Date.now() / 1000);
+    await maybeUpgradePassword(client, "users", userRow, password);
 
-    const userPayload = {
-      userId: regularUser.id,
-      email: regularUser.email,
-      role: "user",
-      ip,
-      userAgent: userAgent.slice(0, 200),
-      iat: now,
-      exp: now + USER_SESSION_MAX_AGE,
-      jti: crypto.randomUUID(),
-    };
+    resetEmailRateLimit(email);
 
-    const userToken = signSession(userPayload, userSecret);
-
-    await maybeUpgradePassword(
-      supabase,
-      "users",
-      regularUser.id,
-      password,
-      regularUser.password_hash
-    );
-
-    await logAttempt({
-      role: "user",
+    await logAttempt(client, {
+      role,
       email,
       ip,
       userAgent,
@@ -725,20 +961,27 @@ export async function POST(req: NextRequest) {
 
     const res = NextResponse.json({
       ok: true,
-      user: publicUser(regularUser, "user"),
+      role,
+      redirect: getRedirectForRole(role, lang),
+      user: publicUser(userRow, role),
     });
 
-    setAuthCookie(res, "user_session", userToken, USER_SESSION_MAX_AGE, "lax");
+    try {
+      if (role === "admin") {
+        setAdminSessionCookies(res, String(userRow.id), sessionExtras(userRow));
+      } else {
+        setUserSessionCookies(res, String(userRow.id), sessionExtras(userRow));
+      }
+    } catch (error) {
+      console.error("[Login] set cookies error:", error);
+      return serverErrorResponse("تعذر إنشاء جلسة المستخدم.");
+    }
 
-    res.headers.set("Cache-Control", "no-store");
-    res.headers.set("X-Content-Type-Options", "nosniff");
-    res.headers.set("X-Frame-Options", "DENY");
-
-    return res;
+    return withSecurityHeaders(res);
   } catch (error) {
-    console.error("[Login] Unexpected error:", error);
+    console.error("[Login] unexpected error:", error);
 
-    await logAttempt({
+    await logAttempt(null, {
       email: "unknown",
       ip,
       userAgent,
@@ -755,16 +998,19 @@ export async function POST(req: NextRequest) {
 // ============================================================
 
 export async function GET() {
-  return NextResponse.json(
-    {
-      ok: false,
-      error: "Method not allowed",
-    },
-    {
-      status: 405,
-      headers: {
-        Allow: "POST",
+  return withSecurityHeaders(
+    NextResponse.json(
+      {
+        ok: false,
+        error: "method_not_allowed",
+        message: "Method not allowed",
       },
-    }
+      {
+        status: 405,
+        headers: {
+          Allow: "POST",
+        },
+      }
+    )
   );
 }
