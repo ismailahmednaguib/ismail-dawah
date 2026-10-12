@@ -8,12 +8,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 
-// بدل force-dynamic: الصفحة تتخزن ساعة (الآية بتتغير يومياً)
+// الصفحة تتخزن ساعة (الآية بتتغير يومياً)
 export const revalidate = 3600;
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"
 ).replace(/\/$/, "");
+
 // ============================================================
 // الأنواع
 // ============================================================
@@ -24,7 +25,6 @@ type QuickTool = {
   href: string;
   icon: string;
   title: Localized;
-  color: "primary" | "gold";
 };
 
 type SectionItem = {
@@ -38,56 +38,37 @@ type SectionItem = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
-  {
-    // Hero
-    badge: string;
-    title: string;
-    subtitle: string;
-    cta1: string;
-    cta2: string;
-    // Stats
-    statSections: string;
-    statLanguages: string;
-    statSurahs: string;
-    statFree: string;
-    // Sections
-    learnTitle: string;
-    learnSubtitle: string;
-    responsesTitle: string;
-    responsesSubtitle: string;
-    dawahTitle: string;
-    dawahSubtitle: string;
-    // Verse
-    verseLabel: string;
-    verseText: string;
-    verseSource: string;
-    // Download
-    downloadBadge: string;
-    downloadTitle: string;
-    downloadDesc: string;
-    downloadBtn: string;
-    downloadPage: string;
-    // Newsletter
-    newsletterTitle: string;
-    newsletterDesc: string;
-    newsletterPlaceholder: string;
-    newsletterBtn: string;
-    newsletterNote: string;
-    // CTA
-    ctaTitle: string;
-    ctaDesc: string;
-    ctaRegister: string;
-    ctaAbout: string;
-    // Meta
-    metaTitle: string;
-    metaDesc: string;
-    // Misc
-    explore: string;
-    live: string;
-  }
-> = {
+type UiText = {
+  badge: string;
+  title: string;
+  subtitle: string;
+  cta1: string;
+  cta2: string;
+  statSections: string;
+  statLanguages: string;
+  statSurahs: string;
+  statFree: string;
+  learnTitle: string;
+  learnSubtitle: string;
+  responsesTitle: string;
+  responsesSubtitle: string;
+  dawahTitle: string;
+  dawahSubtitle: string;
+  verseLabel: string;
+  downloadBadge: string;
+  downloadTitle: string;
+  downloadDesc: string;
+  downloadBtn: string;
+  downloadPage: string;
+  ctaTitle: string;
+  ctaDesc: string;
+  ctaRegister: string;
+  ctaAbout: string;
+  metaTitle: string;
+  metaDesc: string;
+};
+
+const UI: Record<Lang, UiText> = {
   ar: {
     badge: "✨ منصة دعوية شاملة",
     title: "منصة إسماعيل أحمد نجيب",
@@ -106,29 +87,19 @@ const UI: Record<
     dawahTitle: "الدعوة والتوعية",
     dawahSubtitle: "أدوات ومواد دعوية لنشر العلم الشرعي",
     verseLabel: "آية اليوم",
-    verseText: "﴿ اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ ۝ خَلَقَ الْإِنسَانَ مِنْ عَلَقٍ ﴾",
-    verseSource: "سورة العلق — الآيات 1-2",
     downloadBadge: "📱 تطبيق أندرويد",
     downloadTitle: "حمّل التطبيق الآن",
     downloadDesc:
       "افتح منصة إسماعيل أحمد نجيب كتطبيق مستقل على هاتفك الأندرويد بدون الحاجة لفتح المتصفح.",
     downloadBtn: "تحميل APK مباشرة",
     downloadPage: "صفحة التحميل",
-    newsletterTitle: "اشترك في النشرة البريدية",
-    newsletterDesc:
-      "احصل على جديد المحتوى الدعوي والدروس والفتاوى مباشرة إلى بريدك الإلكتروني.",
-    newsletterPlaceholder: "بريدك الإلكتروني",
-    newsletterBtn: "اشترك الآن",
-    newsletterNote: "لن نشارك بريدك مع أي طرف ثالث، ويمكنك الإلغاء في أي وقت.",
     ctaTitle: "ابدأ رحلتك الإيمانية اليوم",
-    ctaDesc: "انضم إلى آلاف المسلمين الذين يستخدمون المنصة يومياً للتعلم والتذكير.",
+    ctaDesc: "أنشئ حسابك المجاني وتابع وردك وأذكارك وتعلّمك في مكان واحد.",
     ctaRegister: "إنشاء حساب مجاني",
     ctaAbout: "تعرّف علينا",
     metaTitle: "منصة إسماعيل أحمد نجيب الدعوية",
     metaDesc:
       "منصة إسلامية شاملة للقرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، وأدوات الدعوة. بالعربية والإنجليزية.",
-    explore: "استكشف",
-    live: "مباشر",
   },
   en: {
     badge: "✨ Comprehensive Dawah Platform",
@@ -142,35 +113,29 @@ const UI: Record<
     statSurahs: "Quran Surahs",
     statFree: "100% Free",
     learnTitle: "Learn Islamic Sciences",
-    learnSubtitle: "Start with the fundamentals and progress in seeking Islamic knowledge",
+    learnSubtitle:
+      "Start with the fundamentals and progress in seeking Islamic knowledge",
     responsesTitle: "Knowledge & Responses",
-    responsesSubtitle: "Responses to doubts and contemporary issues with balanced Islamic methodology",
+    responsesSubtitle:
+      "Responses to doubts and contemporary issues with balanced Islamic methodology",
     dawahTitle: "Dawah & Awareness",
-    dawahSubtitle: "Tools and materials for spreading authentic Islamic knowledge",
+    dawahSubtitle:
+      "Tools and materials for spreading authentic Islamic knowledge",
     verseLabel: "Verse of the Day",
-    verseText: "\"Read in the name of your Lord who created — Created man from a clinging substance.\"",
-    verseSource: "Surah Al-Alaq — Verses 1-2",
     downloadBadge: "📱 Android App",
     downloadTitle: "Download the App Now",
     downloadDesc:
       "Open the Ismail Ahmed Naguib platform as a standalone app on your Android phone without needing a browser.",
     downloadBtn: "Download APK Direct",
     downloadPage: "Download Page",
-    newsletterTitle: "Subscribe to Our Newsletter",
-    newsletterDesc:
-      "Get the latest dawah content, lessons, and fatwas directly to your email inbox.",
-    newsletterPlaceholder: "Your email address",
-    newsletterBtn: "Subscribe Now",
-    newsletterNote: "We will never share your email with third parties, and you can unsubscribe anytime.",
     ctaTitle: "Start Your Faith Journey Today",
-    ctaDesc: "Join thousands of Muslims who use the platform daily for learning and remembrance.",
+    ctaDesc:
+      "Create your free account and keep your wird, adhkar and learning in one place.",
     ctaRegister: "Create Free Account",
     ctaAbout: "About Us",
     metaTitle: "Ismail Ahmed Naguib Dawah Platform",
     metaDesc:
       "A comprehensive Islamic platform for Quran, adhkar, fatwas, prayer times, Qibla, and dawah tools. In Arabic and English.",
-    explore: "Explore",
-    live: "Live",
   },
 };
 
@@ -179,14 +144,14 @@ const UI: Record<
 // ============================================================
 
 const QUICK_TOOLS: QuickTool[] = [
-  { href: "/quran", icon: "📖", title: { ar: "القرآن", en: "Quran" }, color: "primary" },
-  { href: "/adhkar", icon: "🤲", title: { ar: "الأذكار", en: "Adhkar" }, color: "gold" },
-  { href: "/prayer-times", icon: "🕐", title: { ar: "المواقيت", en: "Prayer Times" }, color: "primary" },
-  { href: "/qibla", icon: "🧭", title: { ar: "القبلة", en: "Qibla" }, color: "gold" },
-  { href: "/tasbih", icon: "📿", title: { ar: "المسبحة", en: "Tasbih" }, color: "primary" },
-  { href: "/calendar", icon: "📅", title: { ar: "التقويم", en: "Calendar" }, color: "gold" },
-  { href: "/fatwa", icon: "⚖️", title: { ar: "الفتاوى", en: "Fatwas" }, color: "primary" },
-  { href: "/ruqyah", icon: "🛡️", title: { ar: "الرقية", en: "Ruqyah" }, color: "gold" },
+  { href: "/quran", icon: "📖", title: { ar: "القرآن", en: "Quran" } },
+  { href: "/adhkar", icon: "🤲", title: { ar: "الأذكار", en: "Adhkar" } },
+  { href: "/prayer-times", icon: "🕐", title: { ar: "المواقيت", en: "Prayer Times" } },
+  { href: "/qibla", icon: "🧭", title: { ar: "القبلة", en: "Qibla" } },
+  { href: "/tasbih", icon: "📿", title: { ar: "المسبحة", en: "Tasbih" } },
+  { href: "/calendar", icon: "📅", title: { ar: "التقويم", en: "Calendar" } },
+  { href: "/fatwa", icon: "⚖️", title: { ar: "الفتاوى", en: "Fatwas" } },
+  { href: "/ruqyah", icon: "🛡️", title: { ar: "الرقية", en: "Ruqyah" } },
 ];
 
 // ============================================================
@@ -332,16 +297,14 @@ export async function generateMetadata({
 
   const l = lang as Lang;
   const ui = UI[l];
-  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app";
+  const ogImage = `${SITE_URL}/icon-512.png`;
 
   return {
-    title: {
-      default: ui.metaTitle,
-      template: `%s | ${ui.metaTitle}`,
-    },
+    // absolute: عشان الـ template اللي في الـ layout ما يكرّرش الاسم
+    title: { absolute: ui.metaTitle },
     description: ui.metaDesc,
     alternates: {
-      canonical: `/${l}`,
+      canonical: `${SITE_URL}/${l}`,
       languages: {
         ar: `${SITE_URL}/ar`,
         en: `${SITE_URL}/en`,
@@ -357,7 +320,7 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: "/icon-512.png.",
+          url: ogImage, // كان فيه نقطة زيادة في الآخر: "/icon-512.png."
           width: 512,
           height: 512,
           alt: ui.metaTitle,
@@ -365,10 +328,10 @@ export async function generateMetadata({
       ],
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary", // الصورة مربعة 512×512 فمش مناسبة لـ summary_large_image
       title: ui.metaTitle,
       description: ui.metaDesc,
-      images: ["/icon-512.png"],
+      images: [ogImage],
     },
   };
 }
@@ -392,38 +355,41 @@ export default async function HomePage({
   const l = lang as Lang;
   const isRTL = l === "ar";
   const ui = UI[l];
-  const verse = await getVerseOfTheDay(l);
+  const verse = getVerseOfTheDay(l);
 
-  // JSON-LD
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: ui.metaTitle,
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/${l}`,
+    url: `${SITE_URL}/${l}`,
     inLanguage: l,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/${l}/search?q={search_term_string}`,
+        urlTemplate: `${SITE_URL}/${l}/search?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+    <main
+      id="main-content"
+      dir={isRTL ? "rtl" : "ltr"}
+      className="min-h-screen bg-cream-dark dark:bg-gray-900"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
-      <Header lang={l} />
+      <Header lang={l} overHero />
 
       {/* ============ Hero Section ============ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-20 text-white md:py-28">
-        {/* زخرفة خلفية */}
         <div
+          aria-hidden="true"
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage:
@@ -432,17 +398,20 @@ export default async function HomePage({
           }}
         />
 
-        {/* دوائر متوهجة */}
-        <div className="absolute -top-24 -end-24 h-96 w-96 rounded-full bg-primary-400/20 blur-3xl" />
-        <div className="absolute -bottom-32 -start-20 h-96 w-96 rounded-full bg-gold-500/15 blur-3xl" />
+        <div
+          aria-hidden="true"
+          className="absolute -top-24 -end-24 h-96 w-96 rounded-full bg-primary-400/20 blur-3xl"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute -bottom-32 -start-20 h-96 w-96 rounded-full bg-gold-500/15 blur-3xl"
+        />
 
         <div className="container-page relative text-center">
-          {/* الشارة */}
           <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-5 py-2 text-sm font-bold backdrop-blur-sm">
             {ui.badge}
           </span>
 
-          {/* العنوان */}
           <h1
             className="mb-6 text-4xl font-black leading-tight md:text-6xl"
             style={{ fontFamily: "var(--font-amiri)" }}
@@ -450,12 +419,10 @@ export default async function HomePage({
             {ui.title}
           </h1>
 
-          {/* الوصف */}
           <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-primary-50">
             {ui.subtitle}
           </p>
 
-          {/* أزرار CTA */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
               href={`/${l}/learn`}
@@ -469,6 +436,8 @@ export default async function HomePage({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.5"
+                aria-hidden="true"
+                focusable="false"
                 className={isRTL ? "rotate-180" : ""}
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
@@ -478,15 +447,14 @@ export default async function HomePage({
               href={`/${l}/live`}
               className="inline-flex items-center gap-2 rounded-2xl border-2 border-white/40 px-7 py-3.5 text-base font-bold text-white transition-all duration-300 hover:bg-white/10"
             >
-              <span className="relative flex h-3 w-3">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+              <span aria-hidden="true" className="relative flex h-3 w-3">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75 motion-reduce:animate-none" />
                 <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
               </span>
               {ui.cta2}
             </Link>
           </div>
 
-          {/* إحصائيات */}
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
             <HeroStatCard value="35+" label={ui.statSections} />
             <HeroStatCard value="2" label={ui.statLanguages} />
@@ -496,7 +464,7 @@ export default async function HomePage({
         </div>
 
         {/* موجة سفلية */}
-        <div className="relative mt-16">
+        <div className="relative mt-16" aria-hidden="true">
           <svg viewBox="0 0 1440 80" fill="none" className="block w-full">
             <path
               d="M0 80L60 70C120 60 240 40 360 30C480 20 600 20 720 25C840 30 960 40 1080 45C1200 50 1320 50 1380 50L1440 50V80H1380C1320 80 1200 80 1080 80C960 80 840 80 720 80C600 80 480 80 360 80C240 80 120 80 60 80H0Z"
@@ -507,7 +475,7 @@ export default async function HomePage({
       </section>
 
       {/* ============ الأدوات السريعة ============ */}
-      <section className="container-page -mt-8 relative z-10">
+      <section className="container-page relative z-10 -mt-8">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {QUICK_TOOLS.map((tool) => (
             <Link
@@ -515,7 +483,10 @@ export default async function HomePage({
               href={`/${l}${tool.href}`}
               className="card card-interactive group flex flex-col items-center gap-2 p-4 text-center transition-all hover:-translate-y-1"
             >
-              <span className="text-3xl transition-transform duration-300 group-hover:scale-110">
+              <span
+                aria-hidden="true"
+                className="text-3xl transition-transform duration-300 group-hover:scale-110"
+              >
                 {tool.icon}
               </span>
               <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
@@ -535,10 +506,12 @@ export default async function HomePage({
           >
             📚 {ui.learnTitle}
           </h2>
-          <div className="islamic-divider my-0">
+          <div className="islamic-divider my-0" aria-hidden="true">
             <span className="text-xl text-gold-500">✦</span>
           </div>
-          <p className="section-subtitle mx-auto max-w-2xl">{ui.learnSubtitle}</p>
+          <p className="section-subtitle mx-auto max-w-2xl">
+            {ui.learnSubtitle}
+          </p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -558,7 +531,7 @@ export default async function HomePage({
             >
               🧠 {ui.responsesTitle}
             </h2>
-            <div className="islamic-divider my-0">
+            <div className="islamic-divider my-0" aria-hidden="true">
               <span className="text-xl text-gold-500">✦</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">
@@ -578,12 +551,14 @@ export default async function HomePage({
       <section className="container-page py-16 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="card relative overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-10 text-center md:p-14 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
-            <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
+            <div
+              aria-hidden="true"
+              className="gradient-gold absolute inset-x-0 top-0 h-1.5"
+            />
 
-            <p className="mb-4 text-xs font-black uppercase tracking-wider text-gold-600 dark:text-gold-400">
+            <p className="mb-4 text-xs font-black tracking-wider text-gold-600 dark:text-gold-400">
               {ui.verseLabel}
             </p>
-
 
             <p
               className="mb-6 text-2xl font-black leading-[2.2] text-slate-900 md:text-3xl dark:text-white"
@@ -591,7 +566,6 @@ export default async function HomePage({
             >
               {verse.text}
             </p>
-
 
             <p className="text-sm font-bold text-gold-700 dark:text-gold-300">
               {verse.source}
@@ -609,10 +583,12 @@ export default async function HomePage({
           >
             📢 {ui.dawahTitle}
           </h2>
-          <div className="islamic-divider my-0">
+          <div className="islamic-divider my-0" aria-hidden="true">
             <span className="text-xl text-gold-500">✦</span>
           </div>
-          <p className="section-subtitle mx-auto max-w-2xl">{ui.dawahSubtitle}</p>
+          <p className="section-subtitle mx-auto max-w-2xl">
+            {ui.dawahSubtitle}
+          </p>
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -624,12 +600,16 @@ export default async function HomePage({
 
       {/* ============ النشرة البريدية ============ */}
       <section className="container-page pb-16 md:pb-20">
-  <Newsletter lang={l} />
-</section>
+        <Newsletter lang={l} />
+      </section>
+
       {/* ============ تطبيق أندرويد ============ */}
       <section className="container-page pb-16 md:pb-20">
         <div className="card relative overflow-hidden border-2 border-primary-200 p-8 md:p-10 dark:border-primary-800">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
+          <div
+            aria-hidden="true"
+            className="gradient-primary absolute inset-x-0 top-0 h-1.5"
+          />
 
           <div className="mx-auto max-w-3xl text-center">
             <span className="badge-primary mb-5">{ui.downloadBadge}</span>
@@ -651,7 +631,18 @@ export default async function HomePage({
                 download="ismail-dawah.apk"
                 className="btn-primary inline-flex items-center gap-2"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="7 10 12 15 17 10" />
                   <line x1="12" y1="15" x2="12" y2="3" />
@@ -670,6 +661,7 @@ export default async function HomePage({
       {/* ============ CTA النهائي ============ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-16 text-white md:py-20">
         <div
+          aria-hidden="true"
           className="absolute inset-0 opacity-10"
           style={{
             backgroundImage:
@@ -704,12 +696,14 @@ export default async function HomePage({
         </div>
       </section>
 
-<Footer lang={l} showNewsletter={false} />    </main>
+      {/* الصفحة بتنتهي بسكشن ملوّن → flushTop يشيل الفراغ بينه وبين الفوتر */}
+      <Footer lang={l} showNewsletter={false} flushTop />
+    </main>
   );
 }
 
 // ============================================================
-// مكون HeroStatCard
+// HeroStatCard
 // ============================================================
 
 function HeroStatCard({ value, label }: { value: string; label: string }) {
@@ -722,7 +716,8 @@ function HeroStatCard({ value, label }: { value: string; label: string }) {
 }
 
 // ============================================================
-// مكون SectionCard
+// SectionCard
+// (كان بيستخدم نوع اسمه SectionItem غير معرّف — دلوقتي معرّف فوق)
 // ============================================================
 
 function SectionCard({
@@ -749,10 +744,14 @@ function SectionCard({
       href={`/${lang}${item.href}`}
       className="card card-interactive group relative overflow-hidden p-6 transition-all duration-300 hover:-translate-y-1"
     >
-      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`} />
+      <div
+        aria-hidden="true"
+        className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+      />
 
       <div className="mb-4 flex items-start gap-4">
         <span
+          aria-hidden="true"
           className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${iconBg} text-3xl shadow-sm`}
         >
           {item.icon}
@@ -779,6 +778,8 @@ function SectionCard({
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          aria-hidden="true"
+          focusable="false"
           className="mt-1 shrink-0 text-slate-300 transition-all duration-300 group-hover:translate-x-1 group-hover:text-primary-500 rtl:rotate-180 rtl:group-hover:-translate-x-1 dark:text-slate-600"
         >
           <path d="M5 12h14M12 5l7 7-7 7" />

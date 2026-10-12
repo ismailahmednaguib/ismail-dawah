@@ -13,42 +13,27 @@ import type { Lang } from "@/lib/i18n";
 type HeaderProps = {
   lang?: Lang;
   settings?: Record<string, unknown> | null;
+  /**
+   * مرّرها true في الصفحات اللي الهيدر بيظهر فيها فوق خلفية داكنة (زي هيرو الصفحة الرئيسية).
+   * الهيدر وقتها بيستخدم ألوان فاتحة طالما المستخدم لسه ما عملش scroll.
+   */
+  overHero?: boolean;
 };
 
 // ============================================================
 // Path helpers
 // ============================================================
 
-/**
- * Regex آمن للتعرف على بادئة اللغة.
- *
- * يقبل:
- * - /ar
- * - /ar/...
- * - /en
- * - /en/...
- *
- * ولا يخطئ مع:
- * - /archive
- * - /english
- */
 const LANG_PATH_REGEX = /^\/(ar|en)(?=\/|$)/;
 
 function normalizePath(path: string | null | undefined): string {
   let p = String(path ?? "/").trim();
 
-  if (!p) {
-    p = "/";
-  }
+  if (!p) p = "/";
+  if (!p.startsWith("/")) p = `/${p}`;
 
-  if (!p.startsWith("/")) {
-    p = `/${p}`;
-  }
-
-  // منع الـ double slash
   p = p.replace(/\/{2,}/g, "/");
 
-  // إزالة الشرطة الأخيرة إلا للجذر
   if (p.length > 1 && p.endsWith("/")) {
     p = p.slice(0, -1);
   }
@@ -70,19 +55,13 @@ function getLangFromPath(path: string): Lang {
 
 function localizedPath(lang: Lang, pathWithoutLang: string): string {
   const normalized = normalizePath(pathWithoutLang);
-
-  if (normalized === "/") {
-    return `/${lang}`;
-  }
-
-  return `/${lang}${normalized}`;
+  return normalized === "/" ? `/${lang}` : `/${lang}${normalized}`;
 }
 
 function getText(value: unknown, fallback: string): string {
   if (typeof value === "string" && value.trim()) {
     return value.trim();
   }
-
   return fallback;
 }
 
@@ -90,14 +69,15 @@ function getText(value: unknown, fallback: string): string {
 // Component
 // ============================================================
 
-export default function Header({ lang: langProp, settings }: HeaderProps) {
+export default function Header({
+  lang: langProp,
+  settings,
+  overHero = false,
+}: HeaderProps) {
   const pathname = usePathname();
   const megaRef = useRef<HTMLDivElement>(null);
 
-  const normalizedPathname = useMemo(
-    () => normalizePath(pathname),
-    [pathname]
-  );
+  const normalizedPathname = useMemo(() => normalizePath(pathname), [pathname]);
 
   const lang = useMemo<Lang>(
     () => langProp || getLangFromPath(normalizedPathname),
@@ -133,22 +113,18 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
   const [megaOpen, setMegaOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
+  // الهيدر شفاف فوق خلفية داكنة → نستخدم ألوان فاتحة
+  const onDark = overHero && !scrolled && !mobileOpen;
+
   // ==========================================================
   // Scroll effect
   // ==========================================================
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-
+    const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
-
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   // ==========================================================
@@ -173,7 +149,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
   }, []);
 
   // ==========================================================
-  // Close menus on route change + sync theme class
+  // Close menus on route change
   // ==========================================================
 
   useEffect(() => {
@@ -195,10 +171,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
     };
 
     window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   // ==========================================================
@@ -206,14 +179,10 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
   // ==========================================================
 
   useEffect(() => {
-    if (!megaOpen) {
-      return;
-    }
+    if (!megaOpen) return;
 
     const onPointerDown = (event: PointerEvent) => {
-      if (!megaRef.current) {
-        return;
-      }
+      if (!megaRef.current) return;
 
       if (!megaRef.current.contains(event.target as Node)) {
         setMegaOpen(false);
@@ -221,10 +190,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
     };
 
     document.addEventListener("pointerdown", onPointerDown);
-
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-    };
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [megaOpen]);
 
   // ==========================================================
@@ -232,9 +198,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
   // ==========================================================
 
   useEffect(() => {
-    if (!mobileOpen) {
-      return;
-    }
+    if (!mobileOpen) return;
 
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -268,15 +232,12 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
 
   const isActiveHref = useCallback(
     (href: string) => {
-      const target = localizedPath(lang, href);
-      const normalizedTarget = normalizePath(target);
+      const normalizedTarget = normalizePath(localizedPath(lang, href));
 
-      // الصفحة الرئيسية تكون نشطة فقط على /ar أو /en
       if (normalizedTarget === `/${lang}`) {
         return normalizedPathname === normalizedTarget;
       }
 
-      // بقية الأقسام تكون نشطة أيضًا على المسارات الفرعية
       return (
         normalizedPathname === normalizedTarget ||
         normalizedPathname.startsWith(`${normalizedTarget}/`)
@@ -402,6 +363,22 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
   );
 
   // ==========================================================
+  // Style helpers (حسب الخلفية)
+  // ==========================================================
+
+  const iconBtnClass = onDark
+    ? "text-white hover:bg-white/10"
+    : "text-slate-600 hover:bg-primary-50 dark:text-slate-300 dark:hover:bg-night-800";
+
+  const navInactiveClass = onDark
+    ? "text-white/90 hover:bg-white/10 hover:text-white"
+    : "text-slate-700 hover:bg-primary-50 hover:text-primary-700 dark:text-slate-200 dark:hover:bg-night-800";
+
+  const langBtnClass = onDark
+    ? "border-white/40 text-white hover:border-white hover:bg-white hover:text-primary-800"
+    : "border-primary-200 text-primary-700 hover:border-primary-500 hover:bg-primary-500 hover:text-white dark:border-night-700 dark:text-primary-300";
+
+  // ==========================================================
   // Render
   // ==========================================================
 
@@ -409,7 +386,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
     <header
       role="banner"
       dir={isRTL ? "rtl" : "ltr"}
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled ? "glass shadow-lg" : "bg-transparent"
       }`}
     >
@@ -439,10 +416,20 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
             </span>
 
             <span className="hidden sm:block">
-              <span className="block font-black leading-tight text-primary-900 dark:text-white">
+              <span
+                className={`block font-black leading-tight ${
+                  onDark ? "text-white" : "text-primary-900 dark:text-white"
+                }`}
+              >
                 {brandName}
               </span>
-              <span className="block text-xs font-semibold text-primary-600 dark:text-primary-300">
+              <span
+                className={`block text-xs font-semibold ${
+                  onDark
+                    ? "text-primary-100"
+                    : "text-primary-600 dark:text-primary-300"
+                }`}
+              >
                 {brandTagline}
               </span>
             </span>
@@ -464,7 +451,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
                   className={`rounded-xl px-3.5 py-2 text-sm font-bold transition-all ${
                     active
                       ? "bg-primary-500 text-white shadow-md"
-                      : "text-slate-700 hover:bg-primary-50 hover:text-primary-700 dark:text-slate-200 dark:hover:bg-night-800"
+                      : navInactiveClass
                   }`}
                 >
                   {item.label}
@@ -476,12 +463,15 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
             <div className="relative" ref={megaRef}>
               <button
                 type="button"
-                onMouseEnter={() => setMegaOpen(true)}
+                // الـ hover للماوس فقط — على اللمس كان بيفتح ثم يقفل فوراً مع الـ onClick
+                onPointerEnter={(e) => {
+                  if (e.pointerType === "mouse") setMegaOpen(true);
+                }}
                 onClick={() => setMegaOpen((prev) => !prev)}
                 aria-expanded={megaOpen}
                 aria-haspopup="true"
                 aria-controls="mega-menu"
-                className="flex cursor-pointer items-center gap-1 rounded-xl px-3.5 py-2 text-sm font-bold text-slate-700 hover:bg-primary-50 dark:text-slate-200 dark:hover:bg-night-800"
+                className={`flex cursor-pointer items-center gap-1 rounded-xl px-3.5 py-2 text-sm font-bold ${navInactiveClass}`}
               >
                 {isRTL ? "المزيد" : "More"}
 
@@ -547,7 +537,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
             <Link
               href={localizedPath(lang, "/search")}
               aria-label={isRTL ? "بحث" : "Search"}
-              className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-primary-50 dark:text-slate-300 dark:hover:bg-night-800"
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${iconBtnClass}`}
             >
               <svg
                 width="20"
@@ -576,7 +566,7 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
                   ? "التبديل إلى الوضع الداكن"
                   : "Switch to dark mode"
               }
-              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-primary-50 dark:text-slate-300 dark:hover:bg-night-800"
+              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl transition-colors ${iconBtnClass}`}
             >
               {dark ? (
                 <svg
@@ -610,12 +600,12 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
 
             <Link
               href={switchHref}
+              hrefLang={otherLang}
+              lang={otherLang}
               aria-label={
-                isRTL
-                  ? "التبديل إلى الإنجليزية"
-                  : "Switch to Arabic"
+                isRTL ? "التبديل إلى الإنجليزية" : "Switch to Arabic"
               }
-              className="hidden h-10 items-center gap-1.5 rounded-xl border-2 border-primary-200 px-3.5 text-sm font-black text-primary-700 transition-all hover:border-primary-500 hover:bg-primary-500 hover:text-white dark:border-night-700 dark:text-primary-300 sm:flex"
+              className={`hidden h-10 items-center gap-1.5 rounded-xl border-2 px-3.5 text-sm font-black transition-all sm:flex ${langBtnClass}`}
             >
               <svg
                 width="16"
@@ -656,7 +646,11 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
               }
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
-              className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-slate-700 hover:bg-primary-50 dark:text-slate-200 dark:hover:bg-night-800 lg:hidden"
+              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl lg:hidden ${
+                onDark
+                  ? "text-white hover:bg-white/10"
+                  : "text-slate-700 hover:bg-primary-50 dark:text-slate-200 dark:hover:bg-night-800"
+              }`}
             >
               <svg
                 width="22"
@@ -732,9 +726,19 @@ export default function Header({ lang: langProp, settings }: HeaderProps) {
               </div>
             ))}
 
+            {/* زر الحساب كان مخفي على الموبايل (md:inline-flex فقط) */}
+            <Link
+              href={localizedPath(lang, "/account")}
+              className="btn-primary mt-3 justify-center"
+            >
+              {isRTL ? "حسابي" : "Account"}
+            </Link>
+
             <Link
               href={switchHref}
-              className="mt-3 rounded-xl border-2 border-primary-300 px-4 py-3 text-center font-black text-primary-700 transition-colors hover:bg-primary-500 hover:text-white dark:border-night-700 dark:text-primary-300 dark:hover:bg-night-800"
+              hrefLang={otherLang}
+              lang={otherLang}
+              className="mt-2 rounded-xl border-2 border-primary-300 px-4 py-3 text-center font-black text-primary-700 transition-colors hover:bg-primary-500 hover:text-white dark:border-night-700 dark:text-primary-300 dark:hover:bg-night-800"
             >
               {otherLang === "ar" ? "العربية" : "English"}
             </Link>

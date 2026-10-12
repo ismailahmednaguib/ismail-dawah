@@ -11,6 +11,8 @@ type FooterProps = {
   settings?: Record<string, unknown> | null;
   /** اخفِ قسم النشرة (مثلاً في الصفحة الرئيسية اللي فيها كارت نشرة خاص بيها) */
   showNewsletter?: boolean;
+  /** شيل الهامش العلوي (mt-24) — مفيد لما الصفحة بتنتهي بسكشن ملوّن */
+  flushTop?: boolean;
 };
 
 type Status = "idle" | "loading" | "done" | "error";
@@ -19,6 +21,7 @@ export default function Footer({
   lang: langProp,
   settings,
   showNewsletter = true,
+  flushTop = false,
 }: FooterProps) {
   const pathname = usePathname() ?? "/";
 
@@ -45,7 +48,6 @@ export default function Footer({
     setStatus("loading");
 
     try {
-      // ✅ كان "/api/newsletter" (غير موجود) — الصحيح:
       const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,6 +101,7 @@ export default function Footer({
   const aboutText = t(lang, "about");
   const contactText = t(lang, "contact");
   const privacyText = t(lang, "privacy");
+  const termsText = t(lang, "terms");
 
   const successMsg = isRTL
     ? "تم الاشتراك بنجاح! شكرًا لك."
@@ -110,7 +113,7 @@ export default function Footer({
   return (
     <footer
       dir={isRTL ? "rtl" : "ltr"}
-      className="mt-24 text-white"
+      className={`${flushTop ? "" : "mt-24"} text-white`}
       style={{
         background:
           "linear-gradient(160deg, #083344 0%, #0e7490 60%, #083344 130%)",
@@ -118,75 +121,76 @@ export default function Footer({
     >
       {/* ===== النشرة البريدية ===== */}
       {showNewsletter && (
-      <div className="border-b border-white/10">
-        <div className="container-page py-14">
-          <div className="grid items-center gap-10 md:grid-cols-2">
-            <div>
-              <div className="mb-4 flex items-center gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-lg"
-                  style={{
-                    background: "linear-gradient(135deg, #06b6d4, #0e7490)",
-                  }}
-                >
-                  📬
-                </span>
-                <h3
-                  className="text-2xl font-bold"
-                  style={{ fontFamily: "var(--font-amiri)" }}
-                >
-                  {t(lang, "newsletter_title")}
-                </h3>
+        <div className="border-b border-white/10">
+          <div className="container-page py-14">
+            <div className="grid items-center gap-10 md:grid-cols-2">
+              <div>
+                <div className="mb-4 flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-lg"
+                    style={{
+                      background: "linear-gradient(135deg, #06b6d4, #0e7490)",
+                    }}
+                  >
+                    📬
+                  </span>
+                  <h3
+                    className="text-2xl font-bold"
+                    style={{ fontFamily: "var(--font-amiri)" }}
+                  >
+                    {t(lang, "newsletter_title")}
+                  </h3>
+                </div>
+                <p className="leading-relaxed text-primary-100">
+                  {t(lang, "newsletter_desc")}
+                </p>
               </div>
-              <p className="leading-relaxed text-primary-100">
-                {t(lang, "newsletter_desc")}
-              </p>
+
+              <form
+                onSubmit={subscribe}
+                className="flex flex-col gap-3 sm:flex-row"
+              >
+                <input
+                  type="email"
+                  required
+                  dir="ltr"
+                  autoComplete="email"
+                  aria-label={t(lang, "email_placeholder")}
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (status === "done" || status === "error") {
+                      setStatus("idle");
+                    }
+                  }}
+                  placeholder={t(lang, "email_placeholder")}
+                  className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white placeholder-slate-300 outline-none transition-all focus:border-primary-300 focus:bg-white/15"
+                />
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="btn-primary whitespace-nowrap disabled:cursor-wait disabled:opacity-70"
+                >
+                  {status === "loading" ? "..." : t(lang, "subscribe")}
+                </button>
+              </form>
             </div>
 
-            <form
-              onSubmit={subscribe}
-              className="flex flex-col gap-3 sm:flex-row"
-            >
-              <input
-                type="email"
-                required
-                autoComplete="email"
-                aria-label={t(lang, "email_placeholder")}
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  if (status !== "idle" && status !== "loading") {
-                    setStatus("idle");
-                  }
-                }}
-                placeholder={t(lang, "email_placeholder")}
-                className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white placeholder-slate-300 outline-none transition-all focus:border-primary-300 focus:bg-white/15"
-              />
-              <button
-                type="submit"
-                disabled={status === "loading"}
-                className="btn-primary whitespace-nowrap disabled:cursor-wait disabled:opacity-70"
-              >
-                {status === "loading" ? "..." : t(lang, "subscribe")}
-              </button>
-            </form>
-          </div>
-
-          <div role="status" aria-live="polite" className="min-h-6">
-            {status === "done" && (
-              <p className="mt-4 text-center text-sm text-primary-200">
-                ✓ {successMsg}
-              </p>
-            )}
-            {status === "error" && (
-              <p className="mt-4 text-center text-sm text-red-300">
-                ✗ {errorMsg}
-              </p>
-            )}
+            <div role="status" aria-live="polite" className="min-h-6">
+              {status === "done" && (
+                <p className="mt-4 text-center text-sm text-primary-200">
+                  ✓ {successMsg}
+                </p>
+              )}
+              {status === "error" && (
+                <p className="mt-4 text-center text-sm text-red-300">
+                  ✗ {errorMsg}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       )}
 
       {/* ===== الأعمدة ===== */}
@@ -224,7 +228,7 @@ export default function Footer({
               {t(lang, "footer_about_text")}
             </p>
 
-            {/* ✅ أزرار أيقونات: أضفنا aria-label عشان يبقى ليها اسم مفهوم */}
+            {/* أزرار أيقونات — aria-label عشان يبقى ليها اسم مفهوم */}
             <div className="flex gap-3">
               <Link
                 href={`/${lang}/about`}
@@ -319,7 +323,7 @@ export default function Footer({
             © {new Date().getFullYear()} {brandName} —{" "}
             {t(lang, "footer_copyright")}
           </p>
-          <div className="flex gap-5">
+          <div className="flex flex-wrap justify-center gap-5">
             <Link
               href={`/${lang}/about`}
               className="transition-colors hover:text-primary-300"
@@ -337,6 +341,12 @@ export default function Footer({
               className="transition-colors hover:text-primary-300"
             >
               {privacyText}
+            </Link>
+            <Link
+              href={`/${lang}/terms`}
+              className="transition-colors hover:text-primary-300"
+            >
+              {termsText}
             </Link>
           </div>
         </div>
