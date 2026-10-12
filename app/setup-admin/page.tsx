@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 
 // ============================================================
 // Types
 // ============================================================
 
-type SetupStatusState =
+type SetupState =
   | "checking"
   | "ready"
   | "token_required"
@@ -16,7 +17,7 @@ type SetupStatusState =
   | "error";
 
 type SetupStatus = {
-  state: SetupStatusState;
+  state: SetupState;
   message?: string;
   retryAfter?: number;
 };
@@ -26,7 +27,8 @@ type SetupStatus = {
 // ============================================================
 
 const LOGIN_URL = "/admin/login";
-const MIN_PASSWORD_LENGTH = 8;
+// نفس حد السيرفر في الإنتاج (12). في التطوير السيرفر بيقبل 8 لكن الأفضل نستخدم 12 دايماً.
+const MIN_PASSWORD_LENGTH = 12;
 const MAX_NAME_LENGTH = 80;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -35,17 +37,15 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // ============================================================
 
 function getStringField(data: unknown, key: string): string {
-  if (!data || typeof data !== "object") {
-    return "";
-  }
-
+  if (!data || typeof data !== "object") return "";
   const value = (data as Record<string, unknown>)[key];
   return typeof value === "string" ? value.trim() : "";
 }
 
-function getErrorMessage(data: unknown, fallback: string): string {
-  const message = getStringField(data, "error");
-  return message || fallback;
+function getNumberField(data: unknown, key: string): number | undefined {
+  if (!data || typeof data !== "object") return undefined;
+  const value = Number((data as Record<string, unknown>)[key]);
+  return Number.isFinite(value) ? value : undefined;
 }
 
 function getPasswordStrength(password: string): {
@@ -53,61 +53,59 @@ function getPasswordStrength(password: string): {
   label: string;
   color: string;
 } {
-  if (!password) {
-    return {
-      score: 0,
-      label: "فارغة",
-      color: "bg-gray-300",
-    };
-  }
+  if (!password) return { score: 0, label: "فارغة", color: "bg-gray-300" };
 
   let score = 0;
-
   if (password.length >= MIN_PASSWORD_LENGTH) score += 1;
-  if (password.length >= 12) score += 1;
+  if (password.length >= 16) score += 1;
   if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 1;
   if (/\d/.test(password)) score += 1;
   if (/[^A-Za-z0-9]/.test(password)) score += 1;
 
-  const normalized = Math.min(score, 5);
+  if (score <= 1) return { score, label: "ضعيفة جدًا", color: "bg-red-500" };
+  if (score === 2) return { score, label: "ضعيفة", color: "bg-orange-500" };
+  if (score === 3) return { score, label: "متوسطة", color: "bg-yellow-500" };
+  if (score === 4) return { score, label: "جيدة", color: "bg-lime-500" };
+  return { score, label: "قوية", color: "bg-green-600" };
+}
 
-  if (normalized <= 1) {
-    return {
-      score: normalized,
-      label: "ضعيفة جدًا",
-      color: "bg-red-500",
-    };
-  }
+// ============================================================
+// UI pieces
+// ============================================================
 
-  if (normalized === 2) {
-    return {
-      score: normalized,
-      label: "ضعيفة",
-      color: "bg-orange-500",
-    };
-  }
+const PRIMARY_BTN =
+  "w-full rounded-lg bg-gold-500 py-3 font-bold text-gray-900 transition hover:bg-gold-600 disabled:cursor-not-allowed disabled:opacity-50";
+const SECONDARY_BTN =
+  "w-full rounded-lg border border-gray-200 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-50";
+const INPUT =
+  "w-full rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-gold-500 focus:outline-none";
 
-  if (normalized === 3) {
-    return {
-      score: normalized,
-      label: "متوسطة",
-      color: "bg-yellow-500",
-    };
-  }
+function Shell({
+  children,
+  tone = "gold",
+}: {
+  children: ReactNode;
+  tone?: "gold" | "red" | "orange";
+}) {
+  const border =
+    tone === "red"
+      ? "border-red-400"
+      : tone === "orange"
+      ? "border-orange-400"
+      : "border-gold-500";
 
-  if (normalized === 4) {
-    return {
-      score: normalized,
-      label: "جيدة",
-      color: "bg-lime-500",
-    };
-  }
-
-  return {
-    score: normalized,
-    label: "قوية",
-    color: "bg-green-600",
-  };
+  return (
+    <main
+      dir="rtl"
+      className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12"
+    >
+      <div
+        className={`w-full max-w-md rounded-2xl border-t-4 bg-white p-8 shadow-lg ${border}`}
+      >
+        {children}
+      </div>
+    </main>
+  );
 }
 
 // ============================================================
@@ -127,10 +125,7 @@ export default function SetupAdminPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
-  const passwordStrength = useMemo(
-    () => getPasswordStrength(password),
-    [password]
-  );
+  const strength = useMemo(() => getPasswordStrength(password), [password]);
 
   // ------------------------------------------------------------
   // Check setup status
@@ -142,11 +137,8 @@ export default function SetupAdminPage() {
 
     try {
       const headers: Record<string, string> = {};
-
       const cleanToken = token?.trim();
-      if (cleanToken) {
-        headers["x-admin-setup-token"] = cleanToken;
-      }
+      if (cleanToken) headers["x-admin-setup-token"] = cleanToken;
 
       const res = await fetch("/api/admin/setup", {
         method: "GET",
@@ -158,25 +150,24 @@ export default function SetupAdminPage() {
       });
 
       const data = (await res.json().catch(() => null)) as unknown;
+      const reason = getStringField(data, "reason");
+      const serverMessage = getStringField(data, "error");
 
-      // If route does not implement GET, allow direct POST attempt.
-      if (res.status === 405) {
-        setStatus({
-          state: "ready",
-          message: "فحص حالة الإعداد غير متاح، سيتم محاولة الإنشاء مباشرة.",
-        });
-        return;
-      }
-
-      if (res.ok && Boolean((data as Record<string, unknown>)?.setupEnabled)) {
+      if (res.ok && (data as Record<string, unknown> | null)?.setupEnabled) {
         setStatus({ state: "ready" });
         return;
       }
 
-      if (res.status === 403) {
-        const reason = getStringField(data, "reason");
-        const serverMessage = getErrorMessage(data, "");
+      if (res.status === 429) {
+        setStatus({
+          state: "error",
+          message: serverMessage || "تم تجاوز عدد المحاولات المسموح. حاول لاحقًا.",
+          retryAfter: getNumberField(data, "retryAfter"),
+        });
+        return;
+      }
 
+      if (res.status === 403) {
         if (reason === "disabled") {
           setStatus({
             state: "disabled",
@@ -195,47 +186,20 @@ export default function SetupAdminPage() {
           return;
         }
 
-        if (reason === "token_required") {
-          setStatus({
-            state: "token_required",
-            message:
-              serverMessage ||
-              "هذه الصفحة محمية. أدخل ADMIN_SETUP_TOKEN إذا كان لديك صلاح.",
-          });
-          return;
-        }
-
+        // token_required (أو أي 403 تاني)
         setStatus({
-          state: "error",
-          message: serverMessage || "غير مصرح لك بعرض صفحة الإعداد.",
-        });
-        return;
-      }
-
-      if (res.status === 429) {
-        const retryAfterRaw = Number(
-          (data as Record<string, unknown>)?.retryAfter
-        );
-
-        setStatus({
-          state: "error",
+          state: "token_required",
           message:
-            getErrorMessage(
-              data,
-              "تم تجاوز عدد المحاولات المسموح. حاول لاحقًا."
-            ),
-          retryAfter: Number.isFinite(retryAfterRaw)
-            ? retryAfterRaw
-            : undefined,
+            cleanToken && serverMessage
+              ? serverMessage
+              : "هذه الصفحة محمية. أدخل توكن الإعداد (ADMIN_SETUP_TOKEN).",
         });
         return;
       }
 
       setStatus({
         state: "error",
-        message:
-          getErrorMessage(data, "تعذر التحقق من حالة الإعداد.") +
-          (res.status ? ` (${res.status})` : ""),
+        message: `${serverMessage || "تعذر التحقق من حالة الإعداد."} (${res.status})`,
       });
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -267,40 +231,22 @@ export default function SetupAdminPage() {
     const cleanName = name.trim();
     const cleanEmail = email.trim().toLowerCase();
 
-    if (!cleanName) {
-      return "الاسم مطلوب.";
-    }
-
-    if (cleanName.length < 2) {
-      return "الاسم قصير جدًا.";
-    }
-
+    if (!cleanName) return "الاسم مطلوب.";
+    if (cleanName.length < 2) return "الاسم قصير جدًا.";
     if (cleanName.length > MAX_NAME_LENGTH) {
       return `الاسم يجب ألا يزيد عن ${MAX_NAME_LENGTH} حرفًا.`;
     }
-
-    if (!cleanEmail) {
-      return "البريد الإلكتروني مطلوب.";
-    }
-
-    if (!EMAIL_REGEX.test(cleanEmail)) {
-      return "صيغة البريد الإلكتروني غير صحيحة.";
-    }
-
-    if (!password) {
-      return "كلمة المرور مطلوبة.";
-    }
-
+    if (!cleanEmail) return "البريد الإلكتروني مطلوب.";
+    if (!EMAIL_REGEX.test(cleanEmail)) return "صيغة البريد الإلكتروني غير صحيحة.";
+    if (!password) return "كلمة المرور مطلوبة.";
     if (password.length < MIN_PASSWORD_LENGTH) {
       return `كلمة المرور يجب ألا تقل عن ${MIN_PASSWORD_LENGTH} أحرف.`;
     }
-
+    if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+      return "كلمة المرور يجب أن تحتوي على حروف وأرقام.";
+    }
     if (password !== confirmPassword) {
       return "كلمة المرور وتأكيدها غير متطابقين.";
-    }
-
-    if (status.state === "token_required" && !setupToken.trim()) {
-      return "هذه الصفحة تحتاج ADMIN_SETUP_TOKEN.";
     }
 
     return null;
@@ -320,11 +266,8 @@ export default function SetupAdminPage() {
       return;
     }
 
-    if (
-      status.state !== "ready" &&
-      status.state !== "token_required"
-    ) {
-      setError("صفحة الإعداد غير متاحة حاليًا.");
+    if (status.state !== "ready") {
+      setError("تحقق من التوكن أولًا ثم أنشئ الحساب.");
       return;
     }
 
@@ -339,9 +282,7 @@ export default function SetupAdminPage() {
       };
 
       const cleanToken = setupToken.trim();
-      if (cleanToken) {
-        headers["x-admin-setup-token"] = cleanToken;
-      }
+      if (cleanToken) headers["x-admin-setup-token"] = cleanToken;
 
       const res = await fetch("/api/admin/setup", {
         method: "POST",
@@ -359,7 +300,7 @@ export default function SetupAdminPage() {
 
       const data = (await res.json().catch(() => null)) as unknown;
 
-      if (res.ok && Boolean((data as Record<string, unknown>)?.ok)) {
+      if (res.ok && (data as Record<string, unknown> | null)?.ok) {
         setSuccess(true);
         setName("");
         setEmail("");
@@ -367,88 +308,43 @@ export default function SetupAdminPage() {
         setConfirmPassword("");
         setSetupToken("");
         setError("");
-
-        // Refresh status quietly so if user reloads, page shows closed state.
-        void checkSetupStatus();
         return;
       }
 
       const reason = getStringField(data, "reason");
-      const serverMessage = getErrorMessage(data, "");
+      const serverMessage = getStringField(data, "error");
 
       if (res.status === 403) {
-        if (
-          reason === "admin_exists" ||
-          serverMessage.includes("admin_exists") ||
-          serverMessage.includes("يوجد أدمن") ||
-          serverMessage.includes("مسجل بالفعل")
-        ) {
-          setStatus({
-            state: "admin_exists",
-            message:
-              serverMessage ||
-              "يوجد حساب أدمن بالفعل. لا يمكن استخدام صفحة الإعداد.",
-          });
+        if (reason === "admin_exists") {
+          setStatus({ state: "admin_exists", message: serverMessage });
           return;
         }
-
-        if (
-          reason === "token_required" ||
-          serverMessage.includes("token") ||
-          serverMessage.includes("توكن")
-        ) {
+        if (reason === "disabled") {
+          setStatus({ state: "disabled", message: serverMessage });
+          return;
+        }
+        if (reason === "token_required") {
           setStatus({
             state: "token_required",
-            message:
-              serverMessage ||
-              "توكن الإعداد غير صحيح أو مفقود.",
+            message: serverMessage || "توكن الإعداد غير صحيح أو مفقود.",
           });
           return;
         }
-
-        if (
-          reason === "disabled" ||
-          serverMessage.includes("معطل")
-        ) {
-          setStatus({
-            state: "disabled",
-            message: serverMessage || "إنشاء حساب الأدمن معطل حاليًا.",
-          });
-          return;
-        }
-
         setError(serverMessage || "غير مصرح لك بإنشاء حساب الأدمن.");
         return;
       }
 
-      if (res.status === 409) {
+      if (res.status === 429) {
+        const retryAfter = getNumberField(data, "retryAfter");
         setError(
-          serverMessage ||
-            "هذا البريد الإلكتروني مسجل بالفعل كأدمن."
+          (serverMessage || "تم تجاوز عدد المحاولات المسموح. حاول لاحقًا.") +
+            (retryAfter ? ` (متبقي ${retryAfter} ثانية)` : "")
         );
         return;
       }
 
-      if (res.status === 429) {
-        const retryAfterRaw = Number(
-          (data as Record<string, unknown>)?.retryAfter
-        );
-
-        const retryAfter = Number.isFinite(retryAfterRaw)
-          ? retryAfterRaw
-          : undefined;
-
-        setError(
-          serverMessage ||
-            "تم تجاوز عدد المحاولات المسموح. حاول لاحقًا." +
-              (retryAfter ? ` (متبقي ${retryAfter} ثانية)` : "")
-        );
-
-        setStatus((prev) => ({
-          ...prev,
-          retryAfter,
-        }));
-
+      if (res.status === 409) {
+        setError(serverMessage || "هذا البريد الإلكتروني مسجل بالفعل كأدمن.");
         return;
       }
 
@@ -458,15 +354,13 @@ export default function SetupAdminPage() {
       }
 
       setError(
-        serverMessage ||
-          "فشل إنشاء حساب الأدمن. حاول لاحقًا أو تواصل مع المسؤول."
+        serverMessage || "فشل إنشاء حساب الأدمن. حاول لاحقًا أو تواصل مع المسؤول."
       );
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
         setError("انتهت مهلة الطلب. حاول مرة أخرى.");
         return;
       }
-
       setError("تعذر الاتصال بالسيرفر. تأكد من الإنترنت وحاول مرة أخرى.");
     } finally {
       clearTimeout(timeout);
@@ -492,366 +386,286 @@ export default function SetupAdminPage() {
     setCheckingToken(false);
   };
 
+  const recheck = (token?: string) => {
+    setStatus({ state: "checking" });
+    void checkSetupStatus(token);
+  };
+
   // ------------------------------------------------------------
-  // Success screen
+  // Screens
   // ------------------------------------------------------------
 
   if (success) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12">
-        <div className="w-full max-w-md rounded-2xl border-t-4 border-gold bg-white p-8 shadow-lg">
-          <h1 className="mb-2 text-center font-serif text-3xl text-primary">
-            ✅ تم إنشاء الحساب
-          </h1>
-
-          <p className="mb-6 text-center text-sm text-gray-500">
-            تم إنشاء حساب الأدمن بنجاح. يمكنك الآن تسجيل الدخول.
-          </p>
-
-          <div className="rounded-lg bg-green-50 p-4 text-center text-sm font-bold text-green-700">
-            احتفظ ببيانات الدخول في مكان آمن.
-          </div>
-
-          <Link
-            href={LOGIN_URL}
-            className="mt-6 block w-full rounded-lg bg-gold py-3 text-center font-bold text-gray-900 transition hover:bg-gold-light"
-          >
-            الذهاب إلى تسجيل دخول الأدمن
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => {
-              setSuccess(false);
-              setStatus({ state: "checking" });
-              void checkSetupStatus();
-            }}
-            className="mt-3 w-full rounded-lg border border-gray-200 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
-          >
-            إعادة فحص حالة الإعداد
-          </button>
+      <Shell>
+        <h1 className="mb-2 text-center text-3xl font-bold text-primary-800">
+          ✅ تم إنشاء الحساب
+        </h1>
+        <p className="mb-6 text-center text-sm text-gray-500">
+          تم إنشاء حساب الأدمن بنجاح. يمكنك الآن تسجيل الدخول.
+        </p>
+        <div className="rounded-lg bg-green-50 p-4 text-center text-sm font-bold text-green-700">
+          احتفظ ببيانات الدخول في مكان آمن، ثم عطّل هذه الصفحة
+          (<code dir="ltr">DISABLE_ADMIN_SETUP=true</code>).
         </div>
-      </main>
+        <Link
+          href={LOGIN_URL}
+          className="mt-6 block w-full rounded-lg bg-gold-500 py-3 text-center font-bold text-gray-900 transition hover:bg-gold-600"
+        >
+          الذهاب إلى تسجيل دخول الأدمن
+        </Link>
+      </Shell>
     );
   }
-
-  // ------------------------------------------------------------
-  // Checking screen
-  // ------------------------------------------------------------
 
   if (status.state === "checking") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12">
-        <div className="w-full max-w-md rounded-2xl border-t-4 border-gold bg-white p-8 text-center shadow-lg">
-          <h1 className="mb-3 font-serif text-2xl text-primary">
-            ⏳ جاري فحص حالة الإعداد
-          </h1>
-          <p className="text-sm text-gray-500">
-            يتم التحقق مما إذا كان إنشاء حساب الأدمن متاحًا.
-          </p>
-        </div>
-      </main>
+      <Shell>
+        <h1 className="mb-3 text-center text-2xl font-bold text-primary-800">
+          ⏳ جاري فحص حالة الإعداد
+        </h1>
+        <p className="text-center text-sm text-gray-500">
+          يتم التحقق مما إذا كان إنشاء حساب الأدمن متاحًا.
+        </p>
+      </Shell>
     );
   }
 
-  // ------------------------------------------------------------
-  // Disabled / admin exists screens
-  // ------------------------------------------------------------
-
-  if (
-    status.state === "disabled" ||
-    status.state === "admin_exists"
-  ) {
+  if (status.state === "disabled" || status.state === "admin_exists") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12">
-        <div className="w-full max-w-md rounded-2xl border-t-4 border-red-400 bg-white p-8 shadow-lg">
-          <h1 className="mb-3 text-center font-serif text-3xl text-primary">
-            🔒 الإعداد غير متاح
-          </h1>
-
-          <p className="mb-6 text-center text-sm text-gray-600">
-            {status.message ||
-              "لا يمكن إنشاء حساب أدمن من هذه الصفحة حاليًا."}
-          </p>
-
-          <Link
-            href={LOGIN_URL}
-            className="block w-full rounded-lg bg-gold py-3 text-center font-bold text-gray-900 transition hover:bg-gold-light"
-          >
-            تسجيل دخول الأدمن
-          </Link>
-
-          <button
-            type="button"
-            onClick={() => {
-              setStatus({ state: "checking" });
-              void checkSetupStatus();
-            }}
-            className="mt-3 w-full rounded-lg border border-gray-200 py-2 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
-          >
-            إعادة المحاولة
-          </button>
-        </div>
-      </main>
+      <Shell tone="red">
+        <h1 className="mb-3 text-center text-3xl font-bold text-primary-800">
+          🔒 الإعداد غير متاح
+        </h1>
+        <p className="mb-6 text-center text-sm text-gray-600">
+          {status.message || "لا يمكن إنشاء حساب أدمن من هذه الصفحة حاليًا."}
+        </p>
+        <Link
+          href={LOGIN_URL}
+          className="block w-full rounded-lg bg-gold-500 py-3 text-center font-bold text-gray-900 transition hover:bg-gold-600"
+        >
+          تسجيل دخول الأدمن
+        </Link>
+        <button
+          type="button"
+          onClick={() => recheck(setupToken.trim() || undefined)}
+          className={`mt-3 ${SECONDARY_BTN}`}
+        >
+          إعادة المحاولة
+        </button>
+      </Shell>
     );
   }
-
-  // ------------------------------------------------------------
-  // Error screen with retry
-  // ------------------------------------------------------------
 
   if (status.state === "error") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12">
-        <div className="w-full max-w-md rounded-2xl border-t-4 border-orange-400 bg-white p-8 shadow-lg">
-          <h1 className="mb-3 text-center font-serif text-3xl text-primary">
-            ⚠️ تعذر تحميل صفحة الإعداد
-          </h1>
-
-          <p className="mb-6 text-center text-sm text-gray-600">
-            {status.message || "حدث خطأ غير متوقع."}
+      <Shell tone="orange">
+        <h1 className="mb-3 text-center text-3xl font-bold text-primary-800">
+          ⚠️ تعذر تحميل صفحة الإعداد
+        </h1>
+        <p className="mb-6 text-center text-sm text-gray-600">
+          {status.message || "حدث خطأ غير متوقع."}
+        </p>
+        {status.retryAfter ? (
+          <p className="mb-4 text-center text-xs text-gray-500">
+            حاول مرة أخرى بعد حوالي {status.retryAfter} ثانية.
           </p>
-
-          {status.retryAfter ? (
-            <p className="mb-4 text-center text-xs text-gray-500">
-              حاول مرة أخرى بعدประมาณ {status.retryAfter} ثانية.
-            </p>
-          ) : null}
-
-          <button
-            type="button"
-            onClick={() => {
-              setStatus({ state: "checking" });
-              void checkSetupStatus(setupToken.trim() || undefined);
-            }}
-            className="w-full rounded-lg bg-gold py-3 font-bold text-gray-900 transition hover:bg-gold-light"
-          >
-            إعادة الفحص
-          </button>
-
-          <Link
-            href={LOGIN_URL}
-            className="mt-3 block w-full rounded-lg border border-gray-200 py-2 text-center text-sm font-bold text-gray-600 transition hover:bg-gray-50"
-          >
-            الذهاب إلى تسجيل الدخول
-          </Link>
-        </div>
-      </main>
+        ) : null}
+        <button
+          type="button"
+          onClick={() => recheck(setupToken.trim() || undefined)}
+          className={PRIMARY_BTN}
+        >
+          إعادة الفحص
+        </button>
+        <Link
+          href={LOGIN_URL}
+          className={`mt-3 block text-center ${SECONDARY_BTN}`}
+        >
+          الذهاب إلى تسجيل الدخول
+        </Link>
+      </Shell>
     );
   }
 
   // ------------------------------------------------------------
-  // Form screen
+  // Form
   // ------------------------------------------------------------
 
-  const canSubmit =
-    !submitting &&
-    (status.state === "ready" || status.state === "token_required");
+  const needsToken = status.state === "token_required";
+  const canSubmit = !submitting && status.state === "ready";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12">
-      <div className="w-full max-w-md rounded-2xl border-t-4 border-gold bg-white p-8 shadow-lg">
-        <h1 className="mb-2 text-center font-serif text-3xl text-primary">
-          🔐 إنشاء حساب الآدمن
-        </h1>
+    <Shell>
+      <h1 className="mb-2 text-center text-3xl font-bold text-primary-800">
+        🔐 إنشاء حساب الأدمن
+      </h1>
+      <p className="mb-6 text-center text-sm text-gray-500">
+        هذه صفحة إنشاء حساب الأدمن لأول مرة.
+      </p>
 
-        <p className="mb-6 text-center text-sm text-gray-500">
-          هذه صفحة إنشاء حساب الأدمن لأول مرة.
-        </p>
+      {status.message ? (
+        <div
+          role="status"
+          className={`mb-5 rounded-lg p-3 text-sm font-bold ${
+            needsToken ? "bg-amber-50 text-amber-800" : "bg-blue-50 text-blue-800"
+          }`}
+        >
+          {status.message}
+        </div>
+      ) : null}
 
-        {status.message ? (
-          <div
-            className={`mb-5 rounded-lg p-3 text-sm font-bold ${
-              status.state === "token_required"
-                ? "bg-amber-50 text-amber-800"
-                : "bg-blue-50 text-blue-800"
-            }`}
+      {needsToken ? (
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <label
+            htmlFor="setup-token"
+            className="mb-1 block text-sm font-bold text-amber-900"
           >
-            {status.message}
+            ADMIN_SETUP_TOKEN
+          </label>
+          <input
+            id="setup-token"
+            type="password"
+            value={setupToken}
+            onChange={(e) => setSetupToken(e.target.value)}
+            placeholder="أدخل توكن الإعداد"
+            dir="ltr"
+            autoComplete="off"
+            className="w-full rounded-lg border-2 border-amber-200 px-4 py-2 text-left focus:border-amber-500 focus:outline-none"
+          />
+          <p className="mt-2 text-xs text-amber-800">
+            احصل على التوكن من متغيرات البيئة في Vercel. لا تشاركه مع أحد.
+          </p>
+          <button
+            type="button"
+            onClick={handleCheckToken}
+            disabled={checkingToken || !setupToken.trim()}
+            className="mt-3 w-full rounded-lg border border-amber-300 bg-white py-2 text-sm font-bold text-amber-900 transition hover:bg-amber-100 disabled:opacity-50"
+          >
+            {checkingToken ? "⏳ جاري التحقق..." : "تحقق من التوكن"}
+          </button>
+        </div>
+      ) : null}
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <div>
+          <label htmlFor="admin-name" className="mb-1 block text-sm font-bold text-gray-600">
+            الاسم
+          </label>
+          <input
+            id="admin-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            maxLength={MAX_NAME_LENGTH}
+            placeholder="اسم الأدمن"
+            autoComplete="name"
+            disabled={needsToken}
+            className={INPUT}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="admin-email" className="mb-1 block text-sm font-bold text-gray-600">
+            البريد الإلكتروني
+          </label>
+          <input
+            id="admin-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@example.com"
+            autoComplete="email"
+            dir="ltr"
+            disabled={needsToken}
+            className={`${INPUT} text-left`}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="admin-password" className="mb-1 block text-sm font-bold text-gray-600">
+            كلمة المرور
+          </label>
+          <input
+            id="admin-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder={`${MIN_PASSWORD_LENGTH} أحرف على الأقل (حروف وأرقام)`}
+            autoComplete="new-password"
+            disabled={needsToken}
+            className={INPUT}
+          />
+
+          <div className="mt-2">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+              <div
+                className={`h-full transition-all ${strength.color}`}
+                style={{ width: `${(Math.min(strength.score, 5) / 5) * 100}%` }}
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">
+              قوة كلمة المرور: {strength.label}
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="admin-confirm-password"
+            className="mb-1 block text-sm font-bold text-gray-600"
+          >
+            تأكيد كلمة المرور
+          </label>
+          <input
+            id="admin-confirm-password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="أعد كتابة كلمة المرور"
+            autoComplete="new-password"
+            disabled={needsToken}
+            className={INPUT}
+          />
+
+          {confirmPassword && password !== confirmPassword ? (
+            <p className="mt-1 text-xs font-bold text-red-600">
+              كلمتا المرور غير متطابقتين.
+            </p>
+          ) : null}
+        </div>
+
+        {error ? (
+          <div role="alert" className="rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">
+            ❌ {error}
           </div>
         ) : null}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {status.state === "token_required" ? (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-              <label
-                htmlFor="setup-token"
-                className="mb-1 block text-sm font-bold text-amber-900"
-              >
-                ADMIN_SETUP_TOKEN
-              </label>
+        <button type="submit" disabled={!canSubmit} className={PRIMARY_BTN}>
+          {submitting ? "⏳ جاري الإنشاء…" : "إنشاء حساب الأدمن"}
+        </button>
+      </form>
 
-              <input
-                id="setup-token"
-                type="password"
-                value={setupToken}
-                onChange={(event) => setSetupToken(event.target.value)}
-                placeholder="أدخل توكن الإعداد"
-                dir="ltr"
-                autoComplete="off"
-                className="w-full rounded-lg border-2 border-amber-200 px-4 py-2 text-left focus:border-amber-500 focus:outline-none"
-              />
-
-              <p className="mt-2 text-xs text-amber-800">
-                احصل على هذا التوكن من متغيرات بيئة السيرفر. لا تشاركه مع أحد.
-              </p>
-
-              <button
-                type="button"
-                onClick={handleCheckToken}
-                disabled={checkingToken || !setupToken.trim()}
-                className="mt-3 w-full rounded-lg border border-amber-300 bg-white py-2 text-sm font-bold text-amber-900 transition hover:bg-amber-100 disabled:opacity-50"
-              >
-                {checkingToken ? "⏳ جاري التحقق..." : "تحقق من التوكن"}
-              </button>
-            </div>
-          ) : null}
-
-          <div>
-            <label
-              htmlFor="admin-name"
-              className="mb-1 block text-sm font-bold text-gray-600"
-            >
-              الاسم
-            </label>
-
-            <input
-              id="admin-name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              maxLength={MAX_NAME_LENGTH}
-              placeholder="اسم الآدمن"
-              autoComplete="name"
-              className="w-full rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-gold focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="admin-email"
-              className="mb-1 block text-sm font-bold text-gray-600"
-            >
-              البريد الإلكتروني
-            </label>
-
-            <input
-              id="admin-email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="admin@example.com"
-              autoComplete="email"
-              dir="ltr"
-              className="w-full rounded-lg border-2 border-gray-200 px-4 py-2 text-left focus:border-gold focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="admin-password"
-              className="mb-1 block text-sm font-bold text-gray-600"
-            >
-              كلمة المرور
-            </label>
-
-            <input
-              id="admin-password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder={`${MIN_PASSWORD_LENGTH} أحرف على الأقل`}
-              autoComplete="new-password"
-              className="w-full rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-gold focus:outline-none"
-            />
-
-            <div className="mt-2">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className={`h-full transition-all ${passwordStrength.color}`}
-                  style={{
-                    width: `${(passwordStrength.score / 5) * 100}%`,
-                  }}
-                />
-              </div>
-
-              <p className="mt-1 text-xs text-gray-500">
-                قوة كلمة المرور: {passwordStrength.label}
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="admin-confirm-password"
-              className="mb-1 block text-sm font-bold text-gray-600"
-            >
-              تأكيد كلمة المرور
-            </label>
-
-            <input
-              id="admin-confirm-password"
-              type="password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              placeholder="أعد كتابة كلمة المرور"
-              autoComplete="new-password"
-              className="w-full rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-gold focus:outline-none"
-            />
-
-            {confirmPassword && password !== confirmPassword ? (
-              <p className="mt-1 text-xs font-bold text-red-600">
-                كلمتا المرور غير متطابقتين.
-              </p>
-            ) : null}
-          </div>
-
-          {error ? (
-            <div className="rounded-lg bg-red-50 p-3 text-sm font-bold text-red-700">
-              ❌ {error}
-            </div>
-          ) : null}
-
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="w-full rounded-lg bg-gold py-3 font-bold text-gray-900 transition hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {submitting ? "⏳ جاري الإنشاء…" : "إنشاء حساب الآدمن"}
-          </button>
-        </form>
-
-        <div className="mt-6 rounded-lg bg-gray-50 p-4 text-xs leading-relaxed text-gray-600">
-          <p className="mb-2 font-bold text-gray-700">تنبيه أمني مهم:</p>
-          <ul className="list-inside list-disc space-y-1">
-            <li>
-              بعد إنشاء الحساب، يُفضَّل تعطيل هذه الصفحة عبر:
-              <code className="mx-1 rounded bg-gray-200 px-1">
-                DISABLE_ADMIN_SETUP=true
-              </code>
-            </li>
-            <li>
-              لا تستخدم هذه الصفحة في الإنتاج بدون
-              <code className="mx-1 rounded bg-gray-200 px-1">
-                ADMIN_SETUP_TOKEN
-              </code>
-              .
-            </li>
-            <li>
-              تأكد أن الاتصال عبر HTTPS فقط.
-            </li>
-            <li>
-              احفظ بيانات الدخول في مدير كلمات مرور آمن.
-            </li>
-          </ul>
-        </div>
-
-        <Link
-          href={LOGIN_URL}
-          className="mt-4 block text-center text-sm font-bold text-primary hover:underline"
-        >
-          عندي حساب بالفعل؟ تسجيل الدخول
-        </Link>
+      <div className="mt-6 rounded-lg bg-gray-50 p-4 text-xs leading-relaxed text-gray-600">
+        <p className="mb-2 font-bold text-gray-700">تنبيه أمني مهم:</p>
+        <ul className="list-inside list-disc space-y-1">
+          <li>
+            بعد إنشاء الحساب عطّل هذه الصفحة بضبط
+            <code dir="ltr" className="mx-1 rounded bg-gray-200 px-1">
+              DISABLE_ADMIN_SETUP=true
+            </code>
+            في Vercel.
+          </li>
+          <li>استخدم توكن عشوائي طويل (32 حرف أو أكثر).</li>
+          <li>احفظ بيانات الدخول في مدير كلمات مرور آمن.</li>
+        </ul>
       </div>
-    </main>
+
+      <Link
+        href={LOGIN_URL}
+        className="mt-4 block text-center text-sm font-bold text-primary-700 hover:underline"
+      >
+        عندي حساب بالفعل؟ تسجيل الدخول
+      </Link>
+    </Shell>
   );
 }
