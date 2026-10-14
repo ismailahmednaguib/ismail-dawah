@@ -226,7 +226,10 @@ async function hashPassword(
     const bcryptModule = await import("bcryptjs");
     const bcrypt = (bcryptModule as any).default ?? bcryptModule;
 
-    return { hash: await bcrypt.hash(password, 12), salt: null };
+    // bcrypt يضمّن الـ salt داخل قيمة الـ hash نفسها.
+    // نضع نصًا فارغًا في العمود حتى يتوافق مع الجداول القديمة
+    // التي تعرّف salt كعمود NOT NULL؛ verifyPassword يتجاهله مع bcrypt.
+    return { hash: await bcrypt.hash(password, 12), salt: "" };
   } catch (err) {
     // في الإنتاج ممنوع ننزل لتشفير أضعف بصمت
     if (isProduction) {
