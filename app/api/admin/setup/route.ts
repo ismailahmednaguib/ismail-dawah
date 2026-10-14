@@ -162,6 +162,14 @@ function isSetupTokenValid(token: string | null): boolean {
   return safeCompare(token, SETUP_TOKEN);
 }
 
+function isSchemaCompatibilityError(error: unknown): boolean {
+  const message = String((error as { message?: string })?.message || "");
+
+  return /column.*does not exist|Could not find the column|schema cache|relation.*does not exist|schema.*does not exist/i.test(
+    message
+  );
+}
+
 function validateEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
 }
@@ -428,44 +436,72 @@ export async function POST(req: NextRequest) {
     const supabase = createAdminClient();
 
     const createdAt = new Date().toISOString();
-    const modernInsert = await supabase
-      .from("admin_users")
-      .insert({
+    const adminName = fullName || "Administrator";
+
+    // لا نعتمد على insert(...).select().single():
+    // بعض جداول Supabase القديمة تمنع إرجاع الصف رغم نجاح الإدخال.
+    // نجرب حمولات متدرجة للتوافق مع الجداول القديمة، ثم نقرأ الصف اختياريًا.
+    const insertPayloads = [
+      {
         email,
-        name: fullName || "Administrator",
+        name: adminName,
         password_hash: hash,
         salt,
         role: "admin",
         is_active: true,
         created_at: createdAt,
-      })
-      .select("id, email, name")
-      .single();
+      },
+      {
+        email,
+        name: adminName,
+        password_hash: hash,
+        salt,
+        created_at: createdAt,
+      },
+      {
+        email,
+        name: adminName,
+        password_hash: hash,
+        salt,
+      },
+      {
+        email,
+        password_hash: hash,
+        salt,
+      },
+    ];
 
-    let createdAdmin = modernInsert.data;
-    let insertError = modernInsert.error;
+    let createdAdmin: { id?: string | number; email: string; name: string } | null = null;
+    let insertError: { code?: string; message?: string } | null = null;
 
-    // دعم جدول admin_users القديم الموجود قبل إضافة role و is_active.
-    if (
-      insertError &&
-      /(column|schema).*does not exist|Could not find the column/i.test(
-        String(insertError.message || "")
-      )
-    ) {
-      const legacyInsert = await supabase
+    for (const payload of insertPayloads) {
+      const result = await supabase
         .from("admin_users")
-        .insert({
-          email,
-          name: fullName || "Administrator",
-          password_hash: hash,
-          salt,
-          created_at: createdAt,
-        })
-        .select("id, email, name")
-        .single();
+        .insert(payload as any);
 
-      createdAdmin = legacyInsert.data;
-      insertError = legacyInsert.error;
+      if (!result.error) {
+        const lookup = await supabase
+          .from("admin_users")
+          .select("id, email, name")
+          .eq("email", email)
+          .maybeSingle();
+
+        createdAdmin = lookup.data
+          ? {
+              id: lookup.data.id as string | number | undefined,
+              email: String(lookup.data.email || email),
+              name: String(lookup.data.name || adminName),
+            }
+          : { email, name: adminName };
+        insertError = null;
+        break;
+      }
+
+      insertError = result.error;
+
+      if (!isSchemaCompatibilityError(result.error)) {
+        break;
+      }
     }
 
     if (insertError || !createdAdmin) {
@@ -482,7 +518,14 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      return secureJson({ ok: false, error: "فشل إنشاء حساب الأدمن" }, 500);
+      return secureJson(
+        {
+          ok: false,
+          error: "فشل إنشاء حساب الأدمن",
+          reason: "database_insert_failed",
+        },
+        500
+      );
     }
 
     // 8) Optional mirror (لا يفشل الطلب لو فشل)
