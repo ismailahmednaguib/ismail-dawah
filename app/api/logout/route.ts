@@ -97,6 +97,7 @@ function getSessionSecret(role: "user" | "admin"): string {
       process.env.ADMIN_SESSION_SECRET ||
       process.env.APP_SESSION_SECRET ||
       process.env.JWT_SECRET ||
+      process.env.SESSION_SECRET ||
       ""
     );
   }
@@ -105,6 +106,7 @@ function getSessionSecret(role: "user" | "admin"): string {
     process.env.USER_SESSION_SECRET ||
     process.env.APP_SESSION_SECRET ||
     process.env.JWT_SECRET ||
+    process.env.SESSION_SECRET ||
     ""
   );
 }

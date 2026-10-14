@@ -11,6 +11,7 @@ export const runtime = "nodejs";
 
 const SESSION_SECRET =
   process.env.ADMIN_SESSION_SECRET ||
+  process.env.SESSION_SECRET ||
   process.env.JWT_SECRET ||
   "dev-fallback-change-me-in-production-32chars-min!!";
 

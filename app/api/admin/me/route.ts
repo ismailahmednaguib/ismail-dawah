@@ -73,7 +73,8 @@ function getSessionSecret(): string | null {
   const secret =
     env("ADMIN_SESSION_SECRET") ||
     env("APP_SESSION_SECRET") ||
-    env("JWT_SECRET");
+    env("JWT_SECRET") ||
+    env("SESSION_SECRET");
 
   if (!secret) {
     return null;
@@ -483,7 +484,7 @@ async function handleMe(req: NextRequest): Promise<NextResponse> {
 
     if (!secret) {
       console.error(
-        "[AdminMe] Missing ADMIN_SESSION_SECRET / APP_SESSION_SECRET / JWT_SECRET."
+        "[AdminMe] Missing ADMIN_SESSION_SECRET / APP_SESSION_SECRET / JWT_SECRET / SESSION_SECRET."
       );
 
       return adminUserResponse(null);

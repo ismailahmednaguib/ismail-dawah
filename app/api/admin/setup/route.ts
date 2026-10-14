@@ -427,7 +427,8 @@ export async function POST(req: NextRequest) {
 
     const supabase = createAdminClient();
 
-    const { data: createdAdmin, error: insertError } = await supabase
+    const createdAt = new Date().toISOString();
+    const modernInsert = await supabase
       .from("admin_users")
       .insert({
         email,
@@ -436,10 +437,36 @@ export async function POST(req: NextRequest) {
         salt,
         role: "admin",
         is_active: true,
-        created_at: new Date().toISOString(),
+        created_at: createdAt,
       })
-      .select("id, email, name, role")
+      .select("id, email, name")
       .single();
+
+    let createdAdmin = modernInsert.data;
+    let insertError = modernInsert.error;
+
+    // دعم جدول admin_users القديم الموجود قبل إضافة role و is_active.
+    if (
+      insertError &&
+      /(column|schema).*does not exist|Could not find the column/i.test(
+        String(insertError.message || "")
+      )
+    ) {
+      const legacyInsert = await supabase
+        .from("admin_users")
+        .insert({
+          email,
+          name: fullName || "Administrator",
+          password_hash: hash,
+          salt,
+          created_at: createdAt,
+        })
+        .select("id, email, name")
+        .single();
+
+      createdAdmin = legacyInsert.data;
+      insertError = legacyInsert.error;
+    }
 
     if (insertError || !createdAdmin) {
       console.error("[AdminSetup] insert error:", insertError);
@@ -498,7 +525,7 @@ export async function POST(req: NextRequest) {
         userId: createdAdmin.id,
         email: createdAdmin.email,
         name: createdAdmin.name,
-        role: createdAdmin.role,
+        role: "admin",
       },
       201
     );

@@ -61,7 +61,7 @@ function getRedirectForRole(role: Role, lang: "ar" | "en"): string {
   if (role === "admin") {
     return (
       process.env.NEXT_PUBLIC_ADMIN_HOME_URL?.trim() ||
-      `${base}/admin`
+      "/admin"
     );
   }
 

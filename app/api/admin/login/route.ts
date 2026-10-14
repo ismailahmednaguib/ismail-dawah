@@ -5,13 +5,12 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import {
-  createHash,
   createHmac,
   pbkdf2Sync,
   randomBytes,
   randomUUID,
-  timingSafeEqual,
 } from "node:crypto";
+import { verifyPassword } from "@/lib/auth";
 
 // ============================================================
 // Types
@@ -92,7 +91,8 @@ function getSessionSecret(): string {
   const secret =
     env("ADMIN_SESSION_SECRET") ||
     env("APP_SESSION_SECRET") ||
-    env("JWT_SECRET");
+    env("JWT_SECRET") ||
+    env("SESSION_SECRET");
 
   if (secret) {
     if (secret.length < MIN_SECRET_LENGTH) {
@@ -106,7 +106,7 @@ function getSessionSecret(): string {
 
   if (isProduction) {
     throw new Error(
-      "Missing ADMIN_SESSION_SECRET / APP_SESSION_SECRET / JWT_SECRET in production."
+      "Missing ADMIN_SESSION_SECRET / APP_SESSION_SECRET / JWT_SECRET / SESSION_SECRET in production."
     );
   }
 
@@ -290,21 +290,6 @@ function isAllowedOrigin(req: Request): boolean {
   return allowed.has(originHost);
 }
 
-function safeEqualHex(a: string, b: string): boolean {
-  try {
-    const bufA = Buffer.from(a, "hex");
-    const bufB = Buffer.from(b, "hex");
-
-    if (bufA.length !== bufB.length) {
-      return false;
-    }
-
-    return timingSafeEqual(bufA, bufB);
-  } catch {
-    return false;
-  }
-}
-
 function hashPassword(password: string): {
   hash: string;
   salt: string;
@@ -333,57 +318,7 @@ async function verifyPasswordFlexible(
   storedHash: string,
   salt?: string | null
 ): Promise<boolean> {
-  if (!password || !storedHash) {
-    return false;
-  }
-
-  const hash = storedHash.trim();
-
-  // bcrypt غير مدعوم في هذه النسخة البناء-آمنة
-  if (hash.startsWith("$2")) {
-    console.warn(
-      "[AdminLogin] bcrypt hash detected but bcryptjs support is disabled in this build-safe route. Install bcryptjs and enable bcrypt verification if needed."
-    );
-    return false;
-  }
-
-  let effectiveSalt = salt?.trim() || "";
-  let effectiveHash = hash;
-
-  // combined format: salt:hash
-  if (!effectiveSalt && hash.includes(":")) {
-    const index = hash.indexOf(":");
-    effectiveSalt = hash.slice(0, index);
-    effectiveHash = hash.slice(index + 1);
-  }
-
-  if (!effectiveSalt) {
-    return false;
-  }
-
-  // legacy SHA-256 + salt
-  if (effectiveHash.length === 64) {
-    const candidate = createHash("sha256")
-      .update(password + effectiveSalt)
-      .digest("hex");
-
-    return safeEqualHex(candidate, effectiveHash);
-  }
-
-  // PBKDF2 + salt
-  if (effectiveHash.length === 128) {
-    const candidate = pbkdf2Sync(
-      password,
-      effectiveSalt,
-      PBKDF2_ITERATIONS,
-      PBKDF2_KEYLEN,
-      PBKDF2_DIGEST
-    ).toString("hex");
-
-    return safeEqualHex(candidate, effectiveHash);
-  }
-
-  return false;
+  return verifyPassword(password, storedHash, salt ?? undefined);
 }
 
 function isMissingTableError(error: unknown): boolean {

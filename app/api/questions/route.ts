@@ -189,6 +189,7 @@ function getUserSecret(): string {
     process.env.USER_SESSION_SECRET ||
     process.env.APP_SESSION_SECRET ||
     process.env.JWT_SECRET ||
+    process.env.SESSION_SECRET ||
     ""
   );
 }

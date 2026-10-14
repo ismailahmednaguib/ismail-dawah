@@ -52,12 +52,14 @@ type PublicUser = {
 function getSecret(role: Role): string {
   const appSecret = process.env.APP_SESSION_SECRET;
   const jwtSecret = process.env.JWT_SECRET;
+  const legacySecret = process.env.SESSION_SECRET;
 
   if (role === "admin") {
     return (
       process.env.ADMIN_SESSION_SECRET ||
       appSecret ||
       jwtSecret ||
+      legacySecret ||
       ""
     );
   }
@@ -66,6 +68,7 @@ function getSecret(role: Role): string {
     process.env.USER_SESSION_SECRET ||
     appSecret ||
     jwtSecret ||
+    legacySecret ||
     ""
   );
 }

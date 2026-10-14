@@ -296,7 +296,8 @@ function getAdminSecret(): string {
   return (
     env("ADMIN_SESSION_SECRET") ||
     env("APP_SESSION_SECRET") ||
-    env("JWT_SECRET")
+    env("JWT_SECRET") ||
+    env("SESSION_SECRET")
   );
 }
 
@@ -304,7 +305,8 @@ function getUserSecret(): string {
   return (
     env("USER_SESSION_SECRET") ||
     env("APP_SESSION_SECRET") ||
-    env("JWT_SECRET")
+    env("JWT_SECRET") ||
+    env("SESSION_SECRET")
   );
 }
 

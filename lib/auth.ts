@@ -160,26 +160,39 @@ function getAnonKey(): string {
 function getSecretForRole(role: Role): string {
   const appSecret = getTrimmedEnv("APP_SESSION_SECRET");
   const jwtSecret = getTrimmedEnv("JWT_SECRET");
+  const legacySecret = getTrimmedEnv("SESSION_SECRET");
 
   let secret = "";
   let secretName = "";
 
   if (role === "admin") {
     secret =
-      getTrimmedEnv("ADMIN_SESSION_SECRET") || appSecret || jwtSecret || "";
+      getTrimmedEnv("ADMIN_SESSION_SECRET") ||
+      appSecret ||
+      jwtSecret ||
+      legacySecret ||
+      "";
     secretName = getTrimmedEnv("ADMIN_SESSION_SECRET")
       ? "ADMIN_SESSION_SECRET"
       : appSecret
       ? "APP_SESSION_SECRET"
-      : "JWT_SECRET";
+      : jwtSecret
+      ? "JWT_SECRET"
+      : "SESSION_SECRET";
   } else {
     secret =
-      getTrimmedEnv("USER_SESSION_SECRET") || appSecret || jwtSecret || "";
+      getTrimmedEnv("USER_SESSION_SECRET") ||
+      appSecret ||
+      jwtSecret ||
+      legacySecret ||
+      "";
     secretName = getTrimmedEnv("USER_SESSION_SECRET")
       ? "USER_SESSION_SECRET"
       : appSecret
       ? "APP_SESSION_SECRET"
-      : "JWT_SECRET";
+      : jwtSecret
+      ? "JWT_SECRET"
+      : "SESSION_SECRET";
   }
 
   if (secret) {
@@ -480,7 +493,7 @@ export function createSession(
 
   if (!secret) {
     throw new Error(
-      `Missing session secret for role: ${role}. Set USER_SESSION_SECRET or ADMIN_SESSION_SECRET or APP_SESSION_SECRET.`
+      `Missing session secret for role: ${role}. Set USER_SESSION_SECRET, ADMIN_SESSION_SECRET, APP_SESSION_SECRET, or SESSION_SECRET.`
     );
   }
 
@@ -1658,7 +1671,7 @@ export function setAdminSessionCookies(
 
   if (!adminSecret) {
     throw new Error(
-      "Missing ADMIN_SESSION_SECRET or APP_SESSION_SECRET/JWT_SECRET"
+      "Missing ADMIN_SESSION_SECRET, APP_SESSION_SECRET, JWT_SECRET, or SESSION_SECRET"
     );
   }
 
@@ -1704,7 +1717,7 @@ export function setUserSessionCookies(
 
   if (!userSecret) {
     throw new Error(
-      "Missing USER_SESSION_SECRET or APP_SESSION_SECRET/JWT_SECRET"
+      "Missing USER_SESSION_SECRET, APP_SESSION_SECRET, JWT_SECRET, or SESSION_SECRET"
     );
   }
 
