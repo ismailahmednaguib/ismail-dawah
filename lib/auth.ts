@@ -1397,8 +1397,9 @@ async function loadBcrypt(): Promise<unknown> {
   if (!bcryptPromise) {
     bcryptPromise = (async () => {
       try {
-        const dynamicImport = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<unknown>;
-        const mod = await dynamicImport("bcryptjs");
+        // استيراد مباشر قابل للتجميع في Vercel/Next.js.
+        // استخدام new Function هنا كان قد يجعل bcrypt غير موجود في حزمة الإنتاج.
+        const mod = await import("bcryptjs");
         return (mod as Record<string, unknown>)?.default ?? mod ?? null;
       } catch {
         return null;
