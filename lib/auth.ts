@@ -241,8 +241,8 @@ export async function createServerClient(): Promise<SupabaseClient> {
   let accessToken: string | null = null;
 
   try {
-    const cookieStore = (await cookies()) as any;
-    accessToken = cookieStore.get?.("sb-access-token")?.value ?? null;
+    const cookieStore = await cookies();
+    accessToken = cookieStore.get("sb-access-token")?.value ?? null;
   } catch {
     accessToken = null;
   }
@@ -623,15 +623,12 @@ async function getCookieCandidates(
   }
 
   try {
-    const cookieStore = (await cookies()) as any;
+    const cookieStore = await cookies();
 
     return {
-      [ADMIN_SESSION_COOKIE]:
-        cookieStore.get?.(ADMIN_SESSION_COOKIE)?.value ?? null,
-      [USER_SESSION_COOKIE]:
-        cookieStore.get?.(USER_SESSION_COOKIE)?.value ?? null,
-      [LEGACY_SESSION_COOKIE]:
-        cookieStore.get?.(LEGACY_SESSION_COOKIE)?.value ?? null,
+      [ADMIN_SESSION_COOKIE]: cookieStore.get(ADMIN_SESSION_COOKIE)?.value ?? null,
+      [USER_SESSION_COOKIE]: cookieStore.get(USER_SESSION_COOKIE)?.value ?? null,
+      [LEGACY_SESSION_COOKIE]: cookieStore.get(LEGACY_SESSION_COOKIE)?.value ?? null,
     };
   } catch {
     return empty;
@@ -654,65 +651,68 @@ function idForQuery(id: string): string | number {
   return id;
 }
 
-function getTokenVersion(row: any): number | null {
-  const raw =
-    row?.token_version ?? row?.auth_version ?? row?.password_version ?? null;
-
+function getTokenVersion(row: unknown): number | null {
+  if (!row || typeof row !== "object") return null;
+  const r = row as Record<string, unknown>;
+  const raw = r?.token_version ?? r?.auth_version ?? r?.password_version ?? null;
   const num = Number(raw);
-
   return Number.isFinite(num) ? num : null;
 }
 
-function mapCustomUser(row: any, role: Role): UserProfile {
+function mapCustomUser(row: unknown, role: Role): UserProfile {
+  if (!row || typeof row !== "object") {
+    throw new Error("Invalid user row");
+  }
+  const r = row as Record<string, unknown>;
   return {
-    id: String(row.id),
-    email: String(row.email ?? ""),
+    id: String(r.id),
+    email: String(r.email ?? ""),
     full_name:
-      typeof row.name === "string"
-        ? row.name
-        : typeof row.full_name === "string"
-        ? row.full_name
+      typeof r.name === "string"
+        ? r.name
+        : typeof r.full_name === "string"
+        ? r.full_name
         : null,
-    avatar_url:
-      typeof row.avatar_url === "string" ? row.avatar_url : null,
+    avatar_url: typeof r.avatar_url === "string" ? r.avatar_url : null,
     role,
     created_at:
-      typeof row.created_at === "string"
-        ? row.created_at
+      typeof r.created_at === "string"
+        ? r.created_at
         : new Date().toISOString(),
-    last_login:
-      typeof row.last_login === "string" ? row.last_login : null,
-    token_version: getTokenVersion(row),
+    last_login: typeof r.last_login === "string" ? r.last_login : null,
+    token_version: getTokenVersion(r),
   };
 }
 
-function mapProfileRow(row: any): UserProfile {
-  const role = normalizeRole(row.role) ?? "user";
+function mapProfileRow(row: unknown): UserProfile {
+  if (!row || typeof row !== "object") {
+    throw new Error("Invalid profile row");
+  }
+  const r = row as Record<string, unknown>;
+  const role = normalizeRole(r.role) ?? "user";
 
   return {
-    id: String(row.id),
-    email: String(row.email ?? ""),
+    id: String(r.id),
+    email: String(r.email ?? ""),
     full_name:
-      typeof row.full_name === "string"
-        ? row.full_name
-        : typeof row.name === "string"
-        ? row.name
+      typeof r.full_name === "string"
+        ? r.full_name
+        : typeof r.name === "string"
+        ? r.name
         : null,
-    avatar_url:
-      typeof row.avatar_url === "string" ? row.avatar_url : null,
+    avatar_url: typeof r.avatar_url === "string" ? r.avatar_url : null,
     role,
     created_at:
-      typeof row.created_at === "string"
-        ? row.created_at
+      typeof r.created_at === "string"
+        ? r.created_at
         : new Date().toISOString(),
-    last_login:
-      typeof row.last_login === "string" ? row.last_login : null,
-    token_version: getTokenVersion(row),
+    last_login: typeof r.last_login === "string" ? r.last_login : null,
+    token_version: getTokenVersion(r),
   };
 }
 
 function isMissingTableError(error: unknown): boolean {
-  const message = String((error as any)?.message || "");
+  const message = String((error as { message?: string })?.message || "");
 
   return (
     /does not exist/i.test(message) ||
@@ -723,7 +723,7 @@ function isMissingTableError(error: unknown): boolean {
 }
 
 function isMissingColumnError(error: unknown, column: string): boolean {
-  const message = String((error as any)?.message || "");
+  const message = String((error as { message?: string })?.message || "");
 
   return (
     new RegExp(column, "i").test(message) &&
@@ -738,14 +738,16 @@ async function maybeSingle(
   table: string,
   columns: string,
   id: string | number
-): Promise<{ data: any; error: any }> {
-  return (await (client
+): Promise<{ data: Record<string, unknown> | null; error: { message: string } | null }> {
+  const { data, error } = await client
     .from(table)
     .select(columns)
     .eq("id", id)
-    .maybeSingle() as unknown as Promise<any>)) as {
-    data: any;
-    error: any;
+    .maybeSingle();
+
+  return {
+    data: data as Record<string, unknown> | null,
+    error: error as { message: string } | null,
   };
 }
 
@@ -792,35 +794,35 @@ async function fetchAdminAuthState(
   ];
 
   for (const columns of adminAttempts) {
-    const res = await maybeSingle(client, "admin_users", columns, queryId);
+    const { data, error } = await maybeSingle(client, "admin_users", columns, queryId);
 
-    if (!res.error) {
-      if (!res.data) {
+    if (!error) {
+      if (!data) {
         return null;
       }
 
-      if (res.data.is_active === false) {
+      if (data.is_active === false) {
         return null;
       }
 
       return {
-        profile: mapCustomUser(res.data, "admin"),
-        tokenVersion: getTokenVersion(res.data),
+        profile: mapCustomUser(data, "admin"),
+        tokenVersion: getTokenVersion(data),
       };
     }
 
-    if (isMissingTableError(res.error)) {
+    if (isMissingTableError(error)) {
       break;
     }
 
     if (
-      isMissingColumnError(res.error, "token_version") ||
-      isMissingColumnError(res.error, "is_active")
+      isMissingColumnError(error, "token_version") ||
+      isMissingColumnError(error, "is_active")
     ) {
       continue;
     }
 
-    console.error("[Auth] fetchAdminAuthState admin_users error:", res.error);
+    console.error("[Auth] fetchAdminAuthState admin_users error:", error);
     return null;
   }
 
@@ -834,42 +836,42 @@ async function fetchAdminAuthState(
   ];
 
   for (const columns of userAttempts) {
-    const res = await maybeSingle(client, "users", columns, queryId);
+    const { data, error } = await maybeSingle(client, "users", columns, queryId);
 
-    if (!res.error) {
-      if (!res.data) {
+    if (!error) {
+      if (!data) {
         return null;
       }
 
-      const role = normalizeRole(res.data.role);
+      const role = normalizeRole(data.role);
 
       if (role && role !== "admin") {
         return null;
       }
 
-      if (res.data.is_active === false) {
+      if (data.is_active === false) {
         return null;
       }
 
       return {
-        profile: mapCustomUser(res.data, "admin"),
-        tokenVersion: getTokenVersion(res.data),
+        profile: mapCustomUser(data, "admin"),
+        tokenVersion: getTokenVersion(data),
       };
     }
 
-    if (isMissingTableError(res.error)) {
+    if (isMissingTableError(error)) {
       return null;
     }
 
     if (
-      isMissingColumnError(res.error, "role") ||
-      isMissingColumnError(res.error, "is_active") ||
-      isMissingColumnError(res.error, "token_version")
+      isMissingColumnError(error, "role") ||
+      isMissingColumnError(error, "is_active") ||
+      isMissingColumnError(error, "token_version")
     ) {
       continue;
     }
 
-    console.error("[Auth] fetchAdminAuthState users error:", res.error);
+    console.error("[Auth] fetchAdminAuthState users error:", error);
     return null;
   }
 
@@ -899,42 +901,42 @@ async function fetchUserAuthState(
   ];
 
   for (const columns of userAttempts) {
-    const res = await maybeSingle(client, "users", columns, queryId);
+    const { data, error } = await maybeSingle(client, "users", columns, queryId);
 
-    if (!res.error) {
-      if (!res.data) {
+    if (!error) {
+      if (!data) {
         return null;
       }
 
-      if (res.data.is_active === false) {
+      if (data.is_active === false) {
         return null;
       }
 
-      const role = normalizeRole(res.data.role) ?? "user";
+      const role = normalizeRole(data.role) ?? "user";
 
       if (role === "admin") {
         return null;
       }
 
       return {
-        profile: mapCustomUser(res.data, "user"),
-        tokenVersion: getTokenVersion(res.data),
+        profile: mapCustomUser(data, "user"),
+        tokenVersion: getTokenVersion(data),
       };
     }
 
-    if (isMissingTableError(res.error)) {
+    if (isMissingTableError(error)) {
       break;
     }
 
     if (
-      isMissingColumnError(res.error, "role") ||
-      isMissingColumnError(res.error, "is_active") ||
-      isMissingColumnError(res.error, "token_version")
+      isMissingColumnError(error, "role") ||
+      isMissingColumnError(error, "is_active") ||
+      isMissingColumnError(error, "token_version")
     ) {
       continue;
     }
 
-    console.error("[Auth] fetchUserAuthState users error:", res.error);
+    console.error("[Auth] fetchUserAuthState users error:", error);
     return null;
   }
 
@@ -946,39 +948,39 @@ async function fetchUserAuthState(
   ];
 
   for (const columns of profileAttempts) {
-    const res = await maybeSingle(client, "profiles", columns, queryId);
+    const { data, error } = await maybeSingle(client, "profiles", columns, queryId);
 
-    if (!res.error) {
-      if (!res.data) {
+    if (!error) {
+      if (!data) {
         return null;
       }
 
-      const role = normalizeRole(res.data.role) ?? "user";
+      const role = normalizeRole(data.role) ?? "user";
 
       if (role === "admin") {
         return null;
       }
 
       return {
-        profile: mapProfileRow(res.data),
-        tokenVersion: getTokenVersion(res.data),
+        profile: mapProfileRow(data),
+        tokenVersion: getTokenVersion(data),
       };
     }
 
-    if (isMissingTableError(res.error)) {
+    if (isMissingTableError(error)) {
       return null;
     }
 
     if (
-      isMissingColumnError(res.error, "role") ||
-      isMissingColumnError(res.error, "token_version") ||
-      isMissingColumnError(res.error, "last_login") ||
-      isMissingColumnError(res.error, "avatar_url")
+      isMissingColumnError(error, "role") ||
+      isMissingColumnError(error, "token_version") ||
+      isMissingColumnError(error, "last_login") ||
+      isMissingColumnError(error, "avatar_url")
     ) {
       continue;
     }
 
-    console.error("[Auth] fetchUserAuthState profiles error:", res.error);
+    console.error("[Auth] fetchUserAuthState profiles error:", error);
     return null;
   }
 
@@ -1376,20 +1378,16 @@ export function hashPasswordCombined(password: string): string {
   return `${salt}:${hash}`;
 }
 
-let bcryptPromise: Promise<any | null> | null = null;
+let bcryptPromise: Promise<unknown> | null = null;
 
-async function loadBcrypt(): Promise<any | null> {
+async function loadBcrypt(): Promise<unknown> {
   if (!bcryptPromise) {
     bcryptPromise = (async () => {
       try {
-        // eslint-disable-next-line no-new-func
-        const dynamicImport = new Function(
-          "specifier",
-          "return import(specifier)"
-        ) as (specifier: string) => Promise<any>;
-
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        const dynamicImport = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<unknown>;
         const mod = await dynamicImport("bcryptjs");
-        return mod?.default ?? mod ?? null;
+        return (mod as Record<string, unknown>)?.default ?? mod ?? null;
       } catch {
         return null;
       }
@@ -1404,9 +1402,10 @@ export async function hashPasswordAsync(password: string): Promise<{
   salt: string;
 }> {
   const bcrypt = await loadBcrypt();
+  const bcryptMod = bcrypt as { hash: (password: string, salt: number | string) => Promise<string> } | null;
 
-  if (bcrypt?.hash) {
-    const hash = await bcrypt.hash(password, 12);
+  if (bcryptMod?.hash) {
+    const hash = await bcryptMod.hash(password, 12);
     return { hash, salt: "" };
   }
 
@@ -1448,13 +1447,14 @@ export async function verifyPassword(
   // bcrypt
   if (hash.startsWith("$2")) {
     const bcrypt = await loadBcrypt();
+    const bcryptMod = bcrypt as { compare: (password: string, hash: string) => Promise<boolean> } | null;
 
-    if (typeof bcrypt?.compare !== "function") {
+    if (typeof bcryptMod?.compare !== "function") {
       return false;
     }
 
     try {
-      return await bcrypt.compare(password, hash);
+      return await bcryptMod.compare(password, hash);
     } catch {
       return false;
     }
@@ -1526,42 +1526,42 @@ export async function bumpAuthVersion(
       let tableMissing = false;
 
       for (const column of columns) {
-        const current = await maybeSingle(client, table, column, id);
+        const { data: current, error: currentError } = await maybeSingle(client, table, column, id);
 
-        if (current.error) {
-          if (isMissingTableError(current.error)) {
+        if (currentError) {
+          if (isMissingTableError(currentError)) {
             tableMissing = true;
             break;
           }
 
-          if (isMissingColumnError(current.error, column)) {
+          if (isMissingColumnError(currentError, column)) {
             continue;
           }
 
           continue;
         }
 
-        if (!current.data) {
+        if (!current) {
           continue;
         }
 
-        const next = Number((current.data as any)?.[column] ?? 0) + 1;
+        const next = Number(current[column] ?? 0) + 1;
 
-        const update = (await (client
+        const { error: updateError } = await client
           .from(table)
-          .update({ [column]: next } as any)
-          .eq("id", id) as unknown as Promise<any>)) as { error?: any };
+          .update({ [column]: next })
+          .eq("id", id);
 
-        if (!update.error) {
+        if (!updateError) {
           return true;
         }
 
-        if (isMissingTableError(update.error)) {
+        if (isMissingTableError(updateError)) {
           tableMissing = true;
           break;
         }
 
-        if (isMissingColumnError(update.error, column)) {
+        if (isMissingColumnError(updateError, column)) {
           continue;
         }
       }
@@ -1599,20 +1599,20 @@ async function updateLastLogin(
         : ["users", "profiles"];
 
     for (const table of tables) {
-      const res = (await (client
+      const { error } = await client
         .from(table)
-        .update({ last_login: now } as any)
-        .eq("id", id) as unknown as Promise<any>)) as { error?: any };
+        .update({ last_login: now })
+        .eq("id", id);
 
-      if (!res.error) {
+      if (!error) {
         return true;
       }
 
-      if (isMissingTableError(res.error)) {
+      if (isMissingTableError(error)) {
         continue;
       }
 
-      if (isMissingColumnError(res.error, "last_login")) {
+      if (isMissingColumnError(error, "last_login")) {
         continue;
       }
     }
@@ -1630,7 +1630,14 @@ async function updateLastLogin(
 function baseCookieOptions(
   maxAge: number,
   sameSite: "lax" | "strict" = "lax"
-): any {
+): {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: "lax" | "strict";
+  maxAge: number;
+  path: string;
+  domain?: string;
+} {
   const domain = getCookieDomain();
 
   return {
@@ -1736,18 +1743,14 @@ export function clearAuthCookies(res: NextResponse): void {
   const domain = getCookieDomain();
 
   for (const name of names) {
-    res.cookies.set(
-      name,
-      "",
-      {
-        httpOnly: true,
-        secure: isProduction(),
-        sameSite: "lax",
-        maxAge: 0,
-        path: "/",
-        ...(domain ? { domain } : {}),
-      } as any
-    );
+    res.cookies.set(name, "", {
+      httpOnly: true,
+      secure: isProduction(),
+      sameSite: "lax",
+      maxAge: 0,
+      path: "/",
+      ...(domain ? { domain } : {}),
+    });
   }
 }
 
@@ -1762,7 +1765,7 @@ export async function setSessionCookies(
   expiresAt: number
 ): Promise<void> {
   try {
-    const store = (await cookies()) as any;
+    const store = await cookies();
 
     const fallbackExp = Math.floor(Date.now() / 1000) + 3600;
     const parsedExp = Number(expiresAt);
@@ -1771,31 +1774,23 @@ export async function setSessionCookies(
 
     const domain = getCookieDomain();
 
-    store.set?.(
-      "sb-access-token",
-      accessToken,
-      {
-        httpOnly: true,
-        secure: isProduction(),
-        sameSite: "lax",
-        expires: new Date(safeExpiresAt * 1000),
-        path: "/",
-        ...(domain ? { domain } : {}),
-      } as any
-    );
+    store.set("sb-access-token", accessToken, {
+      httpOnly: true,
+      secure: isProduction(),
+      sameSite: "lax",
+      expires: new Date(safeExpiresAt * 1000),
+      path: "/",
+      ...(domain ? { domain } : {}),
+    });
 
-    store.set?.(
-      "sb-refresh-token",
-      refreshToken,
-      {
-        httpOnly: true,
-        secure: isProduction(),
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7,
-        path: "/",
-        ...(domain ? { domain } : {}),
-      } as any
-    );
+    store.set("sb-refresh-token", refreshToken, {
+      httpOnly: true,
+      secure: isProduction(),
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+      ...(domain ? { domain } : {}),
+    });
   } catch (error) {
     console.warn("[Auth] Failed to set Supabase Auth cookies:", error);
   }
@@ -1803,10 +1798,10 @@ export async function setSessionCookies(
 
 export async function clearSessionCookies(): Promise<void> {
   try {
-    const store = (await cookies()) as any;
+    const store = await cookies();
 
-    store.delete?.("sb-access-token");
-    store.delete?.("sb-refresh-token");
+    store.delete("sb-access-token");
+    store.delete("sb-refresh-token");
   } catch (error) {
     console.warn("[Auth] Failed to clear Supabase Auth cookies:", error);
   }
@@ -1814,8 +1809,8 @@ export async function clearSessionCookies(): Promise<void> {
 
 export async function getAccessToken(): Promise<string | null> {
   try {
-    const store = (await cookies()) as any;
-    return store.get?.("sb-access-token")?.value ?? null;
+    const store = await cookies();
+    return store.get("sb-access-token")?.value ?? null;
   } catch {
     return null;
   }
@@ -1825,17 +1820,17 @@ export async function getAccessToken(): Promise<string | null> {
 // Supabase Auth mapping helpers
 // ============================================================
 
-function mapSupabaseUser(user: any): UserProfile | null {
-  if (!user) {
+function mapSupabaseUser(user: unknown): UserProfile | null {
+  if (!user || typeof user !== "object") {
     return null;
   }
-
-  const metadata = user.user_metadata || {};
+  const u = user as Record<string, unknown>;
+  const metadata = (u.user_metadata as Record<string, unknown>) || {};
   const role = normalizeRole(metadata.role) ?? "user";
 
   return {
-    id: String(user.id),
-    email: String(user.email ?? ""),
+    id: String(u.id),
+    email: String(u.email ?? ""),
     full_name:
       typeof metadata.full_name === "string"
         ? metadata.full_name
@@ -1848,12 +1843,12 @@ function mapSupabaseUser(user: any): UserProfile | null {
         : null,
     role,
     created_at:
-      typeof user.created_at === "string"
-        ? user.created_at
+      typeof u.created_at === "string"
+        ? String(u.created_at)
         : new Date().toISOString(),
     last_login:
       typeof metadata.last_login === "string"
-        ? metadata.last_login
+        ? String(metadata.last_login)
         : null,
     token_version: null,
   };
@@ -1971,33 +1966,28 @@ export async function signUpWithEmail(
         full_name: cleanFullName,
         role: "user",
         created_at: new Date().toISOString(),
-      } as any;
+      };
 
       let inserted = false;
 
       try {
         const admin = createAdminClient();
-
-        const adminResult = (await (admin
+        const { error: adminError } = await admin
           .from("profiles")
-          .upsert(profilePayload, { onConflict: "id" }) as unknown as Promise<any>)) as {
-          error?: any;
-        };
+          .upsert(profilePayload, { onConflict: "id" });
 
-        inserted = !adminResult.error;
+        inserted = !adminError;
       } catch {
         inserted = false;
       }
 
       if (!inserted) {
         try {
-          const clientResult = (await (supabase
+          const { error: clientError } = await supabase
             .from("profiles")
-            .upsert(profilePayload, { onConflict: "id" }) as unknown as Promise<any>)) as {
-            error?: any;
-          };
+            .upsert(profilePayload, { onConflict: "id" });
 
-          inserted = !clientResult.error;
+          inserted = !clientError;
         } catch {
           inserted = false;
         }
@@ -2016,7 +2006,7 @@ export async function signUpWithEmail(
 export async function signOut(): Promise<void> {
   try {
     const supabase = await createServerClient();
-    await (supabase.auth.signOut() as unknown as Promise<any>);
+    await supabase.auth.signOut();
   } catch {
     // ignore
   }
@@ -2041,7 +2031,7 @@ export async function updateUserProfile(
     const supabase = await createServerClient();
 
     const { data, error } = await supabase.auth.updateUser({
-      data: updates as any,
+      data: updates,
     });
 
     if (error) {
@@ -2050,10 +2040,10 @@ export async function updateUserProfile(
 
     if (data.user) {
       try {
-        await (supabase
+        await supabase
           .from("profiles")
-          .update(updates as any)
-          .eq("id", data.user.id) as unknown as Promise<any>);
+          .update(updates)
+          .eq("id", data.user.id);
       } catch {
         // ignore table update failure
       }
@@ -2167,35 +2157,29 @@ export async function getAllUsers(options: {
 
     const offset = Math.max(Number(options.offset || 0), 0);
 
-    const profiles = (await (client
+    const { data: profiles, error: profilesError } = await client
       .from("profiles")
       .select(
         "id, email, full_name, avatar_url, role, created_at, last_login, token_version"
       )
       .order("created_at", { ascending: false })
-      .range(offset, offset + limit - 1) as unknown as Promise<any>)) as {
-      data: any;
-      error: any;
-    };
+      .range(offset, offset + limit - 1);
 
-    if (!profiles.error && Array.isArray(profiles.data)) {
-      return profiles.data.map(mapProfileRow);
+    if (!profilesError && Array.isArray(profiles)) {
+      return profiles.map(mapProfileRow);
     }
 
-    if (profiles.error && isMissingTableError(profiles.error)) {
-      const users = (await (client
+    if (profilesError && isMissingTableError(profilesError)) {
+      const { data: users, error: usersError } = await client
         .from("users")
         .select(
           "id, email, name, role, created_at, last_login, token_version"
         )
         .order("created_at", { ascending: false })
-        .range(offset, offset + limit - 1) as unknown as Promise<any>)) as {
-        data: any;
-        error: any;
-      };
+        .range(offset, offset + limit - 1);
 
-      if (!users.error && Array.isArray(users.data)) {
-        return users.data.map((row: any) =>
+      if (!usersError && Array.isArray(users)) {
+        return users.map((row) =>
           mapCustomUser(row, normalizeRole(row.role) ?? "user")
         );
       }
@@ -2213,37 +2197,31 @@ export async function getUserById(id: string): Promise<UserProfile | null> {
     const client = createAdminClient();
     const queryId = idForQuery(id);
 
-    const profile = (await (client
+    const { data: profile, error: profileError } = await client
       .from("profiles")
       .select(
         "id, email, full_name, avatar_url, role, created_at, last_login, token_version"
       )
       .eq("id", queryId)
-      .maybeSingle() as unknown as Promise<any>)) as {
-      data: any;
-      error: any;
-    };
+      .maybeSingle();
 
-    if (!profile.error && profile.data) {
-      return mapProfileRow(profile.data);
+    if (!profileError && profile) {
+      return mapProfileRow(profile);
     }
 
-    if (profile.error && isMissingTableError(profile.error)) {
-      const user = (await (client
+    if (profileError && isMissingTableError(profileError)) {
+      const { data: user, error: userError } = await client
         .from("users")
         .select(
           "id, email, name, role, created_at, last_login, token_version"
         )
         .eq("id", queryId)
-        .maybeSingle() as unknown as Promise<any>)) as {
-        data: any;
-        error: any;
-      };
+        .maybeSingle();
 
-      if (!user.error && user.data) {
+      if (!userError && user) {
         return mapCustomUser(
-          user.data,
-          normalizeRole(user.data.role) ?? "user"
+          user,
+          normalizeRole(user.role) ?? "user"
         );
       }
     }
@@ -2268,31 +2246,23 @@ export async function deleteUser(
     const client = createAdminClient();
 
     try {
-      const authResult = (await (client.auth.admin.deleteUser(
-        userId
-      ) as unknown as Promise<any>)) as { error?: any };
+      const { error: authError } = await client.auth.admin.deleteUser(userId);
 
-      if (authResult.error) {
-        console.error("[Auth] deleteUser auth error:", authResult.error);
+      if (authError) {
+        console.error("[Auth] deleteUser auth error:", authError);
       }
     } catch (error) {
       console.error("[Auth] deleteUser auth exception:", error);
     }
 
     try {
-      await (client
-        .from("profiles")
-        .delete()
-        .eq("id", userId) as unknown as Promise<any>);
+      await client.from("profiles").delete().eq("id", userId);
     } catch {
       // ignore
     }
 
     try {
-      await (client
-        .from("users")
-        .delete()
-        .eq("id", userId) as unknown as Promise<any>);
+      await client.from("users").delete().eq("id", userId);
     } catch {
       // ignore
     }
@@ -2337,34 +2307,27 @@ export async function setUserRole(
 
     let tableUpdated = false;
 
-    const attempts: Array<() => Promise<{ error?: any }>> = [
-      async () =>
-        (await (client
-          .from("profiles")
-          .update({ role } as any)
-          .eq("id", userId) as unknown as Promise<any>)) as { error?: any },
-
-      async () =>
-        (await (client
-          .from("users")
-          .update({ role } as any)
-          .eq("id", userId) as unknown as Promise<any>)) as { error?: any },
+    const attempts: Array<() => Promise<{ error: { message: string } | null }>> = [
+      async () => {
+        const { error } = await client.from("profiles").update({ role }).eq("id", userId);
+        return { error: error as { message: string } | null };
+      },
+      async () => {
+        const { error } = await client.from("users").update({ role }).eq("id", userId);
+        return { error: error as { message: string } | null };
+      },
     ];
 
     if (role === "admin") {
-      attempts.push(
-        async () =>
-          (await (client
-            .from("admin_users")
-            .update({ is_active: true } as any)
-            .eq("id", userId) as unknown as Promise<any>)) as { error?: any }
-      );
+      attempts.push(async () => {
+        const { error } = await client.from("admin_users").update({ is_active: true }).eq("id", userId);
+        return { error: error as { message: string } | null };
+      });
     }
 
     for (const attempt of attempts) {
       try {
         const result = await attempt();
-
         if (!result.error) {
           tableUpdated = true;
         }
