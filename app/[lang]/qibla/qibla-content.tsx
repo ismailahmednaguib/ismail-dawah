@@ -340,13 +340,6 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
     return calculateQibla(location.latitude, location.longitude);
   }, [hydrated, location.latitude, location.longitude]);
 
-  // ===== زاوية السهم بالنسبة للبوصلة =====
-  const arrowAngle = useMemo(() => {
-    if (!qibla) return 0;
-    if (deviceHeading === null) return qibla.bearing;
-    return normalizeBearing(qibla.bearing - deviceHeading);
-  }, [deviceHeading, qibla]);
-
   // ===== حفظ الموقع =====
   const persistLocation = useCallback((loc: LocationState) => {
     try {

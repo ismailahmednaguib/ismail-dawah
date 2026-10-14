@@ -1,4 +1,7 @@
+"use client";
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { AppRole } from '@/lib/types/content';
 import { can, highestRole } from '@/lib/admin/permissions';
 
@@ -25,14 +28,13 @@ export default function AdminSidebar({
   userName: string;
   roles: AppRole[];
 }) {
+  const router = useRouter();
   const items: NavItem[] = [
     { href: '/admin', label: 'لوحة المعلومات', icon: '📊', show: true },
     { href: '/admin/content', label: 'المحتوى', icon: '📝', show: can(roles, 'content.read') },
+    { href: '/admin/translations', label: 'الترجمات', icon: '🌐', show: can(roles, 'content.read') },
     { href: '/admin/review', label: 'المراجعة العلمية', icon: '🔍', show: can(roles, 'review.approve') },
-    { href: '/admin/taxonomy', label: 'التصنيفات', icon: '🏷️', show: can(roles, 'taxonomy.manage') },
-    { href: '/admin/media', label: 'الوسائط', icon: '🖼️', show: can(roles, 'media.manage') },
     { href: '/admin/users', label: 'المستخدمون', icon: '👥', show: can(roles, 'users.manage') },
-    { href: '/admin/settings', label: 'الإعدادات', icon: '⚙️', show: can(roles, 'settings.manage') },
     { href: '/admin/audit', label: 'سجل التدقيق', icon: '📜', show: can(roles, 'audit.read') },
   ];
 
@@ -75,7 +77,11 @@ export default function AdminSidebar({
       {/* خروج */}
       <div className="p-3 border-t border-emerald-800">
         <button
-          onClick={() => fetch('/api/admin/logout', { method: 'POST' }).then(() => (window.location.href = '/admin/login'))}
+          onClick={() => {
+            void fetch('/api/admin/logout', { method: 'POST' }).finally(() => {
+              router.push('/admin/login');
+            });
+          }}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-emerald-100 hover:bg-red-900/50 transition-colors text-sm"
         >
           <span>🚪</span>

@@ -5,7 +5,6 @@ import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import type {
   Content,
   ContentStatus,
-  ContentType,
   ContentFilters,
   PaginatedResult,
 } from '@/lib/types/content';

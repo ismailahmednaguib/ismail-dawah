@@ -376,13 +376,6 @@ function getFirstValue(value?: string | string[]): string {
   return value ?? "";
 }
 
-function parseNumber(value?: string | string[]): number {
-  const raw = getFirstValue(value).replace(/,/g, "").trim();
-  if (!raw) return 0;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
-}
-
 function parseNonNegativeNumber(value?: string | string[]): number {
   const raw = getFirstValue(value).replace(/,/g, "").trim();
   if (!raw) return 0;

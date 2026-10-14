@@ -90,7 +90,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
       if (!res.ok) throw new Error();
       loadMatrix();
       loadStats();
-    } catch (err) {
+    } catch {
       alert('فشل النسخ');
     }
   };

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Image from "next/image";
 
 // ===== كارت أساسي =====
 interface BasicCardProps {
@@ -142,7 +143,7 @@ export function FeatureCard({
   className = "",
 }: FeatureCardProps) {
   const content = (
-    <div className="card card-interactive group p-6 h-full flex flex-col">
+    <div className={`card card-interactive group p-6 h-full flex flex-col ${className}`}>
       <div className="flex items-start justify-between mb-4">
         {icon && (
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/40 text-2xl transition-transform duration-300 group-hover:scale-110">
@@ -226,11 +227,14 @@ export function ImageCard({
   className = "",
 }: ImageCardProps) {
   const content = (
-    <div className="card card-interactive group overflow-hidden h-full">
+    <div className={`card card-interactive group overflow-hidden h-full ${className}`}>
       <div className="relative overflow-hidden">
-        <img
+        <Image
           src={image}
           alt={title}
+          width={800}
+          height={400}
+          unoptimized
           className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
         />
         {badge && (

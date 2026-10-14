@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 interface SearchResult {
   id: string;
@@ -23,7 +23,6 @@ const TYPE_ICONS: Record<string, string> = {
 };
 
 export default function SearchAdvanced({ lang }: { lang: string }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   
   const [query, setQuery] = useState(searchParams.get('q') ?? '');
@@ -111,7 +110,7 @@ export default function SearchAdvanced({ lang }: { lang: string }) {
             <div className="text-center py-12">
               <p className="text-4xl mb-3">🔍</p>
               <p className="text-stone-500 dark:text-gray-400">
-                لم نعثر على نتائج لـ "{query}"
+                لم نعثر على نتائج لـ &quot;{query}&quot;
               </p>
               <p className="text-sm text-stone-400 mt-2">
                 جرب كلمات مختلفة أو تحقق من الإملاء

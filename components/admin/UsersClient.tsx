@@ -81,7 +81,10 @@ export default function UsersClient({ session }: { session: AdminSession }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 overflow-hidden">
+    <div
+      className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 overflow-hidden"
+      data-current-user-id={session.userId}
+    >
       {loading ? (
         <div className="p-12 text-center text-stone-400">جارٍ التحميل...</div>
       ) : users.length === 0 ? (

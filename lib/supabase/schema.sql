@@ -226,13 +226,22 @@ create policy "public read taxonomies" on taxonomies
   for select using (true);
 
 create policy "public read terms" on content_terms
-  for select using (true);
+  for select using (
+    exists (
+      select 1 from content c
+      where c.id = content_terms.content_id and c.status = 'published'
+    )
+  );
 
 create policy "public read references" on content_references
-  for select using (true);
+  for select using (
+    exists (
+      select 1 from content c
+      where c.id = content_references.content_id and c.status = 'published'
+    )
+  );
 
-create policy "public read user_roles" on user_roles
-  for select using (true);
+-- لا نعرض أدوار المستخدمين أو بياناتهم الشخصية للعامة.
 
 -- الكتابة: المحررون فأعلى
 create policy "editors write content" on content

@@ -1,6 +1,6 @@
 import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
-import { getContentFull, setStatus } from '@/lib/admin/content-service';
+import { getContentFull } from '@/lib/admin/content-service';
 import ContentEditClient from '@/components/admin/ContentEditClient';
 
 export const metadata = { title: 'تعديل المحتوى | لوحة التحكم' };

@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -907,7 +907,7 @@ export default async function ProphetsStoriesPage({
 
           {q && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
-              <span className="badge-gold">"{q}"</span>
+              <span className="badge-gold">&quot;{q}&quot;</span>
 
               <Link
                 href={`/${l}/prophets-stories`}

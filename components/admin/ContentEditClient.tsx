@@ -3,10 +3,34 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import StatusBadge from '@/components/admin/StatusBadge';
 import type { ContentStatus } from '@/lib/types/content';
 
-export default function ContentEditClient({ content }: { content: any }) {
+type TranslationSummary = {
+  title?: string | null;
+  slug?: string | null;
+};
+
+type ContentReferenceSummary = {
+  id: string;
+  kind: string;
+  surah?: number | null;
+  ayah_from?: number | null;
+  hadith_book?: string | null;
+  book_title?: string | null;
+  scholar_name?: string | null;
+  verified?: boolean;
+};
+
+type EditableContent = {
+  id: string;
+  status: ContentStatus;
+  content_translations?: TranslationSummary[];
+  content_references?: ContentReferenceSummary[];
+};
+
+export default function ContentEditClient({ content }: { content: EditableContent }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const translation = content.content_translations?.[0];
@@ -85,7 +109,7 @@ export default function ContentEditClient({ content }: { content: any }) {
           </p>
         ) : (
           <ul className="space-y-2 text-sm">
-            {content.content_references.map((ref: any) => (
+            {(content.content_references ?? []).map((ref) => (
               <li key={ref.id} className="flex items-center gap-2">
                 <span>
                   {ref.kind === 'quran' ? '📖' : ref.kind === 'hadith' ? '💬' : '📚'}
@@ -104,12 +128,12 @@ export default function ContentEditClient({ content }: { content: any }) {
         )}
       </div>
 
-      <a
+      <Link
         href="/admin/content"
         className="inline-block text-sm text-emerald-700 hover:underline"
       >
         → العودة إلى قائمة المحتوى
-      </a>
+      </Link>
     </div>
   );
 }

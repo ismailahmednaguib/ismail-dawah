@@ -494,7 +494,7 @@ export function createSession(
  * الجلسات هنا stateless موقّعة، لذلك logout الحقيقي هو مسح الكوكيز.
  * هذه الدالة موجودة للتوافق فقط.
  */
-export function destroySession(_token: string): void {
+export function destroySession(): void {
   // no-op
 }
 
@@ -1384,7 +1384,6 @@ async function loadBcrypt(): Promise<unknown> {
   if (!bcryptPromise) {
     bcryptPromise = (async () => {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
         const dynamicImport = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<unknown>;
         const mod = await dynamicImport("bcryptjs");
         return (mod as Record<string, unknown>)?.default ?? mod ?? null;

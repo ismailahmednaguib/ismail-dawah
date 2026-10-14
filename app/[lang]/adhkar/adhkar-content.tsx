@@ -194,7 +194,6 @@ function DhikrCard({
   count,
   lang,
   disabled,
-  isLast,
   onIncrement,
   onReset,
 }: {
@@ -202,7 +201,6 @@ function DhikrCard({
   count: number;
   lang: Lang;
   disabled: boolean;
-  isLast: boolean;
   onIncrement: () => void;
   onReset: () => void;
 }) {
@@ -853,8 +851,6 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
         {activeCategory.adhkar.map((dhikr, index) => {
           const key = getKey(activeCategory.id, index);
           const count = hydrated ? counts[key] || 0 : 0;
-          const isLast = index === activeCategory.adhkar.length - 1;
-
           return (
             <DhikrCard
               key={`${activeCategory.id}-${index}`}
@@ -862,7 +858,6 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
               count={count}
               lang={lang}
               disabled={!hydrated}
-              isLast={isLast}
               onIncrement={() => increment(key, dhikr.count)}
               onReset={() => resetDhikr(key)}
             />

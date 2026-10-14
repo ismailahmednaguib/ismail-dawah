@@ -1,5 +1,6 @@
 import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import ContentListClient from '@/components/admin/ContentListClient';
 
 export const metadata = { title: 'المحتوى | لوحة التحكم' };
@@ -12,12 +13,12 @@ export default async function ContentPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-emerald-950">إدارة المحتوى</h1>
-        <a
+        <Link
           href="/admin/content/new"
           className="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm transition-colors"
         >
           + محتوى جديد
-        </a>
+        </Link>
       </div>
       <ContentListClient />
     </div>

@@ -2,7 +2,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import type { AdminSession } from '@/lib/admin/session';
 
 interface ReviewItem {
@@ -31,7 +30,6 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default function ReviewQueueClient({ session }: { session: AdminSession }) {
-  const router = useRouter();
   const [items, setItems] = useState<ReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'pending' | 'all'>('pending');

@@ -556,7 +556,6 @@ export default async function ProjectsPage({
                   project={project}
                   lang={L}
                   ui={ui}
-                  isRTL={isRTL}
                 />
               ))}
             </div>
@@ -721,12 +720,10 @@ function ProjectCard({
   project,
   lang,
   ui,
-  isRTL,
 }: {
   project: Project;
   lang: Lang;
   ui: UILang;
-  isRTL: boolean;
 }) {
   return (
     <article

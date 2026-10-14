@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
-import { t } from "@/lib/i18n";
 import { getFieldTranslation } from "@/lib/translations";
 
 import Header from "@/components/Header";

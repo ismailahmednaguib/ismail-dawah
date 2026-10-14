@@ -617,7 +617,7 @@ export default async function FatwaPage({
                 {l === "ar" ? activeCategory.ar : activeCategory.en}
               </span>
 
-              {q && <span className="badge-gold">"{q}"</span>}
+              {q && <span className="badge-gold">&quot;{q}&quot;</span>}
 
               <Link
                 href={`/${l}/fatwa`}

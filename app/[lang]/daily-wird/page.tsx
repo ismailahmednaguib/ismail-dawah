@@ -1,7 +1,7 @@
 // app/[lang]/daily-wird/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";

@@ -10,8 +10,6 @@ export const dynamic = "force-dynamic";
 // Configuration
 // ============================================================
 
-const isProduction = process.env.NODE_ENV === "production";
-
 /**
  * السماح مؤقتًا بالجلسات القديمة غير الموقّعة (Base64 فقط).
  *

@@ -285,7 +285,7 @@ export function createContentClient(): SupabaseClient {
  * ⚠️ هذا client السيرفر فقط.
  */
 export const supabase = new Proxy({} as SupabaseClient, {
-  get(_target, prop, _receiver) {
+  get(_target, prop) {
     const client = createContentClient();
     const value = Reflect.get(client, prop, client);
     return typeof value === "function" ? value.bind(client) : value;
@@ -943,7 +943,10 @@ export async function searchContent(
 
   results.sort((a, b) => b.__score - a.__score);
 
-  return results.slice(0, limit).map(({ __score, ...item }) => item);
+  return results.slice(0, limit).map(({ __score, ...item }) => {
+    void __score;
+    return item;
+  });
 }
 
 export async function getLatestContent(lang = "ar", limit = 6): Promise<ContentItem[]> {

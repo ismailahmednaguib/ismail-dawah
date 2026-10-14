@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import type { ContentType, Audience, AgeGroup, EduLevel } from '@/lib/types/content';
 
 const CONTENT_TYPES: { value: ContentType; label: string; icon: string }[] = [
@@ -103,8 +104,8 @@ export default function ContentForm() {
       if (!res.ok) throw new Error(json.error ?? 'فشل الحفظ');
 
       router.push('/admin/content');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'فشل حفظ المحتوى');
     } finally {
       setSaving(false);
     }
@@ -296,12 +297,12 @@ export default function ContentForm() {
         >
           {saving ? 'جارٍ الحفظ...' : '💾 حفظ كمسودة'}
         </button>
-        <a
+        <Link
           href="/admin/content"
           className="px-6 py-2.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-50 transition-colors"
         >
           إلغاء
-        </a>
+        </Link>
       </div>
     </form>
   );

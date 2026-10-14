@@ -121,6 +121,12 @@ export default function BookmarkButton({
         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
       </svg>
 
+      {showLabel && (
+        <span className="ms-2 hidden sm:inline">
+          {isBookmarked ? "محفوظ" : "حفظ"}
+        </span>
+      )}
+
       {/* Tooltip */}
       <span
         className={`

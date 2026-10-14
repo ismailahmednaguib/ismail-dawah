@@ -754,7 +754,7 @@ export default async function FaqPage({
                 </span>
               )}
 
-              {q && <span className="badge-gold">"{q}"</span>}
+              {q && <span className="badge-gold">&quot;{q}&quot;</span>}
 
               <Link
                 href={`/${l}/faq`}

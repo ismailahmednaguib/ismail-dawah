@@ -1,18 +1,23 @@
 // =====================================================
 // طبقة جلسة المدير + الأدوار
 // =====================================================
-// ⚠️ ملاحظة تكامل: المشروع الحالي لديه `lib/auth.ts` و `/api/admin/login`.
-// هذه الطبقة تقرأ ملف تعريف الارتباط الذي ينشئه نظامك الحالي.
-// إذا كان اسم جدول الجلسات لديك مختلفًا، عدّل `SESSION_TABLE` فقط.
+// نظام المصادقة الحالي يستخدم admin_session موقّعًا وadmin_users.
+// لا نعتمد على جداول جلسات إضافية غير موجودة في المشروع.
 // =====================================================
 
-import { cookies } from 'next/headers';
+import 'server-only';
+import { getAdminFromCookie } from '@/lib/auth';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import type { AppRole } from '@/lib/types/content';
 
-// عدّل هذين السطرين ليتطابقا مع نظامك الحالي في `lib/auth.ts`
-const SESSION_COOKIE = 'admin_session';
-const SESSION_TABLE = 'admin_sessions';
+const VALID_ROLES = new Set<AppRole>([
+  'super_admin',
+  'admin',
+  'editor',
+  'scholar_reviewer',
+  'translator',
+  'contributor',
+]);
 
 export interface AdminSession {
   userId: string;
@@ -27,49 +32,45 @@ export interface AdminSession {
  */
 export async function getAdminSession(): Promise<AdminSession | null> {
   try {
-    const cookieStore = await cookies();
-    const sessionToken = cookieStore.get(SESSION_COOKIE)?.value;
-    if (!sessionToken) return null;
+    const admin = await getAdminFromCookie();
+    if (!admin || admin.role !== 'admin') return null;
 
-    const supabase = getSupabaseAdmin();
+    // الدور العام الحالي يأتي من admin_users. إن وُجدت user_roles نستخدمها
+    // لتطبيق صلاحيات المرحلة الأولى، مع fallback آمن حتى لا تتعطل اللوحة
+    // قبل تطبيق migration الخاصة بالأدوار.
+    let roles: AppRole[] = ['admin'];
+    let fullName = admin.full_name;
 
-    // 1. التحقق من صلاحية الجلسة
-    const { data: session } = await supabase
-      .from(SESSION_TABLE)
-      .select('admin_id, expires_at')
-      .eq('id', sessionToken)
-      .maybeSingle();
+    try {
+      const supabase = getSupabaseAdmin();
+      const { data: roleRow, error } = await supabase
+        .from('user_roles')
+        .select('roles, is_active, full_name')
+        .eq('user_id', admin.id)
+        .maybeSingle();
 
-    if (!session) return null;
-    if (session.expires_at && new Date(session.expires_at) < new Date()) {
-      return null;
+      if (!error && roleRow?.is_active === false) return null;
+
+      if (!error && Array.isArray(roleRow?.roles)) {
+        const configuredRoles = roleRow.roles.filter((role): role is AppRole =>
+          typeof role === 'string' && VALID_ROLES.has(role as AppRole)
+        );
+
+        if (configuredRoles.length > 0) roles = configuredRoles;
+      }
+
+      if (!error && typeof roleRow?.full_name === 'string') {
+        fullName = roleRow.full_name;
+      }
+    } catch (error) {
+      // عدم وجود جدول user_roles لا يلغي صلاحية المدير الأساسي.
+      console.warn('[getAdminSession] Could not load role metadata:', error);
     }
-
-    // 2. جلب بيانات المدير
-    const { data: admin } = await supabase
-      .from('admins')
-      .select('id, email, full_name')
-      .eq('id', session.admin_id)
-      .maybeSingle();
-
-    if (!admin) return null;
-
-    // 3. جلب الأدوار من جدول `user_roles` (المرحلة الأولى)
-    const { data: roleRow } = await supabase
-      .from('user_roles')
-      .select('roles, is_active')
-      .eq('user_id', admin.id)
-      .maybeSingle();
-
-    // إذا لا يوجد صف أدوار، نعتبره مساهم فقط (أدنى صلاحية)
-    const roles: AppRole[] = roleRow?.is_active
-      ? (roleRow.roles as AppRole[])
-      : ['contributor'];
 
     return {
       userId: admin.id,
       email: admin.email,
-      fullName: admin.full_name ?? null,
+      fullName: fullName ?? null,
       roles,
     };
   } catch (err) {
