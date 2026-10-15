@@ -78,6 +78,8 @@ function settingsRowsToRecord(rows: SettingsRow[]): Record<string, unknown> {
 
 function settingsToRows(settings: Record<string, unknown>) {
   const rows: Array<Record<string, unknown>> = [];
+  // مفاتيح غير مرتبطة بلغة (تُخزَّن مرة واحدة لا لكل لغة).
+  const nonLocalized = new Set(['pageSections', 'sectionTitles', 'hiddenPages']);
 
   for (const [rawKey, value] of Object.entries(settings)) {
     const key = rawKey === 'siteName'
@@ -85,7 +87,7 @@ function settingsToRows(settings: Record<string, unknown>) {
       : rawKey === 'siteDescription'
         ? 'site.description'
         : rawKey;
-    if (isRecord(value) && ('ar' in value || 'en' in value)) {
+    if (isRecord(value) && ('ar' in value || 'en' in value) && !nonLocalized.has(rawKey)) {
       for (const lang of ['ar', 'en'] as const) {
         if (!(lang in value)) continue;
         rows.push({
@@ -97,7 +99,7 @@ function settingsToRows(settings: Record<string, unknown>) {
     } else {
       rows.push({
         key,
-        lang: 'ar',
+        lang: nonLocalized.has(rawKey) ? 'all' : 'ar',
         value: { value },
       });
     }
@@ -225,6 +227,7 @@ export async function PUT(request: NextRequest) {
     for (const target of revalidateTargets) {
       revalidatePath(target);
     }
+    revalidatePath('/api/site-settings');
     invalidateContentCache();
 
     // سجل تغييرات مختصر بدون تخزين أي أسرار أو بيانات جلسة.

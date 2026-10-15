@@ -798,10 +798,22 @@ export type PageControls = {
 
 export function buildPageControls(settings: Record<string, unknown>): PageControls {
   return {
-    sections: mergeSectionsConfig(settings?.pageSections),
-    titles: mergeTitlesConfig(settings?.sectionTitles),
-    pages: mergePagesVisibility(settings?.hiddenPages),
+    sections: mergeSectionsConfig(unwrapLocalized(settings?.pageSections)),
+    titles: mergeTitlesConfig(unwrapLocalized(settings?.sectionTitles)),
+    pages: mergePagesVisibility(unwrapLocalized(settings?.hiddenPages)),
   };
+}
+
+/** بعض الإصدارات تخزّن القيم مغلّفة بـ { ar, en } — نفكّ التغليف هنا. */
+function unwrapLocalized(value: unknown): unknown {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+  const record = value as Record<string, unknown>;
+  if (PAGES.some((page) => page[0] in record)) return value;
+  if ("ar" in record || "en" in record) {
+    const inner = record.ar ?? record.en;
+    if (inner && typeof inner === "object") return inner;
+  }
+  return value;
 }
 
 export type SectionGate = {
