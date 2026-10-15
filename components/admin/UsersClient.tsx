@@ -14,10 +14,10 @@ interface UserRow {
 }
 
 const ROLE_OPTIONS = [
-  { value: 'super_admin', label: 'مدير عام', color: 'bg-red-100 text-red-700' },
-  { value: 'admin', label: 'مدير', color: 'bg-purple-100 text-purple-700' },
-  { value: 'editor', label: 'محرر', color: 'bg-primary-100 text-primary-700' },
-  { value: 'scholar_reviewer', label: 'مراجع علمي', color: 'bg-amber-100 text-amber-700' },
+  { value: 'super_admin', label: 'مدير عام', color: 'bg-gold-100 text-gold-800' },
+  { value: 'admin', label: 'مدير', color: 'bg-primary-100 text-primary-800' },
+  { value: 'editor', label: 'محرر', color: 'bg-primary-50 text-primary-700' },
+  { value: 'scholar_reviewer', label: 'مراجع علمي', color: 'bg-cream-100 text-primary-800' },
   { value: 'translator', label: 'مترجم', color: 'bg-primary-100 text-primary-700' },
   { value: 'contributor', label: 'مساهم', color: 'bg-stone-100 text-stone-700' },
 ];
@@ -131,15 +131,21 @@ export default function UsersClient({ session }: { session: AdminSession }) {
                   {ROLE_OPTIONS.map(role => (
                     <button
                       key={role.value}
+                      type="button"
                       onClick={() => toggleRole(user.user_id, role.value)}
                       disabled={saving === user.user_id}
+                      title={role.value === 'admin' && !user.roles.includes('admin') ? 'ترقية الحساب إلى مدير' : undefined}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                         user.roles.includes(role.value)
                           ? 'bg-primary-600 text-white border-primary-600'
                           : 'border-stone-300 dark:border-gray-600 text-stone-600 dark:text-gray-300 hover:border-primary-500'
                       }`}
                     >
-                      {role.label}
+                      {role.value === 'admin' && !user.roles.includes('admin')
+                        ? 'ترقية إلى مدير'
+                        : role.value === 'admin'
+                        ? 'مدير ✓'
+                        : role.label}
                     </button>
                   ))}
                 </div>

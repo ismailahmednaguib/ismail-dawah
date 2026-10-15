@@ -12,12 +12,14 @@ export default async function AdminDashboardShell({
   if (!session) redirect('/ar/login');
 
   return (
-    <div dir="rtl" className="min-h-screen bg-stone-50 flex">
+    <div dir="rtl" className="flex min-h-screen flex-col bg-cream-50 lg:flex-row">
       <AdminSidebar
         userName={session.fullName ?? session.email}
         roles={session.roles}
       />
-      <main className="flex-1 p-6 md:p-8 overflow-x-hidden">{children}</main>
+      <main className="min-w-0 flex-1 overflow-x-hidden p-4 md:p-6 lg:p-8">
+        <div className="mx-auto w-full max-w-7xl">{children}</div>
+      </main>
     </div>
   );
 }
