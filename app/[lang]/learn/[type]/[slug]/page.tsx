@@ -4,9 +4,18 @@ import ReferenceDisplay from '@/components/learn/ReferenceDisplay';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { isValidLang, type Lang } from '@/lib/i18n';
 
 interface PageProps {
   params: Promise<{ lang: string; type: string; slug: string }>;
+}
+
+interface TermSummary {
+  id: string;
+  icon?: string | null;
+  name: string;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -28,6 +37,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function LearnContentPage({ params }: PageProps) {
   const { lang, type, slug } = await params;
+  if (!isValidLang(lang)) notFound();
+
+  const currentLang = lang as Lang;
   const content = await getContentBySlug(lang, type, slug);
 
   if (!content) notFound();
@@ -35,7 +47,9 @@ export default async function LearnContentPage({ params }: PageProps) {
   const t = content.translation;
 
   return (
-    <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-50 dark:bg-gray-900">
+    <>
+      <Header lang={currentLang} />
+      <main dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 dark:bg-night-900">
       {/* شريط علوي */}
       <div className="bg-primary-900 text-white py-4 px-4">
         <div className="max-w-4xl mx-auto">
@@ -43,7 +57,7 @@ export default async function LearnContentPage({ params }: PageProps) {
             href={`/${lang}/learn`}
             className="text-primary-300 hover:text-white text-sm transition-colors"
           >
-            → العودة إلى المكتبة
+            {currentLang === 'ar' ? '→ العودة إلى المكتبة' : '← Back to library'}
           </Link>
         </div>
       </div>
@@ -67,7 +81,9 @@ export default async function LearnContentPage({ params }: PageProps) {
               <span>📅 {new Date(content.published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
             )}
             {content.views > 0 && (
-              <span>👁️ {content.views} مشاهدة</span>
+              <span>
+                👁️ {content.views} {currentLang === 'ar' ? 'مشاهدة' : 'views'}
+              </span>
             )}
           </div>
         </header>
@@ -75,7 +91,7 @@ export default async function LearnContentPage({ params }: PageProps) {
         {/* التصنيفات */}
         {content.terms?.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {content.terms.map((term: any) => (
+            {content.terms.map((term: TermSummary) => (
               <span
                 key={term.id}
                 className="px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
@@ -93,8 +109,10 @@ export default async function LearnContentPage({ params }: PageProps) {
         />
 
         {/* المراجع الشرعية */}
-        <ReferenceDisplay references={content.references} />
+        <ReferenceDisplay references={content.references} lang={currentLang} />
       </article>
-    </div>
+      </main>
+      <Footer lang={currentLang} />
+    </>
   );
 }

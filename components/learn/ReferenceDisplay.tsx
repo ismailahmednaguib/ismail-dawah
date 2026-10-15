@@ -1,4 +1,6 @@
 // components/learn/ReferenceDisplay.tsx
+import type { Lang } from '@/lib/i18n';
+
 interface Reference {
   id: string;
   kind: string;
@@ -17,7 +19,7 @@ interface Reference {
 }
 
 const GRADE_COLORS: Record<string, string> = {
-  sahih: 'bg-green-100 text-green-800',
+  sahih: 'bg-primary-100 text-primary-800',
   hasan: 'bg-blue-100 text-blue-800',
   daif: 'bg-yellow-100 text-yellow-800',
   mawdu: 'bg-red-100 text-red-800',
@@ -30,20 +32,58 @@ const GRADE_LABELS: Record<string, string> = {
   mawdu: 'موضوع',
 };
 
+const COPY = {
+  ar: {
+    title: 'المراجع والتوثيق الشرعي',
+    quran: 'القرآن الكريم',
+    hadith: 'حديث',
+    narrator: 'الراوي',
+    verified: 'موثق',
+    reference: 'مرجع',
+  },
+  en: {
+    title: 'Sources and scholarly references',
+    quran: 'The Holy Quran',
+    hadith: 'Hadith',
+    narrator: 'Narrator',
+    verified: 'Verified',
+    reference: 'Reference',
+  },
+} as const;
+
 const SURAH_NAMES = [
   '', 'الفاتحة', 'البقرة', 'آل عمران', 'النساء', 'المائدة', 'الأنعام', 'الأعراف',
   'الأنفال', 'التوبة', 'يونس', 'هود', 'يوسف', 'الرعد', 'إبراهيم', 'الحجر',
-  // ... باقي السور
+  'النحل', 'الإسراء', 'الكهف', 'مريم', 'طه', 'الأنبياء', 'الحج', 'المؤمنون',
+  'النور', 'الفرقان', 'الشعراء', 'النمل', 'القصص', 'العنكبوت', 'الروم', 'لقمان',
+  'السجدة', 'الأحزاب', 'سبأ', 'فاطر', 'يس', 'الصافات', 'ص', 'الزمر', 'غافر',
+  'فصلت', 'الشورى', 'الزخرف', 'الدخان', 'الجاثية', 'الأحقاف', 'محمد', 'الفتح',
+  'الحجرات', 'ق', 'الذاريات', 'الطور', 'النجم', 'القمر', 'الرحمن', 'الواقعة',
+  'الحديد', 'المجادلة', 'الحشر', 'الممتحنة', 'الصف', 'الجمعة', 'المنافقون',
+  'التغابن', 'الطلاق', 'التحريم', 'الملك', 'القلم', 'الحاقة', 'المعارج', 'نوح',
+  'الجن', 'المزمل', 'المدثر', 'القيامة', 'الإنسان', 'المرسلات', 'النبأ',
+  'النازعات', 'عبس', 'التكوير', 'الانفطار', 'المطففين', 'الانشقاق', 'البروج',
+  'الطارق', 'الأعلى', 'الغاشية', 'الفجر', 'البلد', 'الشمس', 'الليل', 'الضحى',
+  'الشرح', 'التين', 'العلق', 'القدر', 'البينة', 'الزلزلة', 'العاديات', 'القارعة',
+  'التكاثر', 'العصر', 'الهمزة', 'الفيل', 'قريش', 'الماعون', 'الكوثر', 'الكافرون',
+  'النصر', 'المسد', 'الإخلاص', 'الفلق', 'الناس',
 ];
 
-export default function ReferenceDisplay({ references }: { references: Reference[] }) {
+export default function ReferenceDisplay({
+  references,
+  lang,
+}: {
+  references: Reference[];
+  lang: Lang;
+}) {
   if (!references || references.length === 0) return null;
+  const copy = COPY[lang];
 
   return (
     <div className="mt-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-xl p-6">
       <h3 className="text-lg font-bold text-amber-900 dark:text-amber-300 mb-4 flex items-center gap-2">
         <span>📚</span>
-        المراجع والتوثيق الشرعي
+        {copy.title}
       </h3>
 
       <ul className="space-y-3">
@@ -54,7 +94,7 @@ export default function ReferenceDisplay({ references }: { references: Reference
                 <span className="text-xl">📖</span>
                 <div>
                   <p className="font-bold text-primary-900 dark:text-primary-300">
-                    القرآن الكريم
+                    {copy.quran}
                   </p>
                   <p className="text-sm text-stone-600 dark:text-gray-400">
                     سورة {SURAH_NAMES[ref.surah ?? 0] ?? ref.surah}
@@ -62,7 +102,7 @@ export default function ReferenceDisplay({ references }: { references: Reference
                     {ref.ayah_to && `-${ref.ayah_to}`}
                   </p>
                 </div>
-                {ref.verified && <span className="mr-auto text-green-600 text-xs">✓ موثق</span>}
+                {ref.verified && <span className="mr-auto text-primary-600 text-xs">✓ {copy.verified}</span>}
               </div>
             )}
 
@@ -71,12 +111,12 @@ export default function ReferenceDisplay({ references }: { references: Reference
                 <span className="text-xl">💬</span>
                 <div className="flex-1">
                   <p className="font-bold text-primary-900 dark:text-primary-300">
-                    {ref.hadith_book ?? 'حديث'}
+                    {ref.hadith_book ?? copy.hadith}
                     {ref.hadith_number && ` (${ref.hadith_number})`}
                   </p>
                   {ref.narrator && (
                     <p className="text-xs text-stone-500 dark:text-gray-400">
-                      الراوي: {ref.narrator}
+                      {copy.narrator}: {ref.narrator}
                     </p>
                   )}
                   {ref.hadith_grade && (
@@ -85,7 +125,7 @@ export default function ReferenceDisplay({ references }: { references: Reference
                     </span>
                   )}
                 </div>
-                {ref.verified && <span className="text-green-600 text-xs">✓ موثق</span>}
+                {ref.verified && <span className="text-primary-600 text-xs">✓ {copy.verified}</span>}
               </div>
             )}
 
@@ -94,11 +134,27 @@ export default function ReferenceDisplay({ references }: { references: Reference
                 <span className="text-xl">📕</span>
                 <div>
                   <p className="font-bold text-primary-900 dark:text-primary-300">
-                    {ref.scholar_name ?? ref.book_title ?? 'مرجع'}
+                    {ref.scholar_name ?? ref.book_title ?? copy.reference}
                   </p>
                   {ref.book_title && ref.scholar_name && (
                     <p className="text-sm text-stone-600 dark:text-gray-400">
                       {ref.book_title}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {!['quran', 'hadith', 'scholar_quote', 'book'].includes(ref.kind) && (
+              <div className="flex items-start gap-3">
+                <span className="text-xl">📚</span>
+                <div>
+                  <p className="font-bold text-primary-900 dark:text-primary-300">
+                    {ref.scholar_name ?? ref.book_title ?? copy.reference}
+                  </p>
+                  {ref.quote_text && (
+                    <p className="mt-1 text-sm text-stone-600 dark:text-gray-400">
+                      {ref.quote_text}
                     </p>
                   )}
                 </div>

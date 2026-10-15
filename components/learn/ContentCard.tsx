@@ -10,7 +10,7 @@ const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string }
   khutbah:   { icon: '🕌', label: 'خطبة',    color: 'bg-primary-100 text-primary-800' },
   audio:     { icon: '🎧', label: 'صوت',     color: 'bg-indigo-100 text-indigo-800' },
   video:     { icon: '🎬', label: 'فيديو',   color: 'bg-rose-100 text-rose-800' },
-  hadith:    { icon: '💬', label: 'حديث',    color: 'bg-green-100 text-green-800' },
+  hadith:    { icon: '💬', label: 'حديث',    color: 'bg-primary-100 text-primary-800' },
   duaa:      { icon: '🤲', label: 'دعاء',    color: 'bg-cyan-100 text-cyan-800' },
   story:     { icon: '📜', label: 'قصة',     color: 'bg-orange-100 text-orange-800' },
   research:  { icon: '🔬', label: 'بحث',     color: 'bg-slate-100 text-slate-800' },
