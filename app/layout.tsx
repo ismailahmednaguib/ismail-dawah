@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next";
 import { Cairo, Amiri, Scheherazade_New } from "next/font/google";
 import "./globals.css";
 import HtmlDir from "@/components/HtmlDir";
+import SkipLink from "@/components/SkipLink";
 import SWRegister from "@/components/SWRegister";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 
@@ -243,12 +244,7 @@ export default function RootLayout({
       >
         <HtmlDir />
 
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-cyan-700 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg"
-        >
-          تخطَّ إلى المحتوى
-        </a>
+        <SkipLink />
 
         <SWRegister />
 
