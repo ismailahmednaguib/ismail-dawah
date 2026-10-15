@@ -82,6 +82,7 @@ export default function Footer({
         { href: `/${lang}/fatwa`, label: t(lang, "fatwa") },
         { href: `/${lang}/atheism-response`, label: t(lang, "atheism_response") },
         { href: `/${lang}/doubts`, label: t(lang, "doubts") },
+        { href: `/${lang}/hadith`, label: isRTL ? "الحديث" : "Hadith" },
         { href: `/${lang}/prophets-stories`, label: t(lang, "prophets_stories") },
         { href: `/${lang}/inheritance`, label: t(lang, "inheritance") },
       ],

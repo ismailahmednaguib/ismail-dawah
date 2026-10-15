@@ -256,6 +256,7 @@ export default function Header({
         ? [
             { href: "", label: "الرئيسية" },
             { href: "/quran", label: "القرآن" },
+            { href: "/hadith", label: "الحديث" },
             { href: "/adhkar", label: "الأذكار" },
             { href: "/prayer-times", label: "مواقيت الصلاة" },
             { href: "/fatwa", label: "الفتاوى" },
@@ -264,6 +265,7 @@ export default function Header({
         : [
             { href: "", label: "Home" },
             { href: "/quran", label: "Quran" },
+            { href: "/hadith", label: "Hadith" },
             { href: "/adhkar", label: "Adhkar" },
             { href: "/prayer-times", label: "Prayer Times" },
             { href: "/fatwa", label: "Fatwa" },
@@ -294,6 +296,7 @@ export default function Header({
                 { href: "/prophets-stories", label: "قصص الأنبياء" },
                 { href: "/inheritance", label: "المواريث" },
                 { href: "/learn", label: "تعلّم" },
+                { href: "/hadith", label: "الحديث" },
               ],
             },
             {
@@ -336,6 +339,7 @@ export default function Header({
                 { href: "/prophets-stories", label: "Prophets Stories" },
                 { href: "/inheritance", label: "Inheritance" },
                 { href: "/learn", label: "Learn" },
+                { href: "/hadith", label: "Hadith" },
               ],
             },
             {
