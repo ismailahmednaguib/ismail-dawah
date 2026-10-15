@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function TaxonomiesPage() {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
   if (!can(session.roles, 'taxonomy.manage')) redirect('/admin');
 
   return (

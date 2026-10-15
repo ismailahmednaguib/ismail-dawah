@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function UsersPage() {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   const canManage = session.roles.some(r => ['super_admin', 'admin'].includes(r));
   if (!canManage) redirect('/admin');

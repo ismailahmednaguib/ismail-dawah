@@ -12,7 +12,7 @@ export default async function EditContentPage({
   params: Promise<{ id: string }>;
 }) {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   const { id } = await params;
   const content = await getContentFull(id);

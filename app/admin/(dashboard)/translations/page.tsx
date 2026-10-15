@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function TranslationsPage() {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   const canAccess = session.roles.some(r =>
     ['super_admin', 'admin', 'editor', 'translator'].includes(r)

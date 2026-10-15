@@ -26,7 +26,7 @@ type SetupStatus = {
 // Constants
 // ============================================================
 
-const LOGIN_URL = "/admin/login";
+const LOGIN_URL = "/ar/login";
 // نفس حد السيرفر في الإنتاج (12). في التطوير السيرفر بيقبل 8 لكن الأفضل نستخدم 12 دايماً.
 const MIN_PASSWORD_LENGTH = 12;
 const MAX_NAME_LENGTH = 80;

@@ -9,7 +9,7 @@ export default async function AdminDashboardShell({
 }) {
   const session = await getAdminSession();
 
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   return (
     <div dir="rtl" className="min-h-screen bg-stone-50 flex">

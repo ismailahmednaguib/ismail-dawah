@@ -6,7 +6,7 @@ export const metadata = { title: 'محتوى جديد | لوحة التحكم' }
 
 export default async function NewContentPage() {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   return (
     <div>

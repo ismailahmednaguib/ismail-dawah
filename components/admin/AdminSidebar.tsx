@@ -80,7 +80,7 @@ export default function AdminSidebar({
         <button
           onClick={() => {
             void fetch('/api/admin/logout', { method: 'POST' }).finally(() => {
-              router.push('/admin/login');
+              router.push('/ar/login');
             });
           }}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-100 hover:bg-red-900/50 transition-colors text-sm"

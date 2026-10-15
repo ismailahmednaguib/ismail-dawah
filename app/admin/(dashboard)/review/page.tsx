@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function ReviewPage() {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   return (
     <div>

@@ -1219,7 +1219,7 @@ export async function requireAuth(
 
 export async function requireAdmin(
   source?: CookieSource,
-  redirectUrl = "/admin/login"
+  redirectUrl = "/ar/login"
 ): Promise<UserProfile> {
   const user = await getServerUser(source);
 
@@ -1298,7 +1298,7 @@ export async function requireAuthResponse(
 
 export async function requireAdminResponse(
   source?: CookieSource,
-  redirectUrl = "/admin/login"
+  redirectUrl = "/ar/login"
 ): Promise<AuthRouteResult> {
   try {
     const user = await requireAdmin(source, redirectUrl);

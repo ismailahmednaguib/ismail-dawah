@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function AuditPage() {
   const session = await getAdminSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/ar/login');
 
   const canView = session.roles.some(r => ['super_admin', 'admin'].includes(r));
   if (!canView) redirect('/admin');
