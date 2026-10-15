@@ -68,8 +68,8 @@ const defaultContent: any = {
     ogImage: "",
     homeKicker: "",
     homeHeroText: "",
-    primaryColor: "#0b2e22",
-    goldColor: "#c9a227",
+    primaryColor: "#083344",
+    goldColor: "#d4af37",
     creamColor: "#f5f1e8",
     facebookUrl: "",
     youtubeUrl: "",
@@ -487,12 +487,12 @@ export default function AdminPanel() {
             key={toast.id}
             className={`px-4 py-3 rounded-lg shadow-lg text-sm font-bold animate-slide-up ${
               toast.type === "success"
-                ? "bg-green-500 text-white"
+                ? "bg-primary-500 text-white"
                 : toast.type === "error"
                 ? "bg-red-500 text-white"
                 : toast.type === "warning"
                 ? "bg-amber-500 text-white"
-                : "bg-blue-500 text-white"
+                : "bg-primary-500 text-white"
             }`}
           >
             {toast.message}

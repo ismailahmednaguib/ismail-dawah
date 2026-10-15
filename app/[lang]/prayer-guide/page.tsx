@@ -210,7 +210,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 1,
     icon: "💧",
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
     title: { ar: "النية والطهارة", en: "Intention and Purification" },
     desc: {
       ar: "انوِ الصلاة في قلبك، وتأكد من طهارتك (الوضوء) وطهارة ثوبك ومكانك.",
@@ -530,7 +530,7 @@ export default async function PrayerGuidePage({
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #0d9488, #0e7490)" }}
+                style={{ background: "linear-gradient(135deg, #0e7490, #0e7490)" }}
               >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 12h3v8h14v-8h3L12 2zm0 2.84L18.16 11H17v8H7v-8H5.84L12 4.84z" />

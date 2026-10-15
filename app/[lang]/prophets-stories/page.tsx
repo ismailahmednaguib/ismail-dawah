@@ -89,7 +89,7 @@ const PROPHETS: Prophet[] = [
     id: "nuh",
     icon: "🚢",
     order: 2,
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
     tags: {
       ar: ["الصبر", "التوحيد", "السفينة", "الطوفان"],
       en: ["Patience", "Tawhid", "Ark", "Flood"],

@@ -61,6 +61,17 @@ const LEVEL_OPTIONS: FilterOption[] = [
   { value: 'specialized', ar: 'متخصص', en: 'Specialized' },
 ];
 
+const MADHHAB_OPTIONS: FilterOption[] = [
+  { value: '', ar: 'كل المذاهب', en: 'All madhhabs' },
+  { value: 'general', ar: 'عام', en: 'General' },
+  { value: 'hanafi', ar: 'حنفي', en: 'Hanafi' },
+  { value: 'maliki', ar: 'مالكي', en: 'Maliki' },
+  { value: 'shafii', ar: 'شافعي', en: 'Shafi’i' },
+  { value: 'hanbali', ar: 'حنبلي', en: 'Hanbali' },
+  { value: 'zahiri', ar: 'ظاهري', en: 'Zahiri' },
+  { value: 'jafari', ar: 'جعفري', en: 'Ja’fari' },
+];
+
 const TYPE_ICONS: Record<string, string> = {
   quran: '📖', quran_verse: '📖', article: '📰', lesson: '📖', course: '🎓',
   book: '📚', fatwa: '⚖️', khutbah: '🕌', audio: '🎧', video: '🎬',
@@ -70,7 +81,7 @@ const TYPE_ICONS: Record<string, string> = {
 const COPY = {
   ar: {
     placeholder: '🔍 ابحث في القرآن، الأحاديث، المقالات، الفتاوى، والدروس...',
-    type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى',
+    type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى', madhhab: 'المذهب',
     results: (count: number) => (count > 0 ? count + ' نتيجة' : 'لا توجد نتائج'),
     noResults: (query: string) => 'لم نعثر على نتائج لـ "' + query + '"',
     tryAgain: 'جرب كلمات مختلفة أو تحقق من الإملاء',
@@ -78,7 +89,7 @@ const COPY = {
   },
   en: {
     placeholder: '🔍 Search Quran, hadith, articles, fatwas, and lessons...',
-    type: 'Content type', audience: 'Audience', age: 'Age group', level: 'Level',
+    type: 'Content type', audience: 'Audience', age: 'Age group', level: 'Level', madhhab: 'Madhhab',
     results: (count: number) => (count > 0 ? count + ' results' : 'No results'),
     noResults: (query: string) => 'No results found for "' + query + '"',
     tryAgain: 'Try different words or check the spelling.',
@@ -105,6 +116,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
   const [audienceFilter, setAudienceFilter] = useState(searchParams.get('audience') ?? '');
   const [ageFilter, setAgeFilter] = useState(searchParams.get('age') ?? '');
   const [levelFilter, setLevelFilter] = useState(searchParams.get('level') ?? '');
+  const [madhhabFilter, setMadhhabFilter] = useState(searchParams.get('madhhab') ?? '');
 
   const doSearch = useCallback(async () => {
     const trimmedQuery = query.trim();
@@ -119,6 +131,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       if (audienceFilter) qs.set('audience', audienceFilter);
       if (ageFilter) qs.set('age', ageFilter);
       if (levelFilter) qs.set('level', levelFilter);
+      if (madhhabFilter) qs.set('madhhab', madhhabFilter);
 
       const res = await fetch(`/api/search?${qs.toString()}`);
       if (!res.ok) throw new Error('Search request failed');
@@ -133,7 +146,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
     } finally {
       setLoading(false);
     }
-  }, [ageFilter, audienceFilter, lang, levelFilter, query, typeFilter]);
+  }, [ageFilter, audienceFilter, lang, levelFilter, madhhabFilter, query, typeFilter]);
 
   // بحث فوري مع تأخير
   useEffect(() => {
@@ -153,6 +166,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
     { label: copy.audience, value: audienceFilter, options: AUDIENCE_OPTIONS, onChange: setAudienceFilter },
     { label: copy.age, value: ageFilter, options: AGE_OPTIONS, onChange: setAgeFilter },
     { label: copy.level, value: levelFilter, options: LEVEL_OPTIONS, onChange: setLevelFilter },
+    { label: copy.madhhab, value: madhhabFilter, options: MADHHAB_OPTIONS, onChange: setMadhhabFilter },
   ];
 
   return (
@@ -197,7 +211,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       </div>
 
       {/* الفلاتر الإضافية */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {filters.map((filter) => (
           <label
             key={filter.label}

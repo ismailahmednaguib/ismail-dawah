@@ -300,7 +300,7 @@ export default async function QuranMemorizationPage({
             className="absolute inset-0 opacity-5"
             style={{
               backgroundImage:
-                "radial-gradient(circle at 20% 30%, #10b981 1px, transparent 1px), radial-gradient(circle at 80% 70%, #d4af37 1px, transparent 1px)",
+                "radial-gradient(circle at 20% 30%, #06b6d4 1px, transparent 1px), radial-gradient(circle at 80% 70%, #d4af37 1px, transparent 1px)",
               backgroundSize: "80px 80px",
             }}
           />
@@ -309,7 +309,7 @@ export default async function QuranMemorizationPage({
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #10b981, #0e7490)" }}
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
               >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />

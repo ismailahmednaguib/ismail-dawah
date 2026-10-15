@@ -195,7 +195,7 @@ const FATWAS: Fatwa[] = [
   {
     id: "women-prayer-mosque",
     icon: "🕌",
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
     category: { ar: "الصلاة", en: "Prayer" },
     q: {
       ar: "هل تصلي المرأة في المسجد؟",
@@ -211,7 +211,7 @@ const FATWAS: Fatwa[] = [
   {
     id: "women-leading-prayer",
     icon: "👩",
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
     category: { ar: "الصلاة", en: "Prayer" },
     q: {
       ar: "هل يجوز للمرأة أن تؤم النساء؟",

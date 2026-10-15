@@ -1023,8 +1023,8 @@ export default async function DawahGuidePage({
                     </p>
                   </div>
 
-                  <div className="rounded-xl border border-green-100 bg-green-50/60 p-4 dark:border-green-900/30 dark:bg-green-950/15">
-                    <p className="mb-1 text-xs font-black text-green-700 dark:text-green-300">
+                  <div className="rounded-xl border border-primary-100 bg-primary-50/60 p-4 dark:border-primary-900/30 dark:bg-primary-950/15">
+                    <p className="mb-1 text-xs font-black text-primary-700 dark:text-primary-300">
                       {ui.instead}
                     </p>
                     <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">

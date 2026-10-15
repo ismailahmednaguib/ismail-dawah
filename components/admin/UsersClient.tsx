@@ -16,7 +16,7 @@ interface UserRow {
 const ROLE_OPTIONS = [
   { value: 'super_admin', label: 'مدير عام', color: 'bg-red-100 text-red-700' },
   { value: 'admin', label: 'مدير', color: 'bg-purple-100 text-purple-700' },
-  { value: 'editor', label: 'محرر', color: 'bg-blue-100 text-blue-700' },
+  { value: 'editor', label: 'محرر', color: 'bg-primary-100 text-primary-700' },
   { value: 'scholar_reviewer', label: 'مراجع علمي', color: 'bg-amber-100 text-amber-700' },
   { value: 'translator', label: 'مترجم', color: 'bg-primary-100 text-primary-700' },
   { value: 'contributor', label: 'مساهم', color: 'bg-stone-100 text-stone-700' },

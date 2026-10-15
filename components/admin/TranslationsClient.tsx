@@ -10,8 +10,8 @@ import TranslationEditor from '@/components/admin/TranslationEditor';
 const STATUS_CONFIG: Record<string, { label: string; icon: string; className: string }> = {
   not_started: { label: 'لم تبدأ', icon: '⬜', className: 'bg-stone-100 text-stone-500' },
   machine_translated: { label: 'ترجمة آلية', icon: '🤖', className: 'bg-orange-100 text-orange-700' },
-  in_progress: { label: 'قيد الترجمة', icon: '✍️', className: 'bg-blue-100 text-blue-700' },
-  reviewed: { label: 'تمت المراجعة', icon: '✅', className: 'bg-green-100 text-green-700' },
+  in_progress: { label: 'قيد الترجمة', icon: '✍️', className: 'bg-primary-100 text-primary-700' },
+  reviewed: { label: 'تمت المراجعة', icon: '✅', className: 'bg-primary-100 text-primary-700' },
   published: { label: 'منشور', icon: '📢', className: 'bg-primary-100 text-primary-700' },
 };
 
@@ -215,7 +215,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                           ) : (
                             <button
                               onClick={() => handleCopyOriginal(item.content_id, lang.code as LanguageCode)}
-                              className="inline-block text-xs bg-stone-100 dark:bg-gray-700 text-stone-500 dark:text-gray-400 px-2 py-1 rounded-full hover:bg-blue-100 hover:text-blue-700 transition"
+                              className="inline-block text-xs bg-stone-100 dark:bg-gray-700 text-stone-500 dark:text-gray-400 px-2 py-1 rounded-full hover:bg-primary-100 hover:text-primary-700 transition"
                               title="نسخ الأصل كنقطة بداية"
                             >
                               ➕ ابدأ الترجمة

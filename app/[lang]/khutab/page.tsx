@@ -216,7 +216,7 @@ const KHUTAB: Khutbah[] = [
     id: "truthfulness",
     category: { ar: "أخلاق", en: "Ethics" },
     categoryIcon: "✅",
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
     icon: "✅",
     title: { ar: "الصدق: طريق الجنة ومنجاة", en: "Truthfulness: Path to Paradise and Salvation" },
     intro: {

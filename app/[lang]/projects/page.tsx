@@ -205,7 +205,7 @@ const FALLBACK_PROJECTS: Project[] = [
   {
     id: "students-support",
     icon: "🎓",
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
     category: { ar: "دعم طلاب العلم", en: "Supporting Students" },
     title: {
       ar: "كفالة طلاب العلم الشرعي",
@@ -284,7 +284,7 @@ async function fetchProjects(): Promise<Project[]> {
         p.gradient ||
         [
           "from-primary-500 to-primary-700",
-          "from-blue-500 to-blue-700",
+          "from-primary-500 to-primary-700",
           "from-purple-500 to-purple-700",
           "from-amber-500 to-amber-700",
           "from-rose-500 to-rose-700",

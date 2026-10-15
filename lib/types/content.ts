@@ -168,7 +168,23 @@ export interface ContentMedia {
   id: string;
   url: string;
   type: 'image' | 'pdf' | 'audio' | 'video';
-  label?: string;
+  storage_path?: string | null;
+  title?: string | null;
+  alt_text?: string | null;
+  mime_type?: string | null;
+  size_bytes?: number | null;
+  duration_seconds?: number | null;
+  sort_order?: number;
+  created_at?: string;
+}
+
+export interface LearnerContentProgress {
+  user_id?: string;
+  content_id: string;
+  last_position_seconds: number;
+  completed_at: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ContentWithDetails extends Content {

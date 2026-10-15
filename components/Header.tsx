@@ -297,6 +297,7 @@ export default function Header({
                 { href: "/inheritance", label: "المواريث" },
                 { href: "/learn", label: "تعلّم" },
                 { href: "/hadith", label: "الحديث" },
+                { href: "/fiqh", label: "الفقه" },
               ],
             },
             {
@@ -340,6 +341,7 @@ export default function Header({
                 { href: "/inheritance", label: "Inheritance" },
                 { href: "/learn", label: "Learn" },
                 { href: "/hadith", label: "Hadith" },
+                { href: "/fiqh", label: "Fiqh" },
               ],
             },
             {

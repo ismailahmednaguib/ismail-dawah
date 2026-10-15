@@ -152,6 +152,40 @@ create table content_references (
 create index idx_ref_content on content_references(content_id);
 create index idx_ref_quran on content_references(surah, ayah_from) where kind = 'quran';
 
+-- 6. وسائط المحتوى
+create table content_media (
+  id uuid primary key default gen_random_uuid(),
+  content_id uuid not null references content(id) on delete cascade,
+  type varchar(20) not null check (type in ('image', 'pdf', 'audio', 'video')),
+  url text not null,
+  storage_path text,
+  title text,
+  alt_text text,
+  mime_type varchar(120),
+  size_bytes bigint,
+  duration_seconds int,
+  sort_order int not null default 0,
+  created_by uuid references auth.users(id),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index idx_media_content on content_media(content_id, sort_order, created_at);
+
+-- 6.1 تقدّم المتعلم (يدعم users الرقمي وprofiles ذي المعرّف النصي)
+create table learner_content_progress (
+  user_id text not null,
+  content_id uuid not null references content(id) on delete cascade,
+  last_position_seconds integer not null default 0 check (last_position_seconds >= 0),
+  completed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  primary key (user_id, content_id)
+);
+
+create index idx_learner_progress_user on learner_content_progress(user_id, updated_at desc);
+create index idx_learner_progress_content on learner_content_progress(content_id);
+
 -- 6. الأدوار والصلاحيات
 create table user_roles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -209,6 +243,8 @@ alter table user_roles enable row level security;
 alter table review_queue enable row level security;
 alter table site_settings enable row level security;
 alter table audit_log enable row level security;
+alter table content_media enable row level security;
+alter table learner_content_progress enable row level security;
 
 -- القراءة العامة: المنشور فقط
 create policy "public read published" on content
@@ -235,9 +271,19 @@ create policy "public read terms" on content_terms
 
 create policy "public read references" on content_references
   for select using (
+    verified = true
+    and
     exists (
       select 1 from content c
       where c.id = content_references.content_id and c.status = 'published'
+    )
+  );
+
+create policy "public read published media" on content_media
+  for select using (
+    exists (
+      select 1 from content c
+      where c.id = content_media.content_id and c.status = 'published'
     )
   );
 
@@ -273,6 +319,19 @@ create policy "editors write terms" on content_terms
         and ur.roles && array['super_admin','admin','editor']::app_role[]
     )
   );
+
+create policy "editors write media" on content_media
+  for all using (
+    exists (
+      select 1 from user_roles ur
+      where ur.user_id = auth.uid()
+        and ur.is_active
+        and ur.roles && array['super_admin','admin','editor']::app_role[]
+    )
+  );
+
+-- التقدم يُقرأ ويُكتب عبر API الخادم بعد التحقق من جلسة users المخصصة.
+-- عدم وجود سياسة عامة مقصود حتى لا يكشف anon بيانات المتعلمين.
 
 create policy "editors write taxonomies" on taxonomies
   for all using (
@@ -331,6 +390,14 @@ create trigger set_content_updated_at
 
 create trigger set_translation_updated_at
   before update on content_translations
+  for each row execute function update_updated_at_column();
+
+create trigger set_media_updated_at
+  before update on content_media
+  for each row execute function update_updated_at_column();
+
+create trigger set_learner_progress_updated_at
+  before update on learner_content_progress
   for each row execute function update_updated_at_column();
 
 -- 10. بيانات أولية: إعدادات الموقع الأساسية

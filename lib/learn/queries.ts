@@ -5,6 +5,7 @@ import type {
   Audience,
   AgeGroup,
   EduLevel,
+  Madhhab,
 } from '@/lib/types/content';
 
 function getClient() {
@@ -20,11 +21,19 @@ function onlyVerifiedReferences<T extends { verified?: boolean }>(
   return (references ?? []).filter((reference) => reference.verified === true);
 }
 
+const MAX_PER_PAGE = 48;
+const MAX_SEARCH_LENGTH = 120;
+
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, '\\$&');
+}
+
 export interface LearnFilters {
   type?: ContentType;
   audience?: Audience;
   age_group?: AgeGroup;
   level?: EduLevel;
+  madhhab?: Madhhab;
   search?: string;
   page?: number;
   per_page?: number;
@@ -39,7 +48,7 @@ export interface LearnItem {
   audience: string[];
   age_groups: string[];
   levels: string[];
-  published_at: string;
+  published_at: string | null;
   views: number;
 }
 
@@ -51,9 +60,16 @@ export async function getPublishedContent(
   filters: LearnFilters
 ): Promise<{ data: LearnItem[]; total: number; total_pages: number }> {
   const supabase = getClient();
-  const page = filters.page ?? 1;
-  const perPage = filters.per_page ?? 12;
+  const requestedPage = Number(filters.page ?? 1);
+  const requestedPerPage = Number(filters.per_page ?? 12);
+  const page = Number.isFinite(requestedPage)
+    ? Math.max(1, Math.floor(requestedPage))
+    : 1;
+  const perPage = Number.isFinite(requestedPerPage)
+    ? Math.min(MAX_PER_PAGE, Math.max(1, Math.floor(requestedPerPage)))
+    : 12;
   const from = (page - 1) * perPage;
+  const search = filters.search?.trim().slice(0, MAX_SEARCH_LENGTH);
 
   // نبني الاستعلام
   let query = supabase
@@ -93,8 +109,15 @@ export async function getPublishedContent(
     query = query.contains('levels', [filters.level]);
   }
 
-  if (filters.search) {
-    query = query.ilike('content_translations.title', `%${filters.search}%`);
+  if (filters.madhhab) {
+    query = query.contains('madhhabs', [filters.madhhab]);
+  }
+
+  if (search) {
+    query = query.ilike(
+      'content_translations.title',
+      `%${escapeLikePattern(search)}%`
+    );
   }
 
   const { data, error, count } = await query
@@ -147,6 +170,7 @@ export async function getContentBySlug(
       content:content_id (
         *,
         content_references (*),
+        content_media (*),
         content_terms (
           taxonomy_id,
           taxonomies (id, kind, name, slug, color, icon)
@@ -167,6 +191,7 @@ export async function getContentBySlug(
     ...content,
     translation: data,
     references: onlyVerifiedReferences(content.content_references),
+    media: content.content_media ?? [],
     terms: (content.content_terms ?? []).map((ct: any) => ct.taxonomies),
   };
 }
@@ -191,6 +216,7 @@ export async function getContentWithFallback(
       content:content_id (
         *,
         content_references (*),
+        content_media (*),
         content_terms (
           taxonomy_id,
           taxonomies (id, kind, name, slug, color, icon)
@@ -201,25 +227,31 @@ export async function getContentWithFallback(
     .eq('slug', slug)
     .single();
 
-  if (translated && translated.content?.status === 'published') {
+  if (
+    translated &&
+    translated.content?.status === 'published' &&
+    translated.content?.content_type === type
+  ) {
     return {
       ...translated.content,
       translation: translated,
       isTranslated: true,
       translationLang: lang,
       references: onlyVerifiedReferences(translated.content.content_references),
+      media: translated.content.content_media ?? [],
       terms: (translated.content.content_terms ?? []).map((ct: any) => ct.taxonomies),
     };
   }
 
   // ثانياً: إذا لم تتوفر، ابحث في اللغات الأخرى
-  const { data: fallback } = await supabase
+  const { data: fallbacks } = await supabase
     .from('content_translations')
     .select(`
       *,
       content:content_id (
         *,
         content_references (*),
+        content_media (*),
         content_terms (
           taxonomy_id,
           taxonomies (id, kind, name, slug, color, icon)
@@ -227,8 +259,13 @@ export async function getContentWithFallback(
       )
     `)
     .eq('slug', slug)
-    .limit(1)
-    .single();
+    .limit(20);
+
+  const fallback = (fallbacks ?? []).find(
+    (candidate: any) =>
+      candidate.content?.status === 'published' &&
+      candidate.content?.content_type === type
+  );
 
   if (fallback && fallback.content?.status === 'published') {
     return {
@@ -238,6 +275,7 @@ export async function getContentWithFallback(
       translationLang: fallback.lang,
       originalLang: fallback.content.lang_original,
       references: onlyVerifiedReferences(fallback.content.content_references),
+      media: fallback.content.content_media ?? [],
       terms: (fallback.content.content_terms ?? []).map((ct: any) => ct.taxonomies),
     };
   }

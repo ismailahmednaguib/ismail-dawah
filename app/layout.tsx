@@ -254,7 +254,9 @@ export default function RootLayout({
 
         <AnalyticsTracker />
 
-        {children}
+        <div id="main-content" tabIndex={-1}>
+          {children}
+        </div>
       </body>
     </html>
   );

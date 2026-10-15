@@ -395,7 +395,7 @@ export default function MapPage() {
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #0d9488, #0e7490)" }}
+                style={{ background: "linear-gradient(135deg, #0e7490, #0e7490)" }}
               >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
@@ -421,10 +421,10 @@ export default function MapPage() {
               {userLocation ? (
                 <>
                   <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary-500 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-primary-500" />
                   </span>
-                  <span className="text-green-700 dark:text-green-300">
+                  <span className="text-primary-700 dark:text-primary-300">
                     {ui.locationEnabled}
                   </span>
                 </>
@@ -689,7 +689,7 @@ export default function MapPage() {
                       <span
                         className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl text-white shadow-lg"
                         style={{
-                          background: "linear-gradient(135deg, #0d9488, #0e7490)",
+                          background: "linear-gradient(135deg, #0e7490, #0e7490)",
                         }}
                       >
                         🕌
@@ -864,7 +864,7 @@ export default function MapPage() {
                 <span
                   className="flex h-20 w-20 items-center justify-center rounded-3xl text-5xl text-white shadow-xl"
                   style={{
-                    background: "linear-gradient(135deg, #0d9488, #0e7490)",
+                    background: "linear-gradient(135deg, #0e7490, #0e7490)",
                   }}
                 >
                   🕌

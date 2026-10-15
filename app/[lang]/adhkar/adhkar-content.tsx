@@ -252,7 +252,7 @@ function DhikrCard({
         pulsing ? "scale-[1.02]" : ""
       } ${
         done
-          ? "border-green-300 bg-green-50/60 dark:border-green-800/60 dark:bg-green-950/20"
+          ? "border-primary-300 bg-primary-50/60 dark:border-primary-800/60 dark:bg-primary-950/20"
           : disabled
           ? "opacity-70"
           : "card-interactive cursor-pointer active:scale-[0.98]"
@@ -260,7 +260,7 @@ function DhikrCard({
     >
       {/* رسالة الإتمام */}
       {done && (
-        <div className="absolute inset-0 flex items-center justify-center bg-green-500/5 backdrop-blur-[1px]">
+        <div className="absolute inset-0 flex items-center justify-center bg-primary-500/5 backdrop-blur-[1px]">
           <span className="text-5xl">✓</span>
         </div>
       )}
@@ -270,7 +270,7 @@ function DhikrCard({
         <div
           className={`h-full rounded-full transition-all duration-300 ${
             done
-              ? "bg-gradient-to-r from-green-400 to-green-600"
+              ? "bg-gradient-to-r from-primary-400 to-primary-600"
               : percent > 66
               ? "bg-gradient-to-r from-primary-500 to-gold-500"
               : percent > 33
@@ -367,7 +367,7 @@ function DhikrCard({
               pulsing ? "scale-110" : ""
             } ${
               done
-                ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
                 : "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
             }`}
           >
@@ -723,7 +723,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
                 isActive
                   ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25"
                   : isCatDone
-                  ? "border-2 border-green-300 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950/30 dark:text-green-300"
+                  ? "border-2 border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-950/30 dark:text-primary-300"
                   : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
               }`}
             >
@@ -778,7 +778,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
                 {formatNumber(categoryStats.total, lang)}
               </span>
               {" · "}
-              <span className="text-green-600 dark:text-green-400">
+              <span className="text-primary-600 dark:text-primary-400">
                 {formatNumber(categoryStats.completedCount, lang)}/{formatNumber(categoryStats.adhkarCount, lang)} {ui.completed}
               </span>
             </p>
@@ -797,7 +797,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
                     categoryStats.percent === 100
-                      ? "bg-gradient-to-r from-green-400 via-green-500 to-green-600"
+                      ? "bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600"
                       : "bg-gradient-to-r from-primary-400 via-primary-500 to-gold-400"
                   }`}
                   style={{ width: `${categoryStats.percent}%` }}
@@ -832,10 +832,10 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
 
       {/* ===== رسالة الاحتفال ===== */}
       {celebrating && (
-        <div className="card mb-8 overflow-hidden border-green-300 bg-gradient-to-br from-green-50 to-primary-50 p-8 text-center dark:border-green-800 dark:from-green-950/30 dark:to-primary-950/30">
+        <div className="card mb-8 overflow-hidden border-primary-300 bg-gradient-to-br from-primary-50 to-primary-50 p-8 text-center dark:border-primary-800 dark:from-primary-950/30 dark:to-primary-950/30">
           <div className="mb-3 text-5xl">🎉</div>
           <h3
-            className="mb-2 text-2xl font-black text-green-700 dark:text-green-300"
+            className="mb-2 text-2xl font-black text-primary-700 dark:text-primary-300"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
             {ui.celebration}

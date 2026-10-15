@@ -771,7 +771,7 @@ export default async function CalendarPage({
                     <span
                       className={`rounded-xl px-4 py-2 text-sm font-black ${
                         event.daysLeft === 0
-                          ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                          ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
                           : event.daysLeft !== null && event.daysLeft <= 7
                           ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
                           : "bg-slate-100 text-slate-700 dark:bg-night-800 dark:text-slate-300"

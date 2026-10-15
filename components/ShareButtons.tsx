@@ -331,7 +331,7 @@ export default function ShareButtons({
         id: "whatsapp",
         label: labels.whatsapp,
         href: `https://wa.me/?text=${encodedBody}`,
-        color: "#25D366",
+        color: "#0e7490",
         icon: <WhatsAppIcon />,
         isAnchor: true,
       },
@@ -381,7 +381,7 @@ export default function ShareButtons({
       items.push({
         id: "copy",
         label: copied ? labels.copied : labels.copy,
-        color: copied ? "#16a34a" : "#0891b2",
+        color: copied ? "#0e7490" : "#0891b2",
         icon: copied ? <CheckIcon /> : <CopyIcon />,
         onClick: async () => {
           if (!resolvedUrl) return;

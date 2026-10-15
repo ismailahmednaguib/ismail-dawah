@@ -6,7 +6,10 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd';
+import ContentProgressControl from '@/components/learn/ContentProgressControl';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import { sanitizeRichTextHtml } from '@/lib/content-safety';
 
 interface PageProps {
   params: Promise<{ lang: string; type: string; slug: string }>;
@@ -18,6 +21,14 @@ interface TermSummary {
   name: string;
 }
 
+interface MediaSummary {
+  id: string;
+  type: 'image' | 'pdf' | 'audio' | 'video';
+  url: string;
+  title?: string | null;
+  alt_text?: string | null;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, type, slug } = await params;
   const content = await getContentBySlug(lang, type, slug);
@@ -27,10 +38,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${content.translation.title} | أكاديمية إسماعيل`,
     description: content.translation.summary?.slice(0, 160) ?? '',
+    alternates: {
+      canonical: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
+    },
     openGraph: {
       title: content.translation.title,
       description: content.translation.summary ?? '',
       type: 'article',
+      url: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
     },
   };
 }
@@ -45,9 +60,66 @@ export default async function LearnContentPage({ params }: PageProps) {
   if (!content) notFound();
 
   const t = content.translation;
+  const safeBody = sanitizeRichTextHtml(t.body);
+  const media = (content.media ?? []) as MediaSummary[];
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://ismailahmednaguib.vercel.app'
+  ).replace(/\/+$/, '');
+  const pageUrl = `${siteUrl}/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`;
+  const schemaType =
+    content.content_type === 'course'
+      ? 'Course'
+      : content.content_type === 'video'
+        ? 'VideoObject'
+        : content.content_type === 'lesson' || content.content_type === 'course_lesson'
+          ? 'LearningResource'
+          : 'Article';
+  const jsonLd = {
+    '@type': schemaType,
+    '@id': pageUrl,
+    name: t.title,
+    headline: t.title,
+    description: t.summary || t.body_plain?.slice(0, 300) || '',
+    url: pageUrl,
+    inLanguage: currentLang,
+    isAccessibleForFree: true,
+    datePublished: content.published_at || undefined,
+    dateModified: content.updated_at || undefined,
+    publisher: {
+      '@type': 'Organization',
+      name: currentLang === 'ar' ? 'أكاديمية إسماعيل أحمد نجيب' : 'Ismail Ahmed Naguib Academy',
+      url: siteUrl,
+    },
+    ...(schemaType === 'Course'
+      ? {
+          provider: {
+            '@type': 'Organization',
+            name: currentLang === 'ar' ? 'أكاديمية إسماعيل أحمد نجيب' : 'Ismail Ahmed Naguib Academy',
+          },
+        }
+      : {}),
+  };
+  const breadcrumbJsonLd = {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: currentLang === 'ar' ? 'المكتبة' : 'Library',
+        item: `${siteUrl}/${lang}/learn`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: t.title,
+        item: pageUrl,
+      },
+    ],
+  };
 
   return (
     <>
+      <JsonLd data={[jsonLd, breadcrumbJsonLd]} />
       <Header lang={currentLang} />
       <main dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 dark:bg-night-900">
       {/* شريط علوي */}
@@ -102,11 +174,38 @@ export default async function LearnContentPage({ params }: PageProps) {
           </div>
         )}
 
+        <ContentProgressControl contentId={content.id} lang={currentLang} />
+
         {/* المحتوى */}
         <div
           className="prose prose-cyan max-w-none dark:prose-invert prose-headings:text-primary-950 dark:prose-headings:text-white"
-          dangerouslySetInnerHTML={{ __html: t.body ?? '' }}
+          dangerouslySetInnerHTML={{ __html: safeBody }}
         />
+
+        {media.length > 0 && (
+          <section className="mt-10 space-y-4 border-t border-primary-100 pt-8 dark:border-night-700" aria-labelledby="content-media-title">
+            <h2 id="content-media-title" className="text-xl font-bold text-primary-950 dark:text-white">
+              {currentLang === 'ar' ? 'الوسائط المرتبطة' : 'Related media'}
+            </h2>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {media.map((item) => (
+                <div key={item.id} className="card overflow-hidden p-4">
+                  {item.type === 'image' && (
+                    <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" />
+                  )}
+                  {item.type === 'audio' && <audio controls preload="metadata" className="w-full" src={item.url} />}
+                  {item.type === 'video' && <video controls preload="metadata" className="w-full rounded-xl" src={item.url} />}
+                  {item.type === 'pdf' && (
+                    <a href={item.url} target="_blank" rel="noreferrer" className="btn-outline w-full justify-center">
+                      📄 {currentLang === 'ar' ? 'فتح ملف PDF' : 'Open PDF'}
+                    </a>
+                  )}
+                  {item.title && <p className="mt-3 text-sm font-semibold text-primary-900 dark:text-primary-100">{item.title}</p>}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* المراجع الشرعية */}
         <ReferenceDisplay references={content.references} lang={currentLang} />

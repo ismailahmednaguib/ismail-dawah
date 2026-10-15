@@ -66,7 +66,7 @@ function getPasswordStrength(password: string): {
   if (score === 2) return { score, label: "ضعيفة", color: "bg-orange-500" };
   if (score === 3) return { score, label: "متوسطة", color: "bg-yellow-500" };
   if (score === 4) return { score, label: "جيدة", color: "bg-lime-500" };
-  return { score, label: "قوية", color: "bg-green-600" };
+  return { score, label: "قوية", color: "bg-primary-600" };
 }
 
 // ============================================================
@@ -404,7 +404,7 @@ export default function SetupAdminPage() {
         <p className="mb-6 text-center text-sm text-gray-500">
           تم إنشاء حساب الأدمن بنجاح. يمكنك الآن تسجيل الدخول.
         </p>
-        <div className="rounded-lg bg-green-50 p-4 text-center text-sm font-bold text-green-700">
+        <div className="rounded-lg bg-primary-50 p-4 text-center text-sm font-bold text-primary-700">
           احتفظ ببيانات الدخول في مكان آمن، ثم عطّل هذه الصفحة
           (<code dir="ltr">DISABLE_ADMIN_SETUP=true</code>).
         </div>
@@ -508,7 +508,7 @@ export default function SetupAdminPage() {
         <div
           role="status"
           className={`mb-5 rounded-lg p-3 text-sm font-bold ${
-            needsToken ? "bg-amber-50 text-amber-800" : "bg-blue-50 text-blue-800"
+            needsToken ? "bg-amber-50 text-amber-800" : "bg-primary-50 text-primary-800"
           }`}
         >
           {status.message}

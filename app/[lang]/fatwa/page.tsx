@@ -335,7 +335,7 @@ function categoryColor(categoryId: string): string {
     zakat: "from-amber-500 to-amber-600",
     hajj: "from-rose-500 to-rose-600",
     family: "from-pink-500 to-pink-600",
-    transactions: "from-blue-500 to-blue-600",
+    transactions: "from-primary-500 to-primary-600",
     aqeedah: "from-purple-500 to-purple-600",
     ethics: "from-primary-500 to-primary-600",
   };

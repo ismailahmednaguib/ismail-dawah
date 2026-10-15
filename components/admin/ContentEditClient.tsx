@@ -1,16 +1,32 @@
 // components/admin/ContentEditClient.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import StatusBadge from '@/components/admin/StatusBadge';
 import ContentTermsEditor from '@/components/admin/ContentTermsEditor';
-import type { ContentStatus } from '@/lib/types/content';
+import ContentMediaEditor from '@/components/admin/ContentMediaEditor';
+import { sanitizeRichTextHtml } from '@/lib/content-safety';
+import type {
+  AgeGroup,
+  Audience,
+  ContentType,
+  ContentStatus,
+  ContentMedia,
+  EduLevel,
+  Madhhab,
+} from '@/lib/types/content';
 
 type TranslationSummary = {
+  id?: string;
+  lang?: string | null;
   title?: string | null;
   slug?: string | null;
+  summary?: string | null;
+  body?: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
 };
 
 type ContentReferenceSummary = {
@@ -29,11 +45,16 @@ type ContentReferenceSummary = {
 type EditableContent = {
   id: string;
   status: ContentStatus;
-  content_type?: string;
+  content_type?: ContentType;
+  audience?: Audience[];
+  age_groups?: AgeGroup[];
+  levels?: EduLevel[];
+  madhhabs?: Madhhab[];
   needs_scholar_review?: boolean;
   is_sensitive?: boolean;
   content_translations?: TranslationSummary[];
   content_references?: ContentReferenceSummary[];
+  content_media?: ContentMedia[];
 };
 
 type ReferenceKind =
@@ -45,6 +66,69 @@ type ReferenceKind =
   | 'book'
   | 'fatwa_source'
   | 'other';
+
+const AUDIENCES: { value: Audience; label: string }[] = [
+  { value: 'non_muslim', label: 'غير المسلم' },
+  { value: 'muslim_new', label: 'المسلم الجديد' },
+  { value: 'muslim_general', label: 'المسلم العام' },
+  { value: 'student', label: 'طالب العلم' },
+  { value: 'scholar', label: 'العالم' },
+  { value: 'daee', label: 'الداعية' },
+  { value: 'parent', label: 'الوالد/الوالدة' },
+  { value: 'teacher', label: 'المعلم' },
+];
+
+const CONTENT_TYPES: { value: ContentType; label: string }[] = [
+  { value: 'article', label: 'مقال' },
+  { value: 'lesson', label: 'درس' },
+  { value: 'course', label: 'دورة' },
+  { value: 'course_lesson', label: 'درس داخل دورة' },
+  { value: 'book', label: 'كتاب' },
+  { value: 'research', label: 'بحث' },
+  { value: 'fatwa', label: 'فتوى' },
+  { value: 'khutbah', label: 'خطبة' },
+  { value: 'audio', label: 'صوتيات' },
+  { value: 'video', label: 'فيديو' },
+  { value: 'hadith', label: 'حديث' },
+  { value: 'duaa', label: 'دعاء' },
+  { value: 'story', label: 'قصة' },
+  { value: 'faq', label: 'أسئلة شائعة' },
+  { value: 'event', label: 'فعالية' },
+  { value: 'page', label: 'صفحة' },
+  { value: 'profile', label: 'ملف تعريفي' },
+];
+
+const AGE_GROUPS: { value: AgeGroup; label: string }[] = [
+  { value: 'kids', label: 'أطفال' },
+  { value: 'teens', label: 'ناشئة' },
+  { value: 'youth', label: 'شباب' },
+  { value: 'adults', label: 'بالغون' },
+  { value: 'seniors', label: 'كبار السن' },
+  { value: 'all', label: 'الجميع' },
+];
+
+const LEVELS: { value: EduLevel; label: string }[] = [
+  { value: 'beginner', label: 'مبتدئ' },
+  { value: 'intermediate', label: 'متوسط' },
+  { value: 'advanced', label: 'متقدم' },
+  { value: 'specialized', label: 'متخصص' },
+];
+
+const MADHHABS: { value: Madhhab; label: string }[] = [
+  { value: 'general', label: 'عام / لا يختص بمذهب' },
+  { value: 'hanafi', label: 'حنفي' },
+  { value: 'maliki', label: 'مالكي' },
+  { value: 'shafii', label: 'شافعي' },
+  { value: 'hanbali', label: 'حنبلي' },
+  { value: 'zahiri', label: 'ظاهري' },
+  { value: 'jafari', label: 'جعفري' },
+];
+
+function toggleValue<T>(values: T[], value: T): T[] {
+  return values.includes(value)
+    ? values.filter((item) => item !== value)
+    : [...values, value];
+}
 
 export default function ContentEditClient({
   content,
@@ -62,6 +146,9 @@ export default function ContentEditClient({
   const [referenceSaving, setReferenceSaving] = useState(false);
   const [referenceError, setReferenceError] = useState('');
   const [referenceKind, setReferenceKind] = useState<ReferenceKind>('quran');
+  const [contentSaving, setContentSaving] = useState(false);
+  const [contentSaved, setContentSaved] = useState(false);
+  const [contentError, setContentError] = useState('');
   const [surah, setSurah] = useState('');
   const [ayahFrom, setAyahFrom] = useState('');
   const [ayahTo, setAyahTo] = useState('');
@@ -72,12 +159,83 @@ export default function ContentEditClient({
   const [bookTitle, setBookTitle] = useState('');
   const [quoteText, setQuoteText] = useState('');
   const [note, setNote] = useState('');
-  const translation = content.content_translations?.[0];
+  const translation =
+    content.content_translations?.find((item) => item.lang === 'ar') ??
+    content.content_translations?.[0];
+  const [title, setTitle] = useState(translation?.title ?? '');
+  const [slug, setSlug] = useState(translation?.slug ?? '');
+  const [summary, setSummary] = useState(translation?.summary ?? '');
+  const [body, setBody] = useState(translation?.body ?? '');
+  const [metaTitle, setMetaTitle] = useState(translation?.meta_title ?? '');
+  const [metaDescription, setMetaDescription] = useState(
+    translation?.meta_description ?? ''
+  );
+  const [contentType, setContentType] = useState<ContentType>(
+    content.content_type ?? 'article'
+  );
+  const [audience, setAudience] = useState<Audience[]>(
+    content.audience?.length ? content.audience : ['muslim_general']
+  );
+  const [ageGroups, setAgeGroups] = useState<AgeGroup[]>(
+    content.age_groups?.length ? content.age_groups : ['all']
+  );
+  const [levels, setLevels] = useState<EduLevel[]>(
+    content.levels?.length ? content.levels : ['beginner']
+  );
+  const [madhhabs, setMadhhabs] = useState<Madhhab[]>(
+    content.madhhabs?.length ? content.madhhabs : ['general']
+  );
+  const [needsScholarReview, setNeedsScholarReview] = useState(
+    Boolean(content.needs_scholar_review)
+  );
+  const [isSensitive, setIsSensitive] = useState(Boolean(content.is_sensitive));
   const requiresReview = Boolean(
     content.needs_scholar_review ||
       content.is_sensitive ||
       content.content_type === 'fatwa'
   );
+
+  const saveContent = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canEdit) return;
+
+    setContentSaving(true);
+    setContentSaved(false);
+    setContentError('');
+    try {
+      const res = await fetch(`/api/admin/content/${content.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content_type: contentType,
+          audience,
+          age_groups: ageGroups,
+          levels,
+          madhhabs,
+          needs_scholar_review: needsScholarReview,
+          is_sensitive: isSensitive,
+          translation: {
+            id: translation?.id,
+            lang: translation?.lang ?? 'ar',
+            title,
+            slug,
+            summary,
+            body: sanitizeRichTextHtml(body),
+            meta_title: metaTitle,
+            meta_description: metaDescription,
+          },
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error ?? 'فشل حفظ المحتوى');
+      setContentSaved(true);
+      router.refresh();
+    } catch (err: unknown) {
+      setContentError(err instanceof Error ? err.message : 'فشل حفظ المحتوى');
+    } finally {
+      setContentSaving(false);
+    }
+  };
 
   const changeStatus = async (status: ContentStatus) => {
     setLoading(true);
@@ -207,7 +365,7 @@ export default function ContentEditClient({
 
         {/* أزرار تغيير الحالة */}
         <div className="flex flex-wrap gap-2">
-          {content.status === 'draft' && requiresReview && (
+          {canEdit && content.status === 'draft' && requiresReview && (
             <button
               onClick={() => changeStatus('in_review')}
               disabled={loading}
@@ -216,7 +374,7 @@ export default function ContentEditClient({
               📨 إرسال للمراجعة العلمية
             </button>
           )}
-          {content.status === 'draft' && !requiresReview && (
+          {canEdit && content.status === 'draft' && !requiresReview && (
             <button
               onClick={() => changeStatus('published')}
               disabled={loading}
@@ -225,7 +383,7 @@ export default function ContentEditClient({
               ✅ نشر
             </button>
           )}
-          {content.status === 'published' && (
+          {canEdit && content.status === 'published' && (
             <button
               onClick={() => changeStatus('archived')}
               disabled={loading}
@@ -234,7 +392,7 @@ export default function ContentEditClient({
               📦 أرشفة
             </button>
           )}
-          {content.status === 'archived' && (
+          {canEdit && content.status === 'archived' && (
             <button
               onClick={() => changeStatus('published')}
               disabled={loading}
@@ -246,8 +404,277 @@ export default function ContentEditClient({
         </div>
       </div>
 
+      {/* بيانات المحتوى */}
+      <form onSubmit={saveContent} className="card space-y-5">
+        <div>
+          <h3 className="text-lg font-bold text-primary-950">بيانات المحتوى</h3>
+          <p className="mt-1 text-sm text-primary-700/70">
+            عدّل النسخة العربية والتصنيفات. المحتوى الحساس يعود للمراجعة العلمية بعد الحفظ.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="text-sm font-medium text-primary-950">
+            العنوان
+            <input
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              disabled={!canEdit}
+              required
+              maxLength={240}
+              className="input-islamic mt-1"
+            />
+          </label>
+          <label className="text-sm font-medium text-primary-950">
+            الرابط المختصر
+            <input
+              value={slug}
+              onChange={(event) => setSlug(event.target.value)}
+              disabled={!canEdit}
+              required
+              maxLength={255}
+              dir="ltr"
+              className="input-islamic mt-1 text-left"
+            />
+          </label>
+          <label className="text-sm font-medium text-primary-950">
+            نوع المحتوى
+            <select
+              value={contentType}
+              onChange={(event) => setContentType(event.target.value as ContentType)}
+              disabled={!canEdit}
+              className="input-islamic mt-1"
+            >
+              {CONTENT_TYPES.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        <label className="block text-sm font-medium text-primary-950">
+          الملخص
+          <textarea
+            value={summary}
+            onChange={(event) => setSummary(event.target.value)}
+            disabled={!canEdit}
+            maxLength={2000}
+            rows={3}
+            className="input-islamic mt-1"
+          />
+        </label>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="text-sm font-medium text-primary-950">
+            عنوان محركات البحث
+            <input
+              value={metaTitle}
+              onChange={(event) => setMetaTitle(event.target.value)}
+              disabled={!canEdit}
+              maxLength={240}
+              className="input-islamic mt-1"
+            />
+          </label>
+          <label className="text-sm font-medium text-primary-950">
+            وصف محركات البحث
+            <input
+              value={metaDescription}
+              onChange={(event) => setMetaDescription(event.target.value)}
+              disabled={!canEdit}
+              maxLength={320}
+              className="input-islamic mt-1"
+            />
+          </label>
+        </div>
+
+        <label className="block text-sm font-medium text-primary-950">
+          نص المحتوى
+          <textarea
+            value={body}
+            onChange={(event) => setBody(event.target.value)}
+            disabled={!canEdit}
+            rows={12}
+            className="input-islamic mt-1 font-mono text-sm"
+            placeholder="يمكن استخدام HTML بسيط مثل الفقرات والعناوين والقوائم."
+          />
+        </label>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <fieldset>
+            <legend className="mb-2 text-sm font-medium text-primary-950">الجمهور</legend>
+            <div className="flex flex-wrap gap-2">
+              {AUDIENCES.map((item) => {
+                const selected = audience.includes(item.value);
+                return (
+                  <button
+                    key={item.value}
+                    type="button"
+                    disabled={!canEdit}
+                    onClick={() =>
+                      setAudience((current) => {
+                        const next = toggleValue(current, item.value);
+                        return next.length ? next : current;
+                      })
+                    }
+                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                      selected
+                        ? 'border-primary-700 bg-primary-700 text-white'
+                        : 'border-primary-200 bg-white text-primary-800 hover:border-primary-500'
+                    } disabled:cursor-not-allowed disabled:opacity-60`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend className="mb-2 text-sm font-medium text-primary-950">الفئة العمرية</legend>
+            <div className="flex flex-wrap gap-2">
+              {AGE_GROUPS.map((item) => {
+                const selected = ageGroups.includes(item.value);
+                return (
+                  <button
+                    key={item.value}
+                    type="button"
+                    disabled={!canEdit}
+                    onClick={() =>
+                      setAgeGroups((current) => {
+                        const next = toggleValue(current, item.value);
+                        return next.length ? next : current;
+                      })
+                    }
+                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                      selected
+                        ? 'border-gold-500 bg-gold-500 text-night-950'
+                        : 'border-primary-200 bg-white text-primary-800 hover:border-primary-500'
+                    } disabled:cursor-not-allowed disabled:opacity-60`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+        </div>
+
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium text-primary-950">المستوى العلمي</legend>
+          <div className="flex flex-wrap gap-2">
+            {LEVELS.map((item) => {
+              const selected = levels.includes(item.value);
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  disabled={!canEdit}
+                  onClick={() =>
+                    setLevels((current) => {
+                      const next = toggleValue(current, item.value);
+                      return next.length ? next : current;
+                    })
+                  }
+                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                    selected
+                      ? 'border-primary-700 bg-primary-700 text-white'
+                      : 'border-primary-200 bg-white text-primary-800 hover:border-primary-500'
+                  } disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium text-primary-950">المذهب الفقهي</legend>
+          <div className="flex flex-wrap gap-2">
+            {MADHHABS.map((item) => {
+              const selected = madhhabs.includes(item.value);
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  disabled={!canEdit}
+                  onClick={() =>
+                    setMadhhabs((current) => {
+                      const next = toggleValue(current, item.value);
+                      return next.length ? next : current;
+                    })
+                  }
+                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                    selected
+                      ? 'border-primary-700 bg-primary-700 text-white'
+                      : 'border-primary-200 bg-white text-primary-800 hover:border-primary-500'
+                  } disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <div className="grid gap-3 rounded-xl border border-primary-100 bg-primary-50/60 p-4 sm:grid-cols-2">
+          <label className="flex items-start gap-3 text-sm text-primary-900">
+            <input
+              type="checkbox"
+              checked={needsScholarReview}
+              onChange={(event) => setNeedsScholarReview(event.target.checked)}
+              disabled={!canEdit}
+              className="mt-1 accent-primary-700"
+            />
+            <span>
+              <span className="block font-medium">يحتاج مراجعة علمية</span>
+              <span className="mt-1 block text-xs text-primary-700/70">
+                لا يمكن نشره مباشرة حتى يعتمده المراجع المختص.
+              </span>
+            </span>
+          </label>
+          <label className="flex items-start gap-3 text-sm text-primary-900">
+            <input
+              type="checkbox"
+              checked={isSensitive}
+              onChange={(event) => setIsSensitive(event.target.checked)}
+              disabled={!canEdit}
+              className="mt-1 accent-primary-700"
+            />
+            <span>
+              <span className="block font-medium">محتوى حساس</span>
+              <span className="mt-1 block text-xs text-primary-700/70">
+                الفتاوى والمحتوى الحساس يمرّان بالمراجعة قبل النشر.
+              </span>
+            </span>
+          </label>
+        </div>
+
+        {contentError && (
+          <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{contentError}</p>
+        )}
+        {contentSaved && (
+          <p className="rounded-lg bg-primary-50 px-3 py-2 text-sm text-primary-800">
+            تم حفظ التعديلات بنجاح.
+          </p>
+        )}
+        {canEdit && (
+          <button type="submit" disabled={contentSaving} className="btn-primary">
+            {contentSaving ? 'جارٍ الحفظ...' : 'حفظ بيانات المحتوى'}
+          </button>
+        )}
+      </form>
+
+      <ContentMediaEditor
+        contentId={content.id}
+        initialMedia={content.content_media}
+        canEdit={canEdit}
+      />
+
       {/* مراجع شرعية */}
-      <div className="bg-white rounded-xl border border-stone-200 p-5">
+      <div className="card">
         <h3 className="font-medium text-stone-700 mb-3">
           📚 التوثيق الشرعي ({references.length})
         </h3>

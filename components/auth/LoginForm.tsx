@@ -274,7 +274,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
           <div
             className={`mb-4 rounded-xl p-4 text-sm font-bold ${
               message.type === "success"
-                ? "border border-green-200 bg-green-50 text-green-700 dark:border-green-800/40 dark:bg-green-950/20 dark:text-green-300"
+                ? "border border-primary-200 bg-primary-50 text-primary-700 dark:border-primary-800/40 dark:bg-primary-950/20 dark:text-primary-300"
                 : "border border-red-200 bg-red-50 text-red-700 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-300"
             }`}
             aria-live="polite"

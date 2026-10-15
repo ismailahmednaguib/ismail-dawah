@@ -658,7 +658,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
 
         {/* رسالة الحفظ */}
         {savedMessage && (
-          <div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-3 text-center text-sm font-bold text-green-700 dark:border-green-800/40 dark:bg-green-950/20 dark:text-green-300">
+          <div className="mt-4 rounded-xl border border-primary-200 bg-primary-50 p-3 text-center text-sm font-bold text-primary-700 dark:border-primary-800/40 dark:bg-primary-950/20 dark:text-primary-300">
             ✓ {ui.settingsSaved}
           </div>
         )}
@@ -1001,7 +1001,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
                     )}
 
                     {isPassed && !isNext && (
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-xs font-black text-green-700 dark:bg-green-900/40 dark:text-green-300">
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-xs font-black text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
                         ✓
                       </span>
                     )}

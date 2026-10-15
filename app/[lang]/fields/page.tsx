@@ -249,7 +249,7 @@ const FIELDS: Field[] = [
       en: "Modern jurisprudential issues and contemporary challenges.",
     },
     slug: "contemporary",
-    color: "from-blue-500 to-blue-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     id: "quran-sciences",

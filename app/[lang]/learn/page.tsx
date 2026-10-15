@@ -1,6 +1,7 @@
 // app/[lang]/learn/page.tsx
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { getPublishedContent } from '@/lib/learn/queries';
 import ContentCard from '@/components/learn/ContentCard';
 import ContentFilters from '@/components/learn/ContentFilters';
@@ -8,12 +9,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
-import type { AgeGroup, Audience, ContentType, EduLevel } from '@/lib/types/content';
-
-export const metadata: Metadata = {
-  title: 'المكتبة الإسلامية | أكاديمية إسماعيل',
-  description: 'تصفح المقالات والدروس والكتب والفتاوى الإسلامية',
-};
+import type { AgeGroup, Audience, ContentType, EduLevel, Madhhab } from '@/lib/types/content';
 
 const COPY = {
   ar: {
@@ -32,9 +28,33 @@ const COPY = {
   },
 } as const;
 
+const TRACKS = {
+  ar: [
+    { value: 'non_muslim', icon: '🌍', title: 'أتعرف على الإسلام', text: 'مدخل هادئ وواضح لمن يريد التعرف على الإسلام.' },
+    { value: 'muslim_new', icon: '🌱', title: 'المسلم الجديد', text: 'خطوات عملية لبناء الأساسيات بثبات.' },
+    { value: 'student', icon: '📚', title: 'طالب العلم', text: 'محتوى مرتب لمن يريد التوسع والتدرج.' },
+  ],
+  en: [
+    { value: 'non_muslim', icon: '🌍', title: 'Discover Islam', text: 'A clear and calm starting point for learning about Islam.' },
+    { value: 'muslim_new', icon: '🌱', title: 'New Muslim', text: 'Practical steps for building a strong foundation.' },
+    { value: 'student', icon: '📚', title: 'Knowledge Seeker', text: 'Structured content for steady, deeper learning.' },
+  ],
+} as const;
+
 interface PageProps {
   params: Promise<{ lang: string }>;
   searchParams: Promise<Record<string, string | undefined>>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { lang } = await params;
+  const currentLang = isValidLang(lang) ? (lang as Lang) : 'ar';
+  const copy = COPY[currentLang];
+
+  return {
+    title: `${copy.title} | أكاديمية إسماعيل`,
+    description: copy.subtitle,
+  };
 }
 
 export default async function LearnPage({ params, searchParams }: PageProps) {
@@ -51,6 +71,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
     audience: sp.audience as Audience | undefined,
     age_group: sp.age as AgeGroup | undefined,
     level: sp.level as EduLevel | undefined,
+    madhhab: sp.madhhab as Madhhab | undefined,
     search: sp.q,
     page: currentPage,
   });
@@ -88,8 +109,27 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* الفلاتر */}
         <Suspense fallback={<div className="h-32 animate-pulse rounded-2xl bg-primary-50" />}>
-          <ContentFilters lang={lang} />
+          <ContentFilters lang={currentLang} />
         </Suspense>
+
+        <section className="mt-6" aria-labelledby="learning-tracks-title">
+          <h2 id="learning-tracks-title" className="mb-3 text-lg font-bold text-primary-950 dark:text-white">
+            {currentLang === 'ar' ? 'اختر مسارك' : 'Choose your path'}
+          </h2>
+          <div className="grid gap-3 md:grid-cols-3">
+            {TRACKS[currentLang].map((track) => (
+              <Link
+                key={track.value}
+                href={`/${lang}/learn?audience=${track.value}`}
+                className="card-interactive p-4"
+              >
+                <span className="text-2xl" aria-hidden="true">{track.icon}</span>
+                <h3 className="mt-2 font-bold text-primary-950 dark:text-white">{track.title}</h3>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{track.text}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         {/* عدد النتائج */}
         <div className="mt-6 mb-4 flex items-center justify-between">

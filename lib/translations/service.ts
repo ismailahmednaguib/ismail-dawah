@@ -1,5 +1,6 @@
 // lib/translations/service.ts
-import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { getSupabaseAdmin, logAudit } from '@/lib/supabase/admin';
+import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import type {
   LanguageCode,
   TranslationRow,
@@ -115,18 +116,46 @@ export async function upsertTranslation(
 ): Promise<TranslationRow> {
   const supabase = getSupabaseAdmin();
 
+  if (!contentId || !LANGUAGES.some(language => language.code === lang)) {
+    throw new Error('بيانات اللغة أو المحتوى غير صالحة');
+  }
+
+  const title = typeof translation.title === 'string' ? translation.title.trim().slice(0, 240) : '';
+  const slug = typeof translation.slug === 'string' ? translation.slug.trim().slice(0, 255) : '';
+  if (!title || !slug) throw new Error('العنوان والرابط حقول مطلوبة');
+
+  const safeBody = sanitizeRichTextHtml(
+    typeof translation.body === 'string' ? translation.body : ''
+  );
+  const bodyPlain = safeBody
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 200_000);
+  const summary = typeof translation.summary === 'string'
+    ? translation.summary.trim().slice(0, 2_000)
+    : '';
+  const metaTitle = typeof translation.meta_title === 'string'
+    ? translation.meta_title.trim().slice(0, 240)
+    : '';
+  const metaDescription = typeof translation.meta_description === 'string'
+    ? translation.meta_description.trim().slice(0, 320)
+    : '';
+
   const payload = {
     content_id: contentId,
     lang,
-    slug: translation.slug,
-    title: translation.title,
-    summary: translation.summary ?? null,
-    body: translation.body ?? null,
-    body_plain: translation.body_plain ?? null,
-    meta_title: translation.meta_title ?? null,
-    meta_description: translation.meta_description ?? null,
-    is_machine_translated: translation.is_machine_translated ?? false,
-    is_reviewed: translation.is_reviewed ?? false,
+    slug,
+    title,
+    summary: summary || null,
+    body: safeBody || null,
+    body_plain: bodyPlain || null,
+    meta_title: metaTitle || null,
+    meta_description: metaDescription || null,
+    is_machine_translated: translation.is_machine_translated === true,
+    // كل تعديل يبدأ كمسودة؛ الاعتماد يتم من markTranslationReviewed فقط.
+    is_reviewed: false,
+    reviewed_by: null,
     updated_at: new Date().toISOString(),
   };
 
@@ -141,13 +170,10 @@ export async function upsertTranslation(
 
   if (error) throw new Error(error.message);
 
-  // تسجيل في سجل التدقيق
-  await supabase.from('audit_log').insert({
-    user_id: userId,
-    action: 'translate',
-    table_name: 'content_translations',
-    record_id: data.id,
-    new_data: { content_id: contentId, lang },
+  await logAudit(userId, 'translate', 'content_translations', data.id, {
+    content_id: contentId,
+    lang,
+    is_reviewed: false,
   });
 
   return data as TranslationRow;
@@ -163,16 +189,24 @@ export async function markTranslationReviewed(
 ): Promise<void> {
   const supabase = getSupabaseAdmin();
 
-  const { error } = await supabase
+  const { data: reviewedTranslation, error } = await supabase
     .from('content_translations')
     .update({
       is_reviewed: true,
       reviewed_by: userId,
     })
     .eq('content_id', contentId)
-    .eq('lang', lang);
+    .eq('lang', lang)
+    .select('id')
+    .maybeSingle();
 
   if (error) throw new Error(error.message);
+  if (!reviewedTranslation) throw new Error('الترجمة غير موجودة');
+  await logAudit(userId, 'review_translation', 'content_translations', reviewedTranslation.id, {
+    content_id: contentId,
+    lang,
+    is_reviewed: true,
+  });
 }
 
 /**
@@ -230,6 +264,10 @@ export async function copyOriginalAsDraft(
   userId: string
 ): Promise<TranslationRow> {
   const supabase = getSupabaseAdmin();
+
+  if (!contentId || !LANGUAGES.some(language => language.code === targetLang)) {
+    throw new Error('لغة الترجمة غير صالحة');
+  }
 
   // جلب اللغة الأصلية للمحتوى
   const { data: content } = await supabase

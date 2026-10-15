@@ -23,6 +23,7 @@ import type {
   PaginatedResult,
   Taxonomy,
 } from '@/lib/types/content';
+import { sanitizeRichTextHtml } from '@/lib/content-safety';
 
 let adminClient: SupabaseClient | null = null;
 
@@ -76,6 +77,27 @@ export interface CreateContentInput {
   };
 }
 
+const VALID_CONTENT_TYPES: ContentType[] = [
+  'article', 'lesson', 'course', 'course_lesson', 'book', 'research', 'fatwa',
+  'khutbah', 'audio', 'video', 'hadith', 'duaa', 'story', 'faq', 'event', 'page', 'profile',
+];
+const VALID_AUDIENCES: Audience[] = [
+  'non_muslim', 'muslim_new', 'muslim_general', 'student', 'scholar', 'daee', 'parent', 'teacher',
+];
+const VALID_AGE_GROUPS: AgeGroup[] = ['kids', 'teens', 'youth', 'adults', 'seniors', 'all'];
+const VALID_LEVELS: EduLevel[] = ['beginner', 'intermediate', 'advanced', 'specialized'];
+const VALID_MADHHABS: Madhhab[] = ['hanafi', 'maliki', 'shafii', 'hanbali', 'zahiri', 'jafari', 'general'];
+
+function normalizeEnumList<T extends string>(value: unknown, allowed: readonly T[], fallback: T[]): T[] {
+  if (value === undefined) return fallback;
+  if (!Array.isArray(value)) throw new Error('تصنيفات المحتوى غير صالحة');
+  const values = [...new Set(value)].filter((item): item is T =>
+    typeof item === 'string' && allowed.includes(item as T)
+  );
+  if (!values.length) throw new Error('يجب اختيار تصنيف واحد على الأقل');
+  return values;
+}
+
 /** المحتوى الذي لا يجوز نشره قبل اعتماد مراجع علمي. */
 export function requiresScholarReview(content: {
   content_type?: ContentType;
@@ -94,6 +116,44 @@ export async function createContent(
   userId: string
 ): Promise<Content> {
   const supabase = getSupabaseAdmin();
+  if (!input || typeof input !== 'object' || !VALID_CONTENT_TYPES.includes(input.content_type)) {
+    throw new Error('نوع المحتوى غير صالح');
+  }
+  if (!input.translation || typeof input.translation !== 'object') {
+    throw new Error('بيانات الترجمة مطلوبة');
+  }
+  if (
+    typeof input.translation.title !== 'string' ||
+    typeof input.translation.slug !== 'string' ||
+    typeof input.translation.lang !== 'string'
+  ) {
+    throw new Error('العنوان والرابط واللغة حقول مطلوبة');
+  }
+
+  const audience = normalizeEnumList(input.audience, VALID_AUDIENCES, ['muslim_general']);
+  const ageGroups = normalizeEnumList(input.age_groups, VALID_AGE_GROUPS, ['all']);
+  const levels = normalizeEnumList(input.levels, VALID_LEVELS, ['beginner']);
+  const madhhabs = normalizeEnumList(input.madhhabs, VALID_MADHHABS, ['general']);
+  if (input.is_sensitive !== undefined && typeof input.is_sensitive !== 'boolean') {
+    throw new Error('قيمة حساسية المحتوى غير صالحة');
+  }
+  if (input.needs_scholar_review !== undefined && typeof input.needs_scholar_review !== 'boolean') {
+    throw new Error('قيمة المراجعة العلمية غير صالحة');
+  }
+  const title = input.translation.title.trim().slice(0, 240);
+  const slug = input.translation.slug.trim().slice(0, 255);
+  const language = input.translation.lang.trim().slice(0, 8);
+
+  if (!title || !slug || !language) {
+    throw new Error('العنوان والرابط واللغة حقول مطلوبة');
+  }
+
+  const safeBody = sanitizeRichTextHtml(input.translation.body || '');
+  const bodyPlain = safeBody
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 200_000);
   const needsScholarReview = Boolean(
     input.needs_scholar_review ||
       input.is_sensitive ||
@@ -107,14 +167,14 @@ export async function createContent(
       content_type: input.content_type,
       status: 'draft',
       lang_original: input.lang_original || 'ar',
-      audience: input.audience || ['muslim_general'],
-      age_groups: input.age_groups || ['all'],
-      levels: input.levels || ['beginner'],
-      madhhabs: input.madhhabs || ['general'],
+      audience,
+      age_groups: ageGroups,
+      levels,
+      madhhabs,
       parent_id: input.parent_id || null,
       sort_order: input.sort_order || 0,
       needs_scholar_review: needsScholarReview,
-      is_sensitive: input.is_sensitive || false,
+      is_sensitive: input.is_sensitive ?? false,
       created_by: userId,
       updated_by: userId,
     })
@@ -130,12 +190,12 @@ export async function createContent(
     .from('content_translations')
     .insert({
       content_id: content.id,
-      lang: input.translation.lang,
-      slug: input.translation.slug,
-      title: input.translation.title,
-      summary: input.translation.summary || null,
-      body: input.translation.body || null,
-      body_plain: input.translation.body_plain || null,
+      lang: language,
+      slug,
+      title,
+      summary: input.translation.summary?.trim().slice(0, 2_000) || null,
+      body: safeBody || null,
+      body_plain: bodyPlain || null,
       meta_title: input.translation.meta_title || null,
       meta_description: input.translation.meta_description || null,
       is_machine_translated: false,

@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import type { LanguageCode, TranslationRow } from '@/lib/translations/types';
 import { LANGUAGES } from '@/lib/translations/types';
+import { sanitizeRichTextHtml } from '@/lib/content-safety';
 
 interface TranslationEditorProps {
   contentId: string;
@@ -163,7 +164,9 @@ export default function TranslationEditor({
                 <label className="text-xs font-medium text-stone-500">المحتوى</label>
                 <div
                   className="text-sm text-stone-700 dark:text-gray-300 mt-1 prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: original?.body ?? '<p>-</p>' }}
+                  dangerouslySetInnerHTML={{
+                    __html: sanitizeRichTextHtml(original?.body ?? '<p>-</p>'),
+                  }}
                 />
               </div>
             </div>
@@ -172,7 +175,7 @@ export default function TranslationEditor({
           {/* العمود الأيسر: الترجمة */}
           <div className="space-y-4">
             <h3 className="font-bold text-stone-700 dark:text-gray-300 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-600 rounded-full" />
+              <span className="w-2 h-2 bg-primary-600 rounded-full" />
               الترجمة ({langInfo?.nativeName})
             </h3>
 
@@ -238,7 +241,7 @@ export default function TranslationEditor({
                   id="machine_translated"
                   checked={translation.is_machine_translated ?? false}
                   onChange={(e) => setTranslation(prev => ({ ...prev, is_machine_translated: e.target.checked }))}
-                  className="w-4 h-4 accent-orange-500"
+                  className="w-4 h-4 accent-gold-500"
                 />
                 <label htmlFor="machine_translated" className="text-sm text-stone-600 dark:text-gray-300">
                   🤖 ترجمة آلية (تحتاج مراجعة)
@@ -259,7 +262,7 @@ export default function TranslationEditor({
           <button
             onClick={() => handleSave(false)}
             disabled={saving || !translation.title}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition disabled:opacity-50"
+            className="btn-outline disabled:opacity-50"
           >
             {saving ? 'جارٍ الحفظ...' : '💾 حفظ كمسودة'}
           </button>

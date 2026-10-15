@@ -17,7 +17,7 @@ export default function LanguageSEO({
   ogImage,
 }: LanguageSEOProps) {
   const alternates = getAlternateLanguages(path);
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app';
+  const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
   const canonicalUrl = `${baseUrl}/${lang}${path}`;
 
   return (

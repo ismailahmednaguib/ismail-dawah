@@ -1,19 +1,26 @@
-// components/learn/ContentCard.tsx
 import Link from 'next/link';
 
-const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
-  article:   { icon: '📰', label: 'مقال',    color: 'bg-blue-100 text-blue-800' },
-  lesson:    { icon: '📖', label: 'درس',     color: 'bg-primary-100 text-primary-800' },
-  course:    { icon: '🎓', label: 'دورة',    color: 'bg-purple-100 text-purple-800' },
-  book:      { icon: '📚', label: 'كتاب',    color: 'bg-amber-100 text-amber-800' },
-  fatwa:     { icon: '⚖️', label: 'فتوى',    color: 'bg-red-100 text-red-800' },
-  khutbah:   { icon: '🕌', label: 'خطبة',    color: 'bg-primary-100 text-primary-800' },
-  audio:     { icon: '🎧', label: 'صوت',     color: 'bg-indigo-100 text-indigo-800' },
-  video:     { icon: '🎬', label: 'فيديو',   color: 'bg-rose-100 text-rose-800' },
-  hadith:    { icon: '💬', label: 'حديث',    color: 'bg-primary-100 text-primary-800' },
-  duaa:      { icon: '🤲', label: 'دعاء',    color: 'bg-cyan-100 text-cyan-800' },
-  story:     { icon: '📜', label: 'قصة',     color: 'bg-orange-100 text-orange-800' },
-  research:  { icon: '🔬', label: 'بحث',     color: 'bg-slate-100 text-slate-800' },
+type ContentTypeConfig = {
+  icon: string;
+  ar: string;
+  en: string;
+  accent: string;
+  badge: 'badge-primary' | 'badge-gold';
+};
+
+const TYPE_CONFIG: Record<string, ContentTypeConfig> = {
+  article: { icon: '📰', ar: 'مقال', en: 'Article', accent: 'bg-primary-500', badge: 'badge-primary' },
+  lesson: { icon: '📖', ar: 'درس', en: 'Lesson', accent: 'bg-primary-600', badge: 'badge-primary' },
+  course: { icon: '🎓', ar: 'دورة', en: 'Course', accent: 'bg-gold-500', badge: 'badge-gold' },
+  book: { icon: '📚', ar: 'كتاب', en: 'Book', accent: 'bg-gold-600', badge: 'badge-gold' },
+  fatwa: { icon: '⚖️', ar: 'فتوى', en: 'Fatwa', accent: 'bg-primary-700', badge: 'badge-primary' },
+  khutbah: { icon: '🕌', ar: 'خطبة', en: 'Khutbah', accent: 'bg-primary-800', badge: 'badge-primary' },
+  audio: { icon: '🎧', ar: 'صوت', en: 'Audio', accent: 'bg-primary-500', badge: 'badge-primary' },
+  video: { icon: '🎬', ar: 'فيديو', en: 'Video', accent: 'bg-primary-600', badge: 'badge-primary' },
+  hadith: { icon: '💬', ar: 'حديث', en: 'Hadith', accent: 'bg-primary-700', badge: 'badge-primary' },
+  duaa: { icon: '🤲', ar: 'دعاء', en: 'Duaa', accent: 'bg-gold-500', badge: 'badge-gold' },
+  story: { icon: '📜', ar: 'قصة', en: 'Story', accent: 'bg-gold-600', badge: 'badge-gold' },
+  research: { icon: '🔬', ar: 'بحث', en: 'Research', accent: 'bg-primary-800', badge: 'badge-primary' },
 };
 
 interface ContentCardProps {
@@ -22,7 +29,7 @@ interface ContentCardProps {
   slug: string;
   title: string;
   summary?: string | null;
-  published_at?: string;
+  published_at?: string | null;
 }
 
 export default function ContentCard({
@@ -33,49 +40,60 @@ export default function ContentCard({
   summary,
   published_at,
 }: ContentCardProps) {
-  const cfg = TYPE_CONFIG[type] ?? { icon: '📄', label: type, color: 'bg-gray-100 text-gray-800' };
+  const config = TYPE_CONFIG[type] ?? {
+    icon: '📄',
+    ar: 'محتوى',
+    en: 'Content',
+    accent: 'bg-primary-500',
+    badge: 'badge-primary' as const,
+  };
+  const isArabic = lang === 'ar';
   const href = `/${lang}/learn/${type}/${slug}`;
   const date = published_at
-    ? new Date(published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')
+    ? new Date(published_at).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')
     : '';
 
   return (
     <Link
       href={href}
-      className="group block bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden"
+      className="group card-interactive block"
+      aria-label={`${title} — ${isArabic ? config.ar : config.en}`}
     >
-      {/* شريط علوي ملون حسب النوع */}
-      <div className={`h-1.5 ${cfg.color.split(' ')[0]}`} />
+      <div className={`h-1.5 ${config.accent}`} aria-hidden="true" />
 
       <div className="p-5">
-        {/* النوع والتاريخ */}
-        <div className="flex items-center justify-between mb-3">
-          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.color}`}>
-            <span>{cfg.icon}</span>
-            {cfg.label}
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <span className={config.badge}>
+            <span aria-hidden="true">{config.icon}</span>
+            {isArabic ? config.ar : config.en}
           </span>
           {date && (
-            <time className="text-xs text-stone-400">{date}</time>
+            <time className="text-xs text-slate-500 dark:text-slate-400">
+              {date}
+            </time>
           )}
         </div>
 
-        {/* العنوان */}
-        <h3 className="text-lg font-bold text-primary-950 dark:text-white group-hover:text-primary-700 dark:group-hover:text-primary-400 transition-colors line-clamp-2 mb-2">
+        <h3 className="mb-2 line-clamp-2 text-lg font-bold text-primary-950 transition-colors group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
           {title}
         </h3>
 
-        {/* الملخص */}
         {summary && (
-          <p className="text-sm text-stone-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
+          <p className="line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             {summary}
           </p>
         )}
 
-        {/* سهم القراءة */}
-        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary-700 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
-          <span>اقرأ المزيد</span>
-          <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        <div className="mt-4 flex items-center gap-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-500 dark:text-primary-300">
+          <span>{isArabic ? 'اقرأ المزيد' : 'Read more'}</span>
+          <svg
+            className={`h-4 w-4 ${isArabic ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0-4 4m4-4H3" />
           </svg>
         </div>
       </div>

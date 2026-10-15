@@ -2,7 +2,7 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app';
+const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
    export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(
@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = [
     '',
     '/learn',
+    '/fiqh',
     '/search',
     '/quran',
     '/fatwa',
@@ -42,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/calendar',
     '/map',
     '/download',
+    '/faq',
     '/privacy',
     '/terms',
   ];
@@ -73,15 +75,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     `)
     .eq('status', 'published');
 
+  const supportedLanguages = new Set(languages);
   const dynamicPages: MetadataRoute.Sitemap = (content ?? []).flatMap((item: any) => {
-    return (item.content_translations ?? []).map((t: any) => ({
+    const translations = (item.content_translations ?? []).filter((t: any) =>
+      supportedLanguages.has(t.lang)
+    );
+
+    return translations.map((t: any) => ({
       url: `${BASE_URL}/${t.lang}/learn/${item.content_type}/${t.slug}`,
       lastModified: new Date(item.updated_at),
       changeFrequency: 'monthly' as const,
       priority: 0.8,
       alternates: {
         languages: Object.fromEntries(
-          (item.content_translations ?? [])
+          translations
             .filter((x: any) => x.slug)
             .map((x: any) => [x.lang, `${BASE_URL}/${x.lang}/learn/${item.content_type}/${x.slug}`])
         ),

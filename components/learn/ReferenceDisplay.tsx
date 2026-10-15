@@ -20,7 +20,7 @@ interface Reference {
 
 const GRADE_COLORS: Record<string, string> = {
   sahih: 'bg-primary-100 text-primary-800',
-  hasan: 'bg-blue-100 text-blue-800',
+  hasan: 'bg-primary-100 text-primary-800',
   daif: 'bg-yellow-100 text-yellow-800',
   mawdu: 'bg-red-100 text-red-800',
 };

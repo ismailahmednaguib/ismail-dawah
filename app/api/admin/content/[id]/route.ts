@@ -7,7 +7,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSession, hasAnyRole } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
-import { getContentFull, setStatus, deleteContent } from '@/lib/admin/content-service';
+import {
+  getContentFull,
+  setStatus,
+  updateContentDetails,
+  deleteContent,
+} from '@/lib/admin/content-service';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -32,11 +37,20 @@ export async function PUT(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'غير مصرح' }, { status: 403 });
   }
   const { id } = await params;
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return NextResponse.json({ error: 'بيانات التعديل غير صالحة' }, { status: 400 });
+  }
 
   try {
     // تغيير الحالة فقط (النشر/الأرشفة)
     if (body.status) {
+      if (Object.keys(body).some((key) => key !== 'status')) {
+        return NextResponse.json(
+          { error: 'افصل تغيير الحالة عن حفظ بيانات المحتوى' },
+          { status: 400 }
+        );
+      }
       const allowedStatuses = [
         'draft',
         'in_review',
@@ -54,8 +68,11 @@ export async function PUT(req: NextRequest, { params }: Params) {
       }
 
       await setStatus(id, body.status, session.userId);
+      return NextResponse.json({ success: true });
     }
-    return NextResponse.json({ success: true });
+
+    const content = await updateContentDetails(id, body, session.userId);
+    return NextResponse.json({ success: true, content });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }

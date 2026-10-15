@@ -378,7 +378,7 @@ export default function DailyWirdClient({
             <div
               className={`h-full rounded-full transition-all duration-700 ${
                 weeklyPercent === 100
-                  ? "bg-gradient-to-r from-green-400 via-green-500 to-green-600"
+                  ? "bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600"
                   : "bg-gradient-to-r from-primary-400 via-primary-500 to-gold-400"
               }`}
               style={{ width: `${weeklyPercent}%` }}
@@ -417,7 +417,7 @@ export default function DailyWirdClient({
                   isActive
                     ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25"
                     : dayPercent === 100
-                    ? "border-2 border-green-300 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950/30 dark:text-green-300"
+                    ? "border-2 border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-950/30 dark:text-primary-300"
                     : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
                 }`}
               >
@@ -524,7 +524,7 @@ export default function DailyWirdClient({
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
                             dayPercent === 100
-                              ? "bg-gradient-to-r from-green-400 to-green-600"
+                              ? "bg-gradient-to-r from-primary-400 to-primary-600"
                               : "bg-gradient-to-r from-primary-400 to-gold-400"
                           }`}
                           style={{ width: `${dayPercent}%` }}
@@ -543,7 +543,7 @@ export default function DailyWirdClient({
                           key={task.id}
                           className={`group flex flex-col gap-3 rounded-2xl border p-4 transition-all duration-300 sm:flex-row sm:items-center sm:justify-between ${
                             isDone
-                              ? "border-green-200 bg-green-50/60 dark:border-green-800/40 dark:bg-green-950/20"
+                              ? "border-primary-200 bg-primary-50/60 dark:border-primary-800/40 dark:bg-primary-950/20"
                               : "border-slate-200 bg-white hover:border-primary-200 dark:border-night-700 dark:bg-night-800 dark:hover:border-primary-700"
                           }`}
                         >
@@ -555,7 +555,7 @@ export default function DailyWirdClient({
                             <span
                               className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 ${
                                 isDone
-                                  ? "border-green-500 bg-green-500 text-white scale-110"
+                                  ? "border-primary-500 bg-primary-500 text-white scale-110"
                                   : "border-slate-300 bg-white group-hover:border-primary-500 dark:border-night-600 dark:bg-night-900"
                               }`}
                             >
@@ -574,7 +574,7 @@ export default function DailyWirdClient({
                               <span
                                 className={`flex items-center gap-2 text-sm font-bold leading-relaxed transition-all ${
                                   isDone
-                                    ? "text-green-800 line-through decoration-green-500/60 dark:text-green-200"
+                                    ? "text-primary-800 line-through decoration-primary-500/60 dark:text-primary-200"
                                     : "text-slate-800 dark:text-slate-100"
                                 }`}
                               >

@@ -184,7 +184,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ",
     ayahSource: { ar: "سورة النجم — الآية 39", en: "Surah An-Najm — Verse 39" },
-    gradient: "from-blue-500 to-blue-700",
+    gradient: "from-primary-500 to-primary-700",
   },
   {
     id: "excessive-gaming",

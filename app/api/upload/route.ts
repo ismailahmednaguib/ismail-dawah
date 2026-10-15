@@ -69,6 +69,11 @@ const AUDIO_MAX_BYTES = Math.min(
   GLOBAL_MAX_BYTES
 );
 
+const VIDEO_MAX_BYTES = Math.min(
+  positiveNumber(env("UPLOAD_VIDEO_MAX_BYTES"), 100 * 1024 * 1024),
+  GLOBAL_MAX_BYTES
+);
+
 const DOC_MAX_BYTES = Math.min(
   positiveNumber(env("UPLOAD_DOC_MAX_BYTES"), 25 * 1024 * 1024),
   GLOBAL_MAX_BYTES
@@ -114,13 +119,14 @@ const ALLOW_MISSING_ORIGIN = env("UPLOAD_ALLOW_MISSING_ORIGIN") === "true";
 // Allowed kinds / extensions / mimes
 // ============================================================
 
-type Kind = "image" | "audio" | "doc";
+type Kind = "image" | "audio" | "video" | "doc";
 
-const ALLOWED_KINDS = new Set<Kind>(["image", "audio", "doc"]);
+const ALLOWED_KINDS = new Set<Kind>(["image", "audio", "video", "doc"]);
 
 const ALLOWED_EXTENSIONS: Record<Kind, Set<string>> = {
   image: new Set(["jpg", "jpeg", "png", "webp", "gif"]),
   audio: new Set(["mp3", "wav", "m4a", "ogg", "flac", "aac"]),
+  video: new Set(["mp4", "webm", "mov"]),
   doc: new Set(["pdf"]),
 };
 
@@ -140,6 +146,11 @@ const EXT_TO_MIME: Record<Kind, Record<string, string>> = {
     flac: "audio/flac",
     aac: "audio/aac",
   },
+  video: {
+    mp4: "video/mp4",
+    webm: "video/webm",
+    mov: "video/quicktime",
+  },
   doc: {
     pdf: "application/pdf",
   },
@@ -148,6 +159,7 @@ const EXT_TO_MIME: Record<Kind, Record<string, string>> = {
 const ALLOWED_MIMES: Record<Kind, Set<string>> = {
   image: new Set(Object.values(EXT_TO_MIME.image)),
   audio: new Set(Object.values(EXT_TO_MIME.audio)),
+  video: new Set(Object.values(EXT_TO_MIME.video)),
   doc: new Set(Object.values(EXT_TO_MIME.doc)),
 };
 
@@ -165,6 +177,7 @@ const MIME_ALIASES: Record<string, string> = {
 const KIND_TO_FOLDER: Record<Kind, string> = {
   image: "images",
   audio: "audio",
+  video: "videos",
   doc: "books",
 };
 
@@ -1038,6 +1051,18 @@ function isValidDocBytes(bytes: Uint8Array, ext: string): boolean {
   return false;
 }
 
+function isValidVideoBytes(bytes: Uint8Array, ext: string): boolean {
+  if (ext === "webm") {
+    return hasPrefix(bytes, [0x1a, 0x45, 0xdf, 0xa3]);
+  }
+
+  if (ext === "mp4" || ext === "mov") {
+    return hasPrefix(bytes, [0x66, 0x74, 0x79, 0x70], 4);
+  }
+
+  return false;
+}
+
 function validateMagicBytes(
   kind: Kind,
   ext: string,
@@ -1057,6 +1082,10 @@ function validateMagicBytes(
     return isValidAudioBytes(bytes, ext);
   }
 
+  if (kind === "video") {
+    return isValidVideoBytes(bytes, ext);
+  }
+
   if (kind === "doc") {
     return isValidDocBytes(bytes, ext);
   }
@@ -1067,6 +1096,7 @@ function validateMagicBytes(
 function maxBytesForKind(kind: Kind): number {
   if (kind === "image") return IMAGE_MAX_BYTES;
   if (kind === "audio") return AUDIO_MAX_BYTES;
+  if (kind === "video") return VIDEO_MAX_BYTES;
   return DOC_MAX_BYTES;
 }
 
@@ -1273,12 +1303,14 @@ export async function GET(req: NextRequest) {
         requestMaxBytes: REQUEST_MAX_BYTES,
         imageMaxBytes: IMAGE_MAX_BYTES,
         audioMaxBytes: AUDIO_MAX_BYTES,
+        videoMaxBytes: VIDEO_MAX_BYTES,
         docMaxBytes: DOC_MAX_BYTES,
       },
       allowedKinds: Array.from(ALLOWED_KINDS),
       allowedExtensions: {
         image: Array.from(ALLOWED_EXTENSIONS.image),
         audio: Array.from(ALLOWED_EXTENSIONS.audio),
+        video: Array.from(ALLOWED_EXTENSIONS.video),
         doc: Array.from(ALLOWED_EXTENSIONS.doc),
       },
     });
@@ -1440,7 +1472,7 @@ export async function POST(req: NextRequest) {
       return jsonResponse(
         {
           ok: false,
-          error: "نوع الملف غير مدعوم. المسموح: image أو audio أو doc.",
+          error: "نوع الملف غير مدعوم. المسموح: image أو audio أو video أو doc.",
         },
         400
       );

@@ -5,7 +5,7 @@ import { ENABLED_LANGUAGE_CODES, DEFAULT_LANGUAGE, isValidLanguage } from './con
  * توليد hrefs لكل اللغات المتاحة لصفحة معينة
  */
 export function getAlternateLanguages(path: string): { lang: string; href: string }[] {
-  const basePath = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app';
+  const basePath = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
   
   return ENABLED_LANGUAGE_CODES.map(code => ({
     lang: code,

@@ -380,7 +380,7 @@ const FIELDS: Field[] = [
     id: "contemporary",
     slug: "contemporary",
     icon: "🌍",
-    color: "from-blue-500 to-blue-600",
+    color: "from-primary-500 to-primary-600",
     title: { ar: "القضايا المعاصرة", en: "Contemporary Issues" },
     subtitle: { ar: "النوازل والمستجدات الفقهية", en: "Modern Issues and New Fiqh Matters" },
     description: {

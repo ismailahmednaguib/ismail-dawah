@@ -2,16 +2,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import type { Madhhab } from '@/lib/types/content';
+
+const MADHHABS: Madhhab[] = [
+  'general',
+  'hanafi',
+  'maliki',
+  'shafii',
+  'hanbali',
+  'zahiri',
+  'jafari',
+];
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const rawQuery = searchParams.get('q')?.trim() ?? '';
-  const q = rawQuery.replace(/[(),]/g, ' ').replace(/\s+/g, ' ').slice(0, 120).trim();
+  const q = rawQuery
+    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .slice(0, 120)
+    .trim();
   const requestedLang = searchParams.get('lang') ?? 'ar';
   const type = searchParams.get('type');
   const audience = searchParams.get('audience');
   const age = searchParams.get('age');
   const level = searchParams.get('level');
+  const requestedMadhhab = searchParams.get('madhhab');
+  const madhhab = MADHHABS.includes(requestedMadhhab as Madhhab)
+    ? (requestedMadhhab as Madhhab)
+    : undefined;
   const pageValue = Number(searchParams.get('page'));
   const perPageValue = Number(searchParams.get('per_page'));
   const page = Number.isFinite(pageValue) ? Math.max(1, Math.floor(pageValue)) : 1;
@@ -42,39 +61,48 @@ export async function GET(req: NextRequest) {
 
   const from = (page - 1) * perPage;
 
-  // البحث في المحتوى
-  let query = supabase
-    .from('content')
-    .select(`
-      id,
-      content_type,
-      audience,
-      age_groups,
-      levels,
-      published_at,
-      views,
-      content_translations!inner (
-        title,
-        slug,
-        summary,
-        lang
-      )
-    `, { count: 'exact' })
-    .eq('status', 'published')
-    .eq('content_translations.lang', lang)
-    .or(`content_translations.title.ilike.%${q}%,content_translations.body_plain.ilike.%${q}%`);
+  // البحث في المحتوى، مع عزل بحث القرآن عن المحتوى الموحد.
+  let data: any[] = [];
+  let count = 0;
 
-  if (type && type !== 'quran') query = query.eq('content_type', type);
-  if (audience) query = query.contains('audience', [audience]);
-  if (age) query = query.contains('age_groups', [age]);
-  if (level) query = query.contains('levels', [level]);
+  if (type !== 'quran') {
+    let query = supabase
+      .from('content')
+      .select(`
+        id,
+        content_type,
+        audience,
+        age_groups,
+        levels,
+        published_at,
+        views,
+        content_translations!inner (
+          title,
+          slug,
+          summary,
+          lang
+        )
+      `, { count: 'exact' })
+      .eq('status', 'published')
+      .eq('content_translations.lang', lang)
+      .or(`content_translations.title.ilike.%${q}%,content_translations.body_plain.ilike.%${q}%`);
 
-  const { data, error, count } = await query
-    .order('views', { ascending: false })
-    .range(from, from + perPage - 1);
+    if (type) query = query.eq('content_type', type);
+    if (audience) query = query.contains('audience', [audience]);
+    if (age) query = query.contains('age_groups', [age]);
+    if (level) query = query.contains('levels', [level]);
+    if (madhhab) query = query.contains('madhhabs', [madhhab]);
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const result = await query
+      .order('views', { ascending: false })
+      .range(from, from + perPage - 1);
+
+    if (result.error) {
+      return NextResponse.json({ error: result.error.message }, { status: 500 });
+    }
+
+    data = result.data ?? [];
+    count = result.count ?? 0;
   }
 
   // البحث في القرآن (اختياري - لو عندك جدول آيات)
@@ -89,7 +117,7 @@ export async function GET(req: NextRequest) {
     quranResults = (quranData ?? []).map((v: any) => ({
       id: v.id,
       type: 'quran_verse',
-      title: `سورة ${v.surah} - آية ${v.ayah_from}`,
+      title: lang === 'ar' ? `سورة ${v.surah} - آية ${v.ayah_from}` : `Surah ${v.surah} - Ayah ${v.ayah_from}`,
       excerpt: v.text?.slice(0, 150),
       url: `/${lang}/quran?surah=${v.surah}`,
     }));

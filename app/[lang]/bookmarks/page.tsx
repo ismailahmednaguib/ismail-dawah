@@ -155,7 +155,7 @@ const CATEGORY_CONFIG: Record<string, { ar: string; en: string; icon: string; co
   all: { ar: "الكل", en: "All", icon: "📚", color: "from-slate-500 to-slate-600" },
   quran: { ar: "قرآن", en: "Quran", icon: "📖", color: "from-primary-500 to-primary-600" },
   adhkar: { ar: "أذكار", en: "Adhkar", icon: "🤲", color: "from-primary-500 to-primary-600" },
-  fatwa: { ar: "فتاوى", en: "Fatwas", icon: "⚖️", color: "from-blue-500 to-blue-600" },
+  fatwa: { ar: "فتاوى", en: "Fatwas", icon: "⚖️", color: "from-primary-500 to-primary-600" },
   articles: { ar: "مقالات", en: "Articles", icon: "✍️", color: "from-amber-500 to-amber-600" },
   stories: { ar: "قصص", en: "Stories", icon: "📜", color: "from-purple-500 to-purple-600" },
   guides: { ar: "أدلة", en: "Guides", icon: "🗺️", color: "from-primary-500 to-primary-600" },
@@ -426,7 +426,7 @@ export default function BookmarksPage() {
         <div
           className={`fixed top-20 left-1/2 z-50 -translate-x-1/2 rounded-xl px-6 py-3 text-sm font-bold shadow-lg transition-all duration-300 ${
             notification.type === "success"
-              ? "bg-green-500 text-white"
+              ? "bg-primary-500 text-white"
               : "bg-red-500 text-white"
           }`}
         >

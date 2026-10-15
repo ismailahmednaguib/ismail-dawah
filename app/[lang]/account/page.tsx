@@ -6,6 +6,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { createAdminClient, getServerUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,10 @@ type AccountUI = {
   note2: string;
   contact: string;
   userArea: string;
+  progressTitle: string;
+  progressDescription: string;
+  progressCompleted: string;
+  progressOpen: string;
 };
 
 // ============================================================
@@ -105,10 +110,14 @@ const UI: Record<Lang, AccountUI> = {
     faq3Q: "ماذا لو نسيت كلمة المرور؟",
     faq3A: "يمكنك استعادة كلمة المرور بسهولة عبر رابط استعادة يُرسل إلى بريدك الإلكتروني.",
     noteTitle: "ملاحظة",
-    note1: "هذه الصفحة نسخة مبسطة وآمنة للبناء، ويمكن تطويرها لاحقًا لتصبح لوحة حساب كاملة.",
+    note1: "يمكنك الآن حفظ إنجاز دروس المكتبة من داخل كل درس، وتظهر إحصائية التقدم عند تسجيل الدخول.",
     note2: "لو واجهت مشكلة في تسجيل الدخول، تواصل معنا عبر صفحة تواصل معنا.",
     contact: "تواصل معنا",
     userArea: "منطقة المستخدم",
+    progressTitle: "تقدمك في المكتبة",
+    progressDescription: "تابع الدروس التي بدأت بها واحفظ ما أتممته.",
+    progressCompleted: "درس مكتمل",
+    progressOpen: "فتح المكتبة",
   },
   en: {
     title: "Account",
@@ -151,10 +160,14 @@ const UI: Record<Lang, AccountUI> = {
     faq3Q: "What if I forget my password?",
     faq3A: "You can easily recover your password via a reset link sent to your email.",
     noteTitle: "Notice",
-    note1: "This page is a simplified safe build version and can be developed later into a full account dashboard.",
+    note1: "You can now mark library lessons as complete, and your progress summary appears when you sign in.",
     note2: "If you face a sign-in issue, contact us through the Contact Us page.",
     contact: "Contact Us",
     userArea: "User Area",
+    progressTitle: "Your library progress",
+    progressDescription: "Keep track of lessons you started and save what you complete.",
+    progressCompleted: "completed lessons",
+    progressOpen: "Open library",
   },
 };
 
@@ -236,6 +249,8 @@ export default async function AccountPage({
   const l = lang as Lang;
   const ui = UI[l];
   const isRTL = l === "ar";
+  const user = await getServerUser();
+  const progressSummary = user ? await getProgressSummary(user.id) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -455,6 +470,44 @@ export default async function AccountPage({
           </Link>
         </div>
 
+        {progressSummary && (
+          <section className="mb-10" aria-labelledby="account-progress-title">
+            <div className="card relative overflow-hidden p-6 md:p-8">
+              <div className="gradient-gold absolute inset-x-0 top-0 h-1" />
+              <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2
+                    id="account-progress-title"
+                    className="text-2xl font-black text-slate-900 dark:text-white"
+                    style={{ fontFamily: "var(--font-amiri)" }}
+                  >
+                    📈 {ui.progressTitle}
+                  </h2>
+                  <p className="mt-2 text-slate-600 dark:text-slate-300">
+                    {ui.progressDescription}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="rounded-2xl bg-primary-50 px-5 py-3 text-center dark:bg-primary-900/30">
+                    <div className="text-2xl font-black text-primary-800 dark:text-primary-200">
+                      {progressSummary.completed}
+                      <span className="text-base font-medium text-primary-600 dark:text-primary-300">
+                        /{progressSummary.total}
+                      </span>
+                    </div>
+                    <div className="text-xs text-primary-700 dark:text-primary-300">
+                      {ui.progressCompleted}
+                    </div>
+                  </div>
+                  <Link href={`/${l}/learn`} className="btn-primary whitespace-nowrap">
+                    {ui.progressOpen}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* ===== لماذا تنشئ حساباً؟ ===== */}
         <div className="mb-10">
           <div className="mb-8 text-center">
@@ -595,6 +648,31 @@ export default async function AccountPage({
       <Footer lang={l} />
     </main>
   );
+}
+
+async function getProgressSummary(userId: string) {
+  const sessionUserId = userId.trim();
+  if (!sessionUserId || sessionUserId.length > 255) return null;
+
+  try {
+    const { data, error } = await createAdminClient()
+      .from("learner_content_progress")
+      .select("content_id,completed_at")
+      .eq("user_id", sessionUserId);
+
+    if (error) {
+      console.error("[account progress]", error);
+      return null;
+    }
+
+    const items = data ?? [];
+    return {
+      total: items.length,
+      completed: items.filter((item: { completed_at?: string | null }) => Boolean(item.completed_at)).length,
+    };
+  } catch {
+    return null;
+  }
 }
 
 // ============================================================

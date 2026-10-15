@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { assertVerifiedReferenceForPublish } from '@/lib/admin/content-service';
 
 export async function GET(req: NextRequest) {
   const session = await getAdminSession();
@@ -85,14 +86,21 @@ export async function POST(req: NextRequest) {
 
     const { data: content, error: contentError } = await supabase
       .from('content')
-      .select('id')
+      .select('id, status, content_type, is_sensitive')
       .eq('id', content_id)
       .maybeSingle();
 
     if (contentError) throw new Error(contentError.message);
     if (!content) return NextResponse.json({ error: 'المحتوى غير موجود' }, { status: 404 });
+    if (content.status !== 'in_review') {
+      return NextResponse.json(
+        { error: 'لا يمكن اعتماد محتوى خارج حالة المراجعة العلمية' },
+        { status: 409 }
+      );
+    }
 
     if (action === 'approve') {
+      await assertVerifiedReferenceForPublish(content_id, content);
       const { error: publishError } = await supabase
         .from('content')
         .update({

@@ -138,7 +138,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                         item.status === 'pending'
                           ? 'bg-amber-100 text-amber-700'
                           : item.status === 'approved'
-                          ? 'bg-green-100 text-green-700'
+                          ? 'bg-primary-100 text-primary-700'
                           : 'bg-red-100 text-red-700'
                       }`}
                     >

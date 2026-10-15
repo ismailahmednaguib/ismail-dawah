@@ -951,7 +951,7 @@ export default async function ZakatPage({
             </div>
 
             {/* ===== الزراعة ===== */}
-            <div className="rounded-2xl border border-green-200 bg-green-50/40 p-5 dark:border-green-900/30 dark:bg-green-950/15">
+            <div className="rounded-2xl border border-primary-200 bg-primary-50/40 p-5 dark:border-primary-900/30 dark:bg-primary-950/15">
               <h3 className="mb-2 text-lg font-black text-slate-900 dark:text-white">
                 🌾 {ui.cropsTitle}
               </h3>
@@ -1078,7 +1078,7 @@ export default async function ZakatPage({
                 <div
                   className={`rounded-2xl border p-6 ${
                     payable
-                      ? "border-green-200 bg-green-50/60 dark:border-green-900/30 dark:bg-green-950/15"
+                      ? "border-primary-200 bg-primary-50/60 dark:border-primary-900/30 dark:bg-primary-950/15"
                       : "border-amber-200 bg-amber-50/60 dark:border-amber-900/30 dark:bg-amber-950/15"
                   }`}
                 >
@@ -1089,7 +1089,7 @@ export default async function ZakatPage({
                   <p
                     className={`text-2xl font-black leading-relaxed ${
                       payable
-                        ? "text-green-800 dark:text-green-200"
+                        ? "text-primary-800 dark:text-primary-200"
                         : "text-amber-800 dark:text-amber-200"
                     }`}
                   >
@@ -1142,8 +1142,8 @@ export default async function ZakatPage({
                 </h2>
 
                 <div className="grid gap-5 md:grid-cols-3">
-                  <div className="rounded-2xl border border-green-200 bg-green-50/50 p-5 dark:border-green-900/30 dark:bg-green-950/15">
-                    <p className="mb-2 text-xs font-bold text-green-700 dark:text-green-300">
+                  <div className="rounded-2xl border border-primary-200 bg-primary-50/50 p-5 dark:border-primary-900/30 dark:bg-primary-950/15">
+                    <p className="mb-2 text-xs font-bold text-primary-700 dark:text-primary-300">
                       {ui.crops}
                     </p>
                     <p className="text-xl font-black text-slate-900 dark:text-white">

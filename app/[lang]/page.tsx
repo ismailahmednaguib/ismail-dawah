@@ -433,7 +433,6 @@ export default async function HomePage({
 
   return (
     <main
-      id="main-content"
       dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-cream-dark dark:bg-gray-900"
     >

@@ -80,6 +80,7 @@ export default function Footer({
       title: t(lang, "knowledge_responses"),
       links: [
         { href: `/${lang}/fatwa`, label: t(lang, "fatwa") },
+        { href: `/${lang}/fiqh`, label: isRTL ? "الفقه" : "Fiqh" },
         { href: `/${lang}/atheism-response`, label: t(lang, "atheism_response") },
         { href: `/${lang}/doubts`, label: t(lang, "doubts") },
         { href: `/${lang}/hadith`, label: isRTL ? "الحديث" : "Hadith" },

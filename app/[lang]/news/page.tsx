@@ -663,14 +663,14 @@ export default function NewsPage() {
         )}
 
         {/* ===== Hero ===== */}
-        <div className="card relative mb-8 overflow-hidden border-2 border-blue-200 bg-gradient-to-br from-blue-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-blue-800 dark:from-blue-950/30 dark:via-gray-900 dark:to-primary-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #2563eb, #0e7490)" }}
+                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
               >
                 <svg
                   width="48"
@@ -953,7 +953,7 @@ export default function NewsPage() {
                         </span>
 
                         {isLatest && (
-                          <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                          <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
                             🆕 {ui.latestBadge}
                           </span>
                         )}

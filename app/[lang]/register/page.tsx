@@ -219,7 +219,7 @@ export default function RegisterPage() {
     if (passwordStrength <= 2) return "bg-red-500";
     if (passwordStrength === 3) return "bg-amber-500";
     if (passwordStrength === 4) return "bg-primary-500";
-    return "bg-green-500";
+    return "bg-primary-500";
   }, [passwordStrength]);
 
   const submit = async () => {
@@ -410,7 +410,7 @@ export default function RegisterPage() {
                               ? "text-amber-600 dark:text-amber-400"
                               : passwordStrength === 4
                               ? "text-primary-600 dark:text-primary-400"
-                              : "text-green-600 dark:text-green-400"
+                              : "text-primary-600 dark:text-primary-400"
                           }`}
                         >
                           {strengthLabel}
@@ -469,7 +469,7 @@ export default function RegisterPage() {
                   <div
                     className={`rounded-xl p-4 text-sm font-bold ${
                       msg.type === "success"
-                        ? "border border-green-200 bg-green-50 text-green-700 dark:border-green-800/40 dark:bg-green-950/20 dark:text-green-300"
+                        ? "border border-primary-200 bg-primary-50 text-primary-700 dark:border-primary-800/40 dark:bg-primary-950/20 dark:text-primary-300"
                         : "border border-red-200 bg-red-50 text-red-700 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-300"
                     }`}
                   >

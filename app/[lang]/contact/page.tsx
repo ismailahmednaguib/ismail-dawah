@@ -428,7 +428,7 @@ export default async function ContactPage({
           <div
             className={`card mb-8 p-5 md:p-6 ${
               status === "sent"
-                ? "border-green-200 bg-green-50/60 dark:border-green-800/40 dark:bg-green-950/20"
+                ? "border-primary-200 bg-primary-50/60 dark:border-primary-800/40 dark:bg-primary-950/20"
                 : "border-red-200 bg-red-50/60 dark:border-red-900/40 dark:bg-red-950/20"
             }`}
           >
@@ -436,7 +436,7 @@ export default async function ContactPage({
               <span
                 className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl ${
                   status === "sent"
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                    ? "bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300"
                     : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
                 }`}
               >
@@ -447,7 +447,7 @@ export default async function ContactPage({
                 <h2
                   className={`mb-1 text-lg font-black ${
                     status === "sent"
-                      ? "text-green-800 dark:text-green-200"
+                      ? "text-primary-800 dark:text-primary-200"
                       : "text-red-800 dark:text-red-200"
                   }`}
                 >
@@ -456,7 +456,7 @@ export default async function ContactPage({
                 <p
                   className={`leading-relaxed ${
                     status === "sent"
-                      ? "text-green-700 dark:text-green-300"
+                      ? "text-primary-700 dark:text-primary-300"
                       : "text-red-700 dark:text-red-300"
                   }`}
                 >
@@ -717,9 +717,9 @@ export default async function ContactPage({
                     href={`https://wa.me/${whatsappNumber}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-green-200 hover:bg-green-50/60 dark:border-night-700 dark:hover:border-green-900/40 dark:hover:bg-green-950/20"
+                    className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:hover:border-primary-900/40 dark:hover:bg-primary-950/20"
                   >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-100 text-xl dark:bg-green-900/40">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-xl dark:bg-primary-900/40">
                       💬
                     </span>
                     <div className="min-w-0">
