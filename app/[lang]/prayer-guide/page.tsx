@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -445,6 +447,8 @@ export default async function PrayerGuidePage({
   if (!isValidLang(lang)) notFound();
 
   const L = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "prayer-guide", L);
   const ui = UI[L];
   const isRTL = L === "ar";
 
@@ -523,6 +527,7 @@ export default async function PrayerGuidePage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -567,7 +572,9 @@ export default async function PrayerGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📋" label={ui.stepsCount} value={STEPS.length} color="primary" />
           <StatCard icon="🕐" label={ui.prayersCount} value={PRAYERS.length} color="gold" />
@@ -575,7 +582,9 @@ export default async function PrayerGuidePage({
           <StatCard icon="⚠️" label={ui.nullifiersCount} value={nullifiers.length} color="gold" />
         </div>
 
+        </>)}
         {/* ===== الصلوات الخمس ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2
@@ -642,7 +651,9 @@ export default async function PrayerGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== خطوات الصلاة ===== */}
+        {gate.visible('k3') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2
@@ -715,7 +726,9 @@ export default async function PrayerGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== شروط ومبطلات الصلاة ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2
@@ -778,7 +791,9 @@ export default async function PrayerGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== آية الصلاة ===== */}
+        {gate.visible('k5') && (<>
         <div className="card relative mb-10 overflow-hidden border-2 border-gold-300 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-8 text-center md:p-12 dark:border-gold-700 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -793,7 +808,9 @@ export default async function PrayerGuidePage({
           </p>
         </div>
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k6') && (<>
         <div className="mb-10">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -853,7 +870,9 @@ export default async function PrayerGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيهات مهمة ===== */}
+        {gate.visible('k7') && (<>
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -885,6 +904,7 @@ export default async function PrayerGuidePage({
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={L} />

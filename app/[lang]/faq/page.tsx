@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { faqJsonLd } from "@/lib/seo";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
@@ -588,6 +590,8 @@ export default async function FaqPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "faq", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -640,6 +644,7 @@ export default async function FaqPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -685,7 +690,9 @@ export default async function FaqPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="❓" label={ui.totalQuestions} value={FAQS.length} color="primary" />
           <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
@@ -693,7 +700,9 @@ export default async function FaqPage({
           <StatCard icon="🔄" label={ui.alwaysUpdated} value="✓" color="gold" />
         </div>
 
+        </>)}
         {/* ===== بطاقة البحث ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <form
             method="get"
@@ -778,7 +787,9 @@ export default async function FaqPage({
           )}
         </div>
 
+        </>)}
         {/* ===== الفئات ===== */}
+        {gate.visible('k3') && (<>
         <div className="mb-8">
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
             {ui.categoriesTitle}
@@ -807,7 +818,9 @@ export default async function FaqPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== عدد النتائج ===== */}
+        {gate.visible('k4') && (<>
         <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
           {ui.results}:{" "}
           <span className="text-primary-600 dark:text-primary-400">
@@ -819,6 +832,7 @@ export default async function FaqPage({
           </span>
         </p>
 
+        </>)}
         {/* ===== لا توجد نتائج ===== */}
         {filteredFaqs.length === 0 ? (
           <div className="card p-12 text-center">
@@ -904,6 +918,7 @@ export default async function FaqPage({
         )}
 
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k5') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -983,7 +998,9 @@ export default async function FaqPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== CTA التواصل ===== */}
+        {gate.visible('k6') && (<>
         <div className="card relative mt-10 overflow-hidden p-8 text-center md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -1016,12 +1033,15 @@ export default async function FaqPage({
           </Link>
         </div>
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k7') && (<>
         <div className="card mt-6 border-gold-200 bg-gold-50/60 p-5 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             📌 {ui.note}
           </p>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

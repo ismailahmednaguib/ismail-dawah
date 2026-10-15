@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
@@ -414,6 +416,8 @@ export default async function DoubtsPage({
   }
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "doubts", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -469,6 +473,7 @@ export default async function DoubtsPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== ترويسة ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -490,7 +495,9 @@ export default async function DoubtsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنقل سريع ===== */}
+        {gate.visible('k1') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
             {ui.quickNav}
@@ -517,7 +524,9 @@ export default async function DoubtsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== قواعد في التعامل مع الشبهات ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">
@@ -573,7 +582,9 @@ export default async function DoubtsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== شبهات وإجابات ===== */}
+        {gate.visible('k3') && (<>
         <div id="faq" className="mb-12 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">
@@ -665,7 +676,9 @@ export default async function DoubtsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيه منهجي ===== */}
+        {gate.visible('k4') && (<>
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -700,7 +713,9 @@ export default async function DoubtsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== روابط مفيدة ===== */}
+        {gate.visible('k5') && (<>
         <div className="card mt-8 p-6 md:p-8">
           <h2 className="mb-5 text-xl font-black text-slate-900 dark:text-white">
             {isRTL ? "روابط مفيدة" : "Useful links"}
@@ -768,6 +783,7 @@ export default async function DoubtsPage({
             </Link>
           </div>
         </div>
+        </>)}
       </section>
       </main>
 

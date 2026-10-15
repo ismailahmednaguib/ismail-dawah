@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -173,6 +175,8 @@ export default async function QiblaPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "qibla", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -247,6 +251,7 @@ export default async function QiblaPage({
 
       <section className="container-page pt-10 md:pt-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-slate-900 via-primary-900 to-slate-800 p-8 md:p-12 dark:border-gold-800">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -313,7 +318,9 @@ export default async function QiblaPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="🎯" label={ui.statsAccurate} color="primary" />
           <StatCard icon="⚡" label={ui.statsRealtime} color="gold" />
@@ -321,7 +328,9 @@ export default async function QiblaPage({
           <StatCard icon="✨" label={ui.statsFree} color="gold" />
         </div>
 
+        </>)}
         {/* ===== مقدمة ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-8 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -336,6 +345,7 @@ export default async function QiblaPage({
             </p>
           </div>
         </div>
+        </>)}
       </section>
 
       {/* ===== المحتوى التفاعلي ===== */}

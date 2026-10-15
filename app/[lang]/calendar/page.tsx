@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -456,6 +458,8 @@ export default async function CalendarPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "calendar", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -532,6 +536,7 @@ export default async function CalendarPage({
         )}
 
         {/* ===== Hero: المناسبة القادمة ===== */}
+        {gate.visible('k0') && (<>
         {nextEvent && nextEvent.nextDate && (
           <div className="card relative mb-8 overflow-hidden border-2 border-gold-300 bg-gradient-to-br from-gold-50 to-primary-50 p-8 md:p-10 dark:border-gold-700 dark:from-gold-950/30 dark:to-primary-950/30">
             <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
@@ -564,7 +569,9 @@ export default async function CalendarPage({
           </div>
         )}
 
+        </>)}
         {/* ===== بطاقة اليوم ===== */}
+        {gate.visible('k1') && (<>
         <div className="card relative mb-10 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -620,7 +627,9 @@ export default async function CalendarPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard
             icon="📅"
@@ -648,7 +657,9 @@ export default async function CalendarPage({
           />
         </div>
 
+        </>)}
         {/* ===== المناسبات القادمة ===== */}
+        {gate.visible('k3') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.upcomingTitle}</h2>
@@ -721,7 +732,9 @@ export default async function CalendarPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== كل المناسبات ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.allTitle}</h2>
@@ -786,7 +799,9 @@ export default async function CalendarPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k5') && (<>
         <div className="mb-10">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -866,7 +881,9 @@ export default async function CalendarPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيه ===== */}
+        {gate.visible('k6') && (<>
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/20">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -898,6 +915,7 @@ export default async function CalendarPage({
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

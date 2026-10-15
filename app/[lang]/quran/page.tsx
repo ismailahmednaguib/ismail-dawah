@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { SURAHS } from "@/lib/data";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
@@ -354,6 +356,8 @@ export default async function QuranPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "quran", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -440,6 +444,7 @@ export default async function QuranPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -495,7 +500,9 @@ export default async function QuranPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard
             icon="📖"
@@ -523,7 +530,9 @@ export default async function QuranPage({
           />
         </div>
 
+        </>)}
         {/* ===== مقدمة ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-8 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -552,7 +561,9 @@ export default async function QuranPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== البحث والفلترة ===== */}
+        {gate.visible('k3') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <form
             method="get"
@@ -634,6 +645,7 @@ export default async function QuranPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== خطأ التحميل ===== */}
         {loadError && (
           <div className="card mb-8 border-red-200 bg-red-50/70 p-8 text-center dark:border-red-900/40 dark:bg-red-950/20">
@@ -667,6 +679,7 @@ export default async function QuranPage({
         )}
 
         {/* ===== قائمة السور ===== */}
+        {gate.visible('k4') && (<>
         {!loadError && filteredSurahs.length > 0 && (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredSurahs.map((surah) => {
@@ -742,7 +755,9 @@ export default async function QuranPage({
           </div>
         )}
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k5') && (<>
         {!loadError && surahs.length > 0 && (
           <div className="mt-12">
             <h2
@@ -804,7 +819,9 @@ export default async function QuranPage({
           </div>
         )}
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k6') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -833,6 +850,7 @@ export default async function QuranPage({
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -280,6 +282,8 @@ export default async function LivePage({
   if (!isValidLang(lang)) notFound();
 
   const L = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "live", L);
   const ui = UI[L];
   const isRTL = L === "ar";
 
@@ -401,6 +405,7 @@ export default async function LivePage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-red-200 bg-gradient-to-br from-red-50 via-cream-dark to-red-50 p-8 md:p-12 dark:border-red-900 dark:from-red-950/30 dark:via-gray-900 dark:to-red-950/30">
           <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-red-500 via-red-600 to-red-700" />
 
@@ -455,7 +460,9 @@ export default async function LivePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📡" label={ui.liveCount} value="●" color="primary" isLive />
           <StatCard icon="🕌" label={ui.meetingCount} value={weeklyMeetings} color="gold" />
@@ -463,7 +470,9 @@ export default async function LivePage({
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 
+        </>)}
         {/* ===== البث المباشر ===== */}
+        {gate.visible('k2') && (<>
         {settings.liveUrl ? (
           <div className="card relative mb-10 overflow-hidden border-2 border-red-300 bg-gradient-to-br from-red-600 via-red-700 to-red-800 p-8 text-white shadow-2xl dark:border-red-800">
             {/* زخرفة */}
@@ -519,7 +528,9 @@ export default async function LivePage({
           </div>
         )}
 
+        </>)}
         {/* ===== المجلس الأسبوعي ===== */}
+        {gate.visible('k3') && (<>
         <div className="mb-10">
           <div className="mb-6 text-center">
             <h2
@@ -584,7 +595,9 @@ export default async function LivePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== جدول الدروس الأسبوعي ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-10">
           <div className="mb-6 text-center">
             <h2
@@ -648,7 +661,9 @@ export default async function LivePage({
           )}
         </div>
 
+        </>)}
         {/* ===== حديث شريف ===== */}
+        {gate.visible('k5') && (<>
         <div className="card relative mb-10 overflow-hidden border-2 border-gold-300 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 text-center md:p-12 dark:border-gold-700 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -663,7 +678,9 @@ export default async function LivePage({
           </p>
         </div>
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k6') && (<>
         <div className="mb-10">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -723,7 +740,9 @@ export default async function LivePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيه مهم ===== */}
+        {gate.visible('k7') && (<>
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -751,6 +770,7 @@ export default async function LivePage({
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={L} />

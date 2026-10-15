@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { handleContactForm } from "@/lib/email";
 import { CONTACT_INFO, SITE_NAME, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
 import TopBar from "@/components/TopBar";
@@ -280,6 +282,8 @@ export default async function ContactPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "contact", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -423,6 +427,7 @@ export default async function ContactPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== رسالة النجاح/الخطأ ===== */}
+        {gate.visible('k0') && (<>
         {showAlert && (
           <div
             className={`card mb-8 p-5 md:p-6 ${
@@ -466,7 +471,9 @@ export default async function ContactPage({
           </div>
         )}
 
+        </>)}
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k1') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -512,7 +519,9 @@ export default async function ContactPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
@@ -557,7 +566,9 @@ export default async function ContactPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== الشبكة الرئيسية ===== */}
+        {gate.visible('k3') && (<>
         <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
           {/* ===== نموذج التواصل ===== */}
           <div className="card p-6 md:p-8">
@@ -877,7 +888,9 @@ export default async function ContactPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== الأسئلة الشائعة ===== */}
+        {gate.visible('k4') && (<>
         <div className="mt-12">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.faqTitle}</h2>
@@ -893,7 +906,9 @@ export default async function ContactPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k5') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start justify-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-100 text-xl dark:bg-gold-900/40">
@@ -904,6 +919,7 @@ export default async function ContactPage({
             </p>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

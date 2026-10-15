@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import {
   getPublicTaxonomies,
   getPublicList,
@@ -133,6 +135,8 @@ export default async function FieldPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "field", l);
   const isRTL = l === "ar";
   const ui = UI[l];
 
@@ -189,6 +193,7 @@ export default async function FieldPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero مخصص ===== */}
+        {gate.visible('k0') && (<>
         <div className={`card relative mb-8 overflow-hidden border-2 border-transparent p-8 md:p-12 bg-gradient-to-br ${color} text-white`}>
           <div className="absolute inset-0 bg-black/20" />
 
@@ -208,14 +213,18 @@ export default async function FieldPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-10 grid grid-cols-3 gap-4">
           <StatCard icon="📚" value={lessons.length} label={isRTL ? "دروس" : "Lessons"} color={color} />
           <StatCard icon="✍️" value={articles.length} label={isRTL ? "مقالات" : "Articles"} color={color} />
           <StatCard icon="✨" value={relatedContent.length} label={isRTL ? "محتوى" : "Content"} color={color} />
         </div>
 
+        </>)}
         {/* ===== محتوى مرتبط ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-12">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.topicsTitle}</h2>
@@ -267,7 +276,9 @@ export default async function FieldPage({
           )}
         </div>
 
+        </>)}
         {/* ===== مجالات ذات صلة ===== */}
+        {gate.visible('k3') && (<>
         {relatedFields.length > 0 && (
           <div className="mb-12">
             <div className="mb-6 text-center">
@@ -302,7 +313,9 @@ export default async function FieldPage({
           </div>
         )}
 
+        </>)}
         {/* ===== التنقل بين المجالات ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-10 grid gap-4 md:grid-cols-2">
           {prevField && (
             <Link
@@ -343,7 +356,9 @@ export default async function FieldPage({
           )}
         </div>
 
+        </>)}
         {/* ===== CTA العودة ===== */}
+        {gate.visible('k5') && (<>
         <div className="text-center">
           <Link href={`/${l}/fields`} className="btn-primary inline-flex items-center gap-2">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isRTL ? "rotate-180" : ""}>
@@ -352,6 +367,7 @@ export default async function FieldPage({
             {ui.allFields}
           </Link>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -297,6 +299,8 @@ export default async function DownloadPage({
   }
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "download", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -382,6 +386,7 @@ export default async function DownloadPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== الترويسة ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-10 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -424,7 +429,9 @@ export default async function DownloadPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== بطاقات المعلومات + زر التحميل ===== */}
+        {gate.visible('k1') && (<>
         <div className="grid gap-6 md:grid-cols-3">
           {/* عمود التحميل الرئيسي */}
           <div className="md:col-span-2">
@@ -538,7 +545,9 @@ export default async function DownloadPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== خطوات التثبيت ===== */}
+        {gate.visible('k2') && (<>
         <div className="mt-10">
           <h2
             className="mb-8 text-center text-3xl font-black text-slate-900 dark:text-white"
@@ -575,7 +584,9 @@ export default async function DownloadPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== مميزات التطبيق ===== */}
+        {gate.visible('k3') && (<>
         <div className="mt-12">
           <h2
             className="mb-8 text-center text-3xl font-black text-slate-900 dark:text-white"
@@ -594,7 +605,9 @@ export default async function DownloadPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== ملاحظات مهمة ===== */}
+        {gate.visible('k4') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <h2
             className="mb-5 text-2xl font-black text-slate-900 dark:text-white"
@@ -618,7 +631,9 @@ export default async function DownloadPage({
           </ul>
         </div>
 
+        </>)}
         {/* ===== الأسئلة الشائعة ===== */}
+        {gate.visible('k5') && (<>
         <div className="mt-10">
           <h2
             className="mb-8 text-center text-3xl font-black text-slate-900 dark:text-white"
@@ -635,7 +650,9 @@ export default async function DownloadPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== زر العودة ===== */}
+        {gate.visible('k6') && (<>
         <div className="mt-10 flex justify-center">
           <Link href={`/${l}`} className="btn-outline gap-2">
             <svg
@@ -656,6 +673,7 @@ export default async function DownloadPage({
             {ui.backHome}
           </Link>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -500,6 +502,8 @@ export default async function ZakatPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "zakat", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -743,6 +747,7 @@ export default async function ZakatPage({
 
           <form method="get" action={`/${l}/zakat`} className="grid gap-6">
             {/* ===== العملة وأساس النصاب ===== */}
+            {gate.visible('k0') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label htmlFor="currency" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
@@ -768,7 +773,9 @@ export default async function ZakatPage({
               </div>
             </div>
 
+            </>)}
             {/* ===== الأصول الأساسية ===== */}
+            {gate.visible('k1') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label htmlFor="cash" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
@@ -811,7 +818,9 @@ export default async function ZakatPage({
               </div>
             </div>
 
+            </>)}
             {/* ===== الذهب والفضة ===== */}
+            {gate.visible('k2') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div className="rounded-2xl border border-gold-200 bg-gold-50/40 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
                 <h3 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
@@ -906,7 +915,9 @@ export default async function ZakatPage({
               </div>
             </div>
 
+            </>)}
             {/* ===== الديون والمستحقات ===== */}
+            {gate.visible('k3') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label htmlFor="receivables" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
@@ -949,7 +960,9 @@ export default async function ZakatPage({
               </div>
             </div>
 
+            </>)}
             {/* ===== الزراعة ===== */}
+            {gate.visible('k4') && (<>
             <div className="rounded-2xl border border-primary-200 bg-primary-50/40 p-5 dark:border-primary-900/30 dark:bg-primary-950/15">
               <h3 className="mb-2 text-lg font-black text-slate-900 dark:text-white">
                 🌾 {ui.cropsTitle}
@@ -990,6 +1003,7 @@ export default async function ZakatPage({
               </div>
             </div>
 
+            </>)}
             {/* ===== أزرار ===== */}
             <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-6 dark:border-night-700">
               <Link
@@ -1024,6 +1038,7 @@ export default async function ZakatPage({
         {submitted && (
           <div className="space-y-8">
             {/* ===== بطاقة النتيجة الرئيسية ===== */}
+            {gate.visible('k5') && (<>
             <div className="card relative overflow-hidden p-6 md:p-8">
               <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -1130,7 +1145,9 @@ export default async function ZakatPage({
               </div>
             </div>
 
+            </>)}
             {/* ===== زكاة المحصول ===== */}
+            {gate.visible('k6') && (<>
             {crops > 0 && (
               <div className="card p-6 md:p-8">
                 <h2
@@ -1174,7 +1191,9 @@ export default async function ZakatPage({
               </div>
             )}
 
+            </>)}
             {/* ===== التنبيهات ===== */}
+            {gate.visible('k7') && (<>
             {warnings.length > 0 && (
               <div className="card border-amber-200 bg-amber-50/60 p-6 md:p-8 dark:border-amber-900/30 dark:bg-amber-950/15">
                 <h2
@@ -1197,6 +1216,7 @@ export default async function ZakatPage({
                 </ul>
               </div>
             )}
+            </>)}
           </div>
         )}
 

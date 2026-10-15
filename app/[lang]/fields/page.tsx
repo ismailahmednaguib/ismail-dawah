@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { getPublicTaxonomies, type PublicTerm } from "@/lib/learn/public";
 
 import Header from "@/components/Header";
@@ -171,6 +173,8 @@ export default async function FieldsPage({
   if (!isValidLang(lang)) notFound();
 
   const L = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "fields", L);
   const ui = UI[L];
   const isRTL = L === "ar";
 
@@ -216,6 +220,7 @@ export default async function FieldsPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -261,7 +266,9 @@ export default async function FieldsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📚" label={ui.totalFields} value={fields.length} color="primary" />
           <StatCard icon="🌍" label={ui.languages} value={2} color="gold" />
@@ -269,7 +276,9 @@ export default async function FieldsPage({
           <StatCard icon="🎁" label={ui.freeAccess} value="✓" color="gold" />
         </div>
 
+        </>)}
         {/* ===== مقدمة ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-10 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -285,7 +294,9 @@ export default async function FieldsPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== عنوان الشبكة ===== */}
+        {gate.visible('k3') && (<>
         <div className="mb-6 flex items-center justify-between">
           <h2
             className="text-2xl font-black text-slate-900 dark:text-white"
@@ -298,7 +309,9 @@ export default async function FieldsPage({
           </span>
         </div>
 
+        </>)}
         {/* ===== شبكة المجالات ===== */}
+        {gate.visible('k4') && (<>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {fields.map((field) => (
             <Link
@@ -345,7 +358,9 @@ export default async function FieldsPage({
           ))}
         </div>
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k5') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -412,6 +427,7 @@ export default async function FieldsPage({
             </Link>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={L} />

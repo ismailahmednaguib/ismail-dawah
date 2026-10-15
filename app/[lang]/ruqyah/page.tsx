@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -501,6 +503,8 @@ export default async function RuqyahPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "ruqyah", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -571,6 +575,7 @@ export default async function RuqyahPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -629,7 +634,9 @@ export default async function RuqyahPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📂" label={ui.sectionsCount} value={RUQYAH_SECTIONS.length} color="primary" />
           <StatCard icon="📖" label={ui.itemsCount} value={totalItems} color="gold" />
@@ -637,7 +644,9 @@ export default async function RuqyahPage({
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 
+        </>)}
         {/* ===== مقدمة: شروط الرقية ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-8 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -659,7 +668,9 @@ export default async function RuqyahPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== بطاقة البحث ===== */}
+        {gate.visible('k3') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <form
             method="get"
@@ -714,7 +725,9 @@ export default async function RuqyahPage({
           )}
         </div>
 
+        </>)}
         {/* ===== عدد النتائج ===== */}
+        {gate.visible('k4') && (<>
         <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
           {ui.results}:{" "}
           <span className="text-primary-600 dark:text-primary-400">
@@ -726,6 +739,7 @@ export default async function RuqyahPage({
           </span>
         </p>
 
+        </>)}
         {/* ===== لا توجد نتائج ===== */}
         {filteredSections.length === 0 ? (
           <div className="card p-12 text-center">
@@ -828,6 +842,7 @@ export default async function RuqyahPage({
         )}
 
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k5') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -887,14 +902,18 @@ export default async function RuqyahPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k6') && (<>
         <div className="card mt-10 p-6 text-center">
           <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
             💡 {ui.note}
           </p>
         </div>
 
+        </>)}
         {/* ===== تنبيه ===== */}
+        {gate.visible('k7') && (<>
         <div className="card mt-6 border-gold-200 bg-gold-50/60 p-6 dark:border-gold-800/40 dark:bg-gold-950/20">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -912,6 +931,7 @@ export default async function RuqyahPage({
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

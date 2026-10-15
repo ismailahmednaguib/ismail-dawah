@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -556,6 +558,8 @@ export default async function AboutPage({
   }
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "about", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -608,6 +612,7 @@ export default async function AboutPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== ترويسة ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -641,7 +646,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard number="35+" label={ui.statsSections} icon="📚" />
           <StatCard number="2" label={ui.statsLanguages} icon="🌍" />
@@ -649,7 +656,9 @@ export default async function AboutPage({
           <StatCard number="100%" label={ui.statsFree} icon="✨" />
         </div>
 
+        </>)}
         {/* ===== تنقل سريع ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
             {ui.quickNav}
@@ -680,7 +689,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== عن المنصة ===== */}
+        {gate.visible('k3') && (<>
         <div id="about" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <h2
             className="mb-5 text-2xl font-black text-slate-900 dark:text-white"
@@ -699,6 +710,7 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== الرسالة والرؤية ===== */}
         <div className="mb-8 grid gap-6 lg:grid-cols-2">
           <div id="mission" className="card relative scroll-mt-32 overflow-hidden p-6 md:p-8">
@@ -751,6 +763,7 @@ export default async function AboutPage({
         </div>
 
         {/* ===== القيم ===== */}
+        {gate.visible('k4') && (<>
         <div id="values" className="mb-8 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.valuesTitle}</h2>
@@ -783,7 +796,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== المشرف ===== */}
+        {gate.visible('k5') && (<>
         <div id="founder" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-start">
             <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-3xl text-white shadow-lg shadow-primary-500/25">
@@ -814,7 +829,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== منهج المحتوى ===== */}
+        {gate.visible('k6') && (<>
         <div id="content" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <h2
             className="mb-3 text-2xl font-black text-slate-900 dark:text-white"
@@ -840,7 +857,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== أقسام المنصة ===== */}
+        {gate.visible('k7') && (<>
         <div id="sections" className="mb-8 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.sectionsTitle}</h2>
@@ -885,7 +904,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== الخصوصية ===== */}
+        {gate.visible('k8') && (<>
         <div id="privacy" className="card mb-8 scroll-mt-32 border-primary-200 bg-primary-50/40 p-6 md:p-8 dark:border-primary-900/30 dark:bg-primary-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
@@ -905,7 +926,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== CTA ===== */}
+        {gate.visible('k9') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 text-center md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
           <h2
@@ -927,7 +950,9 @@ export default async function AboutPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k10') && (<>
         <div className="card p-6 md:p-8">
           <h2
             className="mb-5 text-xl font-black text-slate-900 dark:text-white"
@@ -947,6 +972,7 @@ export default async function AboutPage({
             ))}
           </ul>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

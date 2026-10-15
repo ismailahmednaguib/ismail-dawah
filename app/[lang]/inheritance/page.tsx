@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -803,6 +805,8 @@ export default async function InheritancePage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "inheritance", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -958,6 +962,7 @@ export default async function InheritancePage({
             className="grid gap-6"
           >
             {/* ===== العملة وقيمة التركة ===== */}
+            {gate.visible('k0') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label
@@ -1010,7 +1015,9 @@ export default async function InheritancePage({
               </div>
             </div>
 
+            </>)}
             {/* ===== جنس المتوفى والزوج ===== */}
+            {gate.visible('k1') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label
@@ -1055,7 +1062,9 @@ export default async function InheritancePage({
               </div>
             </div>
 
+            </>)}
             {/* ===== الأب والأم ===== */}
+            {gate.visible('k2') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div>
                 <label
@@ -1096,7 +1105,9 @@ export default async function InheritancePage({
               </div>
             </div>
 
+            </>)}
             {/* ===== الأبناء والبنات ===== */}
+            {gate.visible('k3') && (<>
             <div className="grid gap-5 md:grid-cols-2">
               <div className="rounded-2xl border border-primary-200 bg-primary-50/40 p-5 dark:border-primary-900/30 dark:bg-primary-950/15">
                 <h3 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
@@ -1203,6 +1214,7 @@ export default async function InheritancePage({
               </div>
             </div>
 
+            </>)}
             {/* ===== أزرار ===== */}
             <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-6 dark:border-night-700">
               <Link
@@ -1255,6 +1267,7 @@ export default async function InheritancePage({
         {submitted && (
           <div className="space-y-8">
             {/* ===== تنبيهات ===== */}
+            {gate.visible('k4') && (<>
             {result.warnings.length > 0 && (
               <div className="card border-amber-200 bg-amber-50/60 p-6 md:p-8 dark:border-amber-900/30 dark:bg-amber-950/15">
                 <h2
@@ -1278,7 +1291,9 @@ export default async function InheritancePage({
               </div>
             )}
 
+            </>)}
             {/* ===== جدول القسمة ===== */}
+            {gate.visible('k5') && (<>
             {result.rows.length > 0 ? (
               <div className="card relative overflow-hidden p-6 md:p-8">
                 <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
@@ -1419,6 +1434,7 @@ export default async function InheritancePage({
                 </h2>
               </div>
             )}
+            </>)}
           </div>
         )}
 

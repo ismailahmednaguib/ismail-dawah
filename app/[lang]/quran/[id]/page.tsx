@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, t, type Lang } from "@/lib/i18n";
+import { isValidLang, t, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { SURAHS, getSurahByNumber, toArabicNumeral } from "@/lib/data";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
@@ -191,6 +193,8 @@ export default async function SurahPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "quran-surah", l);
   const isRTL = l === "ar";
 
   const surahNumber = Number(id);
@@ -273,6 +277,7 @@ export default async function SurahPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-10 dark:border-gold-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -354,7 +359,9 @@ export default async function SurahPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== اختيار القارئ ===== */}
+        {gate.visible('k1') && (<>
         <div className="card mb-8 p-5">
           <p className="mb-3 text-sm font-black text-slate-900 dark:text-white">
             🎤 {isRTL ? "اختر القارئ" : "Choose Reciter"}
@@ -379,7 +386,9 @@ export default async function SurahPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== المشغل المركزي ===== */}
+        {gate.visible('k2') && (<>
         {audioAyahs.length > 0 && (
           <SurahPlayer
             ayahs={audioAyahs}
@@ -389,7 +398,9 @@ export default async function SurahPage({
           />
         )}
 
+        </>)}
         {/* ===== البسملة ===== */}
+        {gate.visible('k3') && (<>
         {surahNumber !== 1 && surahNumber !== 9 && (
           <div className="mt-8 text-center">
             <p
@@ -401,6 +412,7 @@ export default async function SurahPage({
           </div>
         )}
 
+        </>)}
         {/* ===== خطأ التحميل ===== */}
         {fetchError && (
           <div className="card mt-8 border-red-200 p-8 text-center dark:border-red-900/40">
@@ -416,6 +428,7 @@ export default async function SurahPage({
         )}
 
         {/* ===== الآيات ===== */}
+        {gate.visible('k4') && (<>
         {quranData && (
           <div className="mt-10 space-y-5">
             {quranData.arabicAyahs.map((ayah, index) => {
@@ -475,7 +488,9 @@ export default async function SurahPage({
           </div>
         )}
 
+        </>)}
         {/* ===== التنقل بين السور ===== */}
+        {gate.visible('k5') && (<>
         <nav className="mt-12 grid gap-4 sm:grid-cols-2">
           {prevSurah ? (
             <Link
@@ -531,6 +546,7 @@ export default async function SurahPage({
             </Link>
           ) : <div />}
         </nav>
+        </>)}
       </section>
 
       <Footer lang={l} />

@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -179,6 +181,8 @@ export default async function PrayerTimesPage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "prayer-times", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -253,6 +257,7 @@ export default async function PrayerTimesPage({
       />
 
       {/* ===== Hero محسّن ===== */}
+      {gate.visible('k0') && (<>
       <section className="container-page pt-10 md:pt-14">
         <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
@@ -347,10 +352,14 @@ export default async function PrayerTimesPage({
         </div>
       </section>
 
+      </>)}
       {/* ===== المحتوى التفاعلي ===== */}
+      {gate.visible('k1') && (<>
       <PrayerTimesContent lang={l} />
 
+      </>)}
       {/* ===== صفحات ذات صلة ===== */}
+      {gate.visible('k2') && (<>
       <section className="container-page pb-10 md:pb-14">
         <div className="mt-10">
           <h2
@@ -433,6 +442,7 @@ export default async function PrayerTimesPage({
       </section>
 
       <Footer lang={l} />
+      </>)}
     </main>
   );
 }

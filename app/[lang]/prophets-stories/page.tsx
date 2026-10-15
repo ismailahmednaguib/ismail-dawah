@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Lang } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -729,6 +731,8 @@ export default async function ProphetsStoriesPage({
   if (lang !== "ar" && lang !== "en") notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "prophets-stories", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -790,6 +794,7 @@ export default async function ProphetsStoriesPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -835,7 +840,9 @@ export default async function ProphetsStoriesPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="🕌" label={ui.prophetsCount} value={PROPHETS.length} color="primary" />
           <StatCard icon="💡" label={ui.lessonsCount} value={`${formatNumber(totalLessons, l)}+`} color="gold" />
@@ -843,7 +850,9 @@ export default async function ProphetsStoriesPage({
           <StatCard icon="🔍" label={ui.searchLabel} value="✓" color="gold" />
         </div>
 
+        </>)}
         {/* ===== مقدمة ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-10 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -859,7 +868,9 @@ export default async function ProphetsStoriesPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== البحث ===== */}
+        {gate.visible('k3') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <form
             method="get"
@@ -931,7 +942,9 @@ export default async function ProphetsStoriesPage({
           )}
         </div>
 
+        </>)}
         {/* ===== تنقل سريع ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-8">
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
             {ui.quickNav}
@@ -951,7 +964,9 @@ export default async function ProphetsStoriesPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== عدد النتائج ===== */}
+        {gate.visible('k5') && (<>
         <div className="mb-6 flex items-center justify-between">
           <h2
             className="text-2xl font-black text-slate-900 dark:text-white"
@@ -971,6 +986,7 @@ export default async function ProphetsStoriesPage({
           </p>
         </div>
 
+        </>)}
         {/* ===== لا توجد نتائج ===== */}
         {filteredProphets.length === 0 ? (
           <div className="card p-12 text-center">
@@ -1123,6 +1139,7 @@ export default async function ProphetsStoriesPage({
         )}
 
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k6') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -1182,12 +1199,15 @@ export default async function ProphetsStoriesPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k7') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
             📌 {ui.note}
           </p>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

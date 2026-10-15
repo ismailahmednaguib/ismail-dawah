@@ -1,7 +1,9 @@
 // app/[lang]/adhkar/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -136,6 +138,8 @@ export default async function AdhkarPage({
   }
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "adhkar", l);
   const m = META[l];
   const isRTL = l === "ar";
 
@@ -180,6 +184,7 @@ export default async function AdhkarPage({
 
       <section className="container-page pt-10 md:pt-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -223,7 +228,9 @@ export default async function AdhkarPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
@@ -268,7 +275,9 @@ export default async function AdhkarPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== مميزات الصفحة ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-8 grid gap-4 md:grid-cols-3">
           <FeatureCard
             icon="📖"
@@ -286,6 +295,7 @@ export default async function AdhkarPage({
             description={m.feature3Desc}
           />
         </div>
+        </>)}
       </section>
 
       {/* ===== المحتوى التفاعلي ===== */}

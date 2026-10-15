@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -247,6 +249,8 @@ export default async function AccountPage({
   }
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "account", l);
   const ui = UI[l];
   const isRTL = l === "ar";
   const user = await getServerUser();
@@ -303,6 +307,7 @@ export default async function AccountPage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== ترويسة ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-10 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -333,7 +338,9 @@ export default async function AccountPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== بطاقات الحساب الرئيسية ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-10 grid gap-5 md:grid-cols-2">
           {/* تسجيل الدخول */}
           <Link
@@ -508,7 +515,9 @@ export default async function AccountPage({
           </section>
         )}
 
+        </>)}
         {/* ===== لماذا تنشئ حساباً؟ ===== */}
+        {gate.visible('k2') && (<>
         <div className="mb-10">
           <div className="mb-8 text-center">
             <h2
@@ -551,7 +560,9 @@ export default async function AccountPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== كيف يعمل النظام؟ ===== */}
+        {gate.visible('k3') && (<>
         <div className="mb-10">
           <div className="mb-8 text-center">
             <h2
@@ -588,7 +599,9 @@ export default async function AccountPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== الأسئلة الشائعة ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-10">
           <div className="mb-8 text-center">
             <h2
@@ -606,7 +619,9 @@ export default async function AccountPage({
           </div>
         </div>
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k5') && (<>
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -643,6 +658,7 @@ export default async function AccountPage({
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />

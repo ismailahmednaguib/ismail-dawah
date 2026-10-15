@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -666,6 +668,8 @@ export default async function DawahGuidePage({
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
+  const __pageSettings = await getSiteSettings();
+  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "dawah-guide", l);
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -720,6 +724,7 @@ export default async function DawahGuidePage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -765,7 +770,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-5">
           <StatCard icon="❤️" label={ui.principlesCount} value={PRINCIPLES.length} color="primary" />
           <StatCard icon="🧭" label={ui.stepsCount} value={DAWAH_STEPS.length} color="gold" />
@@ -774,7 +781,9 @@ export default async function DawahGuidePage({
           <StatCard icon="✅" label={ui.checklistCount} value={CHECKLIST.length} color="primary" />
         </div>
 
+        </>)}
         {/* ===== مقدمة ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-8 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -790,7 +799,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنقل سريع ===== */}
+        {gate.visible('k3') && (<>
         <div className="card mb-8 p-6 md:p-7">
           <h2 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
             {ui.quickNav}
@@ -805,7 +816,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== أصول الدعوة ===== */}
+        {gate.visible('k4') && (<>
         <div id="principles" className="mb-12 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.principlesTitle}</h2>
@@ -858,7 +871,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== خطوات عملية ===== */}
+        {gate.visible('k5') && (<>
         <div id="steps" className="mb-12 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.stepsTitle}</h2>
@@ -935,7 +950,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== مهارات الداعية ===== */}
+        {gate.visible('k6') && (<>
         <div id="skills" className="mb-12 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.skillsTitle}</h2>
@@ -986,7 +1003,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== أخطاء شائعة ===== */}
+        {gate.visible('k7') && (<>
         <div id="mistakes" className="mb-12 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.mistakesTitle}</h2>
@@ -1036,7 +1055,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== قائمة تحضير ===== */}
+        {gate.visible('k8') && (<>
         <div id="checklist" className="mb-12 scroll-mt-32">
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.checklistTitle}</h2>
@@ -1062,7 +1083,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيه مهم ===== */}
+        {gate.visible('k9') && (<>
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -1095,7 +1118,9 @@ export default async function DawahGuidePage({
           </div>
         </div>
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k10') && (<>
         <div className="mt-10">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -1154,6 +1179,7 @@ export default async function DawahGuidePage({
             </Link>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={l} />
