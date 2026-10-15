@@ -8,7 +8,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
-
+
+import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع
 // ============================================================
@@ -407,6 +408,7 @@ export default function NewsPage() {
   const pathname = usePathname();
   const L: Lang = pathname.startsWith("/en") ? "en" : "ar";
   const isRTL = L === "ar";
+  const gate = usePageGate("news", L);
   const ui = UI[L];
 
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -602,6 +604,7 @@ export default function NewsPage() {
         )}
 
         {/* ===== Hero ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -651,7 +654,9 @@ export default function NewsPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات سريعة ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard
             icon="📰"
@@ -678,6 +683,7 @@ export default function NewsPage() {
           />
         </div>
 
+        </>)}
         {/* ===== حالة التحميل ===== */}
         {loading && (
           <div className="space-y-5" aria-busy="true" aria-live="polite">
@@ -715,6 +721,7 @@ export default function NewsPage() {
         )}
 
         {/* ===== المحتوى الرئيسي ===== */}
+        {gate.visible('k2') && (<>
         {!loading && news.length > 0 && (
           <>
             {/* البحث */}
@@ -987,7 +994,9 @@ export default function NewsPage() {
           </>
         )}
 
+        </>)}
         {/* ===== Newsletter CTA ===== */}
+        {gate.visible('k3') && (<>
         <div
           id="newsletter"
           className="card relative mt-12 overflow-hidden border-2 border-primary-300 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 text-center md:p-12 dark:border-primary-700 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30"
@@ -1022,7 +1031,9 @@ export default function NewsPage() {
           </Link>
         </div>
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k4') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -1110,7 +1121,9 @@ export default function NewsPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيه ===== */}
+        {gate.visible('k5') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -1139,6 +1152,7 @@ export default function NewsPage() {
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={L} />

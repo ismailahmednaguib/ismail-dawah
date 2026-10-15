@@ -8,7 +8,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
-
+
+import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع
 // ============================================================
@@ -269,6 +270,7 @@ export default function MapPage() {
   const lang = (pathname || "").split("/").filter(Boolean)[0];
   const L: Lang = lang === "en" ? "en" : "ar";
   const isRTL = L === "ar";
+  const gate = usePageGate("map", L);
   const ui = UI[L];
 
   const [places, setPlaces] = useState<Place[]>([]);
@@ -435,6 +437,7 @@ export default function MapPage() {
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -497,6 +500,7 @@ export default function MapPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== حالة التحميل ===== */}
         {loading && (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -549,6 +553,7 @@ export default function MapPage() {
         )}
 
         {/* ===== المحتوى الرئيسي ===== */}
+        {gate.visible('k1') && (<>
         {!loading && !error && places.length > 0 && (
           <>
             {/* إحصائيات سريعة */}
@@ -893,6 +898,7 @@ export default function MapPage() {
             </div>
           </>
         )}
+        </>)}
       </section>
 
       {/* ===== Modal التفاصيل ===== */}

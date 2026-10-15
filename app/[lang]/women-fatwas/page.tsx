@@ -8,7 +8,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
-
+
+import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع
 // ============================================================
@@ -257,6 +258,7 @@ export default function WomenFatwasPage() {
         ? "en"
         : "ar";
   const isRTL = L === "ar";
+  const gate = usePageGate("women-fatwas", L);
   const ui = UI[L];
 
   const [filter, setFilter] = useState<string>("all");
@@ -351,6 +353,7 @@ export default function WomenFatwasPage() {
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-pink-200 bg-gradient-to-br from-pink-50 via-cream-dark to-rose-50 p-8 md:p-12 dark:border-pink-800 dark:from-pink-950/30 dark:via-gray-900 dark:to-rose-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -400,7 +403,9 @@ export default function WomenFatwasPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📜" label={ui.fatwasCount} value={fatwas.length} color="primary" />
           <StatCard icon="📂" label={ui.categoriesCount} value={categories.length} color="gold" />
@@ -408,7 +413,9 @@ export default function WomenFatwasPage() {
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 
+        </>)}
         {/* ===== لماذا فتاوى خاصة ===== */}
+        {gate.visible('k2') && (<>
         <div className="card mb-10 overflow-hidden">
           <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
@@ -445,7 +452,9 @@ export default function WomenFatwasPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== البحث ===== */}
+        {gate.visible('k3') && (<>
         <div className="card mb-6 p-5">
           <div className="relative">
             <svg
@@ -479,7 +488,9 @@ export default function WomenFatwasPage() {
           )}
         </div>
 
+        </>)}
         {/* ===== الفلاتر ===== */}
+        {gate.visible('k4') && (<>
         <div className="mb-8 flex flex-wrap gap-2">
           <button
             onClick={() => setFilter("all")}
@@ -534,7 +545,9 @@ export default function WomenFatwasPage() {
           })}
         </div>
 
+        </>)}
         {/* ===== العنوان ===== */}
+        {gate.visible('k5') && (<>
         <div className="mb-6 flex items-center justify-between">
           <h2
             className="text-2xl font-black text-slate-900 dark:text-white"
@@ -547,6 +560,7 @@ export default function WomenFatwasPage() {
           </span>
         </div>
 
+        </>)}
         {/* ===== حالة التحميل ===== */}
         {loading && (
           <div className="mb-4 space-y-4" aria-busy="true" aria-live="polite">
@@ -702,6 +716,7 @@ export default function WomenFatwasPage() {
         ))}
 
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k6') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -781,7 +796,9 @@ export default function WomenFatwasPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيهات فقهية ===== */}
+        {gate.visible('k7') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -813,6 +830,7 @@ export default function WomenFatwasPage() {
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={L} />

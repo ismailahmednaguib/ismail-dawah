@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
+
+import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع
 // ============================================================
@@ -219,6 +220,7 @@ export default function BookmarksPage() {
   const lang: Lang = pathname.startsWith("/en") ? "en" : "ar";
   const ui = UI[lang];
   const isRTL = lang === "ar";
+  const gate = usePageGate("bookmarks", lang);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -436,6 +438,7 @@ export default function BookmarksPage() {
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
@@ -468,7 +471,9 @@ export default function BookmarksPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon="🔖"
@@ -503,7 +508,9 @@ export default function BookmarksPage() {
           />
         </div>
 
+        </>)}
         {/* ===== أدوات التحكم ===== */}
+        {gate.visible('k2') && (<>
         {bookmarks.length > 0 && (
           <div className="card mb-8 p-6 md:p-7">
             {/* البحث والفرز */}
@@ -634,6 +641,7 @@ export default function BookmarksPage() {
           </div>
         )}
 
+        </>)}
         {/* ===== حالة التحميل ===== */}
         {!loaded && (
           <div className="grid gap-5 lg:grid-cols-2">
@@ -708,6 +716,7 @@ export default function BookmarksPage() {
         )}
 
         {/* ===== قائمة المفضلة ===== */}
+        {gate.visible('k3') && (<>
         {loaded && filtered.length > 0 && (
           <div className="grid gap-5 lg:grid-cols-2">
             {filtered.map((bookmark) => {
@@ -781,7 +790,9 @@ export default function BookmarksPage() {
           </div>
         )}
 
+        </>)}
         {/* ===== ملاحظة ===== */}
+        {gate.visible('k4') && (<>
         <div className="card mt-8 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -810,6 +821,7 @@ export default function BookmarksPage() {
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={lang} />

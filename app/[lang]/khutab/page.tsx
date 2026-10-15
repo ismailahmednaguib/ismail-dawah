@@ -9,7 +9,8 @@ import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
 import type { PublicItem } from "@/lib/learn/public";
-
+
+import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع
 // ============================================================
@@ -231,6 +232,7 @@ export default function KhutabPage() {
   const lang: "ar" | "en" = pathname.startsWith("/en") ? "en" : "ar";
   const L = lang as Lang;
   const isRTL = L === "ar";
+  const gate = usePageGate("khutab", L);
   const ui = UI[L];
 
   const [khutab, setKhutab] = useState<Khutbah[]>([]);
@@ -320,6 +322,7 @@ export default function KhutabPage() {
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
+        {gate.visible('k0') && (<>
         <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-amber-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-gold-800 dark:from-amber-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -363,7 +366,9 @@ export default function KhutabPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== إحصائيات ===== */}
+        {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="🎤" label={ui.khutabCount} value={khutab.length} color="primary" />
           <StatCard icon="📂" label={ui.categoriesCount} value={categories.length} color="gold" />
@@ -695,7 +700,9 @@ export default function KhutabPage() {
           </div>
         )}
 
+        </>)}
         {/* ===== صفحات ذات صلة ===== */}
+        {gate.visible('k2') && (<>
         <div className="mt-12">
           <h2
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -755,7 +762,9 @@ export default function KhutabPage() {
           </div>
         </div>
 
+        </>)}
         {/* ===== تنبيه مهم ===== */}
+        {gate.visible('k3') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
@@ -783,6 +792,7 @@ export default function KhutabPage() {
             </div>
           </div>
         </div>
+        </>)}
       </section>
 
       <Footer lang={L} />

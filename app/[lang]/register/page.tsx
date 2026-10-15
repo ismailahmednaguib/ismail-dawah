@@ -8,7 +8,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
-
+
+import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // نصوص الواجهة
 // ============================================================
@@ -194,6 +195,7 @@ export default function RegisterPage() {
   const lang = (params?.lang as string) || "ar";
   const L = lang as Lang;
   const isRTL = L === "ar";
+  const gate = usePageGate("register", L);
   const ui = UI[L];
 
   const [name, setName] = useState("");
@@ -278,6 +280,7 @@ export default function RegisterPage() {
       <section className="container-page py-10 md:py-14">
         <div className="mx-auto max-w-4xl">
           {/* ===== Hero محسّن ===== */}
+          {gate.visible('k0') && (<>
           <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-8 md:p-10 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
             <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
@@ -558,7 +561,9 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          </>)}
           {/* ===== صفحات ذات صلة ===== */}
+          {gate.visible('k1') && (<>
           <div className="mt-10">
             <h2
               className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
@@ -617,6 +622,7 @@ export default function RegisterPage() {
               </Link>
             </div>
           </div>
+          </>)}
         </div>
       </section>
 
