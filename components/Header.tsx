@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
+import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 
 // ============================================================
 // Types
@@ -105,6 +106,16 @@ export default function Header({
 
   const [remoteSettings, setRemoteSettings] = useState<Record<string, unknown> | null>(null);
   const effectiveSettings = remoteSettings ?? settings ?? null;
+
+  // الصفحات المخفية من لوحة التحكم → تُستبعد من القائمة تلقائيًا.
+  const hiddenPages = useMemo(
+    () => mergePagesVisibility((effectiveSettings as Record<string, unknown> | null)?.hiddenPages),
+    [effectiveSettings]
+  );
+  const isHiddenHref = useCallback(
+    (href: string) => isHrefHidden(hiddenPages, href),
+    [hiddenPages]
+  );
 
   const switchHref = useMemo(
     () => localizedPath(otherLang, pathWithoutLang),
@@ -326,14 +337,15 @@ export default function Header({
             {
               title: "العلوم والردود",
               items: [
-                { href: "/atheism-response", label: "الرد على الإلحاد" },
+                { href: "/learn", label: "تعلّم" },
+                { href: "/fiqh", label: "الفقه" },
+                { href: "/articles", label: "المقالات" },
+                { href: "/women-fatwas", label: "فتاوى المرأة" },
+                { href: "/prophets-stories", label: "قصص الأنبياء" },
                 { href: "/doubts", label: "الشبهات" },
                 { href: "/responses", label: "مركز الردود" },
-                { href: "/prophets-stories", label: "قصص الأنبياء" },
+                { href: "/atheism-response", label: "الرد على الإلحاد" },
                 { href: "/inheritance", label: "المواريث" },
-                { href: "/learn", label: "تعلّم" },
-                { href: "/hadith", label: "الحديث" },
-                { href: "/fiqh", label: "الفقه" },
               ],
             },
             {
@@ -342,9 +354,11 @@ export default function Header({
                 { href: "/dawah", label: "بوابة غير المسلمين" },
                 { href: "/dawah-guide", label: "دليل الدعوة" },
                 { href: "/fields", label: "المجالات الدعوية" },
+                { href: "/map", label: "الخريطة الدعوية" },
                 { href: "/projects", label: "المشاريع" },
                 { href: "/khutab", label: "الخطب" },
                 { href: "/embrace-islam", label: "ادخل الإسلام" },
+                { href: "/khatm-dua", label: "ختم الدعاء" },
               ],
             },
             {
@@ -354,6 +368,7 @@ export default function Header({
                 { href: "/tasbih", label: "المسبحة" },
                 { href: "/calendar", label: "التقويم الهجري" },
                 { href: "/ruqyah", label: "الرقية الشرعية" },
+                { href: "/faq", label: "الأسئلة الشائعة" },
                 { href: "/search", label: "البحث" },
               ],
             },
@@ -372,14 +387,15 @@ export default function Header({
             {
               title: "Knowledge",
               items: [
-                { href: "/atheism-response", label: "Atheism Response" },
+                { href: "/learn", label: "Learn" },
+                { href: "/fiqh", label: "Fiqh" },
+                { href: "/articles", label: "Articles" },
+                { href: "/women-fatwas", label: "Women's Fatwas" },
+                { href: "/prophets-stories", label: "Prophets Stories" },
                 { href: "/doubts", label: "Doubts" },
                 { href: "/responses", label: "Responses Center" },
-                { href: "/prophets-stories", label: "Prophets Stories" },
+                { href: "/atheism-response", label: "Atheism Response" },
                 { href: "/inheritance", label: "Inheritance" },
-                { href: "/learn", label: "Learn" },
-                { href: "/hadith", label: "Hadith" },
-                { href: "/fiqh", label: "Fiqh" },
               ],
             },
             {
@@ -388,9 +404,11 @@ export default function Header({
                 { href: "/dawah", label: "Non-Muslim Portal" },
                 { href: "/dawah-guide", label: "Dawah Guide" },
                 { href: "/fields", label: "Dawah Fields" },
+                { href: "/map", label: "Dawah Map" },
                 { href: "/projects", label: "Projects" },
                 { href: "/khutab", label: "Khutbahs" },
                 { href: "/embrace-islam", label: "Embrace Islam" },
+                { href: "/khatm-dua", label: "Khatm Dua" },
               ],
             },
             {
@@ -400,11 +418,26 @@ export default function Header({
                 { href: "/tasbih", label: "Tasbih" },
                 { href: "/calendar", label: "Hijri Calendar" },
                 { href: "/ruqyah", label: "Ruqyah" },
+                { href: "/faq", label: "FAQ" },
                 { href: "/search", label: "Search" },
               ],
             },
           ],
     [isRTL]
+  );
+
+  // قوائم مرشّحة بعد إخفاء الصفحات من لوحة التحكم
+  const navItems = useMemo(
+    () => NAV.filter((item) => !isHiddenHref(item.href)),
+    [NAV, isHiddenHref]
+  );
+  const menuGroups = useMemo(
+    () =>
+      MENU.map((group) => ({
+        ...group,
+        items: group.items.filter((item) => !isHiddenHref(item.href)),
+      })).filter((group) => group.items.length > 0),
+    [MENU, isHiddenHref]
   );
 
   // ==========================================================
@@ -414,7 +447,6 @@ export default function Header({
   const iconBtnClass = onDark
     ? "text-white hover:bg-white/10"
     : "text-slate-600 hover:bg-primary-50 dark:text-slate-300 dark:hover:bg-night-800";
-
   const navInactiveClass = onDark
     ? "text-white/90 hover:bg-white/10 hover:text-white"
     : "text-slate-700 hover:bg-primary-50 hover:text-primary-700 dark:text-slate-200 dark:hover:bg-night-800";
@@ -485,7 +517,7 @@ export default function Header({
             className="hidden items-center gap-1 lg:flex"
             aria-label={isRTL ? "التنقل الرئيسي" : "Main navigation"}
           >
-            {NAV.map((item) => {
+            {navItems.map((item) => {
               const active = isActiveHref(item.href);
 
               return (
@@ -544,7 +576,7 @@ export default function Header({
                     isRTL ? "left-0" : "right-0"
                   }`}
                 >
-                  {MENU.map((group) => (
+                  {menuGroups.map((group) => (
                     <div key={group.title}>
                       <p className="mb-2 text-xs font-black tracking-wide text-gold-500">
                         {group.title}
@@ -725,7 +757,7 @@ export default function Header({
           className="glass max-h-[80vh] overflow-y-auto border-t border-primary-100 animate-slide-up dark:border-night-700 lg:hidden"
         >
           <div className="flex flex-col gap-1 p-4">
-            {NAV.map((item) => {
+            {navItems.map((item) => {
               const active = isActiveHref(item.href);
 
               return (
@@ -744,7 +776,7 @@ export default function Header({
               );
             })}
 
-            {MENU.map((group) => (
+            {menuGroups.map((group) => (
               <div key={group.title} className="mt-3">
                 <p className="mb-1 px-4 text-xs font-black text-gold-500">
                   {group.title}

@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import ContentCard from "@/components/learn/ContentCard";
 import { getSiteSettings } from "@/lib/content";
+import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { getPublicCounts, getPublicList, type PublicItem } from "@/lib/learn/public";
 
 // المحتوى يُقرأ من قاعدة البيانات وقت الطلب حتى تظهر تعديلات لوحة التحكم فورًا.
@@ -83,6 +84,11 @@ type UiText = {
   responsesSubtitle: string;
   dawahTitle: string;
   dawahSubtitle: string;
+  portalBadge: string;
+  portalTitle: string;
+  portalDesc: string;
+  portalCta1: string;
+  portalCta2: string;
   verseLabel: string;
   downloadBadge: string;
   downloadTitle: string;
@@ -104,6 +110,8 @@ type UiText = {
   latestArticles: string;
   latestHadith: string;
   latestDoubts: string;
+  latestKhutab: string;
+  latestStories: string;
   viewAll: string;
   readMore: string;
 };
@@ -126,6 +134,12 @@ const UI: Record<string, UiText> = {
     responsesSubtitle: "ردود على الشبهات وقضايا معاصرة بمنهج شرعي معتدل",
     dawahTitle: "الدعوة والتوعية",
     dawahSubtitle: "أدوات ومواد دعوية لنشر العلم الشرعي",
+    portalBadge: "🌍 لغير المسلمين",
+    portalTitle: "تبحث عن الحقيقة؟ ابدأ من هنا",
+    portalDesc:
+      "تعريف مبسّط بالإسلام، وإجابات هادئة عن أكثر الأسئلة تكرارًا، وخطوات واضحة لمن يريد اعتناق الإسلام.",
+    portalCta1: "تعريف بالإسلام",
+    portalCta2: "كيف أدخل الإسلام؟",
     verseLabel: "آية اليوم",
     downloadBadge: "📱 تطبيق أندرويد",
     downloadTitle: "حمّل التطبيق الآن",
@@ -150,6 +164,8 @@ const UI: Record<string, UiText> = {
     latestArticles: "أحدث المقالات",
     latestHadith: "من الأحاديث",
     latestDoubts: "من الشبهات والردود",
+    latestKhutab: "من الخطب",
+    latestStories: "من قصص الأنبياء",
     viewAll: "عرض الكل",
     readMore: "اقرأ المزيد",
   },
@@ -173,6 +189,12 @@ const UI: Record<string, UiText> = {
     dawahTitle: "Dawah & Awareness",
     dawahSubtitle:
       "Tools and materials for spreading authentic Islamic knowledge",
+    portalBadge: "🌍 For Non-Muslims",
+    portalTitle: "Seeking the truth? Start here",
+    portalDesc:
+      "A simple introduction to Islam, calm answers to the most-asked questions, and clear steps for those who wish to embrace Islam.",
+    portalCta1: "Introduction to Islam",
+    portalCta2: "How to embrace Islam",
     verseLabel: "Verse of the Day",
     downloadBadge: "📱 Android App",
     downloadTitle: "Download the App Now",
@@ -198,6 +220,8 @@ const UI: Record<string, UiText> = {
     latestArticles: "Latest Articles",
     latestHadith: "From the Hadith",
     latestDoubts: "Doubts & Responses",
+    latestKhutab: "From the Khutbahs",
+    latestStories: "From the Prophets' Stories",
     viewAll: "View all",
     readMore: "Read more",
   },
@@ -483,6 +507,7 @@ export default async function HomePage({
   const isRTL = l === "ar";
   const settings = await getSiteSettings();
   const baseUi = UI[l];
+  const gate = pageGate(buildPageControls(settings as Record<string, unknown>), "home", l);
   const ui: UiText = {
     ...baseUi,
     badge: settingText(settings, "homeKicker", l, baseUi.badge),
@@ -498,7 +523,7 @@ export default async function HomePage({
   };
   const verse = getVerseOfTheDay(l);
 
-  const [counts, latestLessons, latestFatwas, latestArticles, latestHadith, latestDoubts] =
+  const [counts, latestLessons, latestFatwas, latestArticles, latestHadith, latestDoubts, latestKhutab, latestStories] =
     await Promise.all([
       getPublicCounts(l),
       getPublicList(l, "lesson", { limit: 3 }),
@@ -506,6 +531,8 @@ export default async function HomePage({
       getPublicList(l, "article", { limit: 3 }),
       getPublicList(l, "hadith", { limit: 3 }),
       getPublicList(l, "faq", { limit: 3 }),
+      getPublicList(l, "khutbah", { limit: 3 }),
+      getPublicList(l, "story", { limit: 3 }),
     ]);
 
   const websiteJsonLd = {
@@ -537,6 +564,7 @@ export default async function HomePage({
       <Header lang={l} overHero settings={settings} />
 
       {/* ============ Hero Section ============ */}
+      {gate.visible('hero') && (
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-20 text-white md:py-28">
         <div
           aria-hidden="true"
@@ -607,7 +635,7 @@ export default async function HomePage({
 
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
             <HeroStatCard value={`${Math.max(counts.total, 0)}+`} label={ui.statSections} />
-            <HeroStatCard value="8" label={ui.statLanguages} />
+            <HeroStatCard value="2" label={ui.statLanguages} />
             <HeroStatCard value="114" label={ui.statSurahs} />
             <HeroStatCard value="100%" label={ui.statFree} />
           </div>
@@ -623,8 +651,10 @@ export default async function HomePage({
           </svg>
         </div>
       </section>
+      )}
 
       {/* ============ الأدوات السريعة ============ */}
+      {gate.visible('quickTools') && (
       <section className="container-page relative z-10 -mt-8">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {QUICK_TOOLS.map((tool) => (
@@ -646,15 +676,17 @@ export default async function HomePage({
           ))}
         </div>
       </section>
+      )}
 
       {/* ============ مسارات الزائر ============ */}
+      {gate.visible('paths') && (
       <section className="container-page py-14 md:py-16">
         <div className="mb-9 text-center">
           <h2
             className="section-title mb-2"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🧭 {ui.pathsTitle}
+            🧭 {gate.title('paths', ui.pathsTitle, l)}
           </h2>
           <p className="section-subtitle mx-auto max-w-2xl">{ui.pathsSubtitle}</p>
         </div>
@@ -665,15 +697,17 @@ export default async function HomePage({
           ))}
         </div>
       </section>
+      )}
 
       {/* ============ قسم تعلّم ============ */}
+      {gate.visible('learn') && (
       <section className="container-page py-16 md:py-20">
         <div className="mb-10 text-center">
           <h2
             className="section-title mb-0"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📚 {ui.learnTitle}
+            📚 {gate.title('learn', ui.learnTitle, l)}
           </h2>
           <div className="islamic-divider my-0" aria-hidden="true">
             <span className="text-xl text-gold-500">✦</span>
@@ -689,8 +723,10 @@ export default async function HomePage({
           ))}
         </div>
       </section>
+      )}
 
       {/* ============ قسم العلوم والردود ============ */}
+      {gate.visible('responses') && (
       <section className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
         <div className="container-page">
           <div className="mb-10 text-center">
@@ -698,7 +734,7 @@ export default async function HomePage({
               className="section-title mb-0"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🧠 {ui.responsesTitle}
+              🧠 {gate.title('responses', ui.responsesTitle, l)}
             </h2>
             <div className="islamic-divider my-0" aria-hidden="true">
               <span className="text-xl text-gold-500">✦</span>
@@ -715,8 +751,10 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+      )}
 
       {/* ============ آية اليوم ============ */}
+      {gate.visible('verse') && (
       <section className="container-page py-16 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="card relative overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-10 text-center md:p-14 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
@@ -726,7 +764,7 @@ export default async function HomePage({
             />
 
             <p className="mb-4 text-xs font-black tracking-wider text-gold-600 dark:text-gold-400">
-              {ui.verseLabel}
+              {gate.title('verse', ui.verseLabel, l)}
             </p>
 
             <p
@@ -742,15 +780,17 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+      )}
 
       {/* ============ قسم الدعوة ============ */}
+      {gate.visible('dawah') && (
       <section className="container-page pb-16 md:pb-20">
         <div className="mb-10 text-center">
           <h2
             className="section-title mb-0"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📢 {ui.dawahTitle}
+            📢 {gate.title('dawah', ui.dawahTitle, l)}
           </h2>
           <div className="islamic-divider my-0" aria-hidden="true">
             <span className="text-xl text-gold-500">✦</span>
@@ -766,13 +806,48 @@ export default async function HomePage({
           ))}
         </div>
       </section>
+      )}
+
+      {/* ============ بوابة غير المسلمين ============ */}
+      {gate.visible('portal') && (
+      <section className="container-page pb-16 md:pb-20">
+        <div className="relative overflow-hidden rounded-3xl border-2 border-gold-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-gold-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
+          <div
+            aria-hidden="true"
+            className="absolute -end-16 -top-16 h-56 w-56 rounded-full bg-gold-400/20 blur-3xl"
+          />
+          <div className="relative mx-auto max-w-3xl text-center">
+            <span className="badge-gold mb-5">{ui.portalBadge}</span>
+            <h2
+              className="mb-4 text-2xl font-black leading-tight text-slate-900 md:text-4xl dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {gate.title('portal', ui.portalTitle, l)}
+            </h2>
+            <p className="mx-auto mb-8 max-w-2xl leading-relaxed text-slate-600 dark:text-slate-300">
+              {ui.portalDesc}
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link href={`/${l}/dawah`} className="btn-primary">
+                {ui.portalCta1}
+              </Link>
+              <Link href={`/${l}/embrace-islam`} className="btn-outline">
+                {ui.portalCta2}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      )}
 
       {/* ============ أحدث ما نُشر ============ */}
-      {latestLessons.length +
+      {gate.visible('latest') && latestLessons.length +
         latestFatwas.length +
         latestArticles.length +
         latestHadith.length +
-        latestDoubts.length >
+        latestDoubts.length +
+        latestKhutab.length +
+        latestStories.length >
         0 && (
         <section className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
           <div className="container-page">
@@ -781,7 +856,7 @@ export default async function HomePage({
                 className="section-title mb-0"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
-                🆕 {ui.latestTitle}
+                🆕 {gate.title('latest', ui.latestTitle, l)}
               </h2>
               <div className="islamic-divider my-0" aria-hidden="true">
                 <span className="text-xl text-gold-500">✦</span>
@@ -826,16 +901,33 @@ export default async function HomePage({
               lang={l}
               viewAll={ui.viewAll}
             />
+            <LatestRow
+              title={ui.latestKhutab}
+              href={`/${l}/khutab`}
+              items={latestKhutab}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
+            <LatestRow
+              title={ui.latestStories}
+              href={`/${l}/prophets-stories`}
+              items={latestStories}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
           </div>
         </section>
       )}
 
       {/* ============ النشرة البريدية ============ */}
+      {gate.visible('newsletter') && (
       <section className="container-page pb-16 md:pb-20">
         <Newsletter lang={l} />
       </section>
+      )}
 
       {/* ============ تطبيق أندرويد ============ */}
+      {gate.visible('download') && (
       <section className="container-page pb-16 md:pb-20">
         <div className="card relative overflow-hidden border-2 border-primary-200 p-8 md:p-10 dark:border-primary-800">
           <div
@@ -850,7 +942,7 @@ export default async function HomePage({
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-4xl dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              {ui.downloadTitle}
+              {gate.title('download', ui.downloadTitle, l)}
             </h2>
 
             <p className="mb-7 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
@@ -889,8 +981,10 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+      )}
 
       {/* ============ CTA النهائي ============ */}
+      {gate.visible('cta') && (
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-16 text-white md:py-20">
         <div
           aria-hidden="true"
@@ -906,10 +1000,10 @@ export default async function HomePage({
             className="mb-4 text-3xl font-black md:text-4xl"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            {ui.ctaTitle}
+            {gate.title('cta', ui.ctaTitle, l)}
           </h2>
           <p className="mx-auto mb-8 max-w-2xl text-lg text-primary-100">
-            {ui.ctaDesc}
+            {gate.title('cta', ui.ctaDesc, l)}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -927,6 +1021,7 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+      )}
 
       {/* الصفحة بتنتهي بسكشن ملوّن → flushTop يشيل الفراغ بينه وبين الفوتر */}
       <Footer lang={l} settings={settings} showNewsletter={false} flushTop />

@@ -9,10 +9,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import {
+  PAGES,
+  mergeSectionsConfig,
+  mergeTitlesConfig,
+  mergePagesVisibility,
+} from '@/lib/page-sections';
 
 type TabId =
   | 'dashboard'
   | 'settings'
+  | 'sections'
   | 'content'
   | 'taxonomies'
   | 'translations'
@@ -31,6 +38,7 @@ interface TabItem {
 const TABS: TabItem[] = [
   { id: 'dashboard', label: 'لوحة المعلومات', icon: '▦' },
   { id: 'settings', label: 'إعدادات المنصة', icon: '⚙' },
+  { id: 'sections', label: 'الأقسام والظهور', icon: '👁' },
   { id: 'content', label: 'إدارة المحتوى', icon: '✎' },
   { id: 'taxonomies', label: 'التصنيفات', icon: '⌘' },
   { id: 'translations', label: 'الترجمات', icon: '文' },
@@ -366,6 +374,279 @@ function SettingsTab() {
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-700 px-6 py-3 text-white font-black shadow-lg hover:bg-primary-800 transition disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {saving ? 'جارٍ الحفظ…' : 'حفظ الإعدادات وتطبيقها فورًا'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// تبويب الأقسام والظهور (إظهار/إخفاء كل قسم في كل صفحة)
+// ============================================================
+
+function SectionsTab() {
+  const [settings, setSettings] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [openPage, setOpenPage] = useState<string>('home');
+  const [query, setQuery] = useState('');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await apiFetch('/api/admin/settings', { cache: 'no-store' }).then(handleResponse);
+      setSettings(res.settings ?? {});
+    } catch (e) {
+      console.error('[SectionsTab]', e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const sections = useMemo(() => mergeSectionsConfig(settings.pageSections), [settings.pageSections]);
+  const titles = useMemo(() => mergeTitlesConfig(settings.sectionTitles), [settings.sectionTitles]);
+  const pages = useMemo(() => mergePagesVisibility(settings.hiddenPages), [settings.hiddenPages]);
+
+  const commitSections = useCallback(
+    (next: Record<string, Record<string, boolean>>) => {
+      setSettings((prev) => ({ ...prev, pageSections: next }));
+    },
+    []
+  );
+
+  const toggleSection = useCallback(
+    (pageKey: string, secKey: string) => {
+      const current = mergeSectionsConfig(settings.pageSections);
+      const isVisible = current[pageKey]?.[secKey] !== false;
+      commitSections({ ...current, [pageKey]: { ...current[pageKey], [secKey]: !isVisible } });
+    },
+    [settings.pageSections, commitSections]
+  );
+
+  const setAllSections = useCallback(
+    (pageKey: string, visible: boolean) => {
+      const current = mergeSectionsConfig(settings.pageSections);
+      const pageDef = PAGES.find((p) => p[0] === pageKey);
+      const next: Record<string, boolean> = { ...current[pageKey] };
+      for (const [secKey] of pageDef?.[4] ?? []) next[secKey] = visible;
+      commitSections({ ...current, [pageKey]: next });
+    },
+    [settings.pageSections, commitSections]
+  );
+
+  const setTitle = useCallback(
+    (pageKey: string, secKey: string, lang: 'ar' | 'en', value: string) => {
+      setSettings((prev) => {
+        const current = mergeTitlesConfig(prev.sectionTitles);
+        const pageT = current[pageKey] || {};
+        const sec = pageT[secKey] || {};
+        return {
+          ...prev,
+          sectionTitles: {
+            ...current,
+            [pageKey]: { ...pageT, [secKey]: { ...sec, [lang]: value } },
+          },
+        };
+      });
+    },
+    []
+  );
+
+  const togglePage = useCallback(
+    (pageKey: string) => {
+      setSettings((prev) => {
+        const current = mergePagesVisibility(prev.hiddenPages);
+        return { ...prev, hiddenPages: { ...current, [pageKey]: current[pageKey] === false } };
+      });
+    },
+    []
+  );
+
+  const save = useCallback(async () => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      await apiFetch('/api/admin/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ settings }),
+      });
+      setMessage({ type: 'success', text: 'تم الحفظ، وطُبّقت الأقسام على الموقع فورًا.' });
+      void load();
+    } catch (e: any) {
+      setMessage({ type: 'error', text: e.message || 'فشل حفظ الأقسام.' });
+    } finally {
+      setSaving(false);
+    }
+  }, [settings, load]);
+
+  if (loading) {
+    return <div className="h-64 flex items-center justify-center text-stone-400">جارٍ التحميل…</div>;
+  }
+
+  const filteredPages = PAGES.filter(([key, , ar, en]) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return key.toLowerCase().includes(q) || ar.includes(query.trim()) || en.toLowerCase().includes(q);
+  });
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader
+        title="الأقسام والظهور"
+        subtitle="أظهر أو أخفِ أي صفحة وأي قسم داخل الصفحات، وعدّل عناوين الأقسام — يُطبَّق فورًا"
+      />
+
+      {message && (
+        <div
+          className={`rounded-xl p-4 text-sm font-bold ${
+            message.type === 'success'
+              ? 'bg-green-50 text-green-800 border border-green-200'
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-center gap-3">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="ابحث عن صفحة…"
+          className="input-islamic w-full max-w-xs text-sm"
+        />
+        <span className="text-xs font-bold text-stone-500">
+          {filteredPages.length} صفحة · {PAGES.length} إجماليًا
+        </span>
+      </div>
+
+      <div className="space-y-3">
+        {filteredPages.map(([pageKey, path, ar, en, pageSections]) => {
+          const pageVisible = pages[pageKey] !== false;
+          const isOpen = openPage === pageKey;
+          const visibleCount = pageSections.filter(
+            ([secKey]) => sections[pageKey]?.[secKey] !== false
+          ).length;
+
+          return (
+            <div
+              key={pageKey}
+              className="overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-sm"
+            >
+              <div className="flex flex-wrap items-center gap-3 p-4">
+                <button
+                  type="button"
+                  onClick={() => setOpenPage(isOpen ? '' : pageKey)}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-start"
+                >
+                  <span className="text-lg">{isOpen ? '▾' : '▸'}</span>
+                  <div className="min-w-0">
+                    <p className="truncate font-black text-primary-900">{ar}</p>
+                    <p className="truncate text-xs text-stone-500">
+                      <span dir="ltr">{path}</span> · {visibleCount}/{pageSections.length} قسم ظاهر
+                    </p>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAllSections(pageKey, true)}
+                  className="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-bold text-green-800 hover:bg-green-100"
+                >
+                  إظهار كل الأقسام
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAllSections(pageKey, false)}
+                  className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-200"
+                >
+                  إخفاء كل الأقسام
+                </button>
+                <label
+                  className={`inline-flex cursor-pointer items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold ${
+                    pageVisible ? 'bg-primary-50 text-primary-800' : 'bg-red-50 text-red-700'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={pageVisible}
+                    onChange={() => togglePage(pageKey)}
+                    className="rounded text-primary-600 focus:ring-primary-500"
+                  />
+                  {pageVisible ? 'الصفحة ظاهرة' : 'الصفحة مخفية'}
+                </label>
+              </div>
+
+              {isOpen && (
+                <div className="divide-y divide-cream-100 border-t border-cream-100">
+                  {pageSections.map(([secKey, secAr, secEn]) => {
+                    const isVisible = sections[pageKey]?.[secKey] !== false;
+                    const titleAr = titles[pageKey]?.[secKey]?.ar ?? '';
+                    const titleEn = titles[pageKey]?.[secKey]?.en ?? '';
+
+                    return (
+                      <div
+                        key={secKey}
+                        className={`grid gap-3 p-4 md:grid-cols-[220px_1fr] ${
+                          isVisible ? '' : 'bg-cream-50/60'
+                        }`}
+                      >
+                        <label className="flex items-start gap-2">
+                          <input
+                            type="checkbox"
+                            checked={isVisible}
+                            onChange={() => toggleSection(pageKey, secKey)}
+                            className="mt-0.5 rounded text-primary-600 focus:ring-primary-500"
+                          />
+                          <span>
+                            <span
+                              className={`block text-sm font-bold ${
+                                isVisible ? 'text-primary-900' : 'text-stone-400 line-through'
+                              }`}
+                            >
+                              {secAr}
+                            </span>
+                            <span className="block text-[11px] text-stone-400">{secEn}</span>
+                          </span>
+                        </label>
+
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          <input
+                            value={titleAr}
+                            onChange={(e) => setTitle(pageKey, secKey, 'ar', e.target.value)}
+                            placeholder={`عنوان عربي (${secAr})`}
+                            className="input-islamic w-full text-xs"
+                          />
+                          <input
+                            value={titleEn}
+                            onChange={(e) => setTitle(pageKey, secKey, 'en', e.target.value)}
+                            placeholder={`English title (${secEn})`}
+                            className="input-islamic w-full text-xs"
+                            dir="ltr"
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="sticky bottom-4 z-10">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-700 px-6 py-3 font-black text-white shadow-lg transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {saving ? 'جارٍ الحفظ…' : 'حفظ الأقسام وتطبيقها فورًا'}
         </button>
       </div>
     </div>
@@ -821,7 +1102,7 @@ function SimpleTab({ title, subtitle }: { title: string; subtitle: string }) {
     <div className="space-y-6">
       <SectionHeader title={title} subtitle={subtitle} />
       <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-12 text-center text-sm text-stone-500">
-        تُدار هذهsection عبر الصفحة المقابلة في القائمة الجانبية للوحة التحكم.
+        تُدار هذه الأقسام عبر الصفحة المقابلة في القائمة الجانبية للوحة التحكم.
       </div>
     </div>
   );
@@ -834,6 +1115,7 @@ function SimpleTab({ title, subtitle }: { title: string; subtitle: string }) {
 const TAB_COMPONENTS: Record<TabId, () => React.ReactElement> = {
   dashboard: DashboardTab,
   settings: SettingsTab,
+  sections: SectionsTab,
   content: ContentTab,
   taxonomies: TaxonomiesTab,
   translations: TranslationsTab,

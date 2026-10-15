@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t, type Lang } from "@/lib/i18n";
+import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 
 type FooterProps = {
   lang?: Lang;
@@ -149,6 +150,17 @@ export default function Footer({
   const contactText = t(lang, "contact");
   const privacyText = t(lang, "privacy");
   const termsText = t(lang, "terms");
+
+  // إخفاء روابط الصفحات المخفية من لوحة التحكم.
+  const hiddenPages = mergePagesVisibility(
+    (effectiveSettings as Record<string, unknown> | null)?.hiddenPages
+  );
+  const visibleColumns = columns
+    .map((col) => ({
+      ...col,
+      links: col.links.filter((link) => !isHrefHidden(hiddenPages, link.href)),
+    }))
+    .filter((col) => col.links.length > 0);
 
   const successMsg = isRTL
     ? "تم الاشتراك بنجاح! شكرًا لك."
@@ -336,7 +348,7 @@ export default function Footer({
             )}
           </div>
 
-          {columns.map((col) => (
+          {visibleColumns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
               <h4 className="mb-4 font-bold" style={{ color: "#d4af37" }}>
                 {col.title}

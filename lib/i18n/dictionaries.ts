@@ -266,7 +266,7 @@ const ur: Dictionary = {
     all: 'سب',
     type: 'قسم',
     audience: 'سامعین',
-    ageGroup: 'عمر کی группа',
+    ageGroup: 'عمر کا گروپ',
     level: 'لیول',
     clearFilters: 'فلٹر صاف کریں',
     results: 'نتائج',

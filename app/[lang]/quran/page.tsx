@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import { SURAHS } from "@/lib/data";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -237,7 +238,7 @@ function surahMatches(surah: Surah, query: string): boolean {
 
 async function fetchSurahs(): Promise<Surah[]> {
   const response = await fetch("https://api.alquran.cloud/v1/surah", {
-    cache: "no-store",
+    next: { revalidate: 60 * 60 * 24 },
   });
 
   if (!response.ok) {
@@ -247,7 +248,7 @@ async function fetchSurahs(): Promise<Surah[]> {
   const json = await response.json();
   const data = json?.data;
 
-  if (!Array.isArray(data)) return [];
+  if (!Array.isArray(data) || data.length === 0) return [];
 
   return data
     .map((item: any): Surah | null => {
@@ -271,6 +272,18 @@ async function fetchSurahs(): Promise<Surah[]> {
     })
     .filter((item): item is Surah => Boolean(item))
     .sort((a, b) => a.number - b.number);
+}
+
+// بيانات محلية احتياطية (لا تعتمد على الشبكة) لضمان عمل الصفحة دائمًا
+function fallbackSurahs(): Surah[] {
+  return SURAHS.map((surah) => ({
+    number: surah.number,
+    name: surah.arabicName,
+    englishName: surah.englishName,
+    englishNameTranslation: "",
+    numberOfAyahs: surah.ayahs,
+    revelationType: surah.type === "makki" ? "Meccan" : "Medinan",
+  }));
 }
 
 // ============================================================
@@ -355,7 +368,12 @@ export default async function QuranPage({
   try {
     surahs = await fetchSurahs();
   } catch {
-    loadError = true;
+    surahs = [];
+  }
+
+  // احتياطي محلي مضمون لضمان عمل الصفحة حتى لو تعذّر الاتصال بالمصدر
+  if (surahs.length === 0) {
+    surahs = fallbackSurahs();
   }
 
   const filteredSurahs = surahs.filter((surah) => {

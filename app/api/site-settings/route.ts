@@ -11,6 +11,8 @@ const PUBLIC_KEYS = new Set([
   'youtubeUrl', 'telegramUrl', 'twitterUrl', 'instagramUrl', 'liveUrl',
   'meetingLink', 'liveTitle', 'meetingDay', 'meetingTime', 'meetingPlace',
   'showPrayerBar', 'siteName', 'siteDescription', 'metaTitle', 'metaDescription',
+  // التحكم في الأقسام والظهور (يقرأها الموقع لعرض/إخفاء الأقسام فورًا)
+  'pageSections', 'sectionTitles', 'hiddenPages',
 ]);
 
 function publicSettings(settings: Record<string, any>) {

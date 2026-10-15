@@ -3,6 +3,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { invalidateContentCache } from '@/lib/content';
+import { PAGES } from '@/lib/page-sections';
 import { revalidatePath } from 'next/cache';
 
 export const runtime = 'nodejs';
@@ -212,10 +213,18 @@ export async function PUT(request: NextRequest) {
     }
 
     // الإعدادات العامة تظهر في الصفحة الرئيسية وصفحة البث، لذلك نحدّثهما فورًا.
-    revalidatePath('/ar');
-    revalidatePath('/en');
-    revalidatePath('/ar/live');
-    revalidatePath('/en/live');
+    // نحدّث كذلك كل صفحات الموقع حتى تظهر تعديلات إظهار/إخفاء الأقسام فورًا.
+    const revalidateTargets = new Set<string>();
+    for (const lang of ['ar', 'en'] as const) {
+      revalidateTargets.add(`/${lang}`);
+      revalidateTargets.add(`/${lang}/live`);
+      for (const [, path] of PAGES) {
+        revalidateTargets.add(path === '/' ? `/${lang}` : `/${lang}${path}`);
+      }
+    }
+    for (const target of revalidateTargets) {
+      revalidatePath(target);
+    }
     invalidateContentCache();
 
     // سجل تغييرات مختصر بدون تخزين أي أسرار أو بيانات جلسة.

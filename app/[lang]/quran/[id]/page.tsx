@@ -32,11 +32,20 @@ type Ayah = {
 };
 
 type EditionSurah = {
-  identifier: string;
-  language: string;
+  identifier?: string;
+  language?: string;
   name: string;
   ayahs: Ayah[];
+  edition?: {
+    identifier: string;
+    language?: string;
+  };
 };
+
+// الـ API قد يعيد المعرّف في المستوى الأول أو داخل كائن edition
+function getEditionIdentifier(edition: EditionSurah): string | undefined {
+  return edition.edition?.identifier ?? edition.identifier;
+}
 
 type EditionsApiResponse = {
   code: number;
@@ -85,12 +94,14 @@ async function fetchSurahEditions(surahNumber: number, lang: Lang) {
     throw new Error("Invalid Quran API response");
   }
 
-  const arabicEdition = json.data.find((e) => e.identifier === ARABIC_EDITION);
+  const arabicEdition = json.data.find(
+    (e) => getEditionIdentifier(e) === ARABIC_EDITION
+  );
   if (!arabicEdition) throw new Error("Arabic Quran edition not found");
 
   const translationEdition =
     lang === "en"
-      ? json.data.find((e) => e.identifier === ENGLISH_EDITION)
+      ? json.data.find((e) => getEditionIdentifier(e) === ENGLISH_EDITION)
       : undefined;
 
   return {
