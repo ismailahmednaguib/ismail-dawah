@@ -330,14 +330,14 @@ function categoryIcon(categoryId: string): string {
 
 function categoryColor(categoryId: string): string {
   const colors: Record<string, string> = {
-    prayer: "from-emerald-500 to-emerald-600",
+    prayer: "from-primary-500 to-primary-600",
     fasting: "from-indigo-500 to-indigo-600",
     zakat: "from-amber-500 to-amber-600",
     hajj: "from-rose-500 to-rose-600",
     family: "from-pink-500 to-pink-600",
     transactions: "from-blue-500 to-blue-600",
     aqeedah: "from-purple-500 to-purple-600",
-    ethics: "from-teal-500 to-teal-600",
+    ethics: "from-primary-500 to-primary-600",
   };
   return colors[categoryId] ?? "from-slate-500 to-slate-600";
 }

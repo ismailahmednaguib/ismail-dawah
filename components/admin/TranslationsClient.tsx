@@ -12,7 +12,7 @@ const STATUS_CONFIG: Record<string, { label: string; icon: string; className: st
   machine_translated: { label: 'ترجمة آلية', icon: '🤖', className: 'bg-orange-100 text-orange-700' },
   in_progress: { label: 'قيد الترجمة', icon: '✍️', className: 'bg-blue-100 text-blue-700' },
   reviewed: { label: 'تمت المراجعة', icon: '✅', className: 'bg-green-100 text-green-700' },
-  published: { label: 'منشور', icon: '📢', className: 'bg-emerald-100 text-emerald-700' },
+  published: { label: 'منشور', icon: '📢', className: 'bg-primary-100 text-primary-700' },
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -100,7 +100,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
       {/* الإحصائيات */}
       {stats && (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 p-5">
-          <h3 className="font-bold text-emerald-950 dark:text-gold mb-4">
+          <h3 className="font-bold text-primary-950 dark:text-gold mb-4">
             📊 إحصائيات الترجمات ({stats.total_content} محتوى منشور)
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -115,7 +115,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                   </div>
                   <div className="w-full bg-stone-200 dark:bg-gray-600 rounded-full h-2 mb-2">
                     <div
-                      className="bg-emerald-600 h-2 rounded-full transition-all"
+                      className="bg-primary-600 h-2 rounded-full transition-all"
                       style={{ width: `${langStats.coverage_percent}%` }}
                     />
                   </div>
@@ -140,7 +140,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           placeholder="🔍 ابحث عن محتوى..."
-          className="flex-1 border border-stone-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm bg-white dark:bg-gray-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+          className="flex-1 border border-stone-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:outline-none"
         />
       </div>
 
@@ -177,7 +177,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                 matrix.map(item => (
                   <tr key={item.content_id} className="border-b border-stone-100 dark:border-gray-700 hover:bg-stone-50 dark:hover:bg-gray-700/50">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-emerald-950 dark:text-white truncate max-w-[250px]">
+                      <p className="font-medium text-primary-950 dark:text-white truncate max-w-[250px]">
                         {item.original_title}
                       </p>
                       <p className="text-xs text-stone-400">
@@ -197,7 +197,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                       return (
                         <td key={lang.code} className="px-3 py-3 text-center">
                           {isOriginal ? (
-                            <span className="inline-block text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full">
+                            <span className="inline-block text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
                               🏠 الأصل
                             </span>
                           ) : t?.exists ? (

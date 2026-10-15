@@ -34,6 +34,8 @@ type SectionItem = {
   desc: Localized;
 };
 
+type LearningPath = SectionItem;
+
 // ============================================================
 // نصوص الواجهة
 // ============================================================
@@ -66,6 +68,8 @@ type UiText = {
   ctaAbout: string;
   metaTitle: string;
   metaDesc: string;
+  pathsTitle: string;
+  pathsSubtitle: string;
 };
 
 const UI: Record<Lang, UiText> = {
@@ -100,6 +104,9 @@ const UI: Record<Lang, UiText> = {
     metaTitle: "منصة إسماعيل أحمد نجيب الدعوية",
     metaDesc:
       "منصة إسلامية شاملة للقرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، وأدوات الدعوة. بالعربية والإنجليزية.",
+    pathsTitle: "اختر مسارك",
+    pathsSubtitle:
+      "ابدأ من الباب الأقرب إلى احتياجك، ثم انتقل تدريجيًا إلى ما يناسب رحلتك.",
   },
   en: {
     badge: "✨ Comprehensive Dawah Platform",
@@ -136,6 +143,9 @@ const UI: Record<Lang, UiText> = {
     metaTitle: "Ismail Ahmed Naguib Dawah Platform",
     metaDesc:
       "A comprehensive Islamic platform for Quran, adhkar, fatwas, prayer times, Qibla, and dawah tools. In Arabic and English.",
+    pathsTitle: "Choose your path",
+    pathsSubtitle:
+      "Start with the path closest to your needs, then grow at your own pace.",
   },
 };
 
@@ -152,6 +162,54 @@ const QUICK_TOOLS: QuickTool[] = [
   { href: "/calendar", icon: "📅", title: { ar: "التقويم", en: "Calendar" } },
   { href: "/fatwa", icon: "⚖️", title: { ar: "الفتاوى", en: "Fatwas" } },
   { href: "/ruqyah", icon: "🛡️", title: { ar: "الرقية", en: "Ruqyah" } },
+];
+
+const LEARNING_PATHS: LearningPath[] = [
+  {
+    href: "/embrace-islam",
+    icon: "🌱",
+    title: { ar: "أتعرف على الإسلام", en: "Discover Islam" },
+    desc: {
+      ar: "أسئلة أساسية وإجابات هادئة لمن يريد أن يفهم الإسلام.",
+      en: "Clear answers to the essential questions about Islam.",
+    },
+  },
+  {
+    href: "/learn?audience=muslim_new&level=beginner",
+    icon: "🕌",
+    title: { ar: "أنا مسلم جديد", en: "I am a new Muslim" },
+    desc: {
+      ar: "خطوات عملية لتعلم الأساسيات وبناء العادات الإيمانية.",
+      en: "Practical steps for learning the basics and building faith habits.",
+    },
+  },
+  {
+    href: "/learn?audience=muslim_general&level=beginner",
+    icon: "📚",
+    title: { ar: "أريد أن أتعلم", en: "I want to learn" },
+    desc: {
+      ar: "محتوى متدرج في القرآن والسنة والعلوم الشرعية.",
+      en: "A gradual path through Quran, Sunnah, and Islamic sciences.",
+    },
+  },
+  {
+    href: "/learn?audience=student&level=advanced",
+    icon: "🎓",
+    title: { ar: "أنا طالب علم", en: "I am a knowledge seeker" },
+    desc: {
+      ar: "مواد أعمق ومراجع تساعدك على تنظيم رحلة الطلب.",
+      en: "Deeper material and references for a structured learning journey.",
+    },
+  },
+  {
+    href: "/learn?audience=parent&age=kids",
+    icon: "👨‍👩‍👧‍👦",
+    title: { ar: "أرعى أسرة وطفلًا", en: "I guide a family" },
+    desc: {
+      ar: "قصص وأنشطة ومسارات تربوية مناسبة للأسرة والأطفال.",
+      en: "Stories, activities, and age-appropriate family learning paths.",
+    },
+  },
 ];
 
 // ============================================================
@@ -497,6 +555,25 @@ export default async function HomePage({
         </div>
       </section>
 
+      {/* ============ مسارات الزائر ============ */}
+      <section className="container-page py-14 md:py-16">
+        <div className="mb-9 text-center">
+          <h2
+            className="section-title mb-2"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🧭 {ui.pathsTitle}
+          </h2>
+          <p className="section-subtitle mx-auto max-w-2xl">{ui.pathsSubtitle}</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {LEARNING_PATHS.map((path) => (
+            <PathCard key={path.href} item={path} lang={l} />
+          ))}
+        </div>
+      </section>
+
       {/* ============ قسم تعلّم ============ */}
       <section className="container-page py-16 md:py-20">
         <div className="mb-10 text-center">
@@ -785,6 +862,33 @@ function SectionCard({
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
       </div>
+    </Link>
+  );
+}
+
+function PathCard({ item, lang }: { item: LearningPath; lang: Lang }) {
+  const isRTL = lang === "ar";
+
+  return (
+    <Link
+      href={`/${lang}${item.href}`}
+      className="card card-interactive group flex h-full flex-col p-5 transition-all duration-300 hover:-translate-y-1 hover:border-primary-200 dark:hover:border-primary-700"
+    >
+      <span
+        aria-hidden="true"
+        className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-50 text-2xl dark:bg-primary-900/40"
+      >
+        {item.icon}
+      </span>
+      <h3
+        className="mb-2 text-lg font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300"
+        style={{ fontFamily: "var(--font-amiri)" }}
+      >
+        {isRTL ? item.title.ar : item.title.en}
+      </h3>
+      <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+        {isRTL ? item.desc.ar : item.desc.en}
+      </p>
     </Link>
   );
 }

@@ -37,11 +37,11 @@ export default async function LearnContentPage({ params }: PageProps) {
   return (
     <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-50 dark:bg-gray-900">
       {/* شريط علوي */}
-      <div className="bg-emerald-900 text-white py-4 px-4">
+      <div className="bg-primary-900 text-white py-4 px-4">
         <div className="max-w-4xl mx-auto">
           <Link
             href={`/${lang}/learn`}
-            className="text-emerald-300 hover:text-white text-sm transition-colors"
+            className="text-primary-300 hover:text-white text-sm transition-colors"
           >
             → العودة إلى المكتبة
           </Link>
@@ -51,7 +51,7 @@ export default async function LearnContentPage({ params }: PageProps) {
       <article className="max-w-4xl mx-auto px-4 py-10">
         {/* العنوان */}
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-emerald-950 dark:text-white mb-4 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-primary-950 dark:text-white mb-4 leading-tight">
             {t.title}
           </h1>
 
@@ -78,7 +78,7 @@ export default async function LearnContentPage({ params }: PageProps) {
             {content.terms.map((term: any) => (
               <span
                 key={term.id}
-                className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300"
+                className="px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
               >
                 {term.icon} {term.name}
               </span>
@@ -88,7 +88,7 @@ export default async function LearnContentPage({ params }: PageProps) {
 
         {/* المحتوى */}
         <div
-          className="prose prose-emerald max-w-none dark:prose-invert prose-headings:text-emerald-950 dark:prose-headings:text-white"
+          className="prose prose-cyan max-w-none dark:prose-invert prose-headings:text-primary-950 dark:prose-headings:text-white"
           dangerouslySetInnerHTML={{ __html: t.body ?? '' }}
         />
 

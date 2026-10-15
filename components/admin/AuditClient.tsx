@@ -57,11 +57,11 @@ export default function AuditClient() {
         <div className="divide-y divide-stone-100 dark:divide-gray-700">
           {logs.map((log) => (
             <div key={log.id} className="p-4 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-lg shrink-0">
+              <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-lg shrink-0">
                 {ACTION_LABELS[log.action]?.split(' ')[0] ?? '📝'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-emerald-950 dark:text-white">
+                <p className="text-sm font-medium text-primary-950 dark:text-white">
                   {ACTION_LABELS[log.action] ?? log.action}
                   <span className="text-stone-400 font-normal"> في </span>
                   <code className="text-xs bg-stone-100 dark:bg-gray-700 px-1.5 py-0.5 rounded">{log.table_name}</code>
@@ -72,7 +72,7 @@ export default function AuditClient() {
                 </p>
                 {log.new_data && Object.keys(log.new_data).length > 0 && (
                   <details className="mt-2">
-                    <summary className="text-xs text-emerald-700 dark:text-emerald-400 cursor-pointer">
+                    <summary className="text-xs text-primary-700 dark:text-primary-400 cursor-pointer">
                       عرض التفاصيل
                     </summary>
                     <pre className="mt-1 text-xs bg-stone-50 dark:bg-gray-900 rounded p-2 overflow-x-auto text-stone-600 dark:text-gray-300">

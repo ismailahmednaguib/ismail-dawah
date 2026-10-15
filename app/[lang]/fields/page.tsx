@@ -139,7 +139,7 @@ const FIELDS: Field[] = [
       en: "Practical Islamic rulings in worship, transactions, and personal status.",
     },
     slug: "fiqh",
-    color: "from-emerald-500 to-emerald-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     id: "tafsir",
@@ -150,7 +150,7 @@ const FIELDS: Field[] = [
       en: "Interpretation of the Quran, explaining its meanings, rulings, and lessons.",
     },
     slug: "tafsir",
-    color: "from-green-500 to-green-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     id: "hadith",
@@ -172,7 +172,7 @@ const FIELDS: Field[] = [
       en: "The life of the Prophet ﷺ from birth to his passing.",
     },
     slug: "seerah",
-    color: "from-teal-500 to-teal-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     id: "dawah",
@@ -260,7 +260,7 @@ const FIELDS: Field[] = [
       en: "Quranic sciences including reasons for revelation, abrogation, and clear/ambiguous verses.",
     },
     slug: "quran-sciences",
-    color: "from-emerald-500 to-teal-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     id: "comparison",

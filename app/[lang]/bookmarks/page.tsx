@@ -153,12 +153,12 @@ const UI: Record<Lang, UILang> = {
 
 const CATEGORY_CONFIG: Record<string, { ar: string; en: string; icon: string; color: string }> = {
   all: { ar: "الكل", en: "All", icon: "📚", color: "from-slate-500 to-slate-600" },
-  quran: { ar: "قرآن", en: "Quran", icon: "📖", color: "from-green-500 to-green-600" },
+  quran: { ar: "قرآن", en: "Quran", icon: "📖", color: "from-primary-500 to-primary-600" },
   adhkar: { ar: "أذكار", en: "Adhkar", icon: "🤲", color: "from-primary-500 to-primary-600" },
   fatwa: { ar: "فتاوى", en: "Fatwas", icon: "⚖️", color: "from-blue-500 to-blue-600" },
   articles: { ar: "مقالات", en: "Articles", icon: "✍️", color: "from-amber-500 to-amber-600" },
   stories: { ar: "قصص", en: "Stories", icon: "📜", color: "from-purple-500 to-purple-600" },
-  guides: { ar: "أدلة", en: "Guides", icon: "🗺️", color: "from-teal-500 to-teal-600" },
+  guides: { ar: "أدلة", en: "Guides", icon: "🗺️", color: "from-primary-500 to-primary-600" },
   other: { ar: "أخرى", en: "Other", icon: "📌", color: "from-gray-500 to-gray-600" },
 };
 

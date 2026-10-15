@@ -104,9 +104,9 @@ const PAGE_SIZE = 6;
 const CATEGORIES: Category[] = [
   { id: "all", ar: "كل المقالات", en: "All Articles", icon: "📚", color: "from-slate-500 to-slate-600" },
   { id: "dawah", ar: "الدعوة", en: "Dawah", icon: "🤝", color: "from-primary-500 to-primary-600" },
-  { id: "quran", ar: "القرآن", en: "Quran", icon: "📖", color: "from-green-500 to-green-600" },
+  { id: "quran", ar: "القرآن", en: "Quran", icon: "📖", color: "from-primary-500 to-primary-600" },
   { id: "fiqh", ar: "الفقه", en: "Fiqh", icon: "⚖️", color: "from-blue-500 to-blue-600" },
-  { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "🌿", color: "from-emerald-500 to-emerald-600" },
+  { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "🌿", color: "from-primary-500 to-primary-600" },
   { id: "stories", ar: "القصص", en: "Stories", icon: "📜", color: "from-amber-500 to-amber-600" },
   { id: "family", ar: "الأسرة", en: "Family", icon: "🏡", color: "from-rose-500 to-rose-600" },
 ];

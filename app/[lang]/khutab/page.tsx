@@ -162,7 +162,7 @@ const KHUTAB: Khutbah[] = [
     id: "taqwa",
     category: { ar: "أخلاق", en: "Ethics" },
     categoryIcon: "🌿",
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
     icon: "🌿",
     title: { ar: "التقوى: وصية الله للأولين والآخرين", en: "Taqwa: Allah's Counsel to All Generations" },
     intro: {

@@ -53,7 +53,7 @@ export default function ReferenceDisplay({ references }: { references: Reference
               <div className="flex items-start gap-3">
                 <span className="text-xl">📖</span>
                 <div>
-                  <p className="font-bold text-emerald-900 dark:text-emerald-300">
+                  <p className="font-bold text-primary-900 dark:text-primary-300">
                     القرآن الكريم
                   </p>
                   <p className="text-sm text-stone-600 dark:text-gray-400">
@@ -70,7 +70,7 @@ export default function ReferenceDisplay({ references }: { references: Reference
               <div className="flex items-start gap-3">
                 <span className="text-xl">💬</span>
                 <div className="flex-1">
-                  <p className="font-bold text-emerald-900 dark:text-emerald-300">
+                  <p className="font-bold text-primary-900 dark:text-primary-300">
                     {ref.hadith_book ?? 'حديث'}
                     {ref.hadith_number && ` (${ref.hadith_number})`}
                   </p>
@@ -93,7 +93,7 @@ export default function ReferenceDisplay({ references }: { references: Reference
               <div className="flex items-start gap-3">
                 <span className="text-xl">📕</span>
                 <div>
-                  <p className="font-bold text-emerald-900 dark:text-emerald-300">
+                  <p className="font-bold text-primary-900 dark:text-primary-300">
                     {ref.scholar_name ?? ref.book_title ?? 'مرجع'}
                   </p>
                   {ref.book_title && ref.scholar_name && (

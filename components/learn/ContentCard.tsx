@@ -3,11 +3,11 @@ import Link from 'next/link';
 
 const TYPE_CONFIG: Record<string, { icon: string; label: string; color: string }> = {
   article:   { icon: '📰', label: 'مقال',    color: 'bg-blue-100 text-blue-800' },
-  lesson:    { icon: '📖', label: 'درس',     color: 'bg-emerald-100 text-emerald-800' },
+  lesson:    { icon: '📖', label: 'درس',     color: 'bg-primary-100 text-primary-800' },
   course:    { icon: '🎓', label: 'دورة',    color: 'bg-purple-100 text-purple-800' },
   book:      { icon: '📚', label: 'كتاب',    color: 'bg-amber-100 text-amber-800' },
   fatwa:     { icon: '⚖️', label: 'فتوى',    color: 'bg-red-100 text-red-800' },
-  khutbah:   { icon: '🕌', label: 'خطبة',    color: 'bg-teal-100 text-teal-800' },
+  khutbah:   { icon: '🕌', label: 'خطبة',    color: 'bg-primary-100 text-primary-800' },
   audio:     { icon: '🎧', label: 'صوت',     color: 'bg-indigo-100 text-indigo-800' },
   video:     { icon: '🎬', label: 'فيديو',   color: 'bg-rose-100 text-rose-800' },
   hadith:    { icon: '💬', label: 'حديث',    color: 'bg-green-100 text-green-800' },
@@ -60,7 +60,7 @@ export default function ContentCard({
         </div>
 
         {/* العنوان */}
-        <h3 className="text-lg font-bold text-emerald-950 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors line-clamp-2 mb-2">
+        <h3 className="text-lg font-bold text-primary-950 dark:text-white group-hover:text-primary-700 dark:group-hover:text-primary-400 transition-colors line-clamp-2 mb-2">
           {title}
         </h3>
 
@@ -72,7 +72,7 @@ export default function ContentCard({
         )}
 
         {/* سهم القراءة */}
-        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-emerald-700 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary-700 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
           <span>اقرأ المزيد</span>
           <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />

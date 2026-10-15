@@ -692,7 +692,7 @@ export default function MemorizationPlan({
           aria-live="polite"
           className={`mb-5 rounded-xl px-4 py-3 text-sm font-semibold ${
             message.type === "success"
-              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/25 dark:text-emerald-300"
+              ? "bg-primary-50 text-primary-700 dark:bg-primary-950/25 dark:text-primary-300"
               : "bg-red-50 text-red-700 dark:bg-red-950/25 dark:text-red-300"
           }`}
         >
@@ -715,7 +715,7 @@ export default function MemorizationPlan({
           <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
             {ui.totalProgress}
           </p>
-          <p className="mt-1 text-2xl font-black text-emerald-700 dark:text-emerald-300">
+          <p className="mt-1 text-2xl font-black text-primary-700 dark:text-primary-300">
             {totalPercent.toFixed(1)}%
           </p>
         </div>
@@ -801,7 +801,7 @@ export default function MemorizationPlan({
 
         <div className="mb-2 h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-night-700">
           <div
-            className="h-3 rounded-full bg-gradient-to-r from-cyan-600 to-emerald-500 transition-all"
+            className="h-3 rounded-full bg-gradient-to-r from-cyan-600 to-primary-500 transition-all"
             style={{ width: `${Math.min(100, surahPercent)}%` }}
           />
         </div>
@@ -856,7 +856,7 @@ export default function MemorizationPlan({
           <button
             type="button"
             onClick={() => addToSurah(10)}
-            className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-emerald-700"
+            className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
           >
             {ui.addTen}
           </button>

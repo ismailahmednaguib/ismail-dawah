@@ -191,9 +191,9 @@ export function LiveCountdown({
     return (
       <section
         dir={isRTL ? "rtl" : "ltr"}
-        className={`rounded-2xl border border-emerald-200 bg-emerald-50/80 p-5 text-center shadow-sm backdrop-blur dark:border-emerald-900/40 dark:bg-emerald-950/20 ${className}`}
+        className={`rounded-2xl border border-primary-200 bg-primary-50/80 p-5 text-center shadow-sm backdrop-blur dark:border-primary-900/40 dark:bg-primary-950/20 ${className}`}
       >
-        <p className="text-lg font-black text-emerald-700 dark:text-emerald-300">
+        <p className="text-lg font-black text-primary-700 dark:text-primary-300">
           {liveText ?? defaultLive}
         </p>
       </section>

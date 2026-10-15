@@ -107,7 +107,7 @@ export default function TranslationEditor({
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-emerald-600 border-t-transparent mx-auto mb-3" />
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-600 border-t-transparent mx-auto mb-3" />
           <p className="text-stone-500">جارٍ التحميل...</p>
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function TranslationEditor({
         {/* الرأس */}
         <div className="p-5 border-b border-stone-200 dark:border-gray-700 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-emerald-950 dark:text-gold">
+            <h2 className="text-lg font-bold text-primary-950 dark:text-gold">
               {langInfo?.flag} ترجمة إلى {langInfo?.nativeName}
             </h2>
             <p className="text-sm text-stone-500 dark:text-gray-400 mt-1">
@@ -140,7 +140,7 @@ export default function TranslationEditor({
           {/* العمود الأيمن: الأصل */}
           <div className="space-y-4">
             <h3 className="font-bold text-stone-700 dark:text-gray-300 flex items-center gap-2">
-              <span className="w-2 h-2 bg-emerald-600 rounded-full" />
+              <span className="w-2 h-2 bg-primary-600 rounded-full" />
               النص الأصلي (العربية)
             </h3>
 
@@ -185,7 +185,7 @@ export default function TranslationEditor({
                   value={translation.slug ?? ''}
                   onChange={(e) => updateField('slug', e.target.value)}
                   dir="ltr"
-                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm font-mono bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:outline-none"
                   placeholder="article-title-en"
                 />
               </div>
@@ -198,7 +198,7 @@ export default function TranslationEditor({
                   value={translation.title ?? ''}
                   onChange={(e) => updateField('title', e.target.value)}
                   dir={langInfo?.dir}
-                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:outline-none"
                   placeholder="Title in target language"
                 />
               </div>
@@ -212,7 +212,7 @@ export default function TranslationEditor({
                   onChange={(e) => updateField('summary', e.target.value)}
                   dir={langInfo?.dir}
                   rows={2}
-                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:outline-none"
                 />
               </div>
 
@@ -225,7 +225,7 @@ export default function TranslationEditor({
                   onChange={(e) => updateField('body', e.target.value)}
                   dir={langInfo?.dir}
                   rows={12}
-                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono"
+                  className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary-500 focus:outline-none font-mono"
                 />
                 <p className="text-xs text-stone-400 mt-1">
                   💡 يمكنك كتابة HTML مباشرة
@@ -267,7 +267,7 @@ export default function TranslationEditor({
             <button
               onClick={() => handleSave(true)}
               disabled={saving || !translation.title}
-              className="px-4 py-2 bg-emerald-700 text-white rounded-lg text-sm font-medium hover:bg-emerald-800 transition disabled:opacity-50"
+              className="px-4 py-2 bg-primary-700 text-white rounded-lg text-sm font-medium hover:bg-primary-800 transition disabled:opacity-50"
             >
               ✅ حفظ + اعتماد الترجمة
             </button>

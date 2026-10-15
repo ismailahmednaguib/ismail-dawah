@@ -98,7 +98,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
           onClick={() => setFilter('all')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
             filter === 'all'
-              ? 'bg-emerald-700 text-white'
+              ? 'bg-primary-700 text-white'
               : 'bg-white dark:bg-gray-800 text-stone-600 dark:text-gray-300 border border-stone-200 dark:border-gray-700'
           }`}
         >
@@ -145,7 +145,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                       {item.status === 'pending' ? '⏳ في الانتظار' : item.status === 'approved' ? '✅ تمت الموافقة' : '🔄 يحتاج تعديلات'}
                     </span>
                   </div>
-                  <h3 className="font-bold text-emerald-950 dark:text-white">
+                  <h3 className="font-bold text-primary-950 dark:text-white">
                     {item.content_title ?? '(بدون عنوان)'}
                   </h3>
                   <p className="text-xs text-stone-500 dark:text-gray-400 mt-1">
@@ -165,7 +165,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                     <button
                       onClick={() => setNotesDialog({ show: true, itemId: item.id, action: 'approve' })}
                       disabled={actionLoading === item.id}
-                      className="bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-800 transition disabled:opacity-50"
+                      className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-800 transition disabled:opacity-50"
                     >
                       ✅ موافقة
                     </button>
@@ -188,7 +188,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
       {notesDialog.show && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full shadow-2xl">
-            <h3 className="text-lg font-bold text-emerald-950 dark:text-gold mb-3">
+            <h3 className="text-lg font-bold text-primary-950 dark:text-gold mb-3">
               {notesDialog.action === 'approve' ? '✅ الموافقة على المحتوى' : '❌ طلب تعديلات'}
             </h3>
             <textarea
@@ -196,7 +196,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
               onChange={(e) => setNotes(e.target.value)}
               rows={4}
               placeholder={notesDialog.action === 'approve' ? 'ملاحظات المراجع (اختياري)...' : 'اشرح التعديلات المطلوبة...'}
-              className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-stone-800 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+              className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-stone-800 dark:text-white focus:ring-2 focus:ring-primary-500 focus:outline-none"
             />
             <div className="flex gap-3 justify-end mt-4">
               <button
@@ -211,7 +211,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                   if (item) doAction(item.id, item.content_id, notesDialog.action, notes);
                 }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium text-white ${
-                  notesDialog.action === 'approve' ? 'bg-emerald-700 hover:bg-emerald-800' : 'bg-red-500 hover:bg-red-600'
+                  notesDialog.action === 'approve' ? 'bg-primary-700 hover:bg-primary-800' : 'bg-red-500 hover:bg-red-600'
                 }`}
               >
                 تأكيد

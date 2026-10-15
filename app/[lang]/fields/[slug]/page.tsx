@@ -80,7 +80,7 @@ const FIELDS: Field[] = [
     id: "fiqh",
     slug: "fiqh",
     icon: "⚖️",
-    color: "from-emerald-500 to-emerald-600",
+    color: "from-primary-500 to-primary-600",
     title: { ar: "الفقه", en: "Jurisprudence (Fiqh)" },
     subtitle: { ar: "الأحكام الشرعية العملية", en: "Practical Islamic Rulings" },
     description: {
@@ -110,7 +110,7 @@ const FIELDS: Field[] = [
     id: "tafsir",
     slug: "tafsir",
     icon: "📖",
-    color: "from-green-500 to-green-600",
+    color: "from-primary-500 to-primary-600",
     title: { ar: "التفسير", en: "Exegesis (Tafsir)" },
     subtitle: { ar: "فهم معاني القرآن الكريم", en: "Understanding the Meanings of the Quran" },
     description: {
@@ -170,7 +170,7 @@ const FIELDS: Field[] = [
     id: "seerah",
     slug: "seerah",
     icon: "🌙",
-    color: "from-teal-500 to-teal-600",
+    color: "from-primary-500 to-primary-600",
     title: { ar: "السيرة النبوية", en: "Prophetic Biography" },
     subtitle: { ar: "حياة خير البشر ﷺ", en: "The Life of the Best of Creation ﷺ" },
     description: {
@@ -410,7 +410,7 @@ const FIELDS: Field[] = [
     id: "quran-sciences",
     slug: "quran-sciences",
     icon: "📚",
-    color: "from-emerald-500 to-teal-600",
+    color: "from-primary-500 to-primary-600",
     title: { ar: "علوم القرآن", en: "Quranic Sciences" },
     subtitle: { ar: "العلوم المتعلقة بالقرآن الكريم", en: "Sciences Related to the Noble Quran" },
     description: {

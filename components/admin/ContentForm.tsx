@@ -126,7 +126,7 @@ export default function ContentForm() {
               onClick={() => setContentType(t.value)}
               className={`p-3 rounded-lg border text-center text-sm transition-colors ${
                 contentType === t.value
-                  ? 'border-emerald-600 bg-emerald-50 text-emerald-800'
+                  ? 'border-primary-600 bg-primary-50 text-primary-800'
                   : 'border-stone-200 hover:border-stone-300'
               }`}
             >
@@ -147,7 +147,7 @@ export default function ContentForm() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
@@ -172,7 +172,7 @@ export default function ContentForm() {
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
             rows={2}
-            className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
@@ -184,7 +184,7 @@ export default function ContentForm() {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             rows={12}
-            className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           <p className="text-xs text-stone-400 mt-1">
             💡 لاحقًا سنضيف محرر نصوص غني (TipTap) مع دعم RTL كامل
@@ -206,7 +206,7 @@ export default function ContentForm() {
                 onClick={() => setAudience(toggle(audience, a.value))}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   audience.includes(a.value)
-                    ? 'bg-emerald-600 text-white border-emerald-600'
+                    ? 'bg-primary-600 text-white border-primary-600'
                     : 'border-stone-300 text-stone-600'
                 }`}
               >
@@ -293,7 +293,7 @@ export default function ContentForm() {
         <button
           type="submit"
           disabled={saving}
-          className="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
+          className="bg-primary-700 hover:bg-primary-800 text-white px-6 py-2.5 rounded-lg font-medium transition-colors disabled:opacity-50"
         >
           {saving ? 'جارٍ الحفظ...' : '💾 حفظ كمسودة'}
         </button>

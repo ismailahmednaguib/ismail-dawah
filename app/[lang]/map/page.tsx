@@ -388,7 +388,7 @@ export default function MapPage() {
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
-        <div className="card relative mb-8 overflow-hidden border-2 border-teal-200 bg-gradient-to-br from-teal-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-teal-800 dark:from-teal-950/30 dark:via-gray-900 dark:to-primary-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">

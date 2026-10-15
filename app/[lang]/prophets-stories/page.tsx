@@ -45,7 +45,7 @@ const PROPHETS: Prophet[] = [
     id: "adam",
     icon: "🌍",
     order: 1,
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
     tags: {
       ar: ["الخلق", "التوبة", "أبو البشر", "العلم"],
       en: ["Creation", "Repentance", "Father of Humanity", "Knowledge"],

@@ -75,7 +75,7 @@ export default function ContentListClient() {
             setPage(1);
           }}
           placeholder="🔍 ابحث بالعنوان..."
-          className="flex-1 min-w-[200px] border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="flex-1 min-w-[200px] border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <select
           value={typeFilter}
@@ -126,7 +126,7 @@ export default function ContentListClient() {
                   key={item.id}
                   className="border-b border-stone-100 hover:bg-stone-50"
                 >
-                  <td className="px-4 py-3 font-medium text-emerald-950">
+                  <td className="px-4 py-3 font-medium text-primary-950">
                     {item.title ?? '(بدون عنوان)'}
                   </td>
                   <td className="px-4 py-3 text-stone-600">
@@ -142,7 +142,7 @@ export default function ContentListClient() {
                   <td className="px-4 py-3">
                     <a
                       href={`/admin/content/${item.id}`}
-                      className="text-emerald-700 hover:underline text-xs"
+                      className="text-primary-700 hover:underline text-xs"
                     >
                       تعديل
                     </a>

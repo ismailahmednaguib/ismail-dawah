@@ -41,17 +41,17 @@ export default function AdminSidebar({
   const role = highestRole(roles);
 
   return (
-    <aside className="w-64 bg-emerald-950 text-white flex flex-col shrink-0">
+    <aside className="w-64 bg-primary-950 text-white flex flex-col shrink-0">
       {/* الرأس */}
-      <div className="p-5 border-b border-emerald-800">
+      <div className="p-5 border-b border-primary-800">
         <h1 className="font-bold text-lg text-amber-300">
           أكاديمية إسماعيل
         </h1>
-        <p className="text-xs text-emerald-200 mt-1">لوحة التحكم</p>
+        <p className="text-xs text-primary-200 mt-1">لوحة التحكم</p>
       </div>
 
       {/* معلومات المستخدم */}
-      <div className="px-5 py-4 border-b border-emerald-800">
+      <div className="px-5 py-4 border-b border-primary-800">
         <p className="text-sm font-medium">{userName}</p>
         <span className="inline-block mt-1 text-xs bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">
           {ROLE_LABELS[role]}
@@ -66,7 +66,7 @@ export default function AdminSidebar({
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-emerald-100 hover:bg-emerald-800 transition-colors text-sm"
+              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-100 hover:bg-primary-800 transition-colors text-sm"
             >
               <span>{item.icon}</span>
               <span>{item.label}</span>
@@ -75,14 +75,14 @@ export default function AdminSidebar({
       </nav>
 
       {/* خروج */}
-      <div className="p-3 border-t border-emerald-800">
+      <div className="p-3 border-t border-primary-800">
         <button
           onClick={() => {
             void fetch('/api/admin/logout', { method: 'POST' }).finally(() => {
               router.push('/admin/login');
             });
           }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-emerald-100 hover:bg-red-900/50 transition-colors text-sm"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary-100 hover:bg-red-900/50 transition-colors text-sm"
         >
           <span>🚪</span>
           <span>تسجيل الخروج</span>

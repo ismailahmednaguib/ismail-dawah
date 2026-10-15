@@ -56,7 +56,7 @@ export default function ContentEditClient({ content }: { content: EditableConten
       <div className="bg-white rounded-xl border border-stone-200 p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-emerald-950">
+            <h2 className="text-lg font-bold text-primary-950">
               {translation?.title ?? '(بدون عنوان)'}
             </h2>
             <p className="text-sm text-stone-500 mt-1" dir="ltr">
@@ -72,7 +72,7 @@ export default function ContentEditClient({ content }: { content: EditableConten
             <button
               onClick={() => changeStatus('published')}
               disabled={loading}
-              className="bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+              className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
             >
               ✅ نشر
             </button>
@@ -90,7 +90,7 @@ export default function ContentEditClient({ content }: { content: EditableConten
             <button
               onClick={() => changeStatus('published')}
               disabled={loading}
-              className="bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+              className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
             >
               ✅ إعادة النشر
             </button>
@@ -120,7 +120,7 @@ export default function ContentEditClient({ content }: { content: EditableConten
                     : ref.hadith_book ?? ref.book_title ?? ref.scholar_name}
                 </span>
                 {ref.verified && (
-                  <span className="text-emerald-600 text-xs">✓ موثق</span>
+                  <span className="text-primary-600 text-xs">✓ موثق</span>
                 )}
               </li>
             ))}
@@ -130,7 +130,7 @@ export default function ContentEditClient({ content }: { content: EditableConten
 
       <Link
         href="/admin/content"
-        className="inline-block text-sm text-emerald-700 hover:underline"
+        className="inline-block text-sm text-primary-700 hover:underline"
       >
         → العودة إلى قائمة المحتوى
       </Link>

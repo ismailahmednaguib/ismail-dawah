@@ -292,7 +292,7 @@ export default async function QuranMemorizationPage({
 
       <section className="container-page pt-10 md:pt-14">
         {/* ===== Hero محسّن ===== */}
-        <div className="card relative mb-8 overflow-hidden border-2 border-emerald-200 bg-gradient-to-br from-emerald-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-emerald-800 dark:from-emerald-950/30 dark:via-gray-900 dark:to-primary-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           {/* نمط زخرفي */}

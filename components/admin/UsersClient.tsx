@@ -18,7 +18,7 @@ const ROLE_OPTIONS = [
   { value: 'admin', label: 'مدير', color: 'bg-purple-100 text-purple-700' },
   { value: 'editor', label: 'محرر', color: 'bg-blue-100 text-blue-700' },
   { value: 'scholar_reviewer', label: 'مراجع علمي', color: 'bg-amber-100 text-amber-700' },
-  { value: 'translator', label: 'مترجم', color: 'bg-teal-100 text-teal-700' },
+  { value: 'translator', label: 'مترجم', color: 'bg-primary-100 text-primary-700' },
   { value: 'contributor', label: 'مساهم', color: 'bg-stone-100 text-stone-700' },
 ];
 
@@ -95,7 +95,7 @@ export default function UsersClient({ session }: { session: AdminSession }) {
             <div key={user.user_id} className="p-5">
               <div className="flex items-start justify-between flex-wrap gap-3">
                 <div>
-                  <h3 className="font-bold text-emerald-950 dark:text-white">
+                  <h3 className="font-bold text-primary-950 dark:text-white">
                     {user.full_name ?? user.email ?? user.user_id.slice(0, 8)}
                   </h3>
                   {user.email && <p className="text-sm text-stone-500 dark:text-gray-400">{user.email}</p>}
@@ -119,7 +119,7 @@ export default function UsersClient({ session }: { session: AdminSession }) {
                     checked={user.is_active}
                     onChange={(e) => toggleActive(user.user_id, e.target.checked)}
                     disabled={saving === user.user_id}
-                    className="w-4 h-4 accent-emerald-600"
+                    className="w-4 h-4 accent-primary-600"
                   />
                 </label>
               </div>
@@ -135,8 +135,8 @@ export default function UsersClient({ session }: { session: AdminSession }) {
                       disabled={saving === user.user_id}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                         user.roles.includes(role.value)
-                          ? 'bg-emerald-600 text-white border-emerald-600'
-                          : 'border-stone-300 dark:border-gray-600 text-stone-600 dark:text-gray-300 hover:border-emerald-500'
+                          ? 'bg-primary-600 text-white border-primary-600'
+                          : 'border-stone-300 dark:border-gray-600 text-stone-600 dark:text-gray-300 hover:border-primary-500'
                       }`}
                     >
                       {role.label}

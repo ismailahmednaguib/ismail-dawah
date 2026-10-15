@@ -3,54 +3,60 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useCallback } from 'react';
+import type { Lang } from '@/lib/i18n';
 
-const CONTENT_TYPES = [
-  { value: '', label: 'الكل' },
-  { value: 'article', label: '📰 مقالات' },
-  { value: 'lesson', label: '📖 دروس' },
-  { value: 'course', label: '🎓 دورات' },
-  { value: 'book', label: '📚 كتب' },
-  { value: 'fatwa', label: '⚖️ فتاوى' },
-  { value: 'khutbah', label: '🕌 خطب' },
-  { value: 'audio', label: '🎧 صوتيات' },
-  { value: 'video', label: '🎬 فيديو' },
-  { value: 'story', label: '📜 قصص' },
+type FilterOption = { value: string; ar: string; en: string };
+
+const CONTENT_TYPES: FilterOption[] = [
+  { value: '', ar: 'الكل', en: 'All' },
+  { value: 'article', ar: '📰 مقالات', en: '📰 Articles' },
+  { value: 'lesson', ar: '📖 دروس', en: '📖 Lessons' },
+  { value: 'course', ar: '🎓 دورات', en: '🎓 Courses' },
+  { value: 'book', ar: '📚 كتب', en: '📚 Books' },
+  { value: 'fatwa', ar: '⚖️ فتاوى', en: '⚖️ Fatwas' },
+  { value: 'khutbah', ar: '🕌 خطب', en: '🕌 Khutbahs' },
+  { value: 'audio', ar: '🎧 صوتيات', en: '🎧 Audio' },
+  { value: 'video', ar: '🎬 فيديو', en: '🎬 Video' },
+  { value: 'story', ar: '📜 قصص', en: '📜 Stories' },
 ];
 
-const AUDIENCES = [
-  { value: '', label: 'الكل' },
-  { value: 'muslim_general', label: 'المسلم العام' },
-  { value: 'muslim_new', label: 'المسلم الجديد' },
-  { value: 'non_muslim', label: 'غير المسلم' },
-  { value: 'student', label: 'طالب علم' },
-  { value: 'daee', label: 'داعية' },
+const AUDIENCES: FilterOption[] = [
+  { value: '', ar: 'الكل', en: 'All' },
+  { value: 'muslim_general', ar: 'المسلم العام', en: 'General Muslim' },
+  { value: 'muslim_new', ar: 'المسلم الجديد', en: 'New Muslim' },
+  { value: 'non_muslim', ar: 'غير المسلم', en: 'Non-Muslim' },
+  { value: 'student', ar: 'طالب علم', en: 'Knowledge Seeker' },
+  { value: 'daee', ar: 'داعية', en: 'Dawah Worker' },
+  { value: 'parent', ar: 'ولي أمر', en: 'Parent' },
+  { value: 'teacher', ar: 'معلم', en: 'Teacher' },
 ];
 
-const AGE_GROUPS = [
-  { value: '', label: 'الكل' },
-  { value: 'kids', label: '👶 أطفال' },
-  { value: 'teens', label: '🧑 مراهقون' },
-  { value: 'youth', label: '💪 شباب' },
-  { value: 'adults', label: '👔 بالغون' },
-  { value: 'seniors', label: '👴 كبار السن' },
+const AGE_GROUPS: FilterOption[] = [
+  { value: '', ar: 'الكل', en: 'All' },
+  { value: 'kids', ar: '👶 أطفال', en: '👶 Kids' },
+  { value: 'teens', ar: '🧑 مراهقون', en: '🧑 Teens' },
+  { value: 'youth', ar: '💪 شباب', en: '💪 Youth' },
+  { value: 'adults', ar: '👔 بالغون', en: '👔 Adults' },
+  { value: 'seniors', ar: '👴 كبار السن', en: '👴 Seniors' },
 ];
 
-const LEVELS = [
-  { value: '', label: 'الكل' },
-  { value: 'beginner', label: 'مبتدئ' },
-  { value: 'intermediate', label: 'متوسط' },
-  { value: 'advanced', label: 'متقدم' },
-  { value: 'specialized', label: 'متخصص' },
+const LEVELS: FilterOption[] = [
+  { value: '', ar: 'الكل', en: 'All' },
+  { value: 'beginner', ar: 'مبتدئ', en: 'Beginner' },
+  { value: 'intermediate', ar: 'متوسط', en: 'Intermediate' },
+  { value: 'advanced', ar: 'متقدم', en: 'Advanced' },
+  { value: 'specialized', ar: 'متخصص', en: 'Specialized' },
 ];
 
 interface FilterSelectProps {
   label: string;
   param: string;
-  options: { value: string; label: string }[];
+  options: FilterOption[];
   current: string;
+  lang: Lang;
 }
 
-function FilterSelect({ label, param, options, current }: FilterSelectProps) {
+function FilterSelect({ label, param, options, current, lang }: FilterSelectProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -68,17 +74,17 @@ function FilterSelect({ label, param, options, current }: FilterSelectProps) {
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-medium text-stone-500 dark:text-gray-400">
+      <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
         {label}
       </label>
       <select
         value={current}
         onChange={(e) => handleChange(e.target.value)}
-        className="border border-stone-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-stone-800 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+        className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-night-700 dark:bg-night-800 dark:text-white"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {lang === 'ar' ? opt.ar : opt.en}
           </option>
         ))}
       </select>
@@ -87,6 +93,7 @@ function FilterSelect({ label, param, options, current }: FilterSelectProps) {
 }
 
 export default function ContentFilters({ lang }: { lang: string }) {
+  const currentLang: Lang = lang === 'en' ? 'en' : 'ar';
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -118,7 +125,7 @@ export default function ContentFilters({ lang }: { lang: string }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 p-5 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-night-700 dark:bg-night-800">
       {/* البحث */}
       <div className="mb-4">
         <div className="relative">
@@ -126,14 +133,18 @@ export default function ContentFilters({ lang }: { lang: string }) {
             type="text"
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder="🔍 ابحث في المكتبة الإسلامية..."
-            className="w-full border border-stone-300 dark:border-gray-600 rounded-lg px-4 py-2.5 pr-10 text-sm bg-white dark:bg-gray-900 text-stone-800 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+            placeholder={
+              currentLang === 'ar'
+                ? '🔍 ابحث في المكتبة الإسلامية...'
+                : '🔍 Search the Islamic library...'
+            }
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pr-10 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-night-700 dark:bg-night-900 dark:text-white"
             dir={lang === 'ar' ? 'rtl' : 'ltr'}
           />
           {search && (
             <button
               onClick={() => handleSearch('')}
-              className="absolute top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 ltr:right-3 rtl:left-3"
+            className="absolute top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 ltr:right-3 rtl:left-3"
             >
               ✕
             </button>
@@ -143,10 +154,34 @@ export default function ContentFilters({ lang }: { lang: string }) {
 
       {/* الفلاتر */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <FilterSelect label="النوع" param="type" options={CONTENT_TYPES} current={type} />
-        <FilterSelect label="الجمهور" param="audience" options={AUDIENCES} current={audience} />
-        <FilterSelect label="الفئة العمرية" param="age" options={AGE_GROUPS} current={age} />
-        <FilterSelect label="المستوى" param="level" options={LEVELS} current={level} />
+        <FilterSelect
+          label={currentLang === 'ar' ? 'النوع' : 'Type'}
+          param="type"
+          options={CONTENT_TYPES}
+          current={type}
+          lang={currentLang}
+        />
+        <FilterSelect
+          label={currentLang === 'ar' ? 'الجمهور' : 'Audience'}
+          param="audience"
+          options={AUDIENCES}
+          current={audience}
+          lang={currentLang}
+        />
+        <FilterSelect
+          label={currentLang === 'ar' ? 'الفئة العمرية' : 'Age group'}
+          param="age"
+          options={AGE_GROUPS}
+          current={age}
+          lang={currentLang}
+        />
+        <FilterSelect
+          label={currentLang === 'ar' ? 'المستوى' : 'Level'}
+          param="level"
+          options={LEVELS}
+          current={level}
+          lang={currentLang}
+        />
       </div>
 
       {/* زر مسح الفلاتر */}
@@ -155,7 +190,7 @@ export default function ContentFilters({ lang }: { lang: string }) {
           onClick={clearAll}
           className="mt-3 text-sm text-red-500 hover:text-red-700 font-medium"
         >
-          ✕ مسح جميع الفلاتر
+          {currentLang === 'ar' ? '✕ مسح جميع الفلاتر' : '✕ Clear all filters'}
         </button>
       )}
     </div>

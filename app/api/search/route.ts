@@ -1,17 +1,29 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { isValidLang, type Lang } from '@/lib/i18n';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const q = searchParams.get('q')?.trim();
-  const lang = searchParams.get('lang') ?? 'ar';
+  const rawQuery = searchParams.get('q')?.trim() ?? '';
+  const q = rawQuery.replace(/[(),]/g, ' ').replace(/\s+/g, ' ').slice(0, 120).trim();
+  const requestedLang = searchParams.get('lang') ?? 'ar';
   const type = searchParams.get('type');
   const audience = searchParams.get('audience');
   const age = searchParams.get('age');
   const level = searchParams.get('level');
-  const page = Number(searchParams.get('page')) || 1;
-  const perPage = Number(searchParams.get('per_page')) || 20;
+  const pageValue = Number(searchParams.get('page'));
+  const perPageValue = Number(searchParams.get('per_page'));
+  const page = Number.isFinite(pageValue) ? Math.max(1, Math.floor(pageValue)) : 1;
+  const perPage = Number.isFinite(perPageValue)
+    ? Math.min(50, Math.max(1, Math.floor(perPageValue)))
+    : 20;
+
+  if (!isValidLang(requestedLang)) {
+    return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
+  }
+
+  const lang: Lang = requestedLang;
 
   if (!q || q.length < 2) {
     return NextResponse.json({
@@ -52,7 +64,7 @@ export async function GET(req: NextRequest) {
     .eq('content_translations.lang', lang)
     .or(`content_translations.title.ilike.%${q}%,content_translations.body_plain.ilike.%${q}%`);
 
-  if (type) query = query.eq('content_type', type);
+  if (type && type !== 'quran') query = query.eq('content_type', type);
   if (audience) query = query.contains('audience', [audience]);
   if (age) query = query.contains('age_groups', [age]);
   if (level) query = query.contains('levels', [level]);
@@ -79,7 +91,7 @@ export async function GET(req: NextRequest) {
       type: 'quran_verse',
       title: `سورة ${v.surah} - آية ${v.ayah_from}`,
       excerpt: v.text?.slice(0, 150),
-      url: `/quran/${v.surah}`,
+      url: `/${lang}/quran?surah=${v.surah}`,
     }));
   }
 

@@ -226,7 +226,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 2,
     icon: "🤲",
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
     title: { ar: "تكبيرة الإحرام", en: "Opening Takbir" },
     desc: {
       ar: "قف مستقبلاً القبلة، وارفع يديك حذو منكبيك، وكبّر قائلاً: الله أكبر.",
@@ -306,7 +306,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 7,
     icon: "🧎",
-    gradient: "from-teal-500 to-teal-700",
+    gradient: "from-primary-500 to-primary-700",
     title: { ar: "الجلسة بين السجدتين", en: "Sitting Between Two Prostrations" },
     desc: {
       ar: "ارفع من السجود واجلس مفترشاً، وقل: رب اغفر لي.",
@@ -523,7 +523,7 @@ export default async function PrayerGuidePage({
 
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
-        <div className="card relative mb-8 overflow-hidden border-2 border-teal-200 bg-gradient-to-br from-teal-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-teal-800 dark:from-teal-950/30 dark:via-gray-900 dark:to-primary-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
@@ -731,7 +731,7 @@ export default async function PrayerGuidePage({
 
           <div className="grid gap-5 md:grid-cols-2">
             {/* الشروط */}
-            <div className="card overflow-hidden border-e-4 border-emerald-500 p-6 rtl:border-e-0 rtl:border-s-4">
+            <div className="card overflow-hidden border-e-4 border-primary-500 p-6 rtl:border-e-0 rtl:border-s-4">
               <h3
                 className="mb-4 text-xl font-black text-primary-700 dark:text-gold-300"
                 style={{ fontFamily: "var(--font-amiri)" }}
@@ -742,7 +742,7 @@ export default async function PrayerGuidePage({
               <ul className="space-y-2">
                 {conditions.map((c, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-black text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-xs font-black text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
                       ✓
                     </span>
                     <span className="text-slate-700 dark:text-slate-200">

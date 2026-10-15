@@ -188,7 +188,7 @@ const FALLBACK_PROJECTS: Project[] = [
   {
     id: "mushaf-printing",
     icon: "📖",
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
     category: { ar: "نشر القرآن", en: "Quran Distribution" },
     title: {
       ar: "طباعة وتوزيع مصاحف",
@@ -283,7 +283,7 @@ async function fetchProjects(): Promise<Project[]> {
       gradient:
         p.gradient ||
         [
-          "from-emerald-500 to-emerald-700",
+          "from-primary-500 to-primary-700",
           "from-blue-500 to-blue-700",
           "from-purple-500 to-purple-700",
           "from-amber-500 to-amber-700",

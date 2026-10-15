@@ -232,7 +232,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "وَمَا خَلَقْتُ الْجِنَّ وَالْإِنسَ إِلَّا لِيَعْبُدُونِ",
     ayahSource: { ar: "سورة الذاريات — الآية 56", en: "Surah Adh-Dhariyat — Verse 56" },
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
   },
   {
     id: "bad-friends",
@@ -280,7 +280,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "وَمَن يُسْلِمْ وَجْهَهُ إِلَى اللَّهِ وَهُوَ مُحْسِنٌ فَقَدِ اسْتَمْسَكَ بِالْعُرْوَةِ الْوُثْقَىٰ",
     ayahSource: { ar: "سورة لقمان — الآية 22", en: "Surah Luqman — Verse 22" },
-    gradient: "from-teal-500 to-teal-700",
+    gradient: "from-primary-500 to-primary-700",
   },
 ];
 

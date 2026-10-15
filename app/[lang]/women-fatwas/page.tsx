@@ -313,7 +313,7 @@ const FATWAS: Fatwa[] = [
   {
     id: "work-permissibility",
     icon: "💼",
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
     category: { ar: "العمل", en: "Work" },
     q: {
       ar: "هل يجوز للمرأة أن تعمل؟",
@@ -329,7 +329,7 @@ const FATWAS: Fatwa[] = [
   {
     id: "work-travel-mahram",
     icon: "✈️",
-    gradient: "from-emerald-500 to-emerald-700",
+    gradient: "from-primary-500 to-primary-700",
     category: { ar: "العمل", en: "Work" },
     q: {
       ar: "هل يجوز للمرأة أن تسافر بلا محرم؟",
@@ -716,8 +716,8 @@ export default function WomenFatwasPage() {
 
                       {/* الدليل النبوي */}
                       {f.hadith && (
-                        <div className="rounded-2xl border-r-4 border-emerald-500 bg-emerald-50 p-4 dark:border-emerald-400 dark:bg-emerald-950/20 rtl:border-l-4 rtl:border-r-0">
-                          <p className="mb-1 text-xs font-black text-emerald-700 dark:text-emerald-300">
+                        <div className="rounded-2xl border-r-4 border-primary-500 bg-primary-50 p-4 dark:border-primary-400 dark:bg-primary-950/20 rtl:border-l-4 rtl:border-r-0">
+                          <p className="mb-1 text-xs font-black text-primary-700 dark:text-primary-300">
                             🌙 {ui.hadith}
                           </p>
                           <p
@@ -728,7 +728,7 @@ export default function WomenFatwasPage() {
                             «{f.hadith}»
                           </p>
                           {f.hadithSource && (
-                            <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-400">
+                            <p className="mt-1 text-xs text-primary-600 dark:text-primary-400">
                               📜 {f.hadithSource[L]}
                             </p>
                           )}
