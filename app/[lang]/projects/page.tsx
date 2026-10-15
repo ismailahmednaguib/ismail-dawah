@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import { getPublicList, type PublicItem } from "@/lib/learn/public";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -181,142 +182,38 @@ const UI: Record<string, UILang> = {
 };
 
 // ============================================================
-// بيانات المشاريع الاحتياطية
+// مصدر البيانات: واجهة المكتبة العامة (CMS)
 // ============================================================
 
-const FALLBACK_PROJECTS: Project[] = [
-  {
-    id: "mushaf-printing",
-    icon: "📖",
-    gradient: "from-primary-500 to-primary-700",
-    category: { ar: "نشر القرآن", en: "Quran Distribution" },
-    title: {
-      ar: "طباعة وتوزيع مصاحف",
-      en: "Printing and Distributing Mushafs",
-    },
-    desc: {
-      ar: "مشروع لطباعة مصاحف عالية الجودة وتوزيعها على المساجد والمدارس والمسلمين الجدد في المناطق المحتاجة. كل مصحف يُوزع هو صدقة جارية تُقرأ فيه آيات الله.",
-      en: "A project to print high-quality mushafs and distribute them to mosques, schools, and new Muslims in needy areas. Every distributed mushaf is ongoing charity where Allah's verses are recited.",
-    },
-    goal: { ar: "1000 مصحف", en: "1,000 Mushafs" },
-    raised: { ar: "650 مصحف", en: "650 Mushafs" },
-    progress: 65,
-  },
-  {
-    id: "students-support",
-    icon: "🎓",
-    gradient: "from-primary-500 to-primary-700",
-    category: { ar: "دعم طلاب العلم", en: "Supporting Students" },
-    title: {
-      ar: "كفالة طلاب العلم الشرعي",
-      en: "Sponsoring Islamic Knowledge Students",
-    },
-    desc: {
-      ar: "دعم طلاب العلم المتفرغين لطلب العلم الشرعي، وتوفير الكتب والمراجع والرسوم الدراسية لهم، ليصبحوا دعاة وعلماء يخدمون الأمة.",
-      en: "Supporting dedicated students of Islamic knowledge, providing books, references, and tuition for them to become da'ees and scholars serving the Ummah.",
-    },
-    goal: { ar: "50 طالباً", en: "50 Students" },
-    raised: { ar: "32 طالباً", en: "32 Students" },
-    progress: 64,
-  },
-  {
-    id: "mosque-construction",
-    icon: "🕌",
-    gradient: "from-amber-500 to-amber-700",
-    category: { ar: "بناء المساجد", en: "Mosque Construction" },
-    title: {
-      ar: "المساهمة في بناء مسجد",
-      en: "Contributing to Mosque Construction",
-    },
-    desc: {
-      ar: "المساهمة في بناء مسجد جديد في منطقة نائية يحتاج أهلها إلى مكان للعبادة وتعليم العلم الشرعي. من بنى مسجداً لله بنى الله له بيتاً في الجنة.",
-      en: "Contributing to building a new mosque in a remote area whose people need a place for worship and learning Islamic knowledge. Whoever builds a mosque for Allah, Allah builds for him a house in Paradise.",
-    },
-    goal: { ar: "مسجد واحد", en: "1 Mosque" },
-    raised: { ar: "45%", en: "45%" },
-    progress: 45,
-  },
-  {
-    id: "dawah-materials",
-    icon: "📢",
-    gradient: "from-purple-500 to-purple-700",
-    category: { ar: "إنتاج دعوي", en: "Dawah Production" },
-    title: {
-      ar: "إنتاج محتوى دعوي رقمي",
-      en: "Digital Dawah Content Production",
-    },
-    desc: {
-      ar: "إنتاج مقاطع فيديو ومقالات وكتب إلكترونية بلغات متعددة لنشر الإسلام والرد على الشبهات، ووصل المحتوى للمسلمين الجدد والباحثين عن الحق.",
-      en: "Producing videos, articles, and e-books in multiple languages to spread Islam, respond to doubts, and reach new Muslims and truth seekers.",
-    },
-    goal: { ar: "100 مادة", en: "100 Materials" },
-    raised: { ar: "78 مادة", en: "78 Materials" },
-    progress: 78,
-  },
+// نصوص حرفية حتى يلتقطها Tailwind عند البناء.
+const GRADIENTS = [
+  "from-primary-500 to-primary-700",
+  "from-primary-500 to-primary-700",
+  "from-purple-500 to-purple-700",
+  "from-amber-500 to-amber-700",
+  "from-rose-500 to-rose-700",
+  "from-indigo-500 to-indigo-700",
 ];
 
-// ============================================================
-// دالة جلب المشاريع
-// ============================================================
+// يحوّل عنصر CMS إلى شكل المشروع الذي يتوقعه التصميم الحالي.
+function toProject(item: PublicItem, index: number): Project {
+  const term =
+    item.terms.find((t) => t.kind === "category") || item.terms[0] || null;
 
-async function fetchProjects(): Promise<Project[]> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/content`, {
-      cache: "no-store",
-      next: { revalidate: 300 }, // إعادة التحقق كل 5 دقائق
-    });
+  const name = term?.name?.trim() || "";
+  const title = item.title?.trim() || "";
+  const desc = item.summary?.trim() || item.body?.trim() || "";
 
-    if (!res.ok) return FALLBACK_PROJECTS;
-
-    const json = await res.json();
-    const apiProjects = json?.content?.projects;
-
-    if (!Array.isArray(apiProjects) || apiProjects.length === 0) {
-      return FALLBACK_PROJECTS;
-    }
-
-    // تحويل بيانات API إلى شكل موحد
-    return apiProjects.map((p: any, i: number) => ({
-      id: p.id || `project-${i}`,
-      icon: p.icon || "🤝",
-      gradient:
-        p.gradient ||
-        [
-          "from-primary-500 to-primary-700",
-          "from-primary-500 to-primary-700",
-          "from-purple-500 to-purple-700",
-          "from-amber-500 to-amber-700",
-          "from-rose-500 to-rose-700",
-          "from-indigo-500 to-indigo-700",
-        ][i % 6],
-      category: {
-        ar: p.category?.ar || p.category || "مشروع دعوي",
-        en: p.category?.en || p.category || "Dawah Project",
-      },
-      title: {
-        ar: p.title?.ar || p.title || "",
-        en: p.title?.en || p.title || "",
-      },
-      desc: {
-        ar: p.desc?.ar || p.description?.ar || p.desc || "",
-        en: p.desc?.en || p.description?.en || p.desc || "",
-      },
-      goal: {
-        ar: p.goal?.ar || p.goal || "",
-        en: p.goal?.en || p.goal || "",
-      },
-      raised: p.raised
-        ? {
-            ar: p.raised?.ar || p.raised,
-            en: p.raised?.en || p.raised,
-          }
-        : undefined,
-      progress: typeof p.progress === "number" ? p.progress : undefined,
-    }));
-  } catch {
-    return FALLBACK_PROJECTS;
-  }
+  return {
+    id: item.slug || item.id,
+    icon: term?.icon || "🤝",
+    gradient: GRADIENTS[index % GRADIENTS.length],
+    category: { ar: name || "مشروع دعوي", en: name || "Dawah Project" },
+    title: { ar: title, en: title },
+    desc: { ar: desc, en: desc },
+    // لا يوجد حقل «الهدف/المبلغ المُجمَّع» في CMS، فنُبقيه فارغًا مع الحفاظ على نفس التصميم.
+    goal: { ar: "", en: "" },
+  };
 }
 
 // ============================================================
@@ -388,8 +285,10 @@ export default async function ProjectsPage({
   const ui = UI[L];
   const isRTL = L === "ar";
 
-  // جلب المشاريع من API مع fallback
-  const projects = await fetchProjects();
+  // جلب المشاريع المنشورة من CMS
+  const projects = (
+    await getPublicList(L, "page", { taxonomySlug: "projects", limit: 60 })
+  ).map(toProject);
   const uniqueCategories = new Set(projects.map((p) => p.category[L]));
 
   // JSON-LD

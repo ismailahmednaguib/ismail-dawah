@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -23,6 +23,29 @@ type Place = {
   lng?: number;
   address?: string;
   type?: string;
+};
+
+// شكل عنصر المكتبة العامة (CMS) كما يعيده /api/library.
+type ApiPlace = {
+  id: string;
+  content_type: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  body: string | null;
+  published_at: string | null;
+  views: number;
+  audience: string[];
+  levels: string[];
+  terms: {
+    id: string;
+    kind: string;
+    name: string;
+    slug: string;
+    icon: string | null;
+    color: string | null;
+  }[];
+  isFallback: boolean;
 };
 
 type UILang = {
@@ -183,6 +206,24 @@ const UI: Record<string, UILang> = {
 };
 
 // ============================================================
+// مصدر البيانات: واجهة المكتبة العامة (CMS)
+// ============================================================
+
+// يحوّل عنصر CMS إلى شكل المكان الذي يتوقعه التصميم الحالي.
+function toPlace(item: ApiPlace): Place {
+  const term =
+    item.terms.find((t) => t.kind === "category") || item.terms[0] || null;
+
+  return {
+    id: item.slug || item.id,
+    name: item.title?.trim() || "",
+    area: term?.name?.trim() || "",
+    note: item.summary?.trim() || item.body?.trim() || undefined,
+    type: term?.slug || undefined,
+  };
+}
+
+// ============================================================
 // دالة حساب المسافة (Haversine)
 // ============================================================
 
@@ -224,9 +265,9 @@ function formatNumber(value: number, lang: Lang): string {
 // ============================================================
 
 export default function MapPage() {
-  const params = useParams();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
+  const pathname = usePathname();
+  const lang = (pathname || "").split("/").filter(Boolean)[0];
+  const L: Lang = lang === "en" ? "en" : "ar";
   const isRTL = L === "ar";
   const ui = UI[L];
 
@@ -249,10 +290,16 @@ export default function MapPage() {
       setLoading(true);
       setError(false);
       try {
-        const r = await fetch("/api/content");
-        const j = await r.json();
+        const r = await fetch(
+          `/api/library?type=page&taxonomy=places&lang=${L}&limit=60`,
+          { cache: "no-store" }
+        );
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+
+        const j = (await r.json()) as { data?: ApiPlace[] };
+        const items = Array.isArray(j?.data) ? j.data : [];
         if (!cancelled) {
-          setPlaces(j?.content?.places || []);
+          setPlaces(items.map((item) => toPlace(item)));
         }
       } catch {
         if (!cancelled) setError(true);
@@ -282,7 +329,7 @@ export default function MapPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [L]);
 
   // ===== المناطق الفريدة =====
   const uniqueAreas = useMemo(() => {

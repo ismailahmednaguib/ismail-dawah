@@ -1,13 +1,14 @@
 // app/[lang]/khutab/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
+import type { PublicItem } from "@/lib/learn/public";
 
 // ============================================================
 // الأنواع
@@ -27,6 +28,8 @@ type Khutbah = {
   points: Localized[];
   khatima: Localized;
   icon: string;
+  /** تاريخ النشر من الـCMS (published_at). */
+  date: string | null;
 };
 
 // ============================================================
@@ -153,213 +156,149 @@ const UI: Record<string,
 };
 
 // ============================================================
-// بيانات الخطب
+// تحويل عناصر المحتوى (CMS) إلى نموذج العرض
 // ============================================================
 
-const KHUTAB: Khutbah[] = [
-  {
-    id: "taqwa",
-    category: { ar: "أخلاق", en: "Ethics" },
-    categoryIcon: "🌿",
-    gradient: "from-primary-500 to-primary-700",
-    icon: "🌿",
-    title: { ar: "التقوى: وصية الله للأولين والآخرين", en: "Taqwa: Allah's Counsel to All Generations" },
-    intro: {
-      ar: "﴿وَلَقَدْ وَصَّيْنَا الَّذِينَ أُوتُوا الْكِتَابَ مِن قَبْلِكُمْ وَإِيَّاكُمْ أَنِ اتَّقُوا اللَّهَ﴾. التقوى أن تجعل بينك وبين غضب الله وقاية بطاعته واجتناب معاصيه.",
-      en: "We have certainly enjoined upon those who were given the Scripture before you and upon you to fear Allah. Taqwa is placing a shield between yourself and Allah's anger through obedience.",
-    },
-    verse: {
-      ar: "وَلَقَدْ وَصَّيْنَا الَّذِينَ أُوتُوا الْكِتَابَ مِن قَبْلِكُمْ وَإِيَّاكُمْ أَنِ اتَّقُوا اللَّهَ",
-      en: "And We have instructed those given Scripture before you and yourselves to fear Allah.",
-    },
-    verseSource: { ar: "سورة النساء — الآية 131", en: "Surah An-Nisa — Verse 131" },
-    points: [
-      { ar: "التقوى وصية الله للأولين والآخرين.", en: "Taqwa is Allah's counsel to all generations." },
-      { ar: "ثمار التقوى في الدنيا والآخرة.", en: "Fruits of taqwa in this world and the hereafter." },
-      { ar: "علامات المتقين في القرآن.", en: "Signs of the righteous in the Quran." },
-      { ar: "كيف نحقق التقوى في حياتنا اليومية.", en: "How to achieve taqwa in our daily lives." },
-    ],
-    khatima: {
-      ar: "اللهم اجعلنا من المتقين، واحشرنا في زمرتهم يوم الدين، وأوردنا حوض نبيك محمد ﷺ.",
-      en: "O Allah, make us among the righteous, gather us in their company on the Day of Judgment, and let us drink from the basin of Your Prophet Muhammad ﷺ.",
-    },
-  },
-  {
-    id: "parents",
-    category: { ar: "أسرة", en: "Family" },
-    categoryIcon: "👨‍👩‍👧",
-    gradient: "from-rose-500 to-rose-700",
-    icon: "👨‍👩‍👧",
-    title: { ar: "بر الوالدين: باب من أبواب الجنة", en: "Honoring Parents: A Gate of Paradise" },
-    intro: {
-      ar: "﴿وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا إِلَّا إِيَّاهُ وَبِالْوَالِدَيْنِ إِحْسَانًا﴾. بر الوالدين من أعظم الطاعات وأحب الأعمال إلى الله بعد الصلاة على وقتها.",
-      en: "Your Lord has decreed that you worship none but Him, and to parents, good treatment. Honoring parents is among the greatest acts of obedience after prayer on time.",
-    },
-    verse: {
-      ar: "وَبِالْوَالِدَيْنِ إِحْسَانًا",
-      en: "And to parents, good treatment.",
-    },
-    verseSource: { ar: "سورة الإسراء — الآية 23", en: "Surah Al-Isra — Verse 23" },
-    points: [
-      { ar: "فضل بر الوالدين في القرآن والسنة.", en: "Virtue of honoring parents in Quran and Sunnah." },
-      { ar: "عقوق الوالدين من أكبر الكبائر.", en: "Disobedience to parents is among the greatest sins." },
-      { ar: "كيف نبر الوالدين في حياتهما وبعد مماتهما.", en: "How to honor parents in life and after death." },
-      { ar: "قصص من بر الصحابة بآبائهم.", en: "Stories of companions honoring their parents." },
-    ],
-    khatima: {
-      ar: "اللهم ارحم والدينا كما ربونا صغارا، واغفر لهم وارحمهم، وأكرم نزلهم في جناتك.",
-      en: "O Allah, have mercy on our parents as they raised us when we were small, forgive them, and honor them in Your gardens.",
-    },
-  },
-  {
-    id: "truthfulness",
-    category: { ar: "أخلاق", en: "Ethics" },
-    categoryIcon: "✅",
-    gradient: "from-primary-500 to-primary-700",
-    icon: "✅",
-    title: { ar: "الصدق: طريق الجنة ومنجاة", en: "Truthfulness: Path to Paradise and Salvation" },
-    intro: {
-      ar: "﴿يَا أَيُّهَا الَّذِينَ آمَنُوا اتَّقُوا اللَّهَ وَكُونُوا مَعَ الصَّادِقِينَ﴾. الصدق منجاة، والكذب مهلكة، وهو طريق الأنبياء والصالحين.",
-      en: "O you who have believed, fear Allah and be with those who are true. Truthfulness is salvation and lying is destruction - the path of prophets and righteous.",
-    },
-    verse: {
-      ar: "يَا أَيُّهَا الَّذِينَ آمَنُوا اتَّقُوا اللَّهَ وَكُونُوا مَعَ الصَّادِقِينَ",
-      en: "O you who have believed, fear Allah and be with those who are true.",
-    },
-    verseSource: { ar: "سورة التوبة — الآية 119", en: "Surah At-Tawbah — Verse 119" },
-    points: [
-      { ar: "الصدق طريق الجنة.", en: "Truthfulness leads to Paradise." },
-      { ar: "أنواع الصدق: مع الله، مع الناس، مع النفس.", en: "Types of truthfulness: with Allah, people, and self." },
-      { ar: "آفات الكذب وعواقبه.", en: "Harms of lying and its consequences." },
-      { ar: "الصادقون في القرآن والسنة.", en: "The truthful in Quran and Sunnah." },
-    ],
-    khatima: {
-      ar: "اللهم اجعلنا من الصادقين، وثبتنا على الحق حتى نلقاك، وارزقنا صحبة الصالحين.",
-      en: "O Allah, make us among the truthful, keep us firm on truth until we meet You, and grant us the company of the righteous.",
-    },
-  },
-  {
-    id: "knowledge",
-    category: { ar: "علم", en: "Knowledge" },
-    categoryIcon: "📚",
-    gradient: "from-indigo-500 to-indigo-700",
-    icon: "📚",
-    title: { ar: "فضل العلم وطلبه", en: "Virtue of Knowledge and Its Pursuit" },
-    intro: {
-      ar: "﴿يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ﴾. العلم فريضة على كل مسلم، وطلبه عبادة، والعلماء ورثة الأنبياء.",
-      en: "Allah will raise those who have believed among you and those who were given knowledge, by degrees. Knowledge is obligatory for every Muslim, seeking it is worship, and scholars inherit the prophets.",
-    },
-    verse: {
-      ar: "يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ",
-      en: "Allah will raise those who have believed and those who were given knowledge, by degrees.",
-    },
-    verseSource: { ar: "سورة المجادلة — الآية 11", en: "Surah Al-Mujadila — Verse 11" },
-    points: [
-      { ar: "فضل طلب العلم في الإسلام.", en: "Virtue of seeking knowledge in Islam." },
-      { ar: "أنواع العلوم: شرعية ودنيوية.", en: "Types of knowledge: religious and worldly." },
-      { ar: "آداب طالب العلم.", en: "Etiquette of the student of knowledge." },
-      { ar: "العلماء ورثة الأنبياء.", en: "Scholars are the inheritors of the prophets." },
-    ],
-    khatima: {
-      ar: "اللهم علمنا ما ينفعنا، وانفعنا بما علمتنا، وزدنا علماً نافعاً وعملاً صالحاً متقبلاً.",
-      en: "O Allah, teach us what benefits us, benefit us with what You taught us, and increase us in beneficial knowledge and accepted righteous deeds.",
-    },
-  },
-  {
-    id: "prayer",
-    category: { ar: "عبادات", en: "Worship" },
-    categoryIcon: "🕌",
-    gradient: "from-amber-500 to-amber-700",
-    icon: "🕌",
-    title: { ar: "الصلاة: عمود الدين ونور المؤمن", en: "Prayer: Pillar of Religion and Believer's Light" },
-    intro: {
-      ar: "﴿إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا﴾. الصلاة عمود الدين، وأول ما يحاسب عليه العبد يوم القيامة، وهي نور وبرهان ونجاة.",
-      en: "Indeed, prayer has been decreed upon the believers a decree of specified times. Prayer is the pillar of religion, the first deed to be accounted for, and it is light, proof, and salvation.",
-    },
-    verse: {
-      ar: "إِنَّ الصَّلَاةَ تَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ",
-      en: "Indeed, prayer prohibits immorality and wrongdoing.",
-    },
-    verseSource: { ar: "سورة العنكبوت — الآية 45", en: "Surah Al-Ankabut — Verse 45" },
-    points: [
-      { ar: "فضل الصلاة وأهميتها.", en: "Virtue and importance of prayer." },
-      { ar: "حكم تارك الصلاة.", en: "Ruling on abandoning prayer." },
-      { ar: "كيف نخشع في الصلاة.", en: "How to achieve humility in prayer." },
-      { ar: "الصلاة نور وبرهان ونجاة.", en: "Prayer is light, proof, and salvation." },
-    ],
-    khatima: {
-      ar: "اللهم أعنا على ذكرك وشكرك وحسن عبادتك، واجعلنا من المحافظين على الصلاة.",
-      en: "O Allah, help us to remember You, thank You, and worship You well, and make us among those who guard their prayers.",
-    },
-  },
-  {
-    id: "repentance",
-    category: { ar: "توبة", en: "Repentance" },
-    categoryIcon: "🕊️",
-    gradient: "from-purple-500 to-purple-700",
-    icon: "🕊️",
-    title: { ar: "التوبة: باب مفتوح لا يُغلق", en: "Repentance: An Open Gate" },
-    intro: {
-      ar: "﴿وَتُوبُوا إِلَى اللَّهِ جَمِيعًا أَيُّهَ الْمُؤْمِنُونَ لَعَلَّكُمْ تُفْلِحُونَ﴾. باب التوبة مفتوح ما لم تطلع الشمس من مغربها، والله يفرح بتوبة عبده.",
-      en: "And repent to Allah, all of you, O believers, that you might succeed. The gate of repentance is open until the sun rises from the west, and Allah rejoices at His servant's repentance.",
-    },
-    verse: {
-      ar: "قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ",
-      en: "Say: O My servants who have transgressed against themselves, do not despair of the mercy of Allah.",
-    },
-    verseSource: { ar: "سورة الزمر — الآية 53", en: "Surah Az-Zumar — Verse 53" },
-    points: [
-      { ar: "الله يفرح بتوبة عبده.", en: "Allah rejoices at His servant's repentance." },
-      { ar: "شروط التوبة النصوح.", en: "Conditions of sincere repentance." },
-      { ar: "قصص التائبين في القرآن.", en: "Stories of the repentant in the Quran." },
-      { ar: "لا تيأس من رحمة الله.", en: "Never despair of Allah's mercy." },
-    ],
-    khatima: {
-      ar: "اللهم تب علينا إنك أنت التواب الرحيم، واغفر لنا ذنوبنا وإسرافنا في أمرنا.",
-      en: "O Allah, accept our repentance, for You are the Accepter of Repentance, the Merciful. Forgive us our sins and excess in our affairs.",
-    },
-  },
+/** تدرّجات لونية تُوزّع على البطاقات بالتناوب (نفس تدرّجات التصميم). */
+const KHUTBAH_GRADIENTS = [
+  "from-primary-500 to-primary-700",
+  "from-rose-500 to-rose-700",
+  "from-indigo-500 to-indigo-700",
+  "from-amber-500 to-amber-700",
+  "from-purple-500 to-purple-700",
 ];
+
+/** أسماء التصنيف الافتراضية عند غياب التصنيفات في الـCMS. */
+const CATEGORY_FALLBACK: Record<string, string> = {
+  ar: "خطبة",
+  en: "Khutbah",
+};
+
+/** تقسيم نصّ الخطبة إلى عناصر/جُمل. */
+function splitSentences(text: string): string[] {
+  return text
+    .replace(/([.!?؟])\s+/g, "$1\n")
+    .split("\n")
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
+/** استخراج آية مقتبسة من نص الخطبة إن وُجدت. */
+function extractVerse(text: string): string {
+  const match = text.match(/[«﴿]([^»﴾]+)[»﴾]/);
+  return match ? match[1].trim() : "";
+}
+
+/** بناء نموذج خطبة واحد من عنصر محتوى منشور في الـCMS. */
+function toKhutbah(item: PublicItem, index: number, lang: "ar" | "en"): Khutbah {
+  const term = item.terms?.[0];
+  const categoryName = term?.name?.trim() || CATEGORY_FALLBACK[lang];
+  const icon = term?.icon?.trim() || "🕌";
+
+  const body = (item.body ?? "").trim();
+  const summary = (item.summary ?? "").trim();
+  const sentences = splitSentences(body);
+
+  const introText = summary || sentences[0] || "";
+  // إن وُجد ملخّص فكل الجُمل عناصر، وإلا فالجملة الأولى تُعرض كمقدّمة.
+  const rawPoints = summary ? sentences : sentences.slice(1);
+  const khatimaText = rawPoints.length > 1 ? rawPoints[rawPoints.length - 1] : "";
+  const pointTexts = khatimaText ? rawPoints.slice(0, -1) : rawPoints;
+  const verseText = extractVerse(body) || sentences[0] || "";
+
+  return {
+    id: item.id,
+    category: { ar: categoryName, en: categoryName },
+    categoryIcon: icon,
+    gradient: KHUTBAH_GRADIENTS[index % KHUTBAH_GRADIENTS.length],
+    icon,
+    title: { ar: item.title, en: item.title },
+    intro: { ar: introText, en: introText },
+    verse: { ar: verseText, en: verseText },
+    verseSource: { ar: "", en: "" },
+    points: pointTexts.map((sentence) => ({ ar: sentence, en: sentence })),
+    khatima: { ar: khatimaText, en: khatimaText },
+    date: item.published_at,
+  };
+}
 
 // ============================================================
 // المكون الرئيسي
 // ============================================================
 
 export default function KhutabPage() {
-  const params = useParams();
-  const lang = (params?.lang as string) || "ar";
+  const pathname = usePathname();
+  const lang: "ar" | "en" = pathname.startsWith("/en") ? "en" : "ar";
   const L = lang as Lang;
   const isRTL = L === "ar";
   const ui = UI[L];
 
+  const [khutab, setKhutab] = useState<Khutbah[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
+
+  // ===== جلب الخطب من الـCMS =====
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadKhutab = async () => {
+      try {
+        const response = await fetch(
+          `/api/library?type=khutbah&lang=${lang}&limit=60`,
+          { cache: "no-store" }
+        );
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const payload = (await response.json()) as { data?: PublicItem[] };
+        const items = Array.isArray(payload?.data) ? payload.data : [];
+
+        if (!cancelled) {
+          setKhutab(items.map((item, index) => toKhutbah(item, index, lang)));
+        }
+      } catch (err) {
+        console.error("[/khutab] failed to load khutbahs", err);
+        if (!cancelled) setKhutab([]);
+      }
+    };
+
+    void loadKhutab();
+    return () => {
+      cancelled = true;
+    };
+  }, [lang]);
 
   // استخراج التصنيفات الفريدة
   const categories = useMemo(() => {
     const unique = new Set<string>();
-    KHUTAB.forEach((k) => unique.add(k.category[L]));
+    khutab.forEach((k) => unique.add(k.category[L]));
     return Array.from(unique);
-  }, [L]);
+  }, [khutab, L]);
 
   const filteredKhutab = useMemo(() => {
-    if (filter === "all") return KHUTAB;
-    return KHUTAB.filter((k) => k.category[L] === filter);
-  }, [filter, L]);
+    if (filter === "all") return khutab;
+    return khutab.filter((k) => k.category[L] === filter);
+  }, [khutab, filter, L]);
 
-  const selectedKhutbah = selectedId ? KHUTAB.find((k) => k.id === selectedId) : null;
+  const selectedKhutbah = selectedId ? khutab.find((k) => k.id === selectedId) : null;
 
   // دالة المشاركة
   const handleShare = (khutbah: Khutbah) => {
+    const dateText = khutbah.date
+      ? new Date(khutbah.date).toLocaleDateString(isRTL ? "ar" : "en")
+      : "";
+    const shareText = [khutbah.title[L], khutbah.intro[L], dateText]
+      .filter((part) => part.length > 0)
+      .join("\n\n");
+
     if (typeof navigator !== "undefined" && navigator.share) {
       navigator.share({
         title: khutbah.title[L],
-        text: khutbah.intro[L],
+        text: shareText,
         url: typeof window !== "undefined" ? window.location.href : "",
       }).catch(() => {});
     } else if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(
-        `${khutbah.title[L]}\n\n${khutbah.intro[L]}\n\n${typeof window !== "undefined" ? window.location.href : ""}`
+        `${shareText}\n\n${typeof window !== "undefined" ? window.location.href : ""}`
       );
     }
   };
@@ -426,7 +365,7 @@ export default function KhutabPage() {
 
         {/* ===== إحصائيات ===== */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatCard icon="🎤" label={ui.khutabCount} value={KHUTAB.length} color="primary" />
+          <StatCard icon="🎤" label={ui.khutabCount} value={khutab.length} color="primary" />
           <StatCard icon="📂" label={ui.categoriesCount} value={categories.length} color="gold" />
           <StatCard icon="📤" label={ui.sharable} value="✓" color="primary" />
           <StatCard icon="🖨️" label={ui.printable} value="✓" color="gold" />
@@ -454,14 +393,14 @@ export default function KhutabPage() {
                   <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
                     filter === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 dark:bg-night-700 dark:text-slate-300"
                   }`}>
-                    {KHUTAB.length}
+                    {khutab.length}
                   </span>
                 </button>
 
                 {categories.map((category) => {
                   const isActive = filter === category;
-                  const count = KHUTAB.filter((k) => k.category[L] === category).length;
-                  const sampleKhutbah = KHUTAB.find((k) => k.category[L] === category);
+                  const count = khutab.filter((k) => k.category[L] === category).length;
+                  const sampleKhutbah = khutab.find((k) => k.category[L] === category);
                   const icon = sampleKhutbah?.categoryIcon ?? "📄";
 
                   return (

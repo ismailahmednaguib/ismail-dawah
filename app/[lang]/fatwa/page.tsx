@@ -6,6 +6,9 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
+
+export const dynamic = "force-dynamic";
 
 // ============================================================
 // أنواع البيانات
@@ -49,119 +52,69 @@ const CATEGORIES: FatwaCategory[] = [
 ];
 
 // ============================================================
-// نماذج فتاوى
+// الفتاوى: تُجلب من CMS عبر getPublicList (lib/learn/public)
 // ============================================================
 
-const FATWAS: Fatwa[] = [
-  {
-    id: "prayer-congregation",
-    categoryId: "prayer",
-    question: "ما حكم صلاة الجماعة للرجل؟",
-    answer:
-      "صلاة الجماعة للرجال سنة مؤكدة عند جمهور العلماء، وذهب بعض أهل العلم إلى وجوبها على القادر الحاضر. والأحوط للمسلم ألا يتركها بلا عذر، لأن فيها تعظيمًا لشعائر الله وحضورًا للقلوب وأجرًا عظيمًا.",
-    tags: ["صلاة", "جماعة", "أحكام"],
-    source: "مراجع فقهية عامة",
-  },
-  {
-    id: "prayer-missing-ruku",
-    categoryId: "prayer",
-    question: "من نسي الركوع في الصلاة ماذا يفعل؟",
-    answer:
-      "إذا تذكر المصلي أنه ترك الركوع قبل أن يسجد، رجع فركع ثم سجد. وإن تذكره بعد أن سجد، فالأحوط أن يعيد الركعة، لأن الركن لا يسقط بالنسيان إلا بجبره بسجود سهو إذا كان تركه سهوًا مع الترتيب الصحيح. ومع الشك الكثير يُرجع إلى أهل العلم.",
-    tags: ["صلاة", "ركوع", "نسيان"],
-    source: "أصول فقهية",
-  },
-  {
-    id: "fasting-travel",
-    categoryId: "fasting",
-    question: "هل يجوز الفطر في السفر في رمضان؟",
-    answer:
-      "نعم، يجوز للمسافر الفطر في رمضان ويقضي عدد الأيام التي أفطرها. والأفضل له أن يصوم إذا قدر ولم يشق عليه، لقوله تعالى: ﴿فَمَن كَانَ مِنكُم مَّرِيضًا أَوْ عَلَىٰ سَفَرٍ فَعِدَّةٌ مِّنْ أَيَّامٍ أُخَرَ﴾.",
-    tags: ["صيام", "سفر", "رمضان"],
-    source: "القرآن الكريم",
-  },
-  {
-    id: "fasting-eating-forgetfully",
-    categoryId: "fasting",
-    question: "من أكل أو شرب ناسيًا في نهار رمضان هل أفطر؟",
-    answer:
-      "لا يفطر، بل يتم صومه، لأن ذلك رزق من الله. وقد قال النبي ﷺ: «من نسي وهو صائم فأكل أو شرب فليتم صومه، فإنما أطعمه الله وسقاه».",
-    tags: ["صيام", "نسيان", "رمضان"],
-    source: "متفق عليه",
-  },
-  {
-    id: "zakat-cash",
-    categoryId: "zakat",
-    question: "كيف تزكى الأموال النقدية؟",
-    answer:
-      "تُزكى النقود إذا بلغ مجموعها النصاب، ومر عليها حول قمري. والنصاب يقدر بقيمة ما يعادل 85 جرامًا من الذهب تقريبًا، وتخرج 2.5% من المجموع. ويُضم إلى النقود ما أعد للتجارة من عروض، بينما لا تُزكى الأصول الشخصية التي ليست للتجارة مثل السيارة والسكن.",
-    tags: ["زكاة", "مال", "نصاب"],
-    source: "أحكام الزكاة",
-  },
-  {
-    id: "hajj-umrah-order",
-    categoryId: "hajj",
-    question: "هل يجوز أداء العمرة قبل الحج؟",
-    answer:
-      "نعم، يجوز أداء العمرة قبل الحج، بل هو مشروع في أصناف النسك، خاصة في التمتع حيث يعتمر الحاج ثم يحج. والأمر واسع بحمد الله، والأهم هو التعلم على النسك الصحيح وأداء الأركان والواجبات.",
-    tags: ["حج", "عمرة", "نسك"],
-    source: "فقه المناسك",
-  },
-  {
-    id: "family-divorce-word",
-    categoryId: "family",
-    question: "هل يقع الطلاق بالكناية؟",
-    answer:
-      "الكناية في الطلاق تحتاج إلى نية. فإذا قال الزوج كلامًا محتملًا مثل: «اذهبي» أو «تصرفي»، فلا يقع الطلاق إلا إذا نواه. أما التصريح مثل: «أنت طالق» فيقع به الطلاق في الجملة، مع التفصيل حسب الحالة والشروط. ومسائل الطلاق دقيقة، لذا يُنصح بمراجعة عالم ثقة.",
-    tags: ["طلاق", "أسرة", "كناية"],
-    source: "فقه الأسرة",
-  },
-  {
-    id: "transactions-interest",
-    categoryId: "transactions",
-    question: "ما حكم الفائدة البنكية؟",
-    answer:
-      "الفائدة الربوية حرام، لأنها من أكل أموال الناس بالباطل، وقد جاء الوعيد الشديد في الربا. والبدائل المشروعة كثيرة مثل المرابحة الشرعية والمشاركة والمضاربة، بشرط أن تكون العقود منضبطة وضابطة للغرر والربا.",
-    tags: ["ربا", "بنوك", "معاملات"],
-    source: "قرآن وسنة",
-  },
-  {
-    id: "aqeedah-tawassul",
-    categoryId: "aqeedah",
-    question: "ما الفرق بين التوسل المشروع والممنوع؟",
-    answer:
-      "التوسل المشروع يكون بما شرعه الله، مثل التوسل بأسماء الله وصفاته، وبإيمان العبد وعمله الصالح، وبدعاء الحي الصالح. أما التوسل الممنوع فهو سؤال الأموات أو الغائبين أو الاستغاثة بهم فيما لا يقدر عليه إلا الله، فهذا من باب الشرك أو ذرائعه.",
-    tags: ["عقيدة", "توسل", "توحيد"],
-    source: "أصول العقيدة",
-  },
-  {
-    id: "ethics-backbiting",
-    categoryId: "ethics",
-    question: "ما حكم الغيبة والنميمة؟",
-    answer:
-      "الغيبة حرام، وهي ذكر أخي بما يكره. والنميمة أيضًا حرام، وهي نقل الكلام بين الناس على وجه الإفساد. والتوبة منها تكون بالإقلاع والندم والعزم على عدم العودة، مع رد المظالم أو الاستحلال إذا ترتب ضرر على الشخص.",
-    tags: ["أخلاق", "غيبة", "نميمة"],
-    source: "القرآن والسنة",
-  },
-  {
-    id: "prayer-wudu-order",
-    categoryId: "prayer",
-    question: "هل الترتيب في الوضوء واجب؟",
-    answer:
-      "الترتيب بين أعضاء الوضوء سنة عند جمهور العلماء، وواجب عند بعضهم. والأحوط أن يتوضأ المسلم مرتبًا: غسل الوجه، ثم اليدين إلى المرفقين، ثم مسح الرأس، ثم غسل الرجلين إلى الكعبين، لحديث صفة وضوء النبي ﷺ.",
-    tags: ["وضوء", "صلاة", "ترتيب"],
-    source: "حديث الوضوء",
-  },
-  {
-    id: "fasting-intention",
-    categoryId: "fasting",
-    question: "هل يجب تبييت النية في صيام رمضان؟",
-    answer:
-      "نعم، يجب تبييت النية لصيام الفرض من الليل، لحديث النبي ﷺ: «من لم يبيت الصيام من الليل فلا صيام له». والنية محلها القلب، ولا يشترط التلفظ بها.",
-    tags: ["صيام", "نية", "رمضان"],
-    source: "سنة نبوية",
-  },
-];
+/**
+ * يطابق تصنيفات عنصر الـ CMS مع تصنيفات الواجهة الثابتة
+ * اعتمادًا على الـ slug ثم على اسم التصنيف العربي/الإنجليزي.
+ */
+function resolveCategoryId(terms: PublicTerm[]): string {
+  for (const term of terms) {
+    const bySlug = CATEGORIES.find(
+      (item) => item.id !== "all" && item.id === term.slug
+    );
+    if (bySlug) return bySlug.id;
+  }
+
+  for (const term of terms) {
+    const name = term.name?.trim();
+    if (!name) continue;
+    const byName = CATEGORIES.find(
+      (item) => item.id !== "all" && (item.ar === name || item.en === name)
+    );
+    if (byName) return byName.id;
+  }
+
+  return "all";
+}
+
+/**
+ * يحوّل عنصر المحتوى المنشور القادم من الـ CMS إلى شكل الفتوى في الصفحة.
+ */
+function mapPublicFatwa(item: PublicItem): Fatwa {
+  const sourceTerm = item.terms.find((term) =>
+    ["source", "reference", "references", "book", "hadith"].includes(term.kind)
+  );
+
+  return {
+    id: item.slug || item.id,
+    categoryId: resolveCategoryId(item.terms),
+    question: item.title.trim(),
+    answer: (item.body ?? item.summary ?? "").trim(),
+    tags: item.terms.map((term) => term.name).filter(Boolean),
+    source: sourceTerm?.name?.trim() || undefined,
+  };
+}
+
+/**
+ * يجلب الفتاوى المنشورة من الـ CMS عبر الطبقة العامة الموحّدة.
+ */
+async function getFatwas(lang: Lang, search?: string): Promise<Fatwa[]> {
+  try {
+    const items = await getPublicList(lang, "fatwa", {
+      limit: 48,
+      search: search?.trim() || undefined,
+    });
+
+    return items
+      .filter((item) => Boolean(item.slug) && Boolean(item.title?.trim()))
+      .map((item) => mapPublicFatwa(item));
+  } catch (error) {
+    console.error("[FatwaPage] public content error:", error);
+    return [];
+  }
+}
 
 // ============================================================
 // نصوص الواجهة
@@ -440,7 +393,10 @@ export default async function FatwaPage({
       ? rawCategory
       : "all";
 
-  const filteredFatwas = FATWAS.filter((fatwa) => {
+  // الفتاوى المنشورة من CMS (مع تمرير البحث إلى الطبقة العامة).
+  const fatwas = await getFatwas(l, q);
+
+  const filteredFatwas = fatwas.filter((fatwa) => {
     if (category !== "all" && fatwa.categoryId !== category) return false;
     return matchesQuery(fatwa, q);
   });
@@ -449,7 +405,7 @@ export default async function FatwaPage({
     CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
 
   // الفتاوى المميزة (أول 3)
-  const featuredFatwas = FATWAS.slice(0, 3);
+  const featuredFatwas = fatwas.slice(0, 3);
 
   // JSON-LD: FAQPage
   const jsonLd = {
@@ -458,7 +414,7 @@ export default async function FatwaPage({
     inLanguage: l,
     name: ui.title,
     description: ui.description,
-    mainEntity: FATWAS.map((fatwa) => ({
+    mainEntity: fatwas.map((fatwa) => ({
       "@type": "Question",
       name: fatwa.question,
       acceptedAnswer: {
@@ -469,7 +425,7 @@ export default async function FatwaPage({
   };
 
   // حساب عدد المصادر الفريدة
-  const uniqueSources = new Set(FATWAS.map((f) => f.source).filter(Boolean)).size;
+  const uniqueSources = new Set(fatwas.map((f) => f.source).filter(Boolean)).size;
 
   return (
     <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
@@ -540,7 +496,7 @@ export default async function FatwaPage({
 
         {/* ===== إحصائيات سريعة ===== */}
         <div className="mb-8 grid grid-cols-3 gap-4">
-          <StatCard icon="⚖️" label={ui.totalFatwas} value={FATWAS.length} color="primary" />
+          <StatCard icon="⚖️" label={ui.totalFatwas} value={fatwas.length} color="primary" />
           <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
           <StatCard icon="📚" label={ui.trustedSources} value={uniqueSources} color="primary" />
         </div>
@@ -652,8 +608,8 @@ export default async function FatwaPage({
               const isActive = item.id === category;
               const href = `/${l}/fatwa${buildFatwaQuery({ q, category: item.id })}`;
               const count = item.id === "all"
-                ? FATWAS.length
-                : FATWAS.filter((f) => f.categoryId === item.id).length;
+                ? fatwas.length
+                : fatwas.filter((f) => f.categoryId === item.id).length;
 
               return (
                 <Link
@@ -780,7 +736,7 @@ export default async function FatwaPage({
             </span>{" "}
             {ui.of}{" "}
             <span className="text-slate-700 dark:text-slate-200">
-              {formatNumber(FATWAS.length, l)}
+              {formatNumber(fatwas.length, l)}
             </span>
           </p>
 

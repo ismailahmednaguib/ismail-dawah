@@ -402,8 +402,8 @@ create trigger set_learner_progress_updated_at
 
 -- 10. بيانات أولية: إعدادات الموقع الأساسية
 insert into site_settings (key, lang, value) values
-  ('site.name', 'ar', '{"value": "أكاديمية إسماعيل أحمد نجيب"}'),
-  ('site.name', 'en', '{"value": "Ismail Ahmed Naguib Academy"}'),
+  ('site.name', 'ar', '{"value": "منصة إسماعيل أحمد نجيب"}'),
+  ('site.name', 'en', '{"value": "Ismail Ahmed Naguib Platform"}'),
   ('site.description', 'ar', '{"value": "منصة إسلامية شاملة للتعلم والعبادة والدعوة"}'),
   ('site.description', 'en', '{"value": "A comprehensive Islamic platform for learning, worship, and dawah"}')
 on conflict (key, lang) do nothing;

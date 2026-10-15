@@ -2,7 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -194,69 +194,6 @@ const UI: Record<string, UILang> = {
 };
 
 // ============================================================
-// بيانات احتياطية
-// ============================================================
-
-const FALLBACK_NEWS: NewsItem[] = [
-  {
-    id: "news-1",
-    date: "2026-10-05",
-    icon: "🎤",
-    category: { ar: "دروس", en: "Lessons" },
-    title: {
-      ar: "بدء سلسلة دروس جديدة في السيرة النبوية",
-      en: "New Series on Prophetic Biography Begins",
-    },
-    body: {
-      ar: "يُسعدنا الإعلان عن بدء سلسلة دروس أسبوعية جديدة في السيرة النبوية العطرة، تُعقد كل اثنين بعد صلاة العشاء. تتناول السيرة بأسلوب تربوي يربط الأحداث بواقعنا المعاصر، وتستخرج الدروس والعبر من حياة النبي ﷺ.",
-      en: "We are pleased to announce the start of a new weekly series on the Prophetic Biography, held every Monday after Isha prayer. The series approaches the Seerah with an educational method linking events to our contemporary reality and extracting lessons from the Prophet's ﷺ life.",
-    },
-  },
-  {
-    id: "news-2",
-    date: "2026-09-28",
-    icon: "📚",
-    category: { ar: "إصدارات", en: "Releases" },
-    title: {
-      ar: "إصدار كتاب جديد: معالم في طريق الطلب",
-      en: "New Book Released: Milestones on the Path of Seeking Knowledge",
-    },
-    body: {
-      ar: "صدر بحمد الله كتاب \"معالم في طريق الطلب\" وهو كتاب تربوي موجه لطلاب العلم المبتدئين، يجمع خلاصة تجارب الشيخ في طلب العلم والتدرج فيه، مع نصائح عملية من تراث السلف.",
-      en: "By the grace of Allah, the book \"Milestones on the Path of Seeking Knowledge\" has been released. It is an educational book directed to beginner students of knowledge, collecting the Sheikh's experiences in seeking knowledge with practical advice from the heritage of the Salaf.",
-    },
-  },
-  {
-    id: "news-3",
-    date: "2026-09-20",
-    icon: "🕌",
-    category: { ar: "مناسبات", en: "Occasions" },
-    title: {
-      ar: "برنامج خاص في العشر من ذي الحجة",
-      en: "Special Program in the First Ten Days of Dhul-Hijjah",
-    },
-    body: {
-      ar: "يسرنا أن نعلن عن برنامج دعوي مكثف خلال العشر الأوائل من ذي الحجة، يتضمن دروسًا يومية في التفسير والحديث، ومجالس ذكر، وختمة دعاء جماعية في ليلة عرفة.",
-      en: "We are pleased to announce an intensive dawah program during the first ten days of Dhul-Hijjah, including daily lessons in tafsir and hadith, remembrance gatherings, and a collective dua khatm on the night of Arafah.",
-    },
-  },
-  {
-    id: "news-4",
-    date: "2026-09-10",
-    icon: "🌐",
-    category: { ar: "إعلانات", en: "Announcements" },
-    title: {
-      ar: "إطلاق النسخة الإنجليزية من المنصة",
-      en: "Launch of the English Version of the Platform",
-    },
-    body: {
-      ar: "بحمد الله تم إطلاق النسخة الإنجليزية الكاملة من منصة إسماعيل أحمد نجيب، لتصل الدعوة إلى شريحة أوسع من المسلمين الناطقين بالإنجليزية والباحثين عن الحق حول العالم.",
-      en: "By the grace of Allah, the complete English version of the Ismail Ahmed Naguib Platform has been launched, to reach a wider audience of English-speaking Muslims and truth-seekers around the world.",
-    },
-  },
-];
-
-// ============================================================
 // دوال مساعدة آمنة
 // ============================================================
 
@@ -356,35 +293,41 @@ function normalizeDate(value: unknown): string {
   return parsed.toISOString();
 }
 
-function normalizeNewsItem(raw: unknown, index: number): NewsItem {
+// يحوّل عنصر CMS (PublicItem) القادم من /api/library إلى نوع NewsItem
+// المستخدم في الواجهة: title / summary / body / published_at / terms.
+function mapPublicItem(raw: unknown, index: number): NewsItem {
   const item =
     raw && typeof raw === "object" && !Array.isArray(raw)
       ? (raw as Record<string, unknown>)
       : {};
 
+  const terms = Array.isArray(item.terms) ? item.terms : [];
+  const primaryTerm =
+    terms[0] && typeof terms[0] === "object" && !Array.isArray(terms[0])
+      ? (terms[0] as Record<string, unknown>)
+      : null;
+
   const fallbackId = `news-${index}`;
+  const bodyText = safeText(item.body, "") || safeText(item.summary, "");
 
   return {
-    id: normalizeId(item.id ?? item._id ?? item.slug, fallbackId),
+    id: normalizeId(item.id ?? item.slug, fallbackId),
     date: normalizeDate(
-      item.date ?? item.publishedAt ?? item.createdAt ?? item.updatedAt
+      item.published_at ?? item.publishedAt ?? item.createdAt ?? item.updatedAt
     ),
-    icon: safeText(item.icon ?? item.emoji, "📰"),
-    category: safeLocalized(item.category ?? item.type ?? item.tag ?? item.section, {
+    icon: safeText(primaryTerm?.icon ?? item.icon, "📰"),
+    category: safeLocalized(primaryTerm?.name ?? item.category, {
       ar: "أخبار",
       en: "News",
     }),
-    title: safeLocalized(item.title ?? item.name ?? item.headline, {
+    title: safeLocalized(item.title ?? item.name, {
       ar: "خبر بدون عنوان",
       en: "Untitled news",
     }),
-    body: safeLocalized(
-      item.body ?? item.content ?? item.description ?? item.text ?? item.excerpt,
-      {
-        ar: "",
-        en: "",
-      }
-    ),
+    body: safeLocalized(bodyText, {
+      ar: "",
+      en: "",
+    }),
   };
 }
 
@@ -461,10 +404,8 @@ function safeJsonLd(value: unknown): string {
 // ============================================================
 
 export default function NewsPage() {
-  const routeParams = useParams();
-  const rawLang = routeParams?.lang;
-  const langString = Array.isArray(rawLang) ? rawLang[0] : rawLang;
-  const L: Lang = langString === "en" ? "en" : "ar";
+  const pathname = usePathname();
+  const L: Lang = pathname.startsWith("/en") ? "en" : "ar";
   const isRTL = L === "ar";
   const ui = UI[L];
 
@@ -484,15 +425,18 @@ export default function NewsPage() {
       "var(--font-scheherazade-source), 'Scheherazade New', serif",
   };
 
-  // ===== جلب الأخبار =====
+  // ===== جلب الأخبار من الـ CMS =====
   const loadNews = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/content", {
-        cache: "no-store",
-      });
+      const response = await fetch(
+        `/api/library?type=event&lang=${L}&limit=60`,
+        {
+          cache: "no-store",
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -505,25 +449,20 @@ export default function NewsPage() {
           ? (payload as Record<string, unknown>)
           : {};
 
-      const content =
-        root.content && typeof root.content === "object" && !Array.isArray(root.content)
-          ? (root.content as Record<string, unknown>)
-          : {};
+      const rawItems = Array.isArray(root.data) ? root.data : [];
 
-      const rawNews = Array.isArray(content.news) ? content.news : [];
-
-      const items = rawNews
-        .map((item, index) => normalizeNewsItem(item, index))
+      const items = rawItems
+        .map((item, index) => mapPublicItem(item, index))
         .filter((item) => item.title.ar.trim() || item.title.en.trim());
 
-      setNews(items.length > 0 ? items : FALLBACK_NEWS);
+      setNews(items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "fetch_failed");
-      setNews(FALLBACK_NEWS);
+      setNews([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [L]);
 
   useEffect(() => {
     void loadNews();

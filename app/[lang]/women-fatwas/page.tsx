@@ -1,8 +1,8 @@
 // app/[lang]/women-fatwas/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
-import { useParams } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -187,185 +187,126 @@ const UI: Record<string,
 };
 
 // ============================================================
-// الفتاوى
+// مصدر البيانات: واجهة المكتبة العامة (CMS)
 // ============================================================
 
-const FATWAS: Fatwa[] = [
-  {
-    id: "women-prayer-mosque",
-    icon: "🕌",
-    gradient: "from-primary-500 to-primary-700",
-    category: { ar: "الصلاة", en: "Prayer" },
-    q: {
-      ar: "هل تصلي المرأة في المسجد؟",
-      en: "Can a woman pray in the mosque?",
-    },
-    a: {
-      ar: "نعم، يجوز للمرأة أن تصلي في المسجد، ولا يجوز منعها. قال ﷺ: «لا تَمْنَعُوا إماءَ اللهِ مساجدَ اللهِ». لكن صلاتها في بيتها أفضل لها، وهذا من رحمة الإسلام بها وتيسيره عليها.",
-      en: "Yes, a woman may pray in the mosque and should not be prevented. The Prophet ﷺ said: 'Do not prevent the female servants of Allah from the mosques of Allah.' However, her prayer at home is better for her, and this is from Islam's mercy and ease toward women.",
-    },
-    verse: "وَأَنْ أَقِيمُوا الصَّلَاةَ",
-    verseSource: { ar: "سورة الأنعام — الآية 71", en: "Surah Al-An'am — Verse 71" },
-  },
-  {
-    id: "women-leading-prayer",
-    icon: "👩",
-    gradient: "from-primary-500 to-primary-700",
-    category: { ar: "الصلاة", en: "Prayer" },
-    q: {
-      ar: "هل يجوز للمرأة أن تؤم النساء؟",
-      en: "Can a woman lead other women in prayer?",
-    },
-    a: {
-      ar: "نعم، يجوز للمرأة أن تؤم النساء في الصلاة، وتقف في وسطهن لا في المقدمة. وقد أمت عائشة رضي الله عنها النساء. وهذا خاص بالنساء فقط.",
-      en: "Yes, a woman may lead other women in prayer, standing in the middle of them, not in front. Aisha (may Allah be pleased with her) led women in prayer. This is specifically for women only.",
-    },
-  },
-  {
-    id: "menstruation-ramadan",
-    icon: "🌙",
-    gradient: "from-rose-500 to-rose-700",
-    category: { ar: "الحيض", en: "Menstruation" },
-    q: {
-      ar: "ماذا تفعل الحائض في رمضان؟",
-      en: "What should a menstruating woman do in Ramadan?",
-    },
-    a: {
-      ar: "الحائض تفطر في رمضان وتقضي الأيام التي أفطرتها بعد رمضان. ولا تصلي ولا تصوم ولا تقرأ القرآن من المصحف أثناء الحيض، لكن تذكر الله وتدعو وتستمع للقرآن.",
-      en: "A menstruating woman breaks her fast in Ramadan and makes up the missed days after Ramadan. She does not pray, fast, or read Quran from the mushaf during menstruation, but she may remember Allah, supplicate, and listen to Quran.",
-    },
-  },
-  {
-    id: "menstruation-quran",
-    icon: "📖",
-    gradient: "from-rose-500 to-rose-700",
-    category: { ar: "الحيض", en: "Menstruation" },
-    q: {
-      ar: "هل يجوز للحائض قراءة القرآن عن ظهر قلب؟",
-      en: "Can a menstruating woman recite Quran from memory?",
-    },
-    a: {
-      ar: "اختلف العلماء، والراجح جواز القراءة عن ظهر قلب (بدون مس المصحف) للحاجة، كالمعلمة والطالبة. أما من غير حاجة فالأحوط الترك.",
-      en: "Scholars differed, and the stronger view is that reciting from memory (without touching the mushaf) is permissible for a need, such as a teacher or student. Without a need, it is safer to abstain.",
-    },
-  },
-  {
-    id: "hijab-definition",
-    icon: "👗",
-    gradient: "from-purple-500 to-purple-700",
-    category: { ar: "الحجاب", en: "Hijab" },
-    q: {
-      ar: "ما هو الحجاب الشرعي؟",
-      en: "What is the Islamic hijab?",
-    },
-    a: {
-      ar: "الحجاب الشرعي أن يغطي جميع بدن المرأة، لا يكون شفافاً ولا ضيقاً، ولا يكون زينة في نفسه، ولا يشبه لباس الرجال ولا لباس الكافرات. وهو فريضة على كل مسلمة بالغة.",
-      en: "The Islamic hijab covers the entire body of a woman, is not transparent or tight, is not an adornment in itself, and does not resemble men's clothing or disbelievers' clothing. It is obligatory on every adult Muslim woman.",
-    },
-    verse: "يَا أَيُّهَا النَّبِيُّ قُل لِّأَزْوَاجِكَ وَبَنَاتِكَ وَنِسَاءِ الْمُؤْمِنِينَ يُدْنِينَ عَلَيْهِنَّ مِن جَلَابِيبِهِنَّ",
-    verseSource: { ar: "سورة الأحزاب — الآية 59", en: "Surah Al-Ahzab — Verse 59" },
-  },
-  {
-    id: "hijab-face-hands",
-    icon: "👤",
-    gradient: "from-purple-500 to-purple-700",
-    category: { ar: "الحجاب", en: "Hijab" },
-    q: {
-      ar: "هل الوجه والكفان عورة؟",
-      en: "Are the face and hands considered awrah?",
-    },
-    a: {
-      ar: "اختلف العلماء: فالجمهور على أنهما ليسا بعورة ويجوز كشفهما، وذهب بعض العلماء إلى وجوب تغطيتهما. الأحوط والأبرأ للذمة التغطية خاصة في زمن الفتنة.",
-      en: "Scholars differed: the majority say they are not awrah and may be uncovered, while some scholars say they must be covered. Covering is safer and more cautious, especially in times of tribulation.",
-    },
-  },
-  {
-    id: "marriage-work-condition",
-    icon: "💍",
-    gradient: "from-pink-500 to-pink-700",
-    category: { ar: "الزواج", en: "Marriage" },
-    q: {
-      ar: "هل يجوز للمرأة أن تشترط العمل في عقد الزواج؟",
-      en: "Can a woman stipulate working in the marriage contract?",
-    },
-    a: {
-      ar: "نعم، يجوز للمرأة أن تشترط في عقد الزواج أن تعمل، أو أن لا يمنعها الزوج من الدراسة، ونحو ذلك. والمسلمون على شروطهم ما لم يحلوا حراماً أو يحرموا حلالاً.",
-      en: "Yes, a woman may stipulate in the marriage contract that she works or that the husband does not prevent her from studying, and similar conditions. Muslims are bound by their conditions unless they make lawful what is unlawful or vice versa.",
-    },
-  },
-  {
-    id: "marriage-divorce-request",
-    icon: "⚖️",
-    gradient: "from-pink-500 to-pink-700",
-    category: { ar: "الزواج", en: "Marriage" },
-    q: {
-      ar: "هل يجوز للمرأة أن تطلب الطلاق؟",
-      en: "Can a woman request divorce?",
-    },
-    a: {
-      ar: "نعم، يجوز لها أن تطلب الخلع إذا كرهت الزوج أو خافت أن لا تقيم حدود الله. والخلع فسخ بعوض، ولا يجوز لها طلب الطلاق من غير سبب شرعي.",
-      en: "Yes, she may request khul' (divorce for compensation) if she dislikes her husband or fears she cannot observe Allah's limits. Khul' is dissolution with compensation. She may not request divorce without a legitimate reason.",
-    },
-    hadith: "أَيُّمَا امْرَأَةٍ سَأَلَتْ زَوْجَهَا طَلَاقًا فِي غَيْرِ مَا بَأْسٍ فَحَرَامٌ عَلَيْهَا رَائِحَةُ الْجَنَّةِ",
-    hadithSource: { ar: "رواه أبو داود والترمذي", en: "Narrated by Abu Dawud and At-Tirmidhi" },
-  },
-  {
-    id: "work-permissibility",
-    icon: "💼",
-    gradient: "from-primary-500 to-primary-700",
-    category: { ar: "العمل", en: "Work" },
-    q: {
-      ar: "هل يجوز للمرأة أن تعمل؟",
-      en: "Is it permissible for a woman to work?",
-    },
-    a: {
-      ar: "نعم، يجوز للمرأة العمل بشروط: أن يكون العمل مشروعاً، لا اختلاط محرم، ولا خلوة، ولا سفر بلا محرم، ولا ترك لواجباتها. والأصل قرارها في البيت.",
-      en: "Yes, a woman may work with conditions: the work must be lawful, no unlawful mixing, no seclusion with men, no travel without a mahram, and not neglecting her duties. Her original place is in the home.",
-    },
-    verse: "وَقَرْنَ فِي بُيُوتِكُنَّ",
-    verseSource: { ar: "سورة الأحزاب — الآية 33", en: "Surah Al-Ahzab — Verse 33" },
-  },
-  {
-    id: "work-travel-mahram",
-    icon: "✈️",
-    gradient: "from-primary-500 to-primary-700",
-    category: { ar: "العمل", en: "Work" },
-    q: {
-      ar: "هل يجوز للمرأة أن تسافر بلا محرم؟",
-      en: "Can a woman travel without a mahram?",
-    },
-    a: {
-      ar: "الراجح من أقوال العلماء أن السفر الذي يقصر فيه الصلاة لا يجوز بلا محرم. أما السفر القصير (داخل المدينة) فلا حرج فيه. وهذا حفظ للمرأة وصون لها.",
-      en: "The strongest scholarly view is that travel requiring shortened prayer is not permissible without a mahram. Short travel (within the city) has no harm. This is protection and preservation for women.",
-    },
-  },
+type ApiFatwa = {
+  id: string;
+  content_type: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  body: string | null;
+  published_at: string | null;
+  views: number;
+  audience: string[];
+  levels: string[];
+  terms: {
+    id: string;
+    kind: string;
+    name: string;
+    slug: string;
+    icon: string | null;
+    color: string | null;
+  }[];
+  isFallback: boolean;
+};
+
+// نصوص حرفية حتى يلتقطها Tailwind عند البناء.
+const GRADIENTS = [
+  "from-pink-500 to-rose-600",
+  "from-primary-500 to-primary-700",
+  "from-purple-500 to-purple-700",
+  "from-rose-500 to-rose-700",
 ];
+
+// يحوّل عنصر CMS إلى شكل الفتوى الذي يتوقعه التصميم الحالي.
+function toFatwa(item: ApiFatwa, index: number): Fatwa {
+  const term =
+    item.terms.find((t) => t.kind === "category") ||
+    item.terms.find((t) => t.kind === "topic") ||
+    item.terms[0] ||
+    null;
+
+  const name = term?.name?.trim() || "";
+  const title = item.title?.trim() || "";
+  const body = item.body?.trim() || item.summary?.trim() || "";
+
+  return {
+    id: item.id,
+    icon: term?.icon || "📄",
+    gradient: GRADIENTS[index % GRADIENTS.length],
+    category: { ar: name || "عام", en: name || "General" },
+    q: { ar: title, en: title },
+    a: { ar: body, en: body },
+  };
+}
 
 // ============================================================
 // المكون الرئيسي
 // ============================================================
 
 export default function WomenFatwasPage() {
+  const pathname = usePathname();
   const params = useParams();
-  const lang = (params?.lang as string) || "ar";
-  const L = lang as Lang;
+  const L: Lang = pathname?.startsWith("/en")
+    ? "en"
+    : pathname?.startsWith("/ar")
+      ? "ar"
+      : (params?.lang as string) === "en"
+        ? "en"
+        : "ar";
   const isRTL = L === "ar";
   const ui = UI[L];
 
   const [filter, setFilter] = useState<string>("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [fatwas, setFatwas] = useState<Fatwa[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // ===== جلب الفتاوى من CMS =====
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setFilter("all");
+      setOpenId(null);
+
+      try {
+        const res = await fetch(`/api/library?type=fatwa&lang=${L}&limit=60`, {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const payload = (await res.json()) as { data?: ApiFatwa[] };
+        const items = Array.isArray(payload?.data) ? payload.data : [];
+
+        if (!cancelled) setFatwas(items.map((item, i) => toFatwa(item, i)));
+      } catch {
+        if (!cancelled) setFatwas([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [L]);
 
   // ===== الفئات الفريدة =====
   const categories = useMemo(() => {
     const unique = new Map<string, Localized>();
-    FATWAS.forEach((f) => unique.set(f.category.ar, f.category));
+    fatwas.forEach((f) => unique.set(f.category.ar, f.category));
     return Array.from(unique.values());
-  }, []);
+  }, [fatwas]);
 
   // ===== الفلترة =====
   const filtered = useMemo(() => {
-    return FATWAS.filter((f) => {
+    return fatwas.filter((f) => {
       const matchesCategory =
         filter === "all" || f.category.ar === filter || f.category.en === filter;
 
@@ -382,16 +323,16 @@ export default function WomenFatwasPage() {
 
       return matchesCategory && matchesSearch;
     });
-  }, [filter, search]);
+  }, [fatwas, filter, search]);
 
   // ===== عدادات الفئات =====
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { all: FATWAS.length };
+    const counts: Record<string, number> = { all: fatwas.length };
     categories.forEach((cat) => {
-      counts[cat.ar] = FATWAS.filter((f) => f.category.ar === cat.ar).length;
+      counts[cat.ar] = fatwas.filter((f) => f.category.ar === cat.ar).length;
     });
     return counts;
-  }, [categories]);
+  }, [categories, fatwas]);
 
   return (
     <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
@@ -461,7 +402,7 @@ export default function WomenFatwasPage() {
 
         {/* ===== إحصائيات ===== */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatCard icon="📜" label={ui.fatwasCount} value={FATWAS.length} color="primary" />
+          <StatCard icon="📜" label={ui.fatwasCount} value={fatwas.length} color="primary" />
           <StatCard icon="📂" label={ui.categoriesCount} value={categories.length} color="gold" />
           <StatCard icon="🌍" label={ui.languages} value={2} color="primary" />
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
@@ -564,7 +505,7 @@ export default function WomenFatwasPage() {
           {categories.map((cat) => {
             const isActive = filter === cat.ar;
             const count = categoryCounts[cat.ar] || 0;
-            const sampleFatwa = FATWAS.find((f) => f.category.ar === cat.ar);
+            const sampleFatwa = fatwas.find((f) => f.category.ar === cat.ar);
             const icon = sampleFatwa?.icon || "📄";
 
             return (
@@ -606,8 +547,27 @@ export default function WomenFatwasPage() {
           </span>
         </div>
 
+        {/* ===== حالة التحميل ===== */}
+        {loading && (
+          <div className="mb-4 space-y-4" aria-busy="true" aria-live="polite">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card animate-pulse p-6">
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 shrink-0 rounded-full bg-slate-200 dark:bg-night-700" />
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 h-5 w-24 rounded-full bg-slate-200 dark:bg-night-700" />
+                    <div className="mb-2 h-6 w-3/4 rounded bg-slate-200 dark:bg-night-700" />
+                    <div className="h-4 w-5/6 rounded bg-slate-200 dark:bg-night-700" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* ===== لا توجد نتائج ===== */}
-        {filtered.length === 0 ? (
+        {!loading &&
+          (filtered.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="mb-4 text-5xl">🔍</div>
             <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
@@ -739,7 +699,7 @@ export default function WomenFatwasPage() {
               );
             })}
           </div>
-        )}
+        ))}
 
         {/* ===== صفحات ذات صلة ===== */}
         <div className="mt-12">

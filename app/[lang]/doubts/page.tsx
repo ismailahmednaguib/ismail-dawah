@@ -6,8 +6,9 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
+import { getPublicList, type PublicItem } from "@/lib/learn/public";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 // ============================================================
 // الأنواع
@@ -55,6 +56,10 @@ type UILang = {
   articles: string;
   dawahGuide: string;
   atheismResponse: string;
+};
+
+type SearchParams = {
+  q?: string | string[];
 };
 
 // ============================================================
@@ -282,277 +287,67 @@ const SECTIONS: DoubtSection[] = [
 ];
 
 // ============================================================
-// شبهات وإجابات
+// شبهات وإجابات — تُقرأ من CMS (نوع المحتوى: faq)
 // ============================================================
 
-const DOUBTS: DoubtQA[] = [
-  {
-    id: "why-suffering",
-    category: {
-      ar: "العقيدة",
-      en: "Creed",
-    },
-    question: {
-      ar: "إذا كان الله رحيمًا، فلماذا يوجد ألم وشر في العالم؟",
-      en: "If Allah is merciful, why is there pain and evil in the world?",
-    },
-    answer: [
-      {
-        ar: "الحياة الدنيا دار ابتلاء وامتحان، ليست دار جزاء كامل. فيها الخير والشر، والاختيار والنتيجة، والصبر والجزاء.",
-        en: "This worldly life is a place of test and trial, not a place of complete recompense. It contains good and evil, choice and consequence, patience and reward.",
-      },
-      {
-        ar: "والله سبحانه حكيم قد تخفى علينا حكمة بعض الأفعال، لكن عدله ورحمته ثابتان. فالألم قد يكون تكفيرًا للذنوب، أو رفعًا للدرجات، أو تنبيهًا للقلوب.",
-        en: "Allah is Wise; the wisdom of some acts may be hidden from us, yet His justice and mercy are established. Pain may expiate sins, raise ranks, or awaken hearts.",
-      },
-      {
-        ar: "بل إن استنكار الإنسان للظلم نفسه يدل على وجود معيار للعدل، وهذا المعيار لا يجد له الملحد تفسيرًا كافيًا في مادة عمياء.",
-        en: "Indeed, human condemnation of injustice itself indicates a standard of justice, a standard for which the atheist finds no sufficient explanation in blind matter.",
-      },
-    ],
-    tip: {
-      ar: "لا تجعل السؤال عن الحكمة سببًا لإنكار الرحمة، فالنقص في علمنا لا يعني نقصًا في حكمة الله.",
-      en: "Do not let questioning wisdom become a denial of mercy; deficiency in our knowledge does not mean deficiency in Allah's wisdom.",
-    },
-  },
-  {
-    id: "quran-preservation",
-    category: {
-      ar: "القرآن",
-      en: "Quran",
-    },
-    question: {
-      ar: "كيف نثق أن القرآن محفوظ ولم يُحرَّف؟",
-      en: "How can we trust that the Quran is preserved and not altered?",
-    },
-    answer: [
-      {
-        ar: "القرآن حُفظ صدوره وكتابة ونقله عبر آلاف الرواة، جيلًا بعد جيل، مع مقارنة المصاحف وإجماع الأمة على ثبوت النص.",
-        en: "The Quran was preserved in recitation, writing, and transmission through thousands of narrators, generation after generation, with comparison of manuscripts and communal consensus on the text.",
-      },
-      {
-        ar: "وقد تحدى الله البشر أن يأتوا بمثله أو بعشر سور أو بسورة من مثله، فبقي التحدي قائمًا عبر القرون.",
-        en: "Allah challenged mankind to produce the like of it, or ten chapters, or one chapter like it, and the challenge remains across centuries.",
-      },
-      {
-        ar: "بخلاف كتب قديمة ضاعت أصولها أو كثرت نسخها المختلفة، فإن القرآن له تاريخ نقل فريد من حيث التواتر والحفظ.",
-        en: "Unlike ancient books whose originals were lost or whose copies diverged, the Quran has a unique transmission history in terms of mass narration and preservation.",
-      },
-    ],
-  },
-  {
-    id: "science-religion",
-    category: {
-      ar: "العلم والإيمان",
-      en: "Science and Faith",
-    },
-    question: {
-      ar: "هل العلم الحديث يناقض الإيمان بالله؟",
-      en: "Does modern science contradict belief in Allah?",
-    },
-    answer: [
-      {
-        ar: "العلم يدرس كيف يعمل الكون، أما الدين فيجيب عن لماذا يوجد الكون ومن خلقه. فهما ليسا بديلين عن بعضهما.",
-        en: "Science studies how the universe works, while religion answers why the universe exists and who created it. They are not substitutes for each other.",
-      },
-      {
-        ar: "اكتشاف القوانين الطبيعية لا يلغي وجود واضعها، كما أن معرفة كيف تعمل الساعة لا تنفي صانعها.",
-        en: "Discovering natural laws does not negate their Lawgiver, just as knowing how a clock works does not deny its maker.",
-      },
-      {
-        ar: "كثير من العلماء زادهم العلم إيمانًا لأنهم رأوا في دقة الخلق وآياته دليلًا على علم الخالق وقدرته.",
-        en: "Many scientists increased in faith through knowledge because they saw in creation's precision and signs evidence of the Creator's knowledge and power.",
-      },
-    ],
-  },
-  {
-    id: "women-in-islam",
-    category: {
-      ar: "المرأة",
-      en: "Women",
-    },
-    question: {
-      ar: "لماذا يُقال إن الإسلام ظلم المرأة؟",
-      en: "Why is it said that Islam oppressed women?",
-    },
-    answer: [
-      {
-        ar: "الإسلام كرّم المرأة وجعلها أمًا وبنتًا وأختًا وزوجة، وأوجب لها حقوقًا في الميراث والمهر والنفقة والملك والاختيار.",
-        en: "Islam honored women as mothers, daughters, sisters, and wives, and granted them rights in inheritance, dowry, maintenance, ownership, and choice.",
-      },
-      {
-        ar: "بعض ما يُنسب للإسلام قد يكون عادات اجتماعية أو فهمًا خاطئًا، ولا يجوز الحكم على الدين من خلال أخطاء المنتسبين إليه.",
-        en: "Some things attributed to Islam may be social customs or misunderstandings, and religion cannot be judged through the errors of those who claim it.",
-      },
-      {
-        ar: "العدل في الإسلام لا يعني دائمًا التساوي في كل حكم، بل وضع كل شيء في موضعه المناسب لحكمة الخالق.",
-        en: "Justice in Islam does not always mean identical treatment in every ruling, but placing each matter in its proper place according to the Creator's wisdom.",
-      },
-    ],
-    tip: {
-      ar: "افصل بين النص الشرعي الصحيح والتطبيق البشري الخاطئ.",
-      en: "Separate authentic revealed text from incorrect human application.",
-    },
-  },
-  {
-    id: "apostasy",
-    category: {
-      ar: "الحدود",
-      en: "Punishments",
-    },
-    question: {
-      ar: "ماذا عن حد الردة؟ أليس فيه إكراه في الدين؟",
-      en: "What about the punishment for apostasy? Is it not coercion in religion?",
-    },
-    answer: [
-      {
-        ar: "مسألة الردة من المسائل الدقيقة التي فيها تفصيل عند أهل العلم، ولا تُفهم منفصلة عن سياقها الفقهي والشرعي.",
-        en: "Apostasy is a precise issue with detailed discussion among scholars, and it cannot be understood apart from its jurisprudential and revealed context.",
-      },
-      {
-        ar: "الأصل في الإسلام: لا إكراه في الدين، ومن دخل في الإسلام ثم ارتد فأمره إلى الله، والعقوبة الدنيوية مرتبطة بشروط وضوابط ومفاسد أعظم.",
-        en: "The Islamic principle is: no compulsion in religion. For one who enters Islam then leaves, his affair is with Allah; worldly punishment is tied to conditions, limits, and greater harms.",
-      },
-      {
-        ar: "لا يجوز للعامة أن يتكلموا في هذه المسألة بغير علم، لأن الخطأ فيها قد يؤدي إلى تكفير الناس أو استباحة الدماء بغير حق.",
-        en: "Laypeople must not speak about this issue without knowledge, because error in it may lead to declaring people disbelievers or shedding blood unjustly.",
-      },
-    ],
-    tip: {
-      ar: "هذه المسألة تحتاج رجوعًا إلى أهل العلم الراسخين، لا إلى مقاطع مختصرة في الإنترنت.",
-      en: "This issue requires returning to firmly grounded scholars, not short internet clips.",
-    },
-  },
-  {
-    id: "qadar",
-    category: {
-      ar: "القدر",
-      en: "Divine Decree",
-    },
-    question: {
-      ar: "إذا كان كل شيء بقدر، فلماذا نُحاسَب على أفعالنا؟",
-      en: "If everything is by divine decree, why are we held accountable for our actions?",
-    },
-    answer: [
-      {
-        ar: "الإيمان بالقدر لا يسقط الاختيار، فالإنسان فاعل مختار بحسب ما آتاه الله من عقل وإرادة وقدرة.",
-        en: "Belief in divine decree does not remove choice; a person acts by choice according to the intellect, will, and ability Allah gave him.",
-      },
-      {
-        ar: "الله يعلم ما سيكون، وعلمه لا يجبر العبد على الفعل، كما أن المعلم الذي يعلم أن تلميذه سينجح لا يكون سببًا لإجباره.",
-        en: "Allah knows what will be, but His knowledge does not compel the servant to act, just as a teacher who knows a student will succeed does not force him.",
-      },
-      {
-        ar: "فالجمع بين الإيمان بالقدر والأخذ بالأسباب هو موقف المسلم الوسط: لا يتواكل ولا ييأس.",
-        en: "Combining belief in decree with taking means is the balanced Muslim position: neither lazy reliance nor despair.",
-      },
-    ],
-  },
-  {
-    id: "violence",
-    category: {
-      ar: "الجهاد والسلام",
-      en: "Jihad and Peace",
-    },
-    question: {
-      ar: "هل الإسلام دين حرب وسيف؟",
-      en: "Is Islam a religion of war and the sword?",
-    },
-    answer: [
-      {
-        ar: "الإسلام دين سلام في أصله، والجهاد فيه له ضوابط شرعية: لا يبدأ المعتدي، ولا يُقتل مدني، ولا غدر، ولا تمثيل، ولا إفساد.",
-        en: "Islam is fundamentally a religion of peace, and jihad has legal limits: aggression is not initiated, civilians are not killed, betrayal is forbidden, mutilation is forbidden, and corruption is forbidden.",
-      },
-      {
-        ar: "كثير من آيات القتال نزلت في سياق دفاعي بعد اضطهاد المسلمين ونقض العهود، ولا تُقرأ مبتورة عن أسبابها.",
-        en: "Many verses about fighting were revealed in a defensive context after persecution of Muslims and broken treaties, and they must not be read isolated from their reasons.",
-      },
-      {
-        ar: "العنف الذي يحدث باسم الإسلام غالبًا انحراف عن هديه، لا حجة عليه.",
-        en: "Violence occurring in Islam's name is usually a deviation from its guidance, not an argument against it.",
-      },
-    ],
-  },
-  {
-    id: "hadith-authenticity",
-    category: {
-      ar: "الحديث",
-      en: "Hadith",
-    },
-    question: {
-      ar: "كيف نثق بالحديث الشريف بعد قرون من النبي؟",
-      en: "How can we trust hadith centuries after the Prophet?",
-    },
-    answer: [
-      {
-        ar: "علم الحديث من أدق علوم النقل، فيه جرح وتعديل، ورجال، ومتون، وطرق، ومقارنة، حتى صُنفت الكتب في الصحيح والسنن والمسند.",
-        en: "Hadith science is among the most precise transmission sciences, involving narrator criticism, matn analysis, chains, comparison, resulting in books of Sahih, Sunan, and Musnad.",
-      },
-      {
-        ar: "لم يكن النقل شفهيًا فقط، بل كان كتابة وحفظًا ومراجعة، مع شهرة الصحابة والتابعين في ضبط السنة.",
-        en: "Transmission was not oral only; it involved writing, memorization, and review, with Companions and Successors famous for preserving the Sunnah.",
-      },
-      {
-        ar: "والحديث الضعيف أو الموضوع لا يجوز الاحتجاج به في العقائد والعبادات عند أهل العلم.",
-        en: "Weak or fabricated hadith cannot be used as evidence in creed or worship according to scholars.",
-      },
-    ],
-  },
-  {
-    id: "new-muslim",
-    category: {
-      ar: "المسلم الجديد",
-      en: "New Muslim",
-    },
-    question: {
-      ar: "أشعر أنني لا أعرف الإسلام كفاية، فهل أسئلتي تدل على ضعف إيماني؟",
-      en: "I feel I do not know Islam enough. Do my questions indicate weak faith?",
-    },
-    answer: [
-      {
-        ar: "لا، السؤال قد يكون من علامة العقل والبحث عن الحق. النبي صلى الله عليه وسلم علّم أصحابه أن يسألوا ويتعلموا.",
-        en: "No. A question may be a sign of intellect and seeking truth. The Prophet taught his Companions to ask and learn.",
-      },
-      {
-        ar: "المسلم الجديد يحتاج رفقا في التعليم، لا توبيخًا على كل سؤال. فالتدرج في الفهم سنة نبوية.",
-        en: "A new Muslim needs gentleness in learning, not rebuke for every question. Gradual understanding is a prophetic method.",
-      },
-      {
-        ar: "ابدأ بالتوحيد والصلاة والأخلاق، ثم توسّع في المسائل بحسب حاجتك واستعدادك.",
-        en: "Begin with tawhid, prayer, and manners, then expand into issues according to need and readiness.",
-      },
-    ],
-    tip: {
-      ar: "لا تستعجل الأحكام على نفسك أو على غيرك، فالعلم يحتاج وقتًا وصبرًا.",
-      en: "Do not rush judgments upon yourself or others; knowledge needs time and patience.",
-    },
-  },
-  {
-    id: "media-doubts",
-    category: {
-      ar: "الإعلام",
-      en: "Media",
-    },
-    question: {
-      ar: "أشاهد مقاطع تثير شكوكي، فهل أتركها أم أرد عليها؟",
-      en: "I watch clips that arouse doubts. Should I leave them or respond?",
-    },
-    answer: [
-      {
-        ar: "إن كنت غير متمكن من العلم، فالأفضل تركها أولًا والسؤال عن أصل المسألة عند أهل الثقة.",
-        en: "If you are not grounded in knowledge, it is better to leave them first and ask about the issue's foundation from trustworthy scholars.",
-      },
-      {
-        ar: "كثير من مقاطع الشبهات تُبنى على بتر النص، أو سوء فهم المصطلح، أو عرض مسألة فقهية معقدة في دقيقة واحدة.",
-        en: "Many doubt clips are built on cutting text, misunderstanding terminology, or presenting complex jurisprudence in one minute.",
-      },
-      {
-        ar: "لا تجعل قلبك ميدانًا لكل فكرة بلا تحقق، فالله أمر بالتثبت: يا أيها الذين آمنوا إن جاءكم فاسق بنبأ فتبينوا.",
-        en: "Do not make your heart an arena for every idea without verification, for Allah commanded verification: O believers, if a sinful person brings news, verify it.",
-      },
-    ],
-  },
-];
+/** أول قيمة من قيمة searchParam قد تكون مصفوفة. */
+function getFirstValue(value?: string | string[]): string {
+  if (Array.isArray(value)) return value[0] ?? "";
+  return value ?? "";
+}
+
+/** المحتوى يصل مُترجمًا حسب اللغة المطلوبة، فنعرضه في الحقلين معًا. */
+function toLocalized(value: string): Localized {
+  return { ar: value, en: value };
+}
+
+/** تصنيف افتراضي عند عدم وجود تصنيفات للعنصر. */
+const DEFAULT_DOUBT_CATEGORY: Localized = {
+  ar: "عام",
+  en: "General",
+};
+
+/** تقسيم نص الإجابة القادم من CMS إلى فقرات. */
+function splitAnswer(body: string): string[] {
+  return body
+    .split(/\r?\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+/** تحويل عنصر CMS إلى شكل العرض المستخدم في الصفحة. */
+function toDoubt(item: PublicItem): DoubtQA {
+  const question = (item.title ?? "").trim();
+  const answer = splitAnswer((item.body ?? "").trim());
+
+  if (answer.length === 0 && (item.summary ?? "").trim()) {
+    answer.push((item.summary ?? "").trim());
+  }
+
+  const term = item.terms?.[0];
+
+  return {
+    id: item.id,
+    category: term?.name ? toLocalized(term.name) : DEFAULT_DOUBT_CATEGORY,
+    question: toLocalized(question),
+    answer: answer.map(toLocalized),
+  };
+}
+
+/** جلب الشبهات والإجابات من CMS مع دعم البحث. */
+async function getDoubts(lang: Lang, search?: string): Promise<DoubtQA[]> {
+  try {
+    const items = await getPublicList(lang, "faq", {
+      limit: 60,
+      search,
+    });
+
+    return items.map(toDoubt).filter((doubt) => doubt.question.ar);
+  } catch (error) {
+    console.error("[DoubtsPage] CMS error:", error);
+    return [];
+  }
+}
 
 // ============================================================
 // Metadata
@@ -607,8 +402,10 @@ export function generateStaticParams() {
 
 export default async function DoubtsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   const { lang } = await params;
 
@@ -620,13 +417,18 @@ export default async function DoubtsPage({
   const ui = UI[l];
   const isRTL = l === "ar";
 
+  const sp = await searchParams;
+  const search = getFirstValue(sp.q).trim();
+
+  const doubts = await getDoubts(l, search || undefined);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     inLanguage: l,
     name: ui.title,
     description: ui.description,
-    mainEntity: DOUBTS.map((doubt) => ({
+    mainEntity: doubts.map((doubt) => ({
       "@type": "Question",
       name: isRTL ? doubt.question.ar : doubt.question.en,
       acceptedAnswer: {
@@ -788,7 +590,7 @@ export default async function DoubtsPage({
           </div>
 
           <div className="space-y-4">
-            {DOUBTS.map((doubt) => (
+            {doubts.map((doubt) => (
               <details
                 key={doubt.id}
                 className="card group p-6 md:p-7"

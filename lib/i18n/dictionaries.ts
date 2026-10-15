@@ -160,7 +160,7 @@ const en: Dictionary = {
     results: 'results',
   },
   footer: {
-    rights: 'All rights reserved © Ismail Ahmed Naguib Academy',
+    rights: 'All rights reserved © Ismail Ahmed Naguib Platform',
     aboutUs: 'About Us',
     contactUs: 'Contact Us',
     privacy: 'Privacy Policy',

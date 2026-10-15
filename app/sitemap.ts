@@ -44,6 +44,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/faq',
     '/privacy',
     '/terms',
+    '/learn',
+    '/fields',
+    '/hadith',
+    '/fiqh',
+    '/responses',
+    '/dawah',
+    '/projects',
+    '/khatm-dua',
+    '/prayer-guide',
+    '/inheritance',
+    '/quran-memorization',
+    '/daily-wird',
+    '/ruqyah',
   ];
 
   for (const lang of languages) {

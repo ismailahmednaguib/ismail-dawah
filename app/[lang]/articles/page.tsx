@@ -6,7 +6,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getPublishedContent } from "@/lib/learn/queries";
+import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
 
 export const dynamic = "force-dynamic";
 
@@ -114,303 +114,8 @@ const CATEGORIES: Category[] = [
 ];
 
 // ============================================================
-// المقالات
+// المقالات: تُجلب من CMS عبر getPublicList (lib/learn/public)
 // ============================================================
-
-const ARTICLES: Article[] = [
-  {
-    id: "dawah-basics",
-    categoryId: "dawah",
-    date: "2026-09-28",
-    readMinutes: 6,
-    icon: "🤝",
-    featured: true,
-    tags: {
-      ar: ["دعوة", "حكمة", "أخلاق"],
-      en: ["dawah", "wisdom", "manners"],
-    },
-    title: {
-      ar: "أساسيات الدعوة إلى الله",
-      en: "Fundamentals of Calling to Allah",
-    },
-    excerpt: {
-      ar: "الدعوة إلى الله ليست مجرد كلام، بل منهج يقوم على العلم والإخلاص والرفق وحسن الخلق.",
-      en: "Dawah is not merely speech; it is a methodology built on knowledge, sincerity, gentleness, and good character.",
-    },
-    content: {
-      ar: [
-        "أول أساس في الدعوة هو الإخلاص، بأن يقصد الداعية وجه الله وهداية الخلق، لا الشهرة ولا الغلبة في الجدال. ثم يأتي العلم، فيعرف الداعية ما يدعو إليه ودليله وحدود المسألة.",
-        "ومن الأسس المهمة الحكمة ومراعاة حال المدعو، فالجاهل يحتاج تعليمًا، والمحتاج يحتاج تيسيرًا، والمستفز يحتاج صبرًا. كما أن الرفق يفتح القلوب، بينما الخشونة قد تغلق أبوابًا كانت مفتوحة.",
-      ],
-      en: [
-        "The first foundation of dawah is sincerity, intending Allah's pleasure and the guidance of creation, not fame or winning arguments. Knowledge follows, so the caller knows what he invites to, its evidence, and the limits of the issue.",
-        "Another key foundation is wisdom and considering the state of the person being invited. The ignorant needs teaching, the needy needs ease, and the provoked needs patience. Gentleness opens hearts, while harshness may close doors that were open.",
-      ],
-    },
-  },
-  {
-    id: "quran-tadabbur",
-    categoryId: "quran",
-    date: "2026-09-21",
-    readMinutes: 5,
-    icon: "📖",
-    featured: true,
-    tags: {
-      ar: ["قرآن", "تدبر", "قلوب"],
-      en: ["quran", "reflection", "hearts"],
-    },
-    title: {
-      ar: "كيف تتدبر القرآن في حياتك اليومية؟",
-      en: "How to Reflect on the Quran in Daily Life",
-    },
-    excerpt: {
-      ar: "التدبر ليس علمًا خاصًا بالعلماء فقط، بل هو مفتاح عيش القلب مع القرآن.",
-      en: "Reflection is not limited to scholars; it is a key to living the heart with the Quran.",
-    },
-    content: {
-      ar: [
-        "ابدأ بقراءة يسيرة مع معنى واضح، ثم اسأل نفسك: ماذا يريد الله مني في هذه الآية؟ لا تجعل همك إنهاء السور فقط، بل اجعل همك فهم الخطاب والتأثر به.",
-        "من أعظم ثمار التدبر أن يصبح القرآن برنامج حياة: آية في الصبر عند البلاء، وآية في الرحمة مع الخلق، وآية في التوبة عند الذنب. هكذا ينزل القرآن من المصحف إلى القلب والسلوك.",
-      ],
-      en: [
-        "Begin with a small reading alongside a clear meaning, then ask yourself: what does Allah want from me in this verse? Do not make your only concern finishing surahs; make your concern understanding the address and being affected by it.",
-        "Among the greatest fruits of reflection is that the Quran becomes a life program: a verse on patience during hardship, a verse on mercy with creation, and a verse on repentance after sin. Thus the Quran descends from the mushaf into the heart and conduct.",
-      ],
-    },
-  },
-  {
-    id: "fiqh-travel-prayer",
-    categoryId: "fiqh",
-    date: "2026-09-14",
-    readMinutes: 7,
-    icon: "🕌",
-    tags: {
-      ar: ["فقه", "صلاة", "سفر"],
-      en: ["fiqh", "prayer", "travel"],
-    },
-    title: {
-      ar: "أحكام صلاة المسافر: تيسير لا تفريط",
-      en: "Rulings of Traveler's Prayer: Ease, Not Negligence",
-    },
-    excerpt: {
-      ar: "شرع الله للمسافر رخصًا تعينه على العبادة، لكن ينبغي فهم ضوابطها حتى لا تتحول إلى تهاون.",
-      en: "Allah legislated concessions for travelers to help them worship, but their conditions should be understood so they do not become negligence.",
-    },
-    content: {
-      ar: [
-        "من أحكام السفر المشهورة: قصر الصلاة الرباعية، والجمع بين الظهر والعصر وبين المغرب والعشاء في حالات الحاجة. وهذه الرخص مبناها على التيسير ورفع الحرج.",
-        "لكن ينبغي الانتباه إلى أن السفر له ضوابط، وأن بعض الناس قد يجمع بين الرخص بطريقة تخل بالمقصود الشرعي. الأصل أن تُصلى الصلاة في وقتها، والرخصة تُستعمل عند الحاجة الحقيقية.",
-      ],
-      en: [
-        "Among well-known travel rulings are shortening the four-unit prayers and combining Dhuhr with Asr and Maghrib with Isha when needed. These concessions are based on easing hardship.",
-        "However, one should note that travel has conditions, and some people may use concessions in a way that undermines the legislative purpose. The default is to pray on time, and concession is used for genuine need.",
-      ],
-    },
-  },
-  {
-    id: "akhlaq-social-media",
-    categoryId: "akhlaq",
-    date: "2026-09-07",
-    readMinutes: 4,
-    icon: "💬",
-    tags: {
-      ar: ["أخلاق", "لسان", "تواصل"],
-      en: ["ethics", "speech", "social media"],
-    },
-    title: {
-      ar: "حفظ اللسان في عصر وسائل التواصل",
-      en: "Guarding the Tongue in the Social Media Age",
-    },
-    excerpt: {
-      ar: "الكلمة في الفضاء الرقمي أسرع انتشارًا وأشد أثرًا، لذا كان حفظ اللسان واجبًا شرعيًا وأخلاقيًا.",
-      en: "Speech in the digital space spreads faster and affects more deeply, so guarding the tongue is a religious and ethical duty.",
-    },
-    content: {
-      ar: [
-        "كثير من الناس يحفظ لسانه في المجلس، لكنه يطلقه في التعليقات والمنشورات. والمؤمن الحق يراقب الله في السر والعلن، وفي الكتابة كما في الكلام.",
-        "من قواعد السلامة الرقمية: لا تنشر ما لا تعلم، ولا تجادل بغضب، ولا تنقل عيوب الناس، ولا تشارك خبرًا قبل التحقق. فالكلمة قد تكون صدقة، وقد تكون سيفًا يجرى صاحبه في نار جهنم.",
-      ],
-      en: [
-        "Many people guard their tongues in gatherings but release them in comments and posts. The true believer watches Allah in secret and openly, in writing as in speech.",
-        "Rules of digital safety include: do not publish what you do not know, do not argue in anger, do not spread people's faults, and do not share news before verification. A word may be charity, or it may be a sword whose owner slides into the Fire.",
-      ],
-    },
-  },
-  {
-    id: "stories-hijrah-lessons",
-    categoryId: "stories",
-    date: "2026-08-31",
-    readMinutes: 6,
-    icon: "🐪",
-    tags: {
-      ar: ["هجرة", "سيرة", "دروس"],
-      en: ["hijrah", "seerah", "lessons"],
-    },
-    title: {
-      ar: "من دروس الهجرة النبوية",
-      en: "Lessons from the Prophetic Migration",
-    },
-    excerpt: {
-      ar: "الهجرة لم تكن انتقالًا جغرافيًا فقط، بل كانت مدرسة في التخطيط والتوكل والتضحية.",
-      en: "The migration was not merely geographical movement; it was a school of planning, trust, and sacrifice.",
-    },
-    content: {
-      ar: [
-        "ظهر في الهجرة التوكل الحقيقي مع الأخذ بالأسباب: النبي صلى الله عليه وسلم اختار رفيقه، وخطط للطريق، واختبأ في الغار، ومع ذلك كان قلبه ممتلئًا يقينًا بقوله تعالى: لا تحزن إن الله معنا.",
-        "وفيها أيضًا درس في التضحية: أبو بكر رضي الله عنه قدم ماله ووقته وراحته، والأنصار فتحوا ديارهم وقلوبهم. فالمجتمع المسلم لا يُبنى بالشعارات، بل بالبذل والاستمرار.",
-      ],
-      en: [
-        "True trust with taking means appeared in the migration: the Prophet chose his companion, planned the route, hid in the cave, yet his heart was filled with certainty in Allah's words: Do not grieve; indeed Allah is with us.",
-        "It also teaches sacrifice: Abu Bakr offered his wealth, time, and comfort, and the Ansar opened their homes and hearts. The Muslim society is not built by slogans, but by giving and persistence.",
-      ],
-    },
-  },
-  {
-    id: "family-prayer-children",
-    categoryId: "family",
-    date: "2026-08-24",
-    readMinutes: 5,
-    icon: "🏡",
-    tags: {
-      ar: ["أسرة", "أبناء", "صلاة"],
-      en: ["family", "children", "prayer"],
-    },
-    title: {
-      ar: "تربية الأبناء على الصلاة بالرفق لا بالترهيب",
-      en: "Raising Children Upon Prayer with Gentleness, Not Fear",
-    },
-    excerpt: {
-      ar: "الصلاة أعظم أركان الإسلام بعد الشهادتين، وتربية الأبناء عليها تحتاج حكمة وصبرًا وقدوة.",
-      en: "Prayer is the greatest pillar after the testimony of faith, and raising children upon it requires wisdom, patience, and example.",
-    },
-    content: {
-      ar: [
-        "أول وسيلة في التربية هي القدوة: حين يرى الابن أباه وأمه يحافظان على الصلاة في وقتها، تتشكل عنده صورة حية أن الصلاة ليست عادة اجتماعية، بل علاقة مع الله.",
-        "ثم يأتي التدرج والرفق: علّمهم معنى الوضوء، وشوّقهم بالمكافأة، ولا تجعل الصلاة عقابًا. فالطفل الذي يرتبط بالصلاة بالرحمة، يكبر وهي سكينة في قلبه.",
-      ],
-      en: [
-        "The first means of upbringing is example: when a child sees father and mother maintaining prayer on time, a living image forms that prayer is not a social habit but a relationship with Allah.",
-        "Then comes gradual gentleness: teach them the meaning of wudu, encourage them with rewards, and do not make prayer a punishment. A child connected to prayer through mercy grows up finding it tranquility in the heart.",
-      ],
-    },
-  },
-  {
-    id: "dawah-shubuhat",
-    categoryId: "dawah",
-    date: "2026-08-17",
-    readMinutes: 8,
-    icon: "🧠",
-    tags: {
-      ar: ["شبهات", "دعوة", "عقل"],
-      en: ["doubts", "dawah", "reason"],
-    },
-    title: {
-      ar: "الرد على الشبهات بمنهج حكيم",
-      en: "Answering Doubts with a Wise Methodology",
-    },
-    excerpt: {
-      ar: "الشبهة لا تُدفع بالغضب دائمًا، بل بفهم أصل السؤال، وتقديم الجواب المناسب للمستوى.",
-      en: "A doubt is not always repelled by anger, but by understanding the root of the question and giving an answer suited to the level.",
-    },
-    content: {
-      ar: [
-        "كثير من الشبهات تكون مبنية على سوء فهم، أو نقل ناقص، أو قياس فاسد. لذلك يجب على الداعية أن يسأل: ما الذي فهمه هذا الشخص؟ وما الدليل الذي اعتمد عليه؟ ثم يزيل اللبس بالبيان لا بالتشهير.",
-        "ومن الحكمة ألا يدخل الداعية في كل شبهة، خاصة ما لا علم له فيه. فليس كل سؤال يستحق جوابًا فوريًا، وقد يكون أفضل الرد: سأتحقق وأرد عليك، أو أحولك إلى أهل الاختصاص.",
-      ],
-      en: [
-        "Many doubts are built on misunderstanding, incomplete transmission, or faulty analogy. Therefore, the da'ee should ask: what did this person understand? What evidence did he rely on? Then remove confusion by clarification, not defamation.",
-        "Wisdom also requires that the da'ee not enter every doubt, especially those beyond his knowledge. Not every question deserves an immediate answer, and sometimes the best response is: I will verify and reply, or I will refer you to specialists.",
-      ],
-    },
-  },
-  {
-    id: "quran-memorization-plans",
-    categoryId: "quran",
-    date: "2026-08-10",
-    readMinutes: 6,
-    icon: "🎯",
-    tags: {
-      ar: ["حفظ", "قرآن", "خطة"],
-      en: ["memorization", "quran", "plan"],
-    },
-    title: {
-      ar: "خطط عملية لحفظ القرآن الكريم",
-      en: "Practical Plans for Memorizing the Quran",
-    },
-    excerpt: {
-      ar: "الحفظ يحتاج خطة واضحة، ووقتًا ثابتًا، ومراجعة دائمة، لا حماسًا يبدأ وينتهي.",
-      en: "Memorization needs a clear plan, fixed time, and constant revision, not enthusiasm that begins and ends.",
-    },
-    content: {
-      ar: [
-        "من أنجح الطرق: تحديد ورد يومي صغير لكن مستمر، مثل ثلاث آيات أو خمس آيات. ثم ربط الحفظ بوقت ثابت، بعد الفجر مثلًا، لأن القلب يكون أصفى والذاكرة أنشط.",
-        "كما أن المراجعة أهم من الحفظ الجديد في كثير من الأحيان. فاحفظ الجديد، ثم راجع القديم كل يوم، واجعل لك أسبوعًا لمراجعة ما حفظته في الشهر. هكذا يثبت القرآن بإذن الله.",
-      ],
-      en: [
-        "Among the most successful methods is setting a small but consistent daily portion, such as three or five verses. Then attach memorization to a fixed time, for example after Fajr, because the heart is clearer and memory is more active.",
-        "Revision is often more important than new memorization. Memorize the new portion, revise the old daily, and set aside a weekly review of the month's memorization. Thus the Quran becomes firm, by Allah's permission.",
-      ],
-    },
-  },
-  {
-    id: "fiqh-zakat-purpose",
-    categoryId: "fiqh",
-    date: "2026-08-03",
-    readMinutes: 7,
-    icon: "💰",
-    tags: {
-      ar: ["زكاة", "فقه", "مقاصد"],
-      en: ["zakat", "fiqh", "objectives"],
-    },
-    title: {
-      ar: "الزكاة: مقاصد وأحكام",
-      en: "Zakat: Objectives and Rulings",
-    },
-    excerpt: {
-      ar: "الزكاة ليست مجرد مبلغ يُخرج، بل هي عبادة مالية تطهر النفس وتصلح المجتمع.",
-      en: "Zakat is not merely an amount paid; it is financial worship that purifies the soul and repairs society.",
-    },
-    content: {
-      ar: [
-        "من مقاصد الزكاة: تطهير المال من الشح، وتطهير النفس من البخل، وتحقيق التكافل بين المسلمين. فهي تربط الغني بالفقير برباط عبادة لا رباط منّة.",
-        "وأحكامها تحتاج دقة: النصاب، والحول، وأنواع الأموال، والديون، وعروض التجارة. ولهذا لا ينبغي الاكتفاء بالحاسبات الآلية في المسائل المعقدة، بل يُراجع أهل العلم.",
-      ],
-      en: [
-        "Objectives of zakat include purifying wealth from stinginess, purifying the soul from miserliness, and achieving mutual care among Muslims. It connects rich and poor through worship, not through favors.",
-        "Its rulings require precision: nisab, lunar year, types of wealth, debts, and trade goods. Therefore, automated calculators should not be relied upon in complex matters; qualified scholars should be consulted.",
-      ],
-    },
-  },
-  {
-    id: "akhlaq-patience",
-    categoryId: "akhlaq",
-    date: "2026-07-27",
-    readMinutes: 5,
-    icon: "🌱",
-    tags: {
-      ar: ["صبر", "ابتلاء", "قلوب"],
-      en: ["patience", "trial", "hearts"],
-    },
-    title: {
-      ar: "الصبر على الابتلاء: مفتاح الطمأنينة",
-      en: "Patience in Trial: The Key to Tranquility",
-    },
-    excerpt: {
-      ar: "الابتلاء سنة الحياة، والصبر ليس جمودًا، بل هو قبول هادئ مع أخذ بالأسباب وحسن ظن بالله.",
-      en: "Trial is the way of life, and patience is not rigidity; it is calm acceptance with taking means and good expectation of Allah.",
-    },
-    content: {
-      ar: [
-        "حين يفهم المسلم أن الابتلاء ليس دليل غضب دائمًا، ولا يعني أن الله نسيه، يهدأ قلبه. فالنبي صلى الله عليه وسلم كان أشد الناس بلاء، ومع ذلك كان أكثرهم صبرًا وأرجاهم أجرًا.",
-        "والصبر لا يمنع الدعاء ولا العمل بالأسباب. بل المؤمن يصبر ويدعو ويعالج ويتوكل. وهذا هو الجمع بين الإيمان بالقدر والأخذ بالأسباب.",
-      ],
-      en: [
-        "When a Muslim understands that trial is not always a sign of anger, nor does it mean Allah forgot him, his heart calms. The Prophet was among the most severely tested people, yet he was the most patient and hopeful of reward.",
-        "Patience does not prevent supplication or taking means. Rather, the believer is patient, prays, seeks treatment, and relies on Allah. This combines belief in divine decree with taking means.",
-      ],
-    },
-  },
-];
 
 // ============================================================
 // نصوص الواجهة
@@ -639,39 +344,71 @@ export function generateStaticParams() {
 }
 
 /**
- * المقالات التي ينشرها المدير من المكتبة الموحدة.
- * نحتفظ بالمقالات التعريفية القديمة كخطة بديلة إلى أن يبدأ المحتوى الموحّد.
+ * يطابق تصنيفات عنصر الـ CMS مع تصنيفات الواجهة الثابتة اعتمادًا على الـ slug.
  */
-async function getManagedArticles(lang: Lang): Promise<Article[]> {
+function resolveCategoryId(terms: PublicTerm[]): string {
+  for (const term of terms) {
+    const match = CATEGORIES.find((item) => item.id === term.slug);
+    if (match) return match.id;
+  }
+  return "all";
+}
+
+/**
+ * يقسّم نص المقال إلى فقرات لعرضها في بطاقة المقال.
+ */
+function splitParagraphs(text: string): string[] {
+  return text
+    .split(/\r?\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
+/**
+ * يحوّل عنصر المحتوى المنشور القادم من الـ CMS إلى شكل البطاقة المستخدم في الصفحة.
+ */
+function mapPublicArticle(item: PublicItem, lang: Lang): Article {
+  const title = item.title.trim();
+  const summary = item.summary?.trim() ?? "";
+  const body = item.body?.trim() ?? "";
+  const categoryId = resolveCategoryId(item.terms);
+  const matchedCategory = CATEGORIES.find(
+    (category) => category.id !== "all" && category.id === categoryId
+  );
+  const icon =
+    matchedCategory?.icon ?? item.terms.find((term) => term.icon)?.icon ?? "📰";
+  const tags = item.terms.map((term) => term.name).filter(Boolean);
+  const paragraphs = splitParagraphs(body || summary);
+
+  return {
+    id: `cms-${item.id}`,
+    categoryId,
+    date: item.published_at?.slice(0, 10) || new Date().toISOString().slice(0, 10),
+    readMinutes: Math.max(1, Math.ceil((body.length || summary.length || 240) / 500)),
+    icon,
+    tags: { ar: tags, en: tags },
+    title: { ar: title, en: title },
+    excerpt: { ar: summary, en: summary },
+    content: { ar: paragraphs, en: paragraphs },
+    href: `/${lang}/learn/article/${encodeURIComponent(item.slug)}`,
+  };
+}
+
+/**
+ * يجلب المقالات المنشورة من CMS عبر الطبقة العامة الموحّدة.
+ */
+async function getArticles(lang: Lang, search?: string): Promise<Article[]> {
   try {
-    const result = await getPublishedContent(lang, {
-      type: "article",
-      page: 1,
-      per_page: 48,
+    const items = await getPublicList(lang, "article", {
+      limit: 48,
+      search: search?.trim() || undefined,
     });
 
-    return result.data
+    return items
       .filter((item) => item.slug && item.title)
-      .map((item) => {
-        const summary = item.summary?.trim() || "";
-        const date = item.published_at?.slice(0, 10) || new Date().toISOString().slice(0, 10);
-        const title = item.title.trim();
-
-        return {
-          id: `managed-${item.id}`,
-          categoryId: "all",
-          date,
-          readMinutes: Math.max(1, Math.ceil((summary.length || 240) / 500)),
-          icon: "📰",
-          tags: { ar: [], en: [] },
-          title: { ar: title, en: title },
-          excerpt: { ar: summary, en: summary },
-          content: { ar: summary ? [summary] : [], en: summary ? [summary] : [] },
-          href: `/${lang}/learn/article/${encodeURIComponent(item.slug)}`,
-        } satisfies Article;
-      });
+      .map((item) => mapPublicArticle(item, lang));
   } catch (error) {
-    console.error("[ArticlesPage] managed content error:", error);
+    console.error("[ArticlesPage] public content error:", error);
     return [];
   }
 }
@@ -703,8 +440,7 @@ export default async function ArticlesPage({
       : "all";
 
   const requestedPage = parsePage(sp.page);
-  const managedArticles = await getManagedArticles(l);
-  const articles = managedArticles.length > 0 ? managedArticles : ARTICLES;
+  const articles = await getArticles(l, q);
 
   const filteredArticles = articles.filter((article) => {
     if (category !== "all" && article.categoryId !== category) return false;
@@ -799,7 +535,7 @@ export default async function ArticlesPage({
               </span>
             </div>
             <p className="text-xl font-black text-primary-700 dark:text-primary-300">
-              {formatNumber(ARTICLES.length, l)}
+              {formatNumber(articles.length, l)}
             </p>
             <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
               {ui.articlesCount}
@@ -994,7 +730,7 @@ export default async function ArticlesPage({
           </span>{" "}
           {ui.of}{" "}
           <span className="text-slate-700 dark:text-slate-200">
-            {formatNumber(ARTICLES.length, l)}
+            {formatNumber(articles.length, l)}
           </span>
         </p>
 

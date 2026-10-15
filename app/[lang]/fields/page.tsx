@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
-import { getFieldTranslation } from "@/lib/translations";
+import { getPublicTaxonomies, type PublicTerm } from "@/lib/learn/public";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,15 +14,6 @@ export const dynamic = "force-dynamic";
 // ============================================================
 // الأنواع
 // ============================================================
-
-type Field = {
-  id: string;
-  icon: string;
-  title: { ar: string; en: string; [key: string]: string };
-  description: { ar: string; en: string; [key: string]: string };
-  slug: string;
-  color: string;
-};
 
 type UILang = {
   title: string;
@@ -115,200 +106,6 @@ const UI: Record<string, UILang> = {
 };
 
 // ============================================================
-// قائمة المجالات
-// ============================================================
-
-const FIELDS: Field[] = [
-  {
-    id: "aqeedah",
-    icon: "🕌",
-    title: { ar: "العقيدة", en: "Creed (Aqeedah)" },
-    description: {
-      ar: "أصول الإيمان بالله وملائكته وكتبه ورسله واليوم الآخر والقدر خيره وشره.",
-      en: "Fundamentals of faith in Allah, His angels, books, messengers, the Last Day, and divine decree.",
-    },
-    slug: "aqeedah",
-    color: "from-indigo-500 to-indigo-600",
-  },
-  {
-    id: "fiqh",
-    icon: "⚖️",
-    title: { ar: "الفقه", en: "Jurisprudence (Fiqh)" },
-    description: {
-      ar: "الأحكام الشرعية العملية في العبادات والمعاملات والأحوال الشخصية.",
-      en: "Practical Islamic rulings in worship, transactions, and personal status.",
-    },
-    slug: "fiqh",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "tafsir",
-    icon: "📖",
-    title: { ar: "التفسير", en: "Exegesis (Tafsir)" },
-    description: {
-      ar: "تفسير القرآن الكريم وبيان معانيه وأحكامه ودروسه.",
-      en: "Interpretation of the Quran, explaining its meanings, rulings, and lessons.",
-    },
-    slug: "tafsir",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "hadith",
-    icon: "📜",
-    title: { ar: "الحديث", en: "Hadith" },
-    description: {
-      ar: "علم الحديث رواية ودراية، والسنة النبوية الشريفة.",
-      en: "Hadith sciences in transmission and criticism, and the Prophetic Sunnah.",
-    },
-    slug: "hadith",
-    color: "from-amber-500 to-amber-600",
-  },
-  {
-    id: "seerah",
-    icon: "🌙",
-    title: { ar: "السيرة النبوية", en: "Prophetic Biography" },
-    description: {
-      ar: "حياة النبي ﷺ وسيرته العطرة من المولد إلى الوفات.",
-      en: "The life of the Prophet ﷺ from birth to his passing.",
-    },
-    slug: "seerah",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "dawah",
-    icon: "📢",
-    title: { ar: "الدعوة", en: "Dawah" },
-    description: {
-      ar: "أصول الدعوة إلى الله وأساليبها وآدابها ومناهجها.",
-      en: "Principles, methods, etiquette, and approaches of calling to Allah.",
-    },
-    slug: "dawah",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "history",
-    icon: "🏛️",
-    title: { ar: "التاريخ الإسلامي", en: "Islamic History" },
-    description: {
-      ar: "تاريخ الأمة الإسلامية من الخلافة الراشدة إلى العصر الحديث.",
-      en: "History of the Islamic Ummah from the Rightly Guided Caliphate to the modern era.",
-    },
-    slug: "history",
-    color: "from-stone-500 to-stone-600",
-  },
-  {
-    id: "ethics",
-    icon: "💫",
-    title: { ar: "الأخلاق", en: "Ethics" },
-    description: {
-      ar: "الأخلاق الإسلامية وتزكية النفس والسلوك القويم.",
-      en: "Islamic ethics, self-purification, and righteous conduct.",
-    },
-    slug: "ethics",
-    color: "from-cyan-500 to-cyan-600",
-  },
-  {
-    id: "family",
-    icon: "👨‍👩‍👧‍👦",
-    title: { ar: "الأسرة", en: "Family" },
-    description: {
-      ar: "أحكام الزواج والأسرة وتربية الأبناء والحقوق الزوجية.",
-      en: "Marriage, family, child-rearing, and spousal rights.",
-    },
-    slug: "family",
-    color: "from-pink-500 to-pink-600",
-  },
-  {
-    id: "youth",
-    icon: "🌱",
-    title: { ar: "الشباب", en: "Youth" },
-    description: {
-      ar: "قضايا الشباب المعاصرة ومشاكلهم وحلولها من منظور إسلامي.",
-      en: "Contemporary youth issues and their Islamic solutions.",
-    },
-    slug: "youth",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "women",
-    icon: "🧕",
-    title: { ar: "المرأة", en: "Women" },
-    description: {
-      ar: "قضايا المرأة المسلمة وأحكامها الفقهية وفتاواها الخاصة.",
-      en: "Issues of Muslim women, their rulings, and specific fatwas.",
-    },
-    slug: "women",
-    color: "from-rose-500 to-rose-600",
-  },
-  {
-    id: "contemporary",
-    icon: "🌍",
-    title: { ar: "القضايا المعاصرة", en: "Contemporary Issues" },
-    description: {
-      ar: "النوازل والمستجدات الفقهية في العصر الحديث.",
-      en: "Modern jurisprudential issues and contemporary challenges.",
-    },
-    slug: "contemporary",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "quran-sciences",
-    icon: "📚",
-    title: { ar: "علوم القرآن", en: "Quranic Sciences" },
-    description: {
-      ar: "علوم القرآن من أسباب النزول والناسخ والمنسوب والمحكم والمتشابه.",
-      en: "Quranic sciences including reasons for revelation, abrogation, and clear/ambiguous verses.",
-    },
-    slug: "quran-sciences",
-    color: "from-primary-500 to-primary-600",
-  },
-  {
-    id: "comparison",
-    icon: "🔍",
-    title: { ar: "الأديان المقارنة", en: "Comparative Religion" },
-    description: {
-      ar: "دراسة الأديان الأخرى ومقارنتها بالإسلام بمنهجية علمية.",
-      en: "Study of other religions compared to Islam with scholarly methodology.",
-    },
-    slug: "comparison",
-    color: "from-violet-500 to-violet-600",
-  },
-  {
-    id: "atheism",
-    icon: "🧠",
-    title: { ar: "الإلحاد والشبهات", en: "Atheism & Doubts" },
-    description: {
-      ar: "الرد على الإلحاد والشبهات المعاصرة بالحجة والعلم.",
-      en: "Responding to atheism and modern doubts with evidence and knowledge.",
-    },
-    slug: "atheism",
-    color: "from-red-500 to-red-600",
-  },
-  {
-    id: "thought",
-    icon: "💡",
-    title: { ar: "الفكر الإسلامي", en: "Islamic Thought" },
-    description: {
-      ar: "الفكر الإسلامي المعاصر والتيارات الفكرية والمذاهب.",
-      en: "Contemporary Islamic thought, intellectual trends, and schools.",
-    },
-    slug: "thought",
-    color: "from-yellow-500 to-yellow-600",
-  },
-  {
-    id: "politics",
-    icon: "🏛️",
-    title: { ar: "السياسة الشرعية", en: "Islamic Politics" },
-    description: {
-      ar: "أحكام السياسة الشرعية والحكم والإمارة والجهاد.",
-      en: "Islamic political rulings, governance, leadership, and jihad.",
-    },
-    slug: "politics",
-    color: "from-slate-500 to-slate-600",
-  },
-];
-
-// ============================================================
 // Metadata
 // ============================================================
 
@@ -377,18 +174,22 @@ export default async function FieldsPage({
   const ui = UI[L];
   const isRTL = L === "ar";
 
+  const fields = await getPublicTaxonomies(L, "field");
+  const fieldColor = (term: PublicTerm) =>
+    term.color ?? "from-primary-500 to-primary-600";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: ui.title,
     description: ui.description,
     inLanguage: L,
-    numberOfItems: FIELDS.length,
-    itemListElement: FIELDS.map((field, index) => ({
+    numberOfItems: fields.length,
+    itemListElement: fields.map((field, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      name: isRTL ? field.title.ar : field.title.en,
-      description: isRTL ? field.description.ar : field.description.en,
+      name: field.name,
+      description: field.name,
       url: `/${L}/fields/${field.slug}`,
     })),
   };
@@ -462,7 +263,7 @@ export default async function FieldsPage({
 
         {/* ===== إحصائيات سريعة ===== */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatCard icon="📚" label={ui.totalFields} value={FIELDS.length} color="primary" />
+          <StatCard icon="📚" label={ui.totalFields} value={fields.length} color="primary" />
           <StatCard icon="🌍" label={ui.languages} value={2} color="gold" />
           <StatCard icon="✨" label={ui.comprehensive} value="100%" color="primary" />
           <StatCard icon="🎁" label={ui.freeAccess} value="✓" color="gold" />
@@ -493,34 +294,34 @@ export default async function FieldsPage({
             📖 {ui.allFields}
           </h2>
           <span className="badge-primary">
-            {FIELDS.length} {ui.totalFields}
+            {fields.length} {ui.totalFields}
           </span>
         </div>
 
         {/* ===== شبكة المجالات ===== */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {FIELDS.map((field) => (
+          {fields.map((field) => (
             <Link
               key={field.id}
               href={`/${L}/fields/${field.slug}`}
               className="card card-interactive group relative overflow-hidden p-6"
             >
-              <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${field.color} opacity-70 transition-opacity duration-300 group-hover:opacity-100`} />
+              <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${fieldColor(field)} opacity-70 transition-opacity duration-300 group-hover:opacity-100`} />
 
               <div className="mb-4 flex items-center gap-3">
-                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${field.color} text-2xl text-white shadow-lg`}>
+                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(field)} text-2xl text-white shadow-lg`}>
                   {field.icon}
                 </span>
                 <h2
                   className="text-xl font-black text-slate-900 dark:text-white"
                   style={{ fontFamily: "var(--font-amiri)" }}
                 >
-                  {getFieldTranslation(field.title, L)}
+                  {field.name}
                 </h2>
               </div>
 
               <p className="mb-5 line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                {getFieldTranslation(field.description, L)}
+                {field.name}
               </p>
 
               <div className="flex items-center gap-2 text-sm font-bold text-primary-700 dark:text-primary-300">

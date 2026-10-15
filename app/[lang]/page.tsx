@@ -7,10 +7,12 @@ import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
+import ContentCard from "@/components/learn/ContentCard";
 import { getSiteSettings } from "@/lib/content";
+import { getPublicCounts, getPublicList, type PublicItem } from "@/lib/learn/public";
 
-// الصفحة تتخزن ساعة (الآية بتتغير يومياً)
-export const revalidate = 3600;
+// المحتوى يُقرأ من قاعدة البيانات وقت الطلب حتى تظهر تعديلات لوحة التحكم فورًا.
+export const dynamic = "force-dynamic";
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"
@@ -95,6 +97,15 @@ type UiText = {
   metaDesc: string;
   pathsTitle: string;
   pathsSubtitle: string;
+  latestTitle: string;
+  latestSubtitle: string;
+  latestLessons: string;
+  latestFatwas: string;
+  latestArticles: string;
+  latestHadith: string;
+  latestDoubts: string;
+  viewAll: string;
+  readMore: string;
 };
 
 const UI: Record<string, UiText> = {
@@ -132,6 +143,15 @@ const UI: Record<string, UiText> = {
     pathsTitle: "اختر مسارك",
     pathsSubtitle:
       "ابدأ من الباب الأقرب إلى احتياجك، ثم انتقل تدريجيًا إلى ما يناسب رحلتك.",
+    latestTitle: "أحدث ما نُشر",
+    latestSubtitle: "مختارات من الدروس والفتاوى والمقالات والأحاديث والشبهات",
+    latestLessons: "أحدث الدروس",
+    latestFatwas: "أحدث الفتاوى",
+    latestArticles: "أحدث المقالات",
+    latestHadith: "من الأحاديث",
+    latestDoubts: "من الشبهات والردود",
+    viewAll: "عرض الكل",
+    readMore: "اقرأ المزيد",
   },
   en: {
     badge: "✨ Comprehensive Dawah Platform",
@@ -171,6 +191,15 @@ const UI: Record<string, UiText> = {
     pathsTitle: "Choose your path",
     pathsSubtitle:
       "Start with the path closest to your needs, then grow at your own pace.",
+    latestTitle: "Latest Published",
+    latestSubtitle: "A selection of lessons, fatwas, articles, hadith, and doubts",
+    latestLessons: "Latest Lessons",
+    latestFatwas: "Latest Fatwas",
+    latestArticles: "Latest Articles",
+    latestHadith: "From the Hadith",
+    latestDoubts: "Doubts & Responses",
+    viewAll: "View all",
+    readMore: "Read more",
   },
 };
 
@@ -286,6 +315,12 @@ const LEARN_ITEMS: SectionItem[] = [
 
 const RESPONSE_ITEMS: SectionItem[] = [
   {
+    href: "/responses",
+    icon: "🛡️",
+    title: { ar: "مركز الردود", en: "Responses Center" },
+    desc: { ar: "ردود منهجية على الشبهات والتيارات", en: "Methodical answers to doubts" },
+  },
+  {
     href: "/atheism-response",
     icon: "🧠",
     title: { ar: "الرد على الإلحاد", en: "Responding to Atheism" },
@@ -328,6 +363,12 @@ const RESPONSE_ITEMS: SectionItem[] = [
 // ============================================================
 
 const DAWAH_ITEMS: SectionItem[] = [
+  {
+    href: "/dawah",
+    icon: "🌍",
+    title: { ar: "بوابة غير المسلمين", en: "Non-Muslim Portal" },
+    desc: { ar: "تعريف بالإسلام لمن يبحث عن الحقيقة", en: "An introduction to Islam" },
+  },
   {
     href: "/dawah-guide",
     icon: "📢",
@@ -457,6 +498,16 @@ export default async function HomePage({
   };
   const verse = getVerseOfTheDay(l);
 
+  const [counts, latestLessons, latestFatwas, latestArticles, latestHadith, latestDoubts] =
+    await Promise.all([
+      getPublicCounts(l),
+      getPublicList(l, "lesson", { limit: 3 }),
+      getPublicList(l, "fatwa", { limit: 3 }),
+      getPublicList(l, "article", { limit: 3 }),
+      getPublicList(l, "hadith", { limit: 3 }),
+      getPublicList(l, "faq", { limit: 3 }),
+    ]);
+
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -555,8 +606,8 @@ export default async function HomePage({
           </div>
 
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
-            <HeroStatCard value="35+" label={ui.statSections} />
-            <HeroStatCard value="2" label={ui.statLanguages} />
+            <HeroStatCard value={`${Math.max(counts.total, 0)}+`} label={ui.statSections} />
+            <HeroStatCard value="8" label={ui.statLanguages} />
             <HeroStatCard value="114" label={ui.statSurahs} />
             <HeroStatCard value="100%" label={ui.statFree} />
           </div>
@@ -715,6 +766,69 @@ export default async function HomePage({
           ))}
         </div>
       </section>
+
+      {/* ============ أحدث ما نُشر ============ */}
+      {latestLessons.length +
+        latestFatwas.length +
+        latestArticles.length +
+        latestHadith.length +
+        latestDoubts.length >
+        0 && (
+        <section className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
+          <div className="container-page">
+            <div className="mb-10 text-center">
+              <h2
+                className="section-title mb-0"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                🆕 {ui.latestTitle}
+              </h2>
+              <div className="islamic-divider my-0" aria-hidden="true">
+                <span className="text-xl text-gold-500">✦</span>
+              </div>
+              <p className="section-subtitle mx-auto max-w-2xl">
+                {ui.latestSubtitle}
+              </p>
+            </div>
+
+            <LatestRow
+              title={ui.latestLessons}
+              href={`/${l}/learn?type=lesson`}
+              items={latestLessons}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
+            <LatestRow
+              title={ui.latestFatwas}
+              href={`/${l}/fatwa`}
+              items={latestFatwas}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
+            <LatestRow
+              title={ui.latestArticles}
+              href={`/${l}/articles`}
+              items={latestArticles}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
+            <LatestRow
+              title={ui.latestHadith}
+              href={`/${l}/hadith`}
+              items={latestHadith}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
+            <LatestRow
+              title={ui.latestDoubts}
+              href={`/${l}/doubts`}
+              items={latestDoubts}
+              lang={l}
+              viewAll={ui.viewAll}
+            />
+          </div>
+        </section>
+      )}
 
       {/* ============ النشرة البريدية ============ */}
       <section className="container-page pb-16 md:pb-20">
@@ -931,6 +1045,64 @@ function PathCard({ item, lang }: { item: LearningPath; lang: Lang }) {
         {isRTL ? item.desc.ar : item.desc.en}
       </p>
     </Link>
+  );
+}
+
+// ============================================================
+// LatestRow — صف محتوى حقيقي من قاعدة البيانات
+// ============================================================
+
+function LatestRow({
+  title,
+  href,
+  items,
+  lang,
+  viewAll,
+}: {
+  title: string;
+  href: string;
+  items: PublicItem[];
+  lang: Lang;
+  viewAll: string;
+}) {
+  if (items.length === 0) return null;
+
+  const isRTL = lang === "ar";
+
+  return (
+    <div className="mb-12 last:mb-0">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <h3
+          className="text-xl font-black text-slate-900 dark:text-white md:text-2xl"
+          style={{ fontFamily: "var(--font-amiri)" }}
+        >
+          {title}
+        </h3>
+        <Link
+          href={href}
+          className="shrink-0 text-sm font-bold text-primary-700 transition-colors hover:text-primary-500 dark:text-primary-300"
+        >
+          {viewAll}
+          <span aria-hidden="true" className="mx-1">
+            {isRTL ? "←" : "→"}
+          </span>
+        </Link>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <ContentCard
+            key={item.id}
+            lang={lang}
+            type={item.content_type}
+            slug={item.slug}
+            title={item.title}
+            summary={item.summary}
+            published_at={item.published_at}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 

@@ -56,7 +56,7 @@ export default function AdminSidebar({
             إ
           </span>
           <div>
-            <h1 className="font-black tracking-tight text-gold-200">أكاديمية إسماعيل</h1>
+            <h1 className="font-black tracking-tight text-gold-200">منصة إسماعيل</h1>
             <p className="mt-0.5 text-xs text-primary-200">مركز إدارة المنصة</p>
           </div>
         </div>
