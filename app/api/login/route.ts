@@ -12,6 +12,7 @@ import {
   isValidAuthEmail,
   type Role,
 } from "@/lib/auth";
+import { isOwnerEmail } from "@/lib/admin/owner";
 
 // ============================================================
 // Types
@@ -393,7 +394,7 @@ export async function POST(req: NextRequest) {
       return unauthorizedResponse();
     }
 
-    const role = getRowRole(userRow);
+    const role: Role = isOwnerEmail(email) ? "admin" : getRowRole(userRow);
 
     const res = NextResponse.json({
       ok: true,

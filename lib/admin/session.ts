@@ -9,6 +9,7 @@ import 'server-only';
 import { getAdminFromCookie } from '@/lib/auth';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import type { AppRole } from '@/lib/types/content';
+import { isOwnerEmail } from '@/lib/admin/owner';
 
 const VALID_ROLES = new Set<AppRole>([
   'super_admin',
@@ -38,7 +39,8 @@ export async function getAdminSession(): Promise<AdminSession | null> {
     // الدور العام الحالي يأتي من admin_users. إن وُجدت user_roles نستخدمها
     // لتطبيق صلاحيات المرحلة الأولى، مع fallback آمن حتى لا تتعطل اللوحة
     // قبل تطبيق migration الخاصة بالأدوار.
-    let roles: AppRole[] = ['admin'];
+    const owner = isOwnerEmail(admin.email);
+    let roles: AppRole[] = owner ? ['super_admin'] : ['admin'];
     let fullName = admin.full_name;
 
     try {
@@ -49,9 +51,9 @@ export async function getAdminSession(): Promise<AdminSession | null> {
         .eq('user_id', admin.id)
         .maybeSingle();
 
-      if (!error && roleRow?.is_active === false) return null;
+      if (!owner && !error && roleRow?.is_active === false) return null;
 
-      if (!error && Array.isArray(roleRow?.roles)) {
+      if (!owner && !error && Array.isArray(roleRow?.roles)) {
         const configuredRoles = roleRow.roles.filter((role): role is AppRole =>
           typeof role === 'string' && VALID_ROLES.has(role as AppRole)
         );

@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminSession } from '@/lib/admin/session';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { isOwnerEmail } from '@/lib/admin/owner';
 
 export async function GET() {
   const session = await getAdminSession();
@@ -19,7 +20,13 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ data });
+  const ownerAwareData = (data ?? []).map((row: any) =>
+    row.user_id === session.userId && isOwnerEmail(session.email)
+      ? { ...row, roles: ['super_admin'] }
+      : row
+  );
+
+  return NextResponse.json({ data: ownerAwareData });
 }
 
 export async function PUT(req: NextRequest) {
