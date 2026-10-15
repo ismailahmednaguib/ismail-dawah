@@ -1,4 +1,5 @@
 import { getAdminSession } from '@/lib/admin/session';
+import { can } from '@/lib/admin/permissions';
 import { redirect } from 'next/navigation';
 import { getContentFull } from '@/lib/admin/content-service';
 import ContentEditClient from '@/components/admin/ContentEditClient';
@@ -22,7 +23,11 @@ export default async function EditContentPage({
       <h1 className="text-2xl font-bold text-primary-950 mb-6">
         تعديل المحتوى
       </h1>
-      <ContentEditClient content={content} />
+      <ContentEditClient
+        content={content}
+        canEdit={can(session.roles, 'content.update')}
+        canReview={can(session.roles, 'review.approve')}
+      />
     </div>
   );
 }
