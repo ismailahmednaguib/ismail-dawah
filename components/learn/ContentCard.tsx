@@ -30,6 +30,8 @@ interface ContentCardProps {
   title: string;
   summary?: string | null;
   published_at?: string | null;
+  /** هل عُرضت الترجمة البديلة (العربية) لعدم توفر ترجمة اللغة المطلوبة؟ */
+  isFallback?: boolean;
 }
 
 export default function ContentCard({
@@ -39,6 +41,7 @@ export default function ContentCard({
   title,
   summary,
   published_at,
+  isFallback = false,
 }: ContentCardProps) {
   const config = TYPE_CONFIG[type] ?? {
     icon: '📄',
@@ -74,9 +77,20 @@ export default function ContentCard({
           )}
         </div>
 
-        <h3 className="mb-2 line-clamp-2 text-lg font-bold text-primary-950 transition-colors group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
-          {title}
-        </h3>
+        {title && (
+          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-primary-950 transition-colors group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+            {title}
+          </h3>
+        )}
+
+        {isFallback && (
+          <span
+            className="mb-2 inline-flex items-center gap-1 rounded-full bg-gold-100 px-2.5 py-0.5 text-[11px] font-bold text-gold-800 dark:bg-gold-900/30 dark:text-gold-300"
+            title={isArabic ? "لا توجد ترجمة كاملة لهذا المحتوى" : "No full translation for this content"}
+          >
+            🌐 {isArabic ? "ترجمة ناقصة" : "Arabic only"}
+          </span>
+        )}
 
         {summary && (
           <p className="line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">

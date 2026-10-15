@@ -1194,6 +1194,7 @@ function LatestRow({
             title={item.title}
             summary={item.summary}
             published_at={item.published_at}
+            isFallback={item.isFallback}
           />
         ))}
       </div>

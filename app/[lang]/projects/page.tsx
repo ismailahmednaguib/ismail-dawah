@@ -678,7 +678,9 @@ function ProjectCard({
         </p>
 
         {/* الهدف والتقدم */}
+        {(project.goal[lang] || project.raised?.[lang] || typeof project.progress === "number") && (
         <div className="mb-5 rounded-2xl bg-white/15 p-4 backdrop-blur-sm">
+          {project.goal[lang] && (
           <div className="mb-2 flex items-center justify-between">
             <span className="text-xs font-bold text-white/80">{ui.goal}:</span>
             <span
@@ -688,6 +690,7 @@ function ProjectCard({
               {project.goal[lang]}
             </span>
           </div>
+          )}
 
           {project.raised && (
             <div className="mb-2 flex items-center justify-between">
@@ -713,6 +716,7 @@ function ProjectCard({
             </div>
           )}
         </div>
+        )}
 
         {/* الأزرار */}
         <div className="flex gap-3">
