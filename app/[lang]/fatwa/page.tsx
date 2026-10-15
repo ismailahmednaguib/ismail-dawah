@@ -167,8 +167,7 @@ const FATWAS: Fatwa[] = [
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -1021,3 +1020,4 @@ function StatCard({
     </div>
   );
 }
+

@@ -95,7 +95,7 @@ export function getSiteUrl(): string {
 export const SITE_NAME = "إسماعيل أحمد نجيب";
 export const SITE_NAME_EN = "Ismail Ahmed Naguib";
 
-export const SITE_TAGLINE: Record<Lang, string> = {
+export const SITE_TAGLINE: Record<string, string> = {
   ar: "منصة دعوية شاملة",
   en: "Complete Dawah Platform",
 };
@@ -104,12 +104,12 @@ export const SITE_TAGLINE: Record<Lang, string> = {
  * الاسم الكامل للعلامة التجارية:
  * إسماعيل أحمد نجيب | منصة دعوية شاملة
  */
-export const SITE_BRAND: Record<Lang, string> = {
+export const SITE_BRAND: Record<string, string> = {
   ar: `${SITE_NAME} | ${SITE_TAGLINE.ar}`,
   en: `${SITE_NAME_EN} | ${SITE_TAGLINE.en}`,
 };
 
-export const SITE_NAME_TRANSLATED: Record<Lang, string> = {
+export const SITE_NAME_TRANSLATED: Record<string, string> = {
   ar: SITE_NAME,
   en: SITE_NAME_EN,
 };
@@ -118,12 +118,12 @@ export const SITE_NAME_TRANSLATED: Record<Lang, string> = {
 // 📝 Descriptions
 // ============================================================
 
-export const SITE_DESCRIPTION: Record<Lang, string> = {
+export const SITE_DESCRIPTION: Record<string, string> = {
   ar: "منصة إسلامية شاملة تجمع القرآن والسنة والعلوم الشرعية وأدوات الدعوة في مكان واحد، بلغتين وتصميم متجاوب.",
   en: "A comprehensive Islamic platform combining Quran, Sunnah, Islamic sciences and Dawah tools in one place, bilingual and responsive.",
 };
 
-export const SITE_SHORT_DESCRIPTION: Record<Lang, string> = {
+export const SITE_SHORT_DESCRIPTION: Record<string, string> = {
   ar: "نور العلم بين يديك.",
   en: "The light of knowledge in your hands.",
 };
@@ -136,12 +136,12 @@ export const DEFAULT_LOCALE: Lang = "ar";
 
 export const SUPPORTED_LOCALES: readonly Lang[] = ["ar", "en"];
 
-export const LOCALE_NAMES: Record<Lang, string> = {
+export const LOCALE_NAMES: Record<string, string> = {
   ar: "العربية",
   en: "English",
 };
 
-export const LOCALE_DIRECTIONS: Record<Lang, "rtl" | "ltr"> = {
+export const LOCALE_DIRECTIONS: Record<string, "rtl" | "ltr"> = {
   ar: "rtl",
   en: "ltr",
 };
@@ -149,7 +149,7 @@ export const LOCALE_DIRECTIONS: Record<Lang, "rtl" | "ltr"> = {
 /**
  * قيم lang المناسبة لعنصر <html>
  */
-export const HTML_LANG: Record<Lang, string> = {
+export const HTML_LANG: Record<string, string> = {
   ar: "ar",
   en: "en",
 };
@@ -157,7 +157,7 @@ export const HTML_LANG: Record<Lang, string> = {
 /**
  * قيم locale المناسبة لـ Open Graph
  */
-export const OPEN_GRAPH_LOCALE: Record<Lang, string> = {
+export const OPEN_GRAPH_LOCALE: Record<string, string> = {
   ar: "ar_EG",
   en: "en_US",
 };
@@ -621,7 +621,7 @@ export function getPageTitle(pageTitle: string, lang: Lang): string {
  * يرجع رابط التواصل حسب اللغة.
  */
 export function getContactLocation(lang: Lang): string {
-  return CONTACT_INFO.location[lang] || CONTACT_INFO.location.ar;
+  return CONTACT_INFO.location[lang as keyof typeof CONTACT_INFO.location] || CONTACT_INFO.location.ar;
 }
 
 // ============================================================

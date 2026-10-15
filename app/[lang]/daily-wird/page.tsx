@@ -111,7 +111,7 @@ const DAYS: WirdDay[] = [
 // نصوص الواجهة (للـ Client Component)
 // ============================================================
 
-const CLIENT_UI: Record<Lang, any> = {
+const CLIENT_UI: Record<string, any> = {
   ar: {
     searchPlaceholder: "ابحث في مهام الورد...",
     search: "بحث",
@@ -184,7 +184,7 @@ const CLIENT_UI: Record<Lang, any> = {
 // نصوص Metadata
 // ============================================================
 
-const META_UI: Record<Lang, {
+const META_UI: Record<string, {
   title: string;
   subtitle: string;
   home: string;
@@ -371,3 +371,4 @@ export default async function DailyWirdPage({
     </main>
   );
 }
+

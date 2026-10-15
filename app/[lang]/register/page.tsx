@@ -64,7 +64,7 @@ type UILang = {
   contactPageDesc: string;
 };
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "إنشاء حساب جديد",
     subtitle: "انضم إلى مجتمع منصة إسماعيل أحمد نجيب الدعوية",

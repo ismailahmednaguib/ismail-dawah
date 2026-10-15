@@ -22,8 +22,8 @@ type FaqCategory = {
 type FaqItem = {
   id: string;
   categoryId: string;
-  question: { ar: string; en: string };
-  answer: { ar: string; en: string };
+  question: { ar: string; en: string; [key: string]: string };
+  answer: { ar: string; en: string; [key: string]: string };
 };
 
 type SearchParams = {
@@ -355,8 +355,7 @@ const FAQS: FaqItem[] = [
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -1064,3 +1063,5 @@ function StatCard({
     </div>
   );
 }
+
+

@@ -51,7 +51,7 @@ type PageUI = {
   note3: string;
 };
 
-const UI: Record<Lang, PageUI> = {
+const UI: Record<string, PageUI> = {
   ar: {
     title: "المسبحة الإلكترونية",
     subtitle: "عدّاد تفاعلي للتسبيح والذكر مع حفظ التقدم",

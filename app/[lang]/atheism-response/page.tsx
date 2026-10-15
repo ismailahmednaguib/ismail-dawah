@@ -74,7 +74,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "الرد على الإلحاد",
     subtitle: "شبهات وإجابات عقلية وشرعية مبسطة",

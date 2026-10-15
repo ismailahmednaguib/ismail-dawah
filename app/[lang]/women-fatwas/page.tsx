@@ -13,7 +13,7 @@ import type { Lang } from "@/lib/i18n";
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type Fatwa = {
   id: string;
@@ -32,8 +32,7 @@ type Fatwa = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -932,3 +931,5 @@ function WhyCard({
     </div>
   );
 }
+
+

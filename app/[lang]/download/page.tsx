@@ -88,7 +88,7 @@ const REQUIREMENTS = "Android 8.0+";
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "تحميل التطبيق",
     subtitle: "حمّل نسخة أندرويد من منصة إسماعيل أحمد نجيب",

@@ -82,8 +82,7 @@ type SubscribeResult = {
 // Messages
 // ============================================================
 
-const MESSAGES: Record<
-  Lang,
+const MESSAGES: Record<string,
   {
     success: string;
     invalidEmail: string;

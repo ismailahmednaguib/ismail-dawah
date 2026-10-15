@@ -32,6 +32,7 @@ export default function AdminSidebar({
   const router = useRouter();
   const items: NavItem[] = [
     { href: "/admin", label: "لوحة المعلومات", icon: "▦", show: true },
+    { href: "/admin/control", label: "التحكم الموحد", icon: "⌘", show: true },
     { href: "/admin/content", label: "المحتوى", icon: "✎", show: can(roles, "content.read") },
     { href: "/admin/taxonomies", label: "التصنيفات", icon: "⌘", show: can(roles, "taxonomy.manage") },
     { href: "/admin/translations", label: "الترجمات", icon: "文", show: can(roles, "content.read") },

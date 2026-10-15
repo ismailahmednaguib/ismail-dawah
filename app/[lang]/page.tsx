@@ -20,7 +20,7 @@ const SITE_URL = (
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type QuickTool = {
   href: string;
@@ -97,7 +97,7 @@ type UiText = {
   pathsSubtitle: string;
 };
 
-const UI: Record<Lang, UiText> = {
+const UI: Record<string, UiText> = {
   ar: {
     badge: "✨ منصة دعوية شاملة",
     title: "منصة إسماعيل أحمد نجيب",
@@ -933,3 +933,5 @@ function PathCard({ item, lang }: { item: LearningPath; lang: Lang }) {
     </Link>
   );
 }
+
+

@@ -69,7 +69,7 @@ type UILang = {
   hadithSource: string;
 };
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "القرآن الكريم",
     subtitle: "تصفح السور الكريمة والبحث والفلترة",

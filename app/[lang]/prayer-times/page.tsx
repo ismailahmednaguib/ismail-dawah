@@ -44,7 +44,7 @@ type PageUI = {
   quranPageDesc: string;
 };
 
-const UI: Record<Lang, PageUI> = {
+const UI: Record<string, PageUI> = {
   ar: {
     title: "مواقيت الصلاة",
     subtitle: "اعرف مواقيت الصلاة حسب موقعك الحالي",

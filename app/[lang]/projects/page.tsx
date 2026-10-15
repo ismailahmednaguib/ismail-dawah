@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type Project = {
   id: string;
@@ -79,7 +79,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "المشاريع الدعوية",
     subtitle: "ساهم معنا في نشر العلم والخير",
@@ -889,3 +889,5 @@ function ReasonCard({
     </div>
   );
 }
+
+

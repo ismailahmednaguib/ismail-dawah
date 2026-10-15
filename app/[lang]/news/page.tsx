@@ -88,7 +88,7 @@ type ShareNavigator = Navigator & {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "الأخبار والنشاطات",
     subtitle: "تابع آخر أخبار ونشاطات الشيخ الدعوية",
@@ -1251,3 +1251,4 @@ function StatCard({
     </div>
   );
 }
+

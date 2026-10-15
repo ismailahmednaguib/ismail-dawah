@@ -13,7 +13,7 @@ export const dynamic = "force-static";
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type PrayerStep = {
   num: number;
@@ -91,7 +91,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "دليل الصلاة",
     subtitle: "تعلم الصلاة خطوة بخطوة كما كان يصلي النبي ﷺ",
@@ -926,3 +926,5 @@ function StatCard({
     </div>
   );
 }
+
+

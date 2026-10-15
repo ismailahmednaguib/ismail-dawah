@@ -59,7 +59,7 @@ type Labels = {
 // Labels
 // ============================================================
 
-const LABELS: Record<Lang, Labels> = {
+const LABELS: Record<string, Labels> = {
   ar: {
     loginTitle: "تسجيل الدخول",
     registerTitle: "إنشاء حساب",

@@ -13,12 +13,12 @@ export interface LanguageConfig {
 export const LANGUAGES: LanguageConfig[] = [
   { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦', dir: 'rtl', enabled: true, locale: 'ar-EG' },
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸', dir: 'ltr', enabled: true, locale: 'en-US' },
-  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr', enabled: false, locale: 'fr-FR' },
-  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩', dir: 'ltr', enabled: false, locale: 'id-ID' },
-  { code: 'ur', name: 'Urdu', nativeName: 'اردو', flag: '🇵🇰', dir: 'rtl', enabled: false, locale: 'ur-PK' },
-  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷', dir: 'ltr', enabled: false, locale: 'tr-TR' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', dir: 'ltr', enabled: false, locale: 'es-ES' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', dir: 'ltr', enabled: false, locale: 'de-DE' },
+  { code: 'fr', name: 'French', nativeName: 'Français', flag: '🇫🇷', dir: 'ltr', enabled: true, locale: 'fr-FR' },
+  { code: 'id', name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩', dir: 'ltr', enabled: true, locale: 'id-ID' },
+  { code: 'ur', name: 'Urdu', nativeName: 'اردو', flag: '🇵🇰', dir: 'rtl', enabled: true, locale: 'ur-PK' },
+  { code: 'tr', name: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷', dir: 'ltr', enabled: true, locale: 'tr-TR' },
+  { code: 'es', name: 'Spanish', nativeName: 'Español', flag: '🇪🇸', dir: 'ltr', enabled: true, locale: 'es-ES' },
+  { code: 'de', name: 'German', nativeName: 'Deutsch', flag: '🇩🇪', dir: 'ltr', enabled: true, locale: 'de-DE' },
 ];
 
 export const DEFAULT_LANGUAGE = 'ar';

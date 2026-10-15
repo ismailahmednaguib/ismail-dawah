@@ -20,7 +20,7 @@ const MADHABS: { value: Madhhab; ar: string; en: string }[] = [
   { value: 'jafari', ar: 'جعفري', en: 'Ja’fari' },
 ];
 
-const COPY = {
+const COPY: Record<string, any> = {
   ar: {
     title: 'الفقه والفتاوى',
     subtitle: 'محتوى فقهي منشور بعد المراجعة العلمية، مع توضيح المذهب عند توفره.',
@@ -164,3 +164,4 @@ export default async function FiqhPage({ params, searchParams }: PageProps) {
     </>
   );
 }
+

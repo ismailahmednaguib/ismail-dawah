@@ -328,6 +328,7 @@ export default function Header({
               items: [
                 { href: "/atheism-response", label: "الرد على الإلحاد" },
                 { href: "/doubts", label: "الشبهات" },
+                { href: "/responses", label: "مركز الردود" },
                 { href: "/prophets-stories", label: "قصص الأنبياء" },
                 { href: "/inheritance", label: "المواريث" },
                 { href: "/learn", label: "تعلّم" },
@@ -338,6 +339,7 @@ export default function Header({
             {
               title: "الدعوة",
               items: [
+                { href: "/dawah", label: "بوابة غير المسلمين" },
                 { href: "/dawah-guide", label: "دليل الدعوة" },
                 { href: "/fields", label: "المجالات الدعوية" },
                 { href: "/projects", label: "المشاريع" },
@@ -372,6 +374,7 @@ export default function Header({
               items: [
                 { href: "/atheism-response", label: "Atheism Response" },
                 { href: "/doubts", label: "Doubts" },
+                { href: "/responses", label: "Responses Center" },
                 { href: "/prophets-stories", label: "Prophets Stories" },
                 { href: "/inheritance", label: "Inheritance" },
                 { href: "/learn", label: "Learn" },
@@ -382,6 +385,7 @@ export default function Header({
             {
               title: "Dawah",
               items: [
+                { href: "/dawah", label: "Non-Muslim Portal" },
                 { href: "/dawah-guide", label: "Dawah Guide" },
                 { href: "/fields", label: "Dawah Fields" },
                 { href: "/projects", label: "Projects" },

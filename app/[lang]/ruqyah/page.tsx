@@ -89,7 +89,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "الرقية الشرعية",
     subtitle: "آيات وأدعية من الكتاب والسنة للتحصين والرقية",
@@ -996,3 +996,4 @@ function ConditionCard({
     </div>
   );
 }
+

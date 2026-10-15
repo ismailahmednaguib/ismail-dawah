@@ -12,6 +12,7 @@ export const dynamic = "force-static";
 type Localized = {
   ar: string;
   en: string;
+  [key: string]: string;
 };
 
 type Step = {
@@ -74,7 +75,7 @@ type UILang = {
   welcomeDesc: string;
 };
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "اعتناق الإسلام",
     subtitle: "دليل المسلم الجديد للبدء بثبات وطمأنينة",

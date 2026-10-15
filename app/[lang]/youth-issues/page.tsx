@@ -13,7 +13,7 @@ export const dynamic = "force-static";
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type YouthIssue = {
   id: string;
@@ -66,7 +66,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "قضايا الشباب المعاصرة",
     subtitle: "مشاكل الشباب اليوم وحلولها من منظور إسلامي",
@@ -734,3 +734,5 @@ function StatCard({
     </div>
   );
 }
+
+

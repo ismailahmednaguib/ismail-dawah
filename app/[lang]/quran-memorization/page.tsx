@@ -56,7 +56,7 @@ type PageUI = {
   virtue4Desc: string;
 };
 
-const UI: Record<Lang, PageUI> = {
+const UI: Record<string, PageUI> = {
   ar: {
     title: "خطة حفظ القرآن",
     subtitle: "نظّم وردك اليومي من الحفظ والمراجعة وتتبع تقدمك",

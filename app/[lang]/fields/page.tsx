@@ -18,8 +18,8 @@ export const dynamic = "force-dynamic";
 type Field = {
   id: string;
   icon: string;
-  title: { ar: string; en: string };
-  description: { ar: string; en: string };
+  title: { ar: string; en: string; [key: string]: string };
+  description: { ar: string; en: string; [key: string]: string };
   slug: string;
   color: string;
 };
@@ -55,7 +55,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "مجالات المنصة",
     subtitle: "تصفح العلوم الشرعية والمجالات الدعوية المتنوعة",
@@ -652,3 +652,5 @@ function StatCard({
     </div>
   );
 }
+
+

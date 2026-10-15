@@ -63,8 +63,7 @@ const CURRENCIES: CurrencyOption[] = [
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -1391,3 +1390,4 @@ function VirtueCard({
     </div>
   );
 }
+

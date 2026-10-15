@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description: 'تصفح محتوى الحديث الشريف الموثق في منصة إسماعيل أحمد نجيب.',
 };
 
-const COPY = {
+const COPY: Record<string, any> = {
   ar: {
     title: 'الحديث الشريف',
     subtitle: 'محتوى حديثي منظم مع إظهار المصدر والدرجة عند توفرهما',
@@ -156,3 +156,4 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
     </>
   );
 }
+

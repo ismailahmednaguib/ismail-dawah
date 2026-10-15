@@ -34,8 +34,7 @@ interface QiblaResult {
   distanceKm: number;
 }
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     currentLocation: string;
     useMyLocation: string;
@@ -772,3 +771,4 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
     </section>
   );
 }
+

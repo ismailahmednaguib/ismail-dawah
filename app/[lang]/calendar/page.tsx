@@ -177,7 +177,7 @@ const EVENTS: IslamicEvent[] = [
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "التقويم الهجري",
     subtitle: "المناسبات الإسلامية وتاريخ اليوم الهجري والميلادي",

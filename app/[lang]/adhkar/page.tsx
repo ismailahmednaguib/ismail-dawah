@@ -11,8 +11,7 @@ import AdhkarContent from "./adhkar-content";
 // Metadata
 // ============================================================
 
-const META: Record<
-  Lang,
+const META: Record<string,
   {
     title: string;
     subtitle: string;

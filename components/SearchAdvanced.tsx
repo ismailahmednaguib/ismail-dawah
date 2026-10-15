@@ -78,7 +78,7 @@ const TYPE_ICONS: Record<string, string> = {
   hadith: '💬', story: '📜', research: '🔬',
 };
 
-const COPY = {
+const COPY: Record<string, any> = {
   ar: {
     placeholder: '🔍 ابحث في القرآن، الأحاديث، المقالات، الفتاوى، والدروس...',
     type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى', madhhab: 'المذهب',
@@ -294,3 +294,4 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
     </div>
   );
 }
+

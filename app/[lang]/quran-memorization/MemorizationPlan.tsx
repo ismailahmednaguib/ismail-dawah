@@ -207,7 +207,7 @@ type ComponentUI = {
   loading: string;
 };
 
-const UI: Record<Lang, ComponentUI> = {
+const UI: Record<string, ComponentUI> = {
   ar: {
     title: "الخطة التفاعلية لحفظ القرآن",
     description:

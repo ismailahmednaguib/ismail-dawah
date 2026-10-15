@@ -416,7 +416,7 @@ const ARTICLES: Article[] = [
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "المقالات",
     subtitle: "مقالات دعوية وتربوية وشرعية مختارة",
@@ -1374,3 +1374,4 @@ function ArticleCard({
     </details>
   );
 }
+

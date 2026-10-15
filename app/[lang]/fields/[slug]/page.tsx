@@ -17,19 +17,19 @@ type Field = {
   slug: string;
   icon: string;
   color: string;
-  title: { ar: string; en: string };
-  subtitle: { ar: string; en: string };
-  description: { ar: string; en: string };
-  verse: { ar: string; en: string };
-  verseSource: { ar: string; en: string };
-  topics: { ar: string[]; en: string[] };
+  title: { ar: string; en: string; [key: string]: string };
+  subtitle: { ar: string; en: string; [key: string]: string };
+  description: { ar: string; en: string; [key: string]: string };
+  verse: { ar: string; en: string; [key: string]: string };
+  verseSource: { ar: string; en: string; [key: string]: string };
+  topics: { ar: string[]; en: string[]; [key: string]: string[] };
   books: {
-    title: { ar: string; en: string };
-    author: { ar: string; en: string };
+    title: { ar: string; en: string; [key: string]: string };
+    author: { ar: string; en: string; [key: string]: string };
   }[];
   faqs: {
-    q: { ar: string; en: string };
-    a: { ar: string; en: string };
+    q: { ar: string; en: string; [key: string]: string };
+    a: { ar: string; en: string; [key: string]: string };
   }[];
   relatedSlugs: string[];
 };
@@ -562,7 +562,7 @@ const FIELDS: Field[] = [
 // نصوص الواجهة العامة
 // ============================================================
 
-const UI: Record<Lang, {
+const UI: Record<string, {
   home: string;
   explore: string;
   topicsTitle: string;
@@ -1016,3 +1016,4 @@ function StatCard({
     </div>
   );
 }
+

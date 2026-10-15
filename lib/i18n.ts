@@ -5,14 +5,24 @@
 // ============================================================================
 
 /**
- * اللغات المدعومة في المنصة
+ * اللغات المدعومة في المسارات والصفحات الفردية
  */
 export const languages = ['ar', 'en'] as const;
 
 /**
- * نوع اللغة المدعومة
+ * جميع اللغات المدعومة في القاموس العام وواجهة المستخدم (للمستقبل)
+ */
+export const allLanguages = ['ar', 'en', 'fr', 'ur', 'id', 'tr', 'es', 'de'] as const;
+
+/**
+ * نوع اللغة المدعومة في المسارات
  */
 export type Lang = (typeof languages)[number];
+
+/**
+ * نوع أي لغة مدعومة (للواجهة والقاموس)
+ */
+export type AllLang = (typeof allLanguages)[number];
 
 /**
  * اللغة الافتراضية للمنصة
@@ -22,33 +32,57 @@ export const defaultLang: Lang = 'ar';
 /**
  * أسماء اللغات للعرض في الواجهة
  */
-export const languagesMap: Record<Lang, string> = {
+export const languagesMap: Record<string, string> = {
   ar: 'العربية',
   en: 'English',
+  fr: 'Français',
+  ur: 'اردو',
+  id: 'Bahasa Indonesia',
+  tr: 'Türkçe',
+  es: 'Español',
+  de: 'Deutsch',
 } as const;
 
 /**
  * أكواد اللغات بصيغة BCP-47 (للـ Intl والـ meta tags)
  */
-export const localeMap: Record<Lang, string> = {
+export const localeMap: Record<string, string> = {
   ar: 'ar-EG',
   en: 'en-US',
+  fr: 'fr-FR',
+  ur: 'ur-PK',
+  id: 'id-ID',
+  tr: 'tr-TR',
+  es: 'es-ES',
+  de: 'de-DE',
 } as const;
 
 /**
  * قيمة lang المناسبة لعنصر <html>
  */
-export const htmlLangMap: Record<Lang, string> = {
+export const htmlLangMap: Record<string, string> = {
   ar: 'ar',
   en: 'en',
+  fr: 'fr',
+  ur: 'ur',
+  id: 'id',
+  tr: 'tr',
+  es: 'es',
+  de: 'de',
 } as const;
 
 /**
  * اتجاه النص حسب اللغة
  */
-export const directionMap: Record<Lang, 'rtl' | 'ltr'> = {
+export const directionMap: Record<string, 'rtl' | 'ltr'> = {
   ar: 'rtl',
   en: 'ltr',
+  fr: 'ltr',
+  ur: 'rtl',
+  id: 'ltr',
+  tr: 'ltr',
+  es: 'ltr',
+  de: 'ltr',
 } as const;
 
 /**
@@ -107,12 +141,9 @@ export function getLanguageName(lang: Lang): string {
 }
 
 export function getAlternateLang(lang: Lang): Lang {
+  // مع لغات متعددة، نعيد اللغة الافتراضية إذا كانت الحالية ليست العربية، وإلا الإنجليزية.
   return lang === 'ar' ? 'en' : 'ar';
 }
-
-// ============================================================================
-// 🧰 Internal helpers
-// ============================================================================
 
 function normalizePath(path: string): string {
   let normalized = String(path ?? '/').trim();
@@ -290,7 +321,7 @@ export function formatDate(
  * نحاول أولًا Umm al-Qura لأنه الأدق للمناسبات السعودية/الإسلامية الشائعة،
  * ثم fallback إلى islamic عام.
  */
-const HIJRI_LOCALES: Record<Lang, string[]> = {
+const HIJRI_LOCALES: Record<string, string[]> = {
   ar: [
     'ar-SA-u-ca-islamic-umalqura',
     'ar-EG-u-ca-islamic',

@@ -82,7 +82,7 @@ type UILang = {
   introDesc: string;
 };
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "ختم الدعاء",
     subtitle: "برنامج جماعي للفقر إلى الله ورفع الحوائج",

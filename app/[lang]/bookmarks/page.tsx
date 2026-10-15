@@ -66,7 +66,7 @@ type UILang = {
 
 const STORAGE_KEY = "ismail-dawah-bookmarks";
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "المفضلة",
     subtitle: "العناصر التي حفظتها سابقًا",
@@ -854,3 +854,4 @@ function StatCard({
     </div>
   );
 }
+

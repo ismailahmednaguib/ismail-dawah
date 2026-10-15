@@ -68,7 +68,7 @@ type AccountUI = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, AccountUI> = {
+const UI: Record<string, AccountUI> = {
   ar: {
     title: "الحساب",
     subtitle: "تسجيل الدخول وإنشاء الحساب ومتابعة التقدم",
@@ -774,3 +774,4 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
     </details>
   );
 }
+

@@ -79,7 +79,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "خريطة الدروس والمساجد",
     subtitle: "اعرف أقرب مكان لحضور دروس الشيخ",

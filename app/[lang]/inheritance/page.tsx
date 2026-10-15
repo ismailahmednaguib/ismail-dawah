@@ -157,8 +157,7 @@ function f(n: number, d: number = 1): Fraction {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;

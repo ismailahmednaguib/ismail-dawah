@@ -93,7 +93,7 @@ const LAST_UPDATED_ISO = "2026-10-09";
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "سياسة الخصوصية",
     subtitle: "كيف نتعامل مع بياناتك عند استخدام المنصة",

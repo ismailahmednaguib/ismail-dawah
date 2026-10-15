@@ -13,7 +13,7 @@ import type { Lang } from "@/lib/i18n";
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type Khutbah = {
   id: string;
@@ -33,8 +33,7 @@ type Khutbah = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -883,3 +882,5 @@ function StatCard({
     </div>
   );
 }
+
+

@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
 
-const COPY = {
+const COPY: Record<string, any> = {
   ar: {
     title: 'البحث الموحد',
     subtitle: 'ابحث في كل محتوى المنصة: القرآن، الأحاديث، المقالات، الفتاوى، والدروس',
@@ -73,3 +73,4 @@ export default async function SearchPage({
     </>
   );
 }
+

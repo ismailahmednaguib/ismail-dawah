@@ -35,8 +35,7 @@ const DEFAULT_SETTINGS: AdhkarSettings = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     resetCategory: string;
     completed: string;
@@ -876,3 +875,4 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
     </section>
   );
 }
+

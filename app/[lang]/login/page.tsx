@@ -11,8 +11,7 @@ import LoginForm from "@/components/auth/LoginForm";
 // UI Text
 // ============================================================
 
-const PAGE_UI: Record<
-  Lang,
+const PAGE_UI: Record<string,
   {
     title: string;
     subtitle: string;

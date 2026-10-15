@@ -85,8 +85,7 @@ interface PrayerEvent {
   isTomorrow: boolean;
 }
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     currentLocation: string;
     useMyLocation: string;

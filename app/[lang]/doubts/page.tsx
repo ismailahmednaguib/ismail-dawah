@@ -61,7 +61,7 @@ type UILang = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "الشبهات",
     subtitle: "شبهات شائعة وإجابات مبسطة بالحكمة والعلم",

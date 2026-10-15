@@ -28,7 +28,7 @@ type UILang = {
   downloading: string;
 };
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     playAll: "تشغيل السورة",
     pause: "إيقاف مؤقت",

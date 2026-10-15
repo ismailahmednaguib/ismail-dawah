@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // الأنواع
 // ============================================================
 
-type Localized = { ar: string; en: string };
+type Localized = { ar: string; en: string; [key: string]: string };
 
 type ScheduleItem = {
   id: string;
@@ -88,8 +88,7 @@ const FALLBACK_SCHEDULE: ScheduleItem[] = [
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -845,3 +844,4 @@ function InfoCard({
     </div>
   );
 }
+

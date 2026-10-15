@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { handleContactForm } from "@/lib/email";
-import { CONTACT_INFO, SITE_NAME, SOCIAL_LINKS } from "@/lib/site";
+import { CONTACT_INFO, SITE_NAME, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -24,13 +24,12 @@ type SearchParams = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const DEFAULT_SUBJECT: Record<Lang, string> = {
+const DEFAULT_SUBJECT: Record<string, string> = {
   ar: "رسالة من منصة إسماعيل أحمد نجيب",
   en: "Message from Ismail Ahmed Naguib Platform",
 };
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     title: string;
     subtitle: string;
@@ -761,7 +760,7 @@ export default async function ContactPage({
                       {ui.locationTitle}
                     </p>
                     <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                      {CONTACT_INFO.location[l]}
+                      {getContactLocation(l)}
                     </p>
                   </div>
                 </div>
@@ -945,3 +944,4 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
     </details>
   );
 }
+

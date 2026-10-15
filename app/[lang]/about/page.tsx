@@ -89,7 +89,7 @@ const PLATFORM_NAME: Localized = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "من نحن",
     subtitle: "تعرّف على منصة إسماعيل أحمد نجيب الدعوية",

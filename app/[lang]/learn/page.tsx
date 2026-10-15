@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import type { AgeGroup, Audience, ContentType, EduLevel, Madhhab } from '@/lib/types/content';
 
-const COPY = {
+const COPY: Record<string, any> = {
   ar: {
     title: 'المكتبة الإسلامية',
     subtitle: 'كل ما تحتاجه من علم شرعي في مكان واحد',
@@ -189,3 +189,4 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
     </>
   );
 }
+

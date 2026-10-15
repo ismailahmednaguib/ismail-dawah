@@ -32,7 +32,7 @@ const GRADE_LABELS: Record<string, string> = {
   mawdu: 'موضوع',
 };
 
-const COPY = {
+const COPY: Record<string, any> = {
   ar: {
     title: 'المراجع والتوثيق الشرعي',
     quran: 'القرآن الكريم',
@@ -166,3 +166,4 @@ export default function ReferenceDisplay({
     </div>
   );
 }
+

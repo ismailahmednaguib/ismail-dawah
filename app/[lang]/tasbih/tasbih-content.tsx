@@ -15,8 +15,7 @@ type SavedState = {
   lifetime: number;
 };
 
-const UI: Record<
-  Lang,
+const UI: Record<string,
   {
     chooseDhikr: string;
     tapToCount: string;

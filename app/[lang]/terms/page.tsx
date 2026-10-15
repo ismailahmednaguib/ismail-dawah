@@ -77,7 +77,7 @@ const PLATFORM_NAME: Localized = {
 // نصوص الواجهة
 // ============================================================
 
-const UI: Record<Lang, UILang> = {
+const UI: Record<string, UILang> = {
   ar: {
     title: "الشروط والأحكام",
     subtitle: "قواعد استخدام منصة إسماعيل أحمد نجيب الدعوية",

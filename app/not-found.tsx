@@ -22,7 +22,7 @@ type NotFoundCopy = {
   searchHref: string;
 };
 
-const COPY: Record<Lang, NotFoundCopy> = {
+const COPY: Record<string, NotFoundCopy> = {
   ar: {
     documentTitle: "الصفحة غير موجودة | إسماعيل أحمد نجيب",
     title: "الصفحة غير موجودة",
