@@ -37,6 +37,22 @@ export async function PUT(req: NextRequest, { params }: Params) {
   try {
     // تغيير الحالة فقط (النشر/الأرشفة)
     if (body.status) {
+      const allowedStatuses = [
+        'draft',
+        'in_review',
+        'published',
+        'archived',
+        'rejected',
+      ] as const;
+
+      if (!allowedStatuses.includes(body.status)) {
+        return NextResponse.json({ error: 'حالة محتوى غير صالحة' }, { status: 400 });
+      }
+
+      if (body.status === 'published' && !can(session.roles, 'content.publish')) {
+        return NextResponse.json({ error: 'ليس لديك صلاحية نشر المحتوى' }, { status: 403 });
+      }
+
       await setStatus(id, body.status, session.userId);
     }
     return NextResponse.json({ success: true });

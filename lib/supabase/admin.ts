@@ -76,11 +76,29 @@ export interface CreateContentInput {
   };
 }
 
+/** المحتوى الذي لا يجوز نشره قبل اعتماد مراجع علمي. */
+export function requiresScholarReview(content: {
+  content_type?: ContentType;
+  needs_scholar_review?: boolean | null;
+  is_sensitive?: boolean | null;
+}): boolean {
+  return Boolean(
+    content.needs_scholar_review ||
+      content.is_sensitive ||
+      content.content_type === 'fatwa'
+  );
+}
+
 export async function createContent(
   input: CreateContentInput,
   userId: string
 ): Promise<Content> {
   const supabase = getSupabaseAdmin();
+  const needsScholarReview = Boolean(
+    input.needs_scholar_review ||
+      input.is_sensitive ||
+      input.content_type === 'fatwa'
+  );
 
   // 1. إنشاء المحتوى الرئيسي
   const { data: content, error: contentError } = await supabase
@@ -95,7 +113,7 @@ export async function createContent(
       madhhabs: input.madhhabs || ['general'],
       parent_id: input.parent_id || null,
       sort_order: input.sort_order || 0,
-      needs_scholar_review: input.needs_scholar_review || false,
+      needs_scholar_review: needsScholarReview,
       is_sensitive: input.is_sensitive || false,
       created_by: userId,
       updated_by: userId,

@@ -26,6 +26,9 @@ type ContentReferenceSummary = {
 type EditableContent = {
   id: string;
   status: ContentStatus;
+  content_type?: string;
+  needs_scholar_review?: boolean;
+  is_sensitive?: boolean;
   content_translations?: TranslationSummary[];
   content_references?: ContentReferenceSummary[];
 };
@@ -33,18 +36,28 @@ type EditableContent = {
 export default function ContentEditClient({ content }: { content: EditableContent }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const translation = content.content_translations?.[0];
+  const requiresReview = Boolean(
+    content.needs_scholar_review ||
+      content.is_sensitive ||
+      content.content_type === 'fatwa'
+  );
 
   const changeStatus = async (status: ContentStatus) => {
     setLoading(true);
+    setError('');
     try {
       const res = await fetch(`/api/admin/content/${content.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
-      if (!res.ok) throw new Error();
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error ?? 'فشل تغيير حالة المحتوى');
       router.refresh();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'فشل تغيير حالة المحتوى');
     } finally {
       setLoading(false);
     }
@@ -66,9 +79,24 @@ export default function ContentEditClient({ content }: { content: EditableConten
           <StatusBadge status={content.status} />
         </div>
 
+        {error && (
+          <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+
         {/* أزرار تغيير الحالة */}
         <div className="flex flex-wrap gap-2">
-          {content.status === 'draft' && (
+          {content.status === 'draft' && requiresReview && (
+            <button
+              onClick={() => changeStatus('in_review')}
+              disabled={loading}
+              className="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+            >
+              📨 إرسال للمراجعة العلمية
+            </button>
+          )}
+          {content.status === 'draft' && !requiresReview && (
             <button
               onClick={() => changeStatus('published')}
               disabled={loading}

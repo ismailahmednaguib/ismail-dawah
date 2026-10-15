@@ -1,7 +1,10 @@
 // =====================================================
 // خدمة المحتوى — تُستخدم من واجهات الـ API وصفحات الخادم
 // =====================================================
-import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import {
+  getSupabaseAdmin,
+  requiresScholarReview,
+} from '@/lib/supabase/admin';
 import type {
   Content,
   ContentStatus,
@@ -99,6 +102,22 @@ export async function setStatus(
   userId: string
 ) {
   const supabase = getSupabaseAdmin();
+
+  const { data: content, error: contentLookupError } = await supabase
+    .from('content')
+    .select('id, content_type, status, needs_scholar_review, is_sensitive')
+    .eq('id', contentId)
+    .maybeSingle();
+
+  if (contentLookupError) throw new Error(contentLookupError.message);
+  if (!content) throw new Error('المحتوى غير موجود');
+
+  if (status === 'published' && requiresScholarReview(content)) {
+    throw new Error(
+      'هذا المحتوى يحتاج اعتماد مراجع علمي أولاً. أرسله إلى المراجعة العلمية قبل النشر.'
+    );
+  }
+
   const { error } = await supabase
     .from('content')
     .update({
@@ -108,6 +127,39 @@ export async function setStatus(
     })
     .eq('id', contentId);
   if (error) throw new Error(error.message);
+
+  if (status === 'in_review') {
+    const { data: pendingItems, error: pendingError } = await supabase
+      .from('review_queue')
+      .select('id')
+      .eq('content_id', contentId)
+      .eq('status', 'pending')
+      .limit(1);
+
+    if (pendingError) {
+      await supabase
+        .from('content')
+        .update({ status: 'draft', updated_by: userId })
+        .eq('id', contentId);
+      throw new Error(pendingError.message);
+    }
+
+    if (!pendingItems?.length) {
+      const { error: queueError } = await supabase.from('review_queue').insert({
+        content_id: contentId,
+        submitted_by: userId,
+        status: 'pending',
+      });
+
+      if (queueError) {
+        await supabase
+          .from('content')
+          .update({ status: 'draft', updated_by: userId })
+          .eq('id', contentId);
+        throw new Error(queueError.message);
+      }
+    }
+  }
 }
 
 /** حذف نهائي (للمدير فقط) */
