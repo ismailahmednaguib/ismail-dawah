@@ -29,6 +29,26 @@ type Fatwa = {
   gradient: string;
 };
 
+// كلمات مفتاحية لتحديد الفتاوى الخاصة بالمرأة (يُصفّى بها المحتوى العام).
+const WOMEN_KEYWORDS = [
+  "المرأة", "النساء", "نساء", "المرأه", "المسلمة", "حيض", "الحيض", "نفاس",
+  "النفاس", "استحاضة", "المستحاضة", "رضاع", "الرضاع", "رضاعة", "الحمل",
+  "الإجهاض", "إجهاض", "طلاق", "الطلاق", "خلع", "الخلع", "عدة", "العدة",
+  "نكاح", "النكاح", "زواج", "الزواج", "مهر", "المهر", "حجاب", "الحجاب",
+  "تبرج", "التبرج", "زوجها", "زوجة", "المرضع", "المحرم", "محرم", "عورة",
+  "woman", "women", "wife", "marriage", "divorce", "menstruation", "menses",
+  "pregnancy", "breastfeeding", "hijab", "mahr", "iddah", "mahram",
+];
+
+/** هل الفتوى متعلقة بالمرأة؟ (نبحث في السؤال والتصنيف فقط لتجنّب المطابقات العابرة). */
+function isWomenRelated(fatwa: Fatwa): boolean {
+  const text = [fatwa.q?.ar, fatwa.q?.en, fatwa.category?.ar, fatwa.category?.en]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  return WOMEN_KEYWORDS.some((word) => text.includes(word.toLowerCase()));
+}
+
 // ============================================================
 // نصوص الواجهة
 // ============================================================
@@ -285,7 +305,10 @@ export default function WomenFatwasPage() {
         const payload = (await res.json()) as { data?: ApiFatwa[] };
         const items = Array.isArray(payload?.data) ? payload.data : [];
 
-        if (!cancelled) setFatwas(items.map((item, i) => toFatwa(item, i)));
+        const mapped = items.map((item, i) => toFatwa(item, i));
+        // نعرض الفتاوى الخاصة بالمرأة فقط، مع الرجوع لكل الفتاوى لو لم يوجد أي تطابق.
+        const womenOnly = mapped.filter(isWomenRelated);
+        if (!cancelled) setFatwas(womenOnly.length > 0 ? womenOnly : mapped);
       } catch {
         if (!cancelled) setFatwas([]);
       } finally {
