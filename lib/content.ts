@@ -614,6 +614,17 @@ async function fetchSiteContent(): Promise<Record<string, unknown> | null> {
   }
 }
 
+/** إعدادات الموقع العامة فقط، بدون تحميل مجموعات المحتوى كاملة. */
+export async function getSiteSettings(): Promise<Record<string, any>> {
+  try {
+    const site = await fetchSiteContent();
+    return normalizeSettings(site?.settings || site?.site);
+  } catch (error) {
+    console.warn('[Content] Failed to fetch site settings:', error);
+    return {};
+  }
+}
+
 async function fetchCollection(name: CollectionName): Promise<ContentItem[]> {
   const client = createContentClient();
 

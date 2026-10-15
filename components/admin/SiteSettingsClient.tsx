@@ -1,0 +1,382 @@
+'use client';
+
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
+
+type SettingsRecord = Record<string, any>;
+type Message = { type: 'success' | 'error'; text: string } | null;
+
+const DEFAULT_SETTINGS: SettingsRecord = {
+  ownerName: 'إسماعيل أحمد نجيب',
+  shortName: 'إسماعيل',
+  jobTitle: '',
+  motto: 'منصة دعوية شاملة',
+  homeKicker: '',
+  homeHeroText: '',
+  homeTitle: { ar: 'منصة إسماعيل أحمد نجيب', en: 'Ismail Ahmed Naguib Platform' },
+  homeSubtitle: { ar: '', en: '' },
+  homeCta1: { ar: 'ابدأ رحلة العلم', en: 'Start Learning' },
+  homeCta2: { ar: 'البث المباشر', en: 'Live Stream' },
+  metaTitle: { ar: '', en: '' },
+  metaDescription: { ar: '', en: '' },
+  bio: [],
+  interests: [],
+  portraitSrc: '',
+  ogImage: '',
+  email: '',
+  wa: '',
+  address: '',
+  cred1: '',
+  cred2: '',
+  facebookUrl: '',
+  youtubeUrl: '',
+  telegramUrl: '',
+  twitterUrl: '',
+  instagramUrl: '',
+  liveUrl: '',
+  meetingLink: '',
+  liveTitle: { ar: '', en: '' },
+  meetingDay: { ar: '', en: '' },
+  meetingTime: { ar: '', en: '' },
+  meetingPlace: { ar: '', en: '' },
+  showPrayerBar: false,
+};
+
+function text(value: unknown): string {
+  return typeof value === 'string' ? value : '';
+}
+
+function listText(value: unknown): string {
+  return Array.isArray(value) ? value.filter(Boolean).join('\n') : text(value);
+}
+
+function listValue(value: string): string[] {
+  return value
+    .split('\n')
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 100);
+}
+
+function InputField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  dir = 'rtl',
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  dir?: 'rtl' | 'ltr';
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-sm font-bold text-primary-950">{label}</span>
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        dir={dir}
+        className="input-islamic w-full"
+      />
+    </label>
+  );
+}
+
+function TextareaField({
+  label,
+  value,
+  onChange,
+  rows = 4,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  rows?: number;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-sm font-bold text-primary-950">{label}</span>
+      <textarea
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        rows={rows}
+        placeholder={placeholder}
+        className="input-islamic w-full resize-y"
+      />
+    </label>
+  );
+}
+
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm md:p-6">
+      <div className="mb-5 border-b border-cream-100 pb-4">
+        <h2 className="text-lg font-black text-primary-950">{title}</h2>
+        <p className="mt-1 text-sm leading-6 text-stone-500">{description}</p>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export default function SiteSettingsClient() {
+  const [settings, setSettings] = useState<SettingsRecord>(DEFAULT_SETTINGS);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<Message>(null);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/admin/settings', {
+        credentials: 'include',
+        cache: 'no-store',
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) throw new Error(data.error || 'تعذر تحميل الإعدادات.');
+
+      setSettings({
+        ...DEFAULT_SETTINGS,
+        ...(data.settings && typeof data.settings === 'object' ? data.settings : {}),
+      });
+      setUpdatedAt(data.updatedAt ?? null);
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : 'تعذر تحميل الإعدادات.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const setValue = (key: string, value: unknown) => {
+    setSettings((current) => ({ ...current, [key]: value }));
+  };
+
+  const setLocalized = (key: string, lang: 'ar' | 'en', value: string) => {
+    setSettings((current) => ({
+      ...current,
+      [key]: {
+        ...(current[key] && typeof current[key] === 'object' ? current[key] : {}),
+        [lang]: value,
+      },
+    }));
+  };
+
+  const save = async () => {
+    setSaving(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ settings }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) throw new Error(data.error || 'تعذر حفظ الإعدادات.');
+
+      setUpdatedAt(data.updatedAt ?? new Date().toISOString());
+      setMessage({ type: 'success', text: 'تم حفظ إعدادات المنصة بنجاح.' });
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: error instanceof Error ? error.message : 'تعذر حفظ الإعدادات.',
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4" aria-label="جارٍ تحميل الإعدادات">
+        {[1, 2, 3].map((item) => (
+          <div key={item} className="h-52 animate-pulse rounded-2xl bg-cream-100" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <div>
+          <span className="text-xs font-black uppercase tracking-[0.2em] text-gold-700">Owner controls</span>
+          <h1 className="mt-2 text-3xl font-black text-primary-950">إعدادات المنصة</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-7 text-stone-500">
+            تحكم في هوية الموقع وبيانات التواصل ورسالة الصفحة الرئيسية والبث من مكان واحد.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          {updatedAt ? (
+            <span className="hidden text-xs text-stone-500 sm:inline">
+              آخر تحديث: {new Date(updatedAt).toLocaleString('ar-EG')}
+            </span>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => void save()}
+            disabled={saving}
+            className="rounded-xl bg-primary-700 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:bg-primary-800 disabled:cursor-wait disabled:opacity-60"
+          >
+            {saving ? 'جارٍ الحفظ...' : 'حفظ كل الإعدادات'}
+          </button>
+        </div>
+      </div>
+
+      {message ? (
+        <div className={`rounded-2xl border p-4 text-sm font-bold ${message.type === 'success' ? 'border-primary-200 bg-primary-50 text-primary-800' : 'border-red-200 bg-red-50 text-red-800'}`} role="status">
+          {message.text}
+        </div>
+      ) : null}
+
+      <Section title="الهوية والبيانات الأساسية" description="هذه البيانات تظهر في الهيدر والفوتر والصفحات التعريفية.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <InputField label="الاسم الكامل" value={text(settings.ownerName)} onChange={(value) => setValue('ownerName', value)} />
+          <InputField label="الاسم المختصر" value={text(settings.shortName)} onChange={(value) => setValue('shortName', value)} />
+          <InputField label="المسمى أو الصفة" value={text(settings.jobTitle)} onChange={(value) => setValue('jobTitle', value)} />
+          <InputField label="الشعار المختصر" value={text(settings.motto)} onChange={(value) => setValue('motto', value)} />
+          <InputField label="رابط الصورة الشخصية" value={text(settings.portraitSrc)} onChange={(value) => setValue('portraitSrc', value)} dir="ltr" placeholder="https://..." />
+          <InputField label="رابط صورة المشاركة" value={text(settings.ogImage)} onChange={(value) => setValue('ogImage', value)} dir="ltr" placeholder="https://..." />
+        </div>
+      </Section>
+
+      <Section title="الصفحة الرئيسية" description="تحكم في الرسالة التي يراها الزائر أولًا.">
+        <div className="space-y-4">
+          <InputField label="العنوان التمهيدي" value={text(settings.homeKicker)} onChange={(value) => setValue('homeKicker', value)} />
+          <TextareaField label="النص الرئيسي" value={text(settings.homeHeroText)} onChange={(value) => setValue('homeHeroText', value)} rows={5} />
+          {[
+            ['homeTitle', 'عنوان الصفحة الرئيسية'],
+            ['homeSubtitle', 'وصف الصفحة الرئيسية'],
+            ['homeCta1', 'زر الدعوة الأول'],
+            ['homeCta2', 'زر الدعوة الثاني'],
+          ].map(([key, label]) => (
+            <div key={key} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+              <p className="mb-3 text-sm font-black text-primary-950">{label}</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <TextareaField label="العربية" value={text(settings[key]?.ar)} onChange={(value) => setLocalized(key, 'ar', value)} rows={key === 'homeSubtitle' ? 3 : 2} />
+                <TextareaField label="English" value={text(settings[key]?.en)} onChange={(value) => setLocalized(key, 'en', value)} rows={key === 'homeSubtitle' ? 3 : 2} />
+              </div>
+            </div>
+          ))}
+          <div className="grid gap-4 md:grid-cols-2">
+            <TextareaField label="نبذة تعريفية — كل سطر نقطة" value={listText(settings.bio)} onChange={(value) => setValue('bio', listValue(value))} />
+            <TextareaField label="الاهتمامات — كل سطر نقطة" value={listText(settings.interests)} onChange={(value) => setValue('interests', listValue(value))} />
+          </div>
+        </div>
+      </Section>
+
+      <Section title="تحسين الظهور والمشاركة" description="تحكم في عنوان ووصف الموقع عند ظهورهما في محركات البحث ووسائل المشاركة.">
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            ['metaTitle', 'عنوان SEO'],
+            ['metaDescription', 'وصف SEO'],
+          ].map(([key, label]) => (
+            <div key={key} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+              <p className="mb-3 text-sm font-black text-primary-950">{label}</p>
+              <div className="space-y-3">
+                <TextareaField label="العربية" value={text(settings[key]?.ar)} onChange={(value) => setLocalized(key, 'ar', value)} rows={3} />
+                <TextareaField label="English" value={text(settings[key]?.en)} onChange={(value) => setLocalized(key, 'en', value)} rows={3} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="التواصل والاعتمادات" description="بيانات التواصل والعبارات التعريفية الخاصة بصاحب المنصة.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <InputField label="البريد الإلكتروني" value={text(settings.email)} onChange={(value) => setValue('email', value)} dir="ltr" />
+          <InputField label="واتساب أو هاتف" value={text(settings.wa)} onChange={(value) => setValue('wa', value)} dir="ltr" />
+          <InputField label="العنوان" value={text(settings.address)} onChange={(value) => setValue('address', value)} />
+          <InputField label="اعتماد أو مؤهل أول" value={text(settings.cred1)} onChange={(value) => setValue('cred1', value)} />
+          <InputField label="اعتماد أو مؤهل ثانٍ" value={text(settings.cred2)} onChange={(value) => setValue('cred2', value)} />
+        </div>
+      </Section>
+
+      <Section title="روابط التواصل الاجتماعي" description="ضع الروابط الكاملة للحسابات التي تريد إظهارها في الموقع.">
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            ['facebookUrl', 'Facebook'],
+            ['youtubeUrl', 'YouTube'],
+            ['telegramUrl', 'Telegram'],
+            ['twitterUrl', 'X / Twitter'],
+            ['instagramUrl', 'Instagram'],
+          ].map(([key, label]) => (
+            <InputField key={key} label={label} value={text(settings[key])} onChange={(value) => setValue(key, value)} dir="ltr" placeholder="https://..." />
+          ))}
+        </div>
+      </Section>
+
+      <Section title="البث والمجلس" description="إعدادات صفحة البث والمواعيد، بالعربية والإنجليزية.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <InputField label="رابط البث" value={text(settings.liveUrl)} onChange={(value) => setValue('liveUrl', value)} dir="ltr" placeholder="https://..." />
+          <InputField label="رابط المجلس" value={text(settings.meetingLink)} onChange={(value) => setValue('meetingLink', value)} dir="ltr" placeholder="https://..." />
+          {[
+            ['liveTitle', 'عنوان البث'],
+            ['meetingDay', 'يوم المجلس'],
+            ['meetingTime', 'وقت المجلس'],
+            ['meetingPlace', 'مكان المجلس'],
+          ].map(([key, label]) => (
+            <div key={key} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+              <p className="mb-3 text-sm font-black text-primary-950">{label}</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <InputField label="العربية" value={text(settings[key]?.ar)} onChange={(value) => setLocalized(key, 'ar', value)} />
+                <InputField label="English" value={text(settings[key]?.en)} onChange={(value) => setLocalized(key, 'en', value)} dir="ltr" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section title="خيارات العرض" description="تحكم في العناصر المساندة الظاهرة للزوار.">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
+          <input
+            type="checkbox"
+            checked={Boolean(settings.showPrayerBar)}
+            onChange={(event) => setValue('showPrayerBar', event.target.checked)}
+            className="mt-1 h-4 w-4 accent-primary-700"
+          />
+          <span>
+            <span className="block text-sm font-black text-primary-950">إظهار شريط مواقيت الصلاة</span>
+            <span className="mt-1 block text-xs leading-6 text-stone-500">فعّله إذا أردت ظهور الشريط في واجهة الموقع.</span>
+          </span>
+        </label>
+      </Section>
+
+      <div className="sticky bottom-4 z-10 flex justify-end">
+        <button
+          type="button"
+          onClick={() => void save()}
+          disabled={saving}
+          className="rounded-2xl bg-gold-500 px-6 py-3 text-sm font-black text-primary-950 shadow-glow-gold transition hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60"
+        >
+          {saving ? 'جارٍ الحفظ...' : 'حفظ التغييرات'}
+        </button>
+      </div>
+    </div>
+  );
+}

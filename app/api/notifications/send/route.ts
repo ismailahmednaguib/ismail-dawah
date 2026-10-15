@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import webpush from "web-push";
+import { isOwnerEmail } from "@/lib/admin/owner";
 
 // ============================================================
 // Configuration
@@ -881,6 +882,8 @@ async function ensureAdminActive(
   supabase: SupabaseClient,
   candidate: AdminCandidate
 ): Promise<boolean> {
+  if (isOwnerEmail(candidate.email)) return true;
+
   try {
     const adminAttempts = [
       "id, is_active",

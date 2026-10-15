@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getContent } from "@/lib/content";
 import crypto from "crypto";
+import { isOwnerEmail } from "@/lib/admin/owner";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -546,6 +547,8 @@ async function ensureAdminActive(
   supabase: any,
   candidate: AdminCandidate
 ): Promise<boolean> {
+  if (isOwnerEmail(candidate.email)) return true;
+
   try {
     const first = await withTimeout(
       supabase

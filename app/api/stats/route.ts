@@ -5,6 +5,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getContent } from "@/lib/content";
+import { isOwnerEmail } from "@/lib/admin/owner";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 // ============================================================
@@ -556,6 +557,8 @@ async function ensureAdminActive(
   supabase: SupabaseClient,
   session: AdminSession
 ): Promise<boolean> {
+  if (isOwnerEmail(session.email)) return true;
+
   try {
     const queryId = idForQuery(session.userId);
 

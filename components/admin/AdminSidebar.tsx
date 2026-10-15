@@ -38,6 +38,7 @@ export default function AdminSidebar({
     { href: "/admin/review", label: "المراجعة العلمية", icon: "✓", show: can(roles, "review.approve") },
     { href: "/admin/users", label: "المستخدمون والأدوار", icon: "♙", show: can(roles, "users.manage") },
     { href: "/admin/audit", label: "سجل التدقيق", icon: "≡", show: can(roles, "audit.read") },
+    { href: "/admin/settings", label: "إعدادات المنصة", icon: "⚙", show: can(roles, "settings.manage") },
   ];
 
   const role = highestRole(roles);

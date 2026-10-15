@@ -12,6 +12,7 @@ import {
   randomUUID,
   timingSafeEqual,
 } from "node:crypto";
+import { isOwnerEmail } from "@/lib/admin/owner";
 
 // ============================================================
 // Configuration
@@ -761,6 +762,8 @@ async function ensureAdminActive(
   supabase: SupabaseClient,
   session: AdminSession
 ): Promise<boolean> {
+  if (isOwnerEmail(session.email)) return true;
+
   try {
     const queryId = idForQuery(session.userId);
 

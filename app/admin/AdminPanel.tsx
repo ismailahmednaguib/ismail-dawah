@@ -120,7 +120,7 @@ function StatCard({
   );
 }
 
-export default function AdminPanel() {
+export default function AdminPanel({ canManageSettings = false }: { canManageSettings?: boolean }) {
   const [stats, setStats] = useState<DashboardStats>(EMPTY_STATS);
   const [advanced, setAdvanced] = useState<AdvancedStats>({});
   const [loading, setLoading] = useState(true);
@@ -189,6 +189,18 @@ export default function AdminPanel() {
   );
   const maxContent = Math.max(1, ...contentEntries.map((item) => item.value));
   const databaseReady = stats.meta?.dbConfigured !== false;
+  const quickActions = canManageSettings
+    ? [
+        ...QUICK_ACTIONS,
+        {
+          href: "/admin/settings",
+          icon: "⚙",
+          title: "إعدادات المنصة",
+          description: "تحكم في الهوية والتواصل والبث والعرض",
+          tone: "primary" as const,
+        },
+      ]
+    : QUICK_ACTIONS;
 
   return (
     <div className="space-y-6 pb-8">
@@ -316,8 +328,8 @@ export default function AdminPanel() {
           </Link>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {QUICK_ACTIONS.map((action) => (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {quickActions.map((action) => (
             <Link
               key={action.href}
               href={action.href}

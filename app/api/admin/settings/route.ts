@@ -1,0 +1,156 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getAdminSession } from '@/lib/admin/session';
+import { can } from '@/lib/admin/permissions';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { invalidateContentCache } from '@/lib/content';
+import { revalidatePath } from 'next/cache';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const MAX_SETTINGS_BYTES = 200_000;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function sanitizeSettings(value: unknown, depth = 0): unknown {
+  if (depth > 8) return null;
+
+  if (typeof value === 'string') {
+    return value
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '')
+      .slice(0, 10_000);
+  }
+
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === 'boolean' || value === null) return value;
+
+  if (Array.isArray(value)) {
+    return value.slice(0, 200).map((item) => sanitizeSettings(item, depth + 1));
+  }
+
+  if (isRecord(value)) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .slice(0, 200)
+        .filter(([key]) => !['__proto__', 'prototype', 'constructor'].includes(key.toLowerCase()))
+        .map(([key, item]) => [key.slice(0, 128), sanitizeSettings(item, depth + 1)])
+    );
+  }
+
+  return null;
+}
+
+async function authorize() {
+  const session = await getAdminSession();
+
+  if (!session) {
+    return { session: null, response: NextResponse.json({ error: 'غير مصرح' }, { status: 401 }) };
+  }
+
+  if (!can(session.roles, 'settings.manage')) {
+    return { session: null, response: NextResponse.json({ error: 'هذه الإعدادات متاحة لمالك المنصة فقط.' }, { status: 403 }) };
+  }
+
+  return { session, response: null };
+}
+
+export async function GET() {
+  const auth = await authorize();
+  if (auth.response) return auth.response;
+
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('site_content')
+      .select('data, updated_at')
+      .eq('id', 1)
+      .maybeSingle();
+
+    if (error) {
+      return NextResponse.json({ error: 'تعذر تحميل إعدادات المنصة.' }, { status: 500 });
+    }
+
+    const content = isRecord(data?.data) ? data.data : {};
+
+    return NextResponse.json({
+      settings: isRecord(content.settings) ? content.settings : {},
+      updatedAt: data?.updated_at ?? null,
+    });
+  } catch (error) {
+    console.error('[AdminSettings] GET error:', error);
+    return NextResponse.json({ error: 'تعذر تحميل إعدادات المنصة.' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  const auth = await authorize();
+  if (auth.response) return auth.response;
+
+  try {
+    const body = await request.json().catch(() => null);
+
+    if (!isRecord(body) || !isRecord(body.settings)) {
+      return NextResponse.json({ error: 'بيانات الإعدادات غير صحيحة.' }, { status: 400 });
+    }
+
+    const cleanSettings = sanitizeSettings(body.settings);
+    const serializedSettings = JSON.stringify(cleanSettings);
+
+    if (Buffer.byteLength(serializedSettings, 'utf8') > MAX_SETTINGS_BYTES) {
+      return NextResponse.json({ error: 'حجم الإعدادات أكبر من المسموح.' }, { status: 413 });
+    }
+
+    const supabase = getSupabaseAdmin();
+    const current = await supabase
+      .from('site_content')
+      .select('data')
+      .eq('id', 1)
+      .maybeSingle();
+
+    if (current.error) {
+      return NextResponse.json({ error: 'تعذر قراءة إعدادات المنصة الحالية.' }, { status: 500 });
+    }
+
+    const currentContent = isRecord(current.data?.data) ? current.data.data : {};
+    const updatedAt = new Date().toISOString();
+    const nextContent = {
+      ...currentContent,
+      settings: cleanSettings,
+    };
+
+    const { error } = await supabase
+      .from('site_content')
+      .upsert({ id: 1, data: nextContent, updated_at: updatedAt });
+
+    if (error) {
+      console.error('[AdminSettings] PUT error:', error);
+      return NextResponse.json({ error: 'تعذر حفظ إعدادات المنصة.' }, { status: 500 });
+    }
+
+    // الإعدادات العامة تظهر في الصفحة الرئيسية وصفحة البث، لذلك نحدّثهما فورًا.
+    revalidatePath('/ar');
+    revalidatePath('/en');
+    revalidatePath('/ar/live');
+    revalidatePath('/en/live');
+    invalidateContentCache();
+
+    // سجل تغييرات مختصر بدون تخزين أي أسرار أو بيانات جلسة.
+    await supabase.from('audit_log').insert({
+      user_id: auth.session?.userId,
+      action: 'update_site_settings',
+      table_name: 'site_content',
+      record_id: '1',
+      new_data: { keys: Object.keys(isRecord(cleanSettings) ? cleanSettings : {}) },
+    });
+
+    return NextResponse.json({ ok: true, updatedAt });
+  } catch (error) {
+    console.error('[AdminSettings] PUT exception:', error);
+    return NextResponse.json({ error: 'تعذر حفظ إعدادات المنصة.' }, { status: 500 });
+  }
+}

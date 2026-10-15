@@ -17,6 +17,7 @@ import {
   timingSafeEqual,
 } from "node:crypto";
 import { promisify } from "node:util";
+import { isOwnerEmail } from "@/lib/admin/owner";
 
 const pbkdf2Async = promisify(pbkdf2) as (
   password: string,
@@ -857,8 +858,9 @@ async function fetchAdminAuthState(
       }
 
       const role = normalizeRole(data.role);
+      const owner = isOwnerEmail(typeof data.email === "string" ? data.email : null);
 
-      if (role && role !== "admin") {
+      if (role && role !== "admin" && !owner) {
         return null;
       }
 

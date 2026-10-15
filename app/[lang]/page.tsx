@@ -7,6 +7,7 @@ import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
+import { getSiteSettings } from "@/lib/content";
 
 // الصفحة تتخزن ساعة (الآية بتتغير يومياً)
 export const revalidate = 3600;
@@ -35,6 +36,24 @@ type SectionItem = {
 };
 
 type LearningPath = SectionItem;
+
+function settingText(
+  settings: Record<string, any>,
+  key: string,
+  lang: Lang,
+  fallback: string
+): string {
+  const value = settings[key];
+
+  if (typeof value === "string" && value.trim()) return value.trim();
+
+  if (value && typeof value === "object") {
+    const localized = value[lang];
+    if (typeof localized === "string" && localized.trim()) return localized.trim();
+  }
+
+  return fallback;
+}
 
 // ============================================================
 // نصوص الواجهة
@@ -355,12 +374,15 @@ export async function generateMetadata({
 
   const l = lang as Lang;
   const ui = UI[l];
-  const ogImage = `${SITE_URL}/icon-512.png`;
+  const settings = await getSiteSettings();
+  const metaTitle = settingText(settings, "metaTitle", l, ui.metaTitle);
+  const metaDesc = settingText(settings, "metaDescription", l, ui.metaDesc);
+  const ogImage = settingText(settings, "ogImage", l, `${SITE_URL}/icon-512.png`);
 
   return {
     // absolute: عشان الـ template اللي في الـ layout ما يكرّرش الاسم
-    title: { absolute: ui.metaTitle },
-    description: ui.metaDesc,
+    title: { absolute: metaTitle },
+    description: metaDesc,
     alternates: {
       canonical: `${SITE_URL}/${l}`,
       languages: {
@@ -370,10 +392,10 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      title: ui.metaTitle,
-      description: ui.metaDesc,
+      title: metaTitle,
+      description: metaDesc,
       url: `${SITE_URL}/${l}`,
-      siteName: ui.metaTitle,
+      siteName: metaTitle,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
       images: [
@@ -381,14 +403,14 @@ export async function generateMetadata({
           url: ogImage, // كان فيه نقطة زيادة في الآخر: "/icon-512.png."
           width: 512,
           height: 512,
-          alt: ui.metaTitle,
+          alt: metaTitle,
         },
       ],
     },
     twitter: {
       card: "summary", // الصورة مربعة 512×512 فمش مناسبة لـ summary_large_image
-      title: ui.metaTitle,
-      description: ui.metaDesc,
+      title: metaTitle,
+      description: metaDesc,
       images: [ogImage],
     },
   };
@@ -412,7 +434,21 @@ export default async function HomePage({
 
   const l = lang as Lang;
   const isRTL = l === "ar";
-  const ui = UI[l];
+  const settings = await getSiteSettings();
+  const baseUi = UI[l];
+  const ui: UiText = {
+    ...baseUi,
+    badge: settingText(settings, "homeKicker", l, baseUi.badge),
+    title: settingText(settings, "homeTitle", l, settingText(settings, "ownerName", l, baseUi.title)),
+    subtitle: settingText(
+      settings,
+      "homeSubtitle",
+      l,
+      settingText(settings, "homeHeroText", l, baseUi.subtitle)
+    ),
+    cta1: settingText(settings, "homeCta1", l, baseUi.cta1),
+    cta2: settingText(settings, "homeCta2", l, baseUi.cta2),
+  };
   const verse = getVerseOfTheDay(l);
 
   const websiteJsonLd = {
@@ -441,7 +477,7 @@ export default async function HomePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
       />
 
-      <Header lang={l} overHero />
+      <Header lang={l} overHero settings={settings} />
 
       {/* ============ Hero Section ============ */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-20 text-white md:py-28">
@@ -773,7 +809,7 @@ export default async function HomePage({
       </section>
 
       {/* الصفحة بتنتهي بسكشن ملوّن → flushTop يشيل الفراغ بينه وبين الفوتر */}
-      <Footer lang={l} showNewsletter={false} flushTop />
+      <Footer lang={l} settings={settings} showNewsletter={false} flushTop />
     </main>
   );
 }
