@@ -843,6 +843,65 @@ async function fetchQuestionCounts(
   };
 }
 
+async function fetchUnifiedContentCounts(
+  supabase: SupabaseClient,
+  warnings: string[]
+): Promise<Record<string, number> | null> {
+  const result = await runQuery(
+    supabase
+      .from('content')
+      .select('content_type')
+      .limit(10_000),
+    'unified_content_counts'
+  );
+
+  if (result.error) {
+    if (!isMissingTableError(result.error)) warnings.push('unified_content_count_failed');
+    return null;
+  }
+
+  const counts: Record<string, number> = {};
+  for (const row of Array.isArray(result.data) ? result.data : []) {
+    const type = typeof row?.content_type === 'string' ? row.content_type : '';
+    if (type) counts[type] = (counts[type] || 0) + 1;
+  }
+
+  return {
+    articles: counts.article || 0,
+    lessons: (counts.lesson || 0) + (counts.course_lesson || 0),
+    courses: counts.course || 0,
+    books: counts.book || 0,
+    fatwas: counts.fatwa || 0,
+    audio: counts.audio || 0,
+    videos: counts.video || 0,
+    hadith: counts.hadith || 0,
+    stories: counts.story || 0,
+    research: counts.research || 0,
+    doubts: (counts.faq || 0) + (counts.doubt || 0),
+    news: counts.event || 0,
+  };
+}
+
+async function fetchPendingReviewCount(
+  supabase: SupabaseClient,
+  warnings: string[]
+): Promise<number> {
+  const result = await runQuery(
+    supabase
+      .from('review_queue')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending'),
+    'review_pending_count'
+  );
+
+  if (result.error) {
+    if (!isMissingTableError(result.error)) warnings.push('review_count_failed');
+    return 0;
+  }
+
+  return toNumber(result.count ?? 0);
+}
+
 // ============================================================
 // GET /api/stats
 // ============================================================
@@ -892,8 +951,11 @@ export async function GET(req: NextRequest) {
     }
 
     // 3) Load content and DB counts safely
-    const [contentResult, usersCount, questionCounts] = await Promise.all([
+    const [contentResult, unifiedContent, usersCount, questionCounts, pendingReviews] = await Promise.all([
       loadContent(),
+      auth.supabase
+        ? fetchUnifiedContentCounts(auth.supabase, warnings)
+        : Promise.resolve<Record<string, number> | null>(null),
       auth.supabase
         ? fetchUsersCount(auth.supabase, warnings)
         : Promise.resolve(0),
@@ -904,6 +966,9 @@ export async function GET(req: NextRequest) {
             pending: 0,
             answered: 0,
           }),
+      auth.supabase
+        ? fetchPendingReviewCount(auth.supabase, warnings)
+        : Promise.resolve(0),
     ]);
 
     if (contentResult.warning) {
@@ -911,28 +976,30 @@ export async function GET(req: NextRequest) {
     }
 
     const content = contentResult.content;
+    const legacyContentCounts = {
+      fields: collectionLength(content, "fields"),
+      lessons: collectionLength(content, "lessons"),
+      videos: collectionLength(content, "videos"),
+      articles: collectionLength(content, "articles"),
+      books: collectionLength(content, "books"),
+      audio: collectionLength(content, "audio"),
+      photos: collectionLength(content, "photos"),
+      fatwas: collectionLength(content, "fatwas"),
+      doubts: collectionLength(content, "doubts"),
+      projects: collectionLength(content, "projects"),
+      news: collectionLength(content, "news"),
+      places: collectionLength(content, "places"),
+      adhkar: collectionLength(content, "adhkar"),
+    };
 
     const stats = {
       ok: true,
-      content: {
-        fields: collectionLength(content, "fields"),
-        lessons: collectionLength(content, "lessons"),
-        videos: collectionLength(content, "videos"),
-        articles: collectionLength(content, "articles"),
-        books: collectionLength(content, "books"),
-        audio: collectionLength(content, "audio"),
-        photos: collectionLength(content, "photos"),
-        fatwas: collectionLength(content, "fatwas"),
-        doubts: collectionLength(content, "doubts"),
-        projects: collectionLength(content, "projects"),
-        news: collectionLength(content, "news"),
-        places: collectionLength(content, "places"),
-        adhkar: collectionLength(content, "adhkar"),
-      },
+      content: unifiedContent ?? legacyContentCounts,
       users: {
         total: usersCount,
       },
       questions: questionCounts,
+      review: { pending: pendingReviews },
       languages: Array.isArray(content?.languages)
         ? content.languages.length
         : 2,

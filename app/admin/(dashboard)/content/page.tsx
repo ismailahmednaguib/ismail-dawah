@@ -2,12 +2,14 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ContentListClient from '@/components/admin/ContentListClient';
+import { can } from '@/lib/admin/permissions';
 
 export const metadata = { title: 'المحتوى | لوحة التحكم' };
 
 export default async function ContentPage() {
   const session = await getAdminSession();
   if (!session) redirect('/ar/login');
+  if (!can(session.roles, 'content.read')) redirect('/admin');
 
   return (
     <div>

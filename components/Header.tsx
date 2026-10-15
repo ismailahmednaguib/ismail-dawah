@@ -93,18 +93,21 @@ export default function Header({
 
   const otherLang: Lang = isRTL ? "en" : "ar";
 
+  const [remoteSettings, setRemoteSettings] = useState<Record<string, unknown> | null>(null);
+  const effectiveSettings = remoteSettings ?? settings ?? null;
+
   const switchHref = useMemo(
     () => localizedPath(otherLang, pathWithoutLang),
     [otherLang, pathWithoutLang]
   );
 
   const brandName = getText(
-    settings?.ownerName,
+    effectiveSettings?.ownerName,
     isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib"
   );
 
   const brandTagline = getText(
-    settings?.motto,
+    effectiveSettings?.motto,
     isRTL ? "منصة دعوية شاملة" : "Complete Dawah Platform"
   );
 
@@ -112,6 +115,26 @@ export default function Header({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void fetch('/api/site-settings', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.settings && typeof data.settings === 'object') {
+          const nextSettings = data.settings as Record<string, unknown>;
+          if (Object.keys(nextSettings).length > 0) {
+            setRemoteSettings(nextSettings);
+          }
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // الهيدر شفاف فوق خلفية داكنة → نستخدم ألوان فاتحة
   const onDark = overHero && !scrolled && !mobileOpen;

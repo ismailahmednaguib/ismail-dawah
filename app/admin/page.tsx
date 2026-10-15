@@ -14,7 +14,10 @@ export default async function AdminPage() {
 
   return (
     <AdminDashboardShell>
-      <AdminPanel canManageSettings={can(session.roles, 'settings.manage')} />
+      <AdminPanel
+        canManageSettings={can(session.roles, 'settings.manage')}
+        canManageNotifications={can(session.roles, 'notifications.manage')}
+      />
     </AdminDashboardShell>
   );
 }

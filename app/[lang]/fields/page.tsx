@@ -227,7 +227,7 @@ const FIELDS: Field[] = [
       en: "Contemporary youth issues and their Islamic solutions.",
     },
     slug: "youth",
-    color: "from-lime-500 to-lime-600",
+    color: "from-primary-500 to-primary-600",
   },
   {
     id: "women",

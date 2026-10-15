@@ -1,7 +1,7 @@
 // components/Footer.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t, type Lang } from "@/lib/i18n";
@@ -29,12 +29,47 @@ export default function Footer({
     langProp || (pathname.split("/")[1] === "en" ? "en" : "ar");
   const isRTL = lang === "ar";
 
+  const [remoteSettings, setRemoteSettings] = useState<Record<string, unknown> | null>(null);
+  const effectiveSettings = remoteSettings ?? settings ?? null;
+
   const brandName =
-    typeof settings?.ownerName === "string" && settings.ownerName.trim()
-      ? settings.ownerName.trim()
+    typeof effectiveSettings?.ownerName === "string" && effectiveSettings.ownerName.trim()
+      ? effectiveSettings.ownerName.trim()
       : isRTL
       ? "إسماعيل أحمد نجيب"
       : "Ismail Ahmed Naguib";
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void fetch('/api/site-settings', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.settings && typeof data.settings === 'object') {
+          const nextSettings = data.settings as Record<string, unknown>;
+          if (Object.keys(nextSettings).length > 0) {
+            setRemoteSettings(nextSettings);
+          }
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const socialLinks: Array<[string, string]> = ([
+    ["Facebook", effectiveSettings?.facebookUrl],
+    ["YouTube", effectiveSettings?.youtubeUrl],
+    ["Telegram", effectiveSettings?.telegramUrl],
+    ["X", effectiveSettings?.twitterUrl],
+    ["Instagram", effectiveSettings?.instagramUrl],
+  ] as Array<[string, unknown]>).flatMap(([label, value]) =>
+    typeof value === "string" && /^https?:\/\//i.test(value.trim())
+      ? [[label, value.trim()]]
+      : []
+  );
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -273,6 +308,22 @@ export default function Footer({
                 </svg>
               </Link>
             </div>
+
+            {socialLinks.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {socialLinks.map(([label, value]) => (
+                  <a
+                    key={label}
+                    href={String(value)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-bold text-primary-100 transition hover:bg-gold-500 hover:text-primary-950"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {columns.map((col) => (

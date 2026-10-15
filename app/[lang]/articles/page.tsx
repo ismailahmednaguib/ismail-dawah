@@ -6,6 +6,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getPublishedContent } from "@/lib/learn/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ type Article = {
     ar: string[];
     en: string[];
   };
+  href?: string;
 };
 
 type SearchParams = {
@@ -636,6 +638,44 @@ export function generateStaticParams() {
   return [{ lang: "ar" }, { lang: "en" }];
 }
 
+/**
+ * المقالات التي ينشرها المدير من المكتبة الموحدة.
+ * نحتفظ بالمقالات التعريفية القديمة كخطة بديلة إلى أن يبدأ المحتوى الموحّد.
+ */
+async function getManagedArticles(lang: Lang): Promise<Article[]> {
+  try {
+    const result = await getPublishedContent(lang, {
+      type: "article",
+      page: 1,
+      per_page: 48,
+    });
+
+    return result.data
+      .filter((item) => item.slug && item.title)
+      .map((item) => {
+        const summary = item.summary?.trim() || "";
+        const date = item.published_at?.slice(0, 10) || new Date().toISOString().slice(0, 10);
+        const title = item.title.trim();
+
+        return {
+          id: `managed-${item.id}`,
+          categoryId: "all",
+          date,
+          readMinutes: Math.max(1, Math.ceil((summary.length || 240) / 500)),
+          icon: "📰",
+          tags: { ar: [], en: [] },
+          title: { ar: title, en: title },
+          excerpt: { ar: summary, en: summary },
+          content: { ar: summary ? [summary] : [], en: summary ? [summary] : [] },
+          href: `/${lang}/learn/article/${encodeURIComponent(item.slug)}`,
+        } satisfies Article;
+      });
+  } catch (error) {
+    console.error("[ArticlesPage] managed content error:", error);
+    return [];
+  }
+}
+
 // ============================================================
 // الصفحة
 // ============================================================
@@ -663,8 +703,10 @@ export default async function ArticlesPage({
       : "all";
 
   const requestedPage = parsePage(sp.page);
+  const managedArticles = await getManagedArticles(l);
+  const articles = managedArticles.length > 0 ? managedArticles : ARTICLES;
 
-  const filteredArticles = ARTICLES.filter((article) => {
+  const filteredArticles = articles.filter((article) => {
     if (category !== "all" && article.categoryId !== category) return false;
     return articleMatches(article, q);
   });
@@ -677,7 +719,7 @@ export default async function ArticlesPage({
   const activeCategory = CATEGORIES.find((item) => item.id === category) ?? CATEGORIES[0];
 
   // المقالات المميزة
-  const featuredArticles = ARTICLES.filter((a) => a.featured).slice(0, 3);
+  const featuredArticles = articles.filter((a) => a.featured).slice(0, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -686,7 +728,7 @@ export default async function ArticlesPage({
     description: ui.description,
     inLanguage: l,
     url: `/${l}/articles`,
-    blogPost: ARTICLES.map((article) => ({
+    blogPost: articles.map((article) => ({
       "@type": "BlogPosting",
       headline: isRTL ? article.title.ar : article.title.en,
       description: isRTL ? article.excerpt.ar : article.excerpt.en,
@@ -1322,6 +1364,12 @@ function ArticleCard({
             ))}
           </div>
         </div>
+
+        {article.href ? (
+          <Link href={article.href} className="btn-primary inline-flex">
+            فتح المحتوى الكامل ←
+          </Link>
+        ) : null}
       </div>
     </details>
   );

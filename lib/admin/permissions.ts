@@ -12,6 +12,8 @@ export type PermissionAction =
   | 'review.approve'
   | 'taxonomy.manage'
   | 'media.manage'
+  | 'questions.manage'
+  | 'notifications.manage'
   | 'users.manage'
   | 'settings.manage'
   | 'audit.read';
@@ -34,6 +36,8 @@ const ACTION_ROLES: Record<PermissionAction, AppRole[]> = {
   'review.approve': ['super_admin', 'admin', 'scholar_reviewer'],
   'taxonomy.manage': ['super_admin', 'admin', 'editor'],
   'media.manage': ['super_admin', 'admin', 'editor'],
+  'questions.manage': ['super_admin', 'admin', 'scholar_reviewer'],
+  'notifications.manage': ['super_admin', 'admin'],
   'users.manage': ['super_admin', 'admin'],
   'settings.manage': ['super_admin'],
   'audit.read': ['super_admin', 'admin'],

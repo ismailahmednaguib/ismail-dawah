@@ -10,6 +10,8 @@ export const dynamic = 'force-dynamic';
 
 const MAX_SETTINGS_BYTES = 200_000;
 
+type SettingsRow = { key?: unknown; lang?: unknown; value?: unknown };
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -45,6 +47,64 @@ function sanitizeSettings(value: unknown, depth = 0): unknown {
   return null;
 }
 
+function settingsRowsToRecord(rows: SettingsRow[]): Record<string, unknown> {
+  const settings: Record<string, unknown> = {};
+
+  for (const row of rows) {
+    if (typeof row.key !== 'string' || !row.key.trim()) continue;
+
+    const key =
+      row.key === 'site.name'
+        ? 'siteName'
+        : row.key === 'site.description'
+          ? 'siteDescription'
+          : row.key;
+    const value =
+      isRecord(row.value) && 'value' in row.value
+        ? row.value.value
+        : row.value;
+
+    if (row.lang === 'ar' || row.lang === 'en') {
+      const current = isRecord(settings[key]) ? settings[key] : {};
+      settings[key] = { ...current, [row.lang]: value };
+    } else {
+      settings[key] = value;
+    }
+  }
+
+  return settings;
+}
+
+function settingsToRows(settings: Record<string, unknown>) {
+  const rows: Array<Record<string, unknown>> = [];
+
+  for (const [rawKey, value] of Object.entries(settings)) {
+    const key = rawKey === 'siteName'
+      ? 'site.name'
+      : rawKey === 'siteDescription'
+        ? 'site.description'
+        : rawKey;
+    if (isRecord(value) && ('ar' in value || 'en' in value)) {
+      for (const lang of ['ar', 'en'] as const) {
+        if (!(lang in value)) continue;
+        rows.push({
+          key,
+          lang,
+          value: { value: value[lang] },
+        });
+      }
+    } else {
+      rows.push({
+        key,
+        lang: 'ar',
+        value: { value },
+      });
+    }
+  }
+
+  return rows;
+}
+
 async function authorize() {
   const session = await getAdminSession();
 
@@ -71,14 +131,23 @@ export async function GET() {
       .eq('id', 1)
       .maybeSingle();
 
-    if (error) {
+    const legacyContent = !error && isRecord(data?.data) ? data.data : {};
+    const structured = await supabase
+      .from('site_settings')
+      .select('key, lang, value');
+    const structuredSettings = !structured.error && Array.isArray(structured.data)
+      ? settingsRowsToRecord(structured.data as SettingsRow[])
+      : {};
+
+    if (error && structured.error) {
       return NextResponse.json({ error: 'تعذر تحميل إعدادات المنصة.' }, { status: 500 });
     }
 
-    const content = isRecord(data?.data) ? data.data : {};
-
     return NextResponse.json({
-      settings: isRecord(content.settings) ? content.settings : {},
+      settings: {
+        ...(isRecord(legacyContent.settings) ? legacyContent.settings : {}),
+        ...structuredSettings,
+      },
       updatedAt: data?.updated_at ?? null,
     });
   } catch (error) {
@@ -112,10 +181,6 @@ export async function PUT(request: NextRequest) {
       .eq('id', 1)
       .maybeSingle();
 
-    if (current.error) {
-      return NextResponse.json({ error: 'تعذر قراءة إعدادات المنصة الحالية.' }, { status: 500 });
-    }
-
     const currentContent = isRecord(current.data?.data) ? current.data.data : {};
     const updatedAt = new Date().toISOString();
     const nextContent = {
@@ -123,12 +188,26 @@ export async function PUT(request: NextRequest) {
       settings: cleanSettings,
     };
 
-    const { error } = await supabase
-      .from('site_content')
-      .upsert({ id: 1, data: nextContent, updated_at: updatedAt });
+    let legacySaved = false;
+    if (!current.error) {
+      const legacyResult = await supabase
+        .from('site_content')
+        .upsert({ id: 1, data: nextContent, updated_at: updatedAt });
+      legacySaved = !legacyResult.error;
+      if (legacyResult.error) console.error('[AdminSettings] legacy PUT error:', legacyResult.error);
+    }
 
-    if (error) {
-      console.error('[AdminSettings] PUT error:', error);
+    const structuredRows = isRecord(cleanSettings)
+      ? settingsToRows(cleanSettings)
+      : [];
+    const structuredResult = structuredRows.length
+      ? await supabase
+          .from('site_settings')
+          .upsert(structuredRows, { onConflict: 'key,lang' })
+      : { error: null };
+
+    if (!legacySaved && structuredResult.error) {
+      console.error('[AdminSettings] structured PUT error:', structuredResult.error);
       return NextResponse.json({ error: 'تعذر حفظ إعدادات المنصة.' }, { status: 500 });
     }
 
@@ -144,7 +223,7 @@ export async function PUT(request: NextRequest) {
       user_id: auth.session?.userId,
       action: 'update_site_settings',
       table_name: 'site_content',
-      record_id: '1',
+      record_id: null,
       new_data: { keys: Object.keys(isRecord(cleanSettings) ? cleanSettings : {}) },
     });
 

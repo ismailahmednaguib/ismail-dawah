@@ -5,6 +5,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import AuditClient from '@/components/admin/AuditClient';
 import type { Metadata } from 'next';
+import { can } from '@/lib/admin/permissions';
 
 export const metadata: Metadata = {
   title: 'سجل التدقيق | لوحة التحكم',
@@ -14,8 +15,7 @@ export default async function AuditPage() {
   const session = await getAdminSession();
   if (!session) redirect('/ar/login');
 
-  const canView = session.roles.some(r => ['super_admin', 'admin'].includes(r));
-  if (!canView) redirect('/admin');
+  if (!can(session.roles, 'audit.read')) redirect('/admin');
 
   return (
     <div>

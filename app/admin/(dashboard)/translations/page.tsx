@@ -5,6 +5,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import TranslationsClient from '@/components/admin/TranslationsClient';
 import type { Metadata } from 'next';
+import { can } from '@/lib/admin/permissions';
 
 export const metadata: Metadata = {
   title: 'إدارة الترجمات | لوحة التحكم',
@@ -14,10 +15,7 @@ export default async function TranslationsPage() {
   const session = await getAdminSession();
   if (!session) redirect('/ar/login');
 
-  const canAccess = session.roles.some(r =>
-    ['super_admin', 'admin', 'editor', 'translator'].includes(r)
-  );
-  if (!canAccess) redirect('/admin');
+  if (!can(session.roles, 'content.read')) redirect('/admin');
 
   return (
     <div>

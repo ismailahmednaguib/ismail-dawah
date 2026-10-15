@@ -10,6 +10,7 @@ type DashboardStats = {
   content?: ContentStats;
   users?: { total?: number };
   questions?: { total?: number; pending?: number; answered?: number };
+  review?: { pending?: number };
   languages?: number;
   meta?: { dbConfigured?: boolean; generatedAt?: string; warnings?: string[] };
 };
@@ -39,6 +40,12 @@ const CONTENT_LABELS: Record<string, string> = {
   photos: "الصور",
   fatwas: "الفتاوى",
   doubts: "الأسئلة والشبهات",
+  courses: "الدورات",
+  research: "الأبحاث",
+  hadith: "الأحاديث",
+  stories: "القصص",
+  faq: "الأسئلة الشائعة",
+  events: "الفعاليات",
   projects: "المشاريع",
   news: "الأخبار",
   places: "الأماكن",
@@ -120,7 +127,13 @@ function StatCard({
   );
 }
 
-export default function AdminPanel({ canManageSettings = false }: { canManageSettings?: boolean }) {
+export default function AdminPanel({
+  canManageSettings = false,
+  canManageNotifications = false,
+}: {
+  canManageSettings?: boolean;
+  canManageNotifications?: boolean;
+}) {
   const [stats, setStats] = useState<DashboardStats>(EMPTY_STATS);
   const [advanced, setAdvanced] = useState<AdvancedStats>({});
   const [loading, setLoading] = useState(true);
@@ -189,18 +202,36 @@ export default function AdminPanel({ canManageSettings = false }: { canManageSet
   );
   const maxContent = Math.max(1, ...contentEntries.map((item) => item.value));
   const databaseReady = stats.meta?.dbConfigured !== false;
-  const quickActions = canManageSettings
-    ? [
-        ...QUICK_ACTIONS,
-        {
+  const quickActions = [
+    ...QUICK_ACTIONS,
+    ...(canManageNotifications
+      ? [
+          {
+            href: "/admin/notifications",
+            icon: "♢",
+            title: "إرسال إشعار",
+            description: "نبّه المشتركين بآخر التحديثات",
+            tone: "primary" as const,
+          },
+          {
+            href: "/admin/newsletter",
+            icon: "✉",
+            title: "مشتركو النشرة",
+            description: "راجع القائمة وأدر حالات الاشتراك",
+            tone: "primary" as const,
+          },
+        ]
+      : []),
+    ...(canManageSettings
+      ? [{
           href: "/admin/settings",
           icon: "⚙",
           title: "إعدادات المنصة",
           description: "تحكم في الهوية والتواصل والبث والعرض",
           tone: "primary" as const,
-        },
-      ]
-    : QUICK_ACTIONS;
+        }]
+      : []),
+  ];
 
   return (
     <div className="space-y-6 pb-8">
@@ -253,10 +284,15 @@ export default function AdminPanel({ canManageSettings = false }: { canManageSet
         </div>
       ) : null}
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="ملخص الإحصائيات">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="ملخص الإحصائيات">
         <StatCard label="إجمالي المحتوى" value={totalContent} icon="▦" hint="كل المواد المنشورة والمضافة" accent="primary" />
         <StatCard label="المستخدمون" value={stats.users?.total} icon="♙" hint="الحسابات المسجلة في المنصة" accent="gold" />
-        <StatCard label="أسئلة معلقة" value={stats.questions?.pending} icon="?" hint="تحتاج ردًا أو متابعة" accent="dark" />
+        <Link href="/admin/questions" className="block rounded-2xl transition hover:-translate-y-0.5 hover:shadow-card">
+          <StatCard label="أسئلة معلقة" value={stats.questions?.pending} icon="?" hint="تحتاج ردًا أو متابعة" accent="dark" />
+        </Link>
+        <Link href="/admin/review" className="block rounded-2xl transition hover:-translate-y-0.5 hover:shadow-card">
+          <StatCard label="مراجعات معلقة" value={stats.review?.pending} icon="✓" hint="تنتظر اعتماد المراجع" accent="primary" />
+        </Link>
         <StatCard label="زيارات اليوم" value={advanced.todayViews} icon="◉" hint="حسب سجل زيارات الموقع" accent="primary" />
       </section>
 

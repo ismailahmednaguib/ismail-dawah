@@ -614,11 +614,53 @@ async function fetchSiteContent(): Promise<Record<string, unknown> | null> {
   }
 }
 
+async function fetchStructuredSiteSettings(): Promise<Record<string, any>> {
+  try {
+    const client = createContentClient();
+    const { data, error } = await client
+      .from('site_settings')
+      .select('key, lang, value');
+
+    if (error || !Array.isArray(data)) return {};
+
+    const settings: Record<string, any> = {};
+
+    for (const row of data as Array<{ key?: unknown; lang?: unknown; value?: unknown }>) {
+      if (typeof row.key !== 'string' || !row.key.trim()) continue;
+
+      const key =
+        row.key === 'site.name'
+          ? 'siteName'
+          : row.key === 'site.description'
+            ? 'siteDescription'
+            : row.key;
+      const value =
+        isPlainObject(row.value) && 'value' in row.value
+          ? row.value.value
+          : row.value;
+
+      if (row.lang === 'ar' || row.lang === 'en') {
+        const current = isPlainObject(settings[key]) ? settings[key] : {};
+        settings[key] = { ...current, [row.lang]: value };
+      } else {
+        settings[key] = value;
+      }
+    }
+
+    return settings;
+  } catch (error) {
+    console.warn('[Content] Failed to fetch structured site settings:', error);
+    return {};
+  }
+}
+
 /** إعدادات الموقع العامة فقط، بدون تحميل مجموعات المحتوى كاملة. */
 export async function getSiteSettings(): Promise<Record<string, any>> {
   try {
+    const structured = await fetchStructuredSiteSettings();
     const site = await fetchSiteContent();
-    return normalizeSettings(site?.settings || site?.site);
+    const legacy = normalizeSettings(site?.settings || site?.site);
+    return { ...legacy, ...structured };
   } catch (error) {
     console.warn('[Content] Failed to fetch site settings:', error);
     return {};

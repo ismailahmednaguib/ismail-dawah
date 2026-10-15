@@ -5,6 +5,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import UsersClient from '@/components/admin/UsersClient';
 import type { Metadata } from 'next';
+import { can } from '@/lib/admin/permissions';
 
 export const metadata: Metadata = {
   title: 'إدارة المستخدمين | لوحة التحكم',
@@ -14,8 +15,7 @@ export default async function UsersPage() {
   const session = await getAdminSession();
   if (!session) redirect('/ar/login');
 
-  const canManage = session.roles.some(r => ['super_admin', 'admin'].includes(r));
-  if (!canManage) redirect('/admin');
+  if (!can(session.roles, 'users.manage')) redirect('/admin');
 
   return (
     <div>

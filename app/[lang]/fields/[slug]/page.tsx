@@ -320,7 +320,7 @@ const FIELDS: Field[] = [
     id: "youth",
     slug: "youth",
     icon: "🌱",
-    color: "from-lime-500 to-lime-600",
+    color: "from-primary-500 to-primary-600",
     title: { ar: "الشباب", en: "Youth" },
     subtitle: { ar: "قضايا وهموم وحلول", en: "Issues, Concerns, and Solutions" },
     description: {

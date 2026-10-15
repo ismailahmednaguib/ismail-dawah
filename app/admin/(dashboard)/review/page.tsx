@@ -5,6 +5,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import ReviewQueueClient from '@/components/admin/ReviewQueueClient';
 import type { Metadata } from 'next';
+import { can } from '@/lib/admin/permissions';
 
 export const metadata: Metadata = {
   title: 'المراجعة العلمية | لوحة التحكم',
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default async function ReviewPage() {
   const session = await getAdminSession();
   if (!session) redirect('/ar/login');
+  if (!can(session.roles, 'review.approve')) redirect('/admin');
 
   return (
     <div>
