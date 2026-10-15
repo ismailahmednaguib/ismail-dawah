@@ -16,8 +16,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPaths = [
     '',
-    '/learn',
-    '/fiqh',
     '/search',
     '/quran',
     '/fatwa',

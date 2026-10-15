@@ -46,7 +46,7 @@ const FALLBACK_SETTINGS: LiveSettings = {
   meetingDay: { ar: "الجمعة", en: "Friday" },
   meetingTime: { ar: "بعد صلاة المغرب", en: "After Maghrib Prayer" },
   meetingPlace: { ar: "مسجد الرحمن — القاهرة", en: "Ar-Rahman Mosque — Cairo" },
-  meetingLink: "https://maps.google.com",
+  meetingLink: "",
 };
 
 const FALLBACK_SCHEDULE: ScheduleItem[] = [
@@ -248,7 +248,7 @@ export async function generateMetadata({
       type: "video.episode",
       images: [
         {
-          url: "/icons/icon-512.png",
+          url: "/icon-512.png",
           width: 512,
           height: 512,
           alt: ui.title,
@@ -259,7 +259,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: ui.title,
       description: ui.description,
-      images: ["/icons/icon-512.png"],
+      images: ["/icon-512.png"],
     },
   };
 }
@@ -340,6 +340,17 @@ export default async function LivePage({
   } catch {
     // استخدام البيانات الاحتياطية
   }
+
+  // عدد المجالس الأسبوعية = عدد الأيام الفريدة في الجدول (بدل قيمة ثابتة).
+  const weeklyMeetings = new Set(
+    schedule.map((item) => item.day[L]).filter(Boolean)
+  ).size;
+
+  // لا نعرض زر الخريطة إلا لرابط موقع محدّد، لا لرابط خرائط عام فارغ.
+  const mapLink = (settings.meetingLink || "").trim();
+  const isGenericMapLink =
+    /^https?:\/\/(www\.)?maps\.(google|apple)\.[a-z.]+\/?$/i.test(mapLink);
+  const hasMapLink = mapLink.length > 0 && !isGenericMapLink;
 
   // JSON-LD
   const jsonLd = {
@@ -448,7 +459,7 @@ export default async function LivePage({
         {/* ===== إحصائيات سريعة ===== */}
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📡" label={ui.liveCount} value="●" color="primary" isLive />
-          <StatCard icon="🕌" label={ui.meetingCount} value={1} color="gold" />
+          <StatCard icon="🕌" label={ui.meetingCount} value={weeklyMeetings} color="gold" />
           <StatCard icon="📚" label={ui.lessonsCount} value={schedule.length} color="primary" />
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
@@ -548,9 +559,9 @@ export default async function LivePage({
               />
             </div>
 
-            {settings.meetingLink && (
+            {hasMapLink && (
               <a
-                href={settings.meetingLink}
+                href={mapLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary inline-flex w-full items-center justify-center gap-2"

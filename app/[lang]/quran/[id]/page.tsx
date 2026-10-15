@@ -143,7 +143,7 @@ export async function generateMetadata({
       type: "article",
       locale: isRTL ? "ar_EG" : "en_US",
       images: [{
-        url: "/icons/icon-512.png",
+        url: "/icon-512.png",
         width: 512,
         height: 512,
         alt: title,
@@ -153,7 +153,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["/icons/icon-512.png"],
+      images: ["/icon-512.png"],
     },
   };
 }

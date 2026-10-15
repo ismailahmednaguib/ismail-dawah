@@ -29,7 +29,7 @@ export async function generateMetadata({
     ? "منصة دعوية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد، بلغتين وتصميم متجاوب."
     : "A comprehensive dawah platform bringing together the Holy Quran, adhkar, fatwas, prophets' stories, prayer times, Qibla direction, and dawah tools in one place, bilingual and responsive.";
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app";
 
   return {
     metadataBase: new URL(baseUrl),
@@ -69,7 +69,7 @@ export async function generateMetadata({
       description,
       images: [
         {
-          url: "/icons/icon-512.png",
+          url: "/icon-512.png",
           width: 512,
           height: 512,
           alt: siteName,
@@ -172,8 +172,8 @@ export default async function LangLayout({
     alternateName: isRTL
       ? "Ismail Ahmed Naguib Dawah Platform"
       : "منصة إسماعيل أحمد نجيب الدعوية",
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app",
-    logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app"}/icons/icon-512.png`,
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app",
+    logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/icon-512.png`,
     description: isRTL
       ? "منصة دعوية شاملة لنشر العلم الشرعي والمحتوى الإسلامي بلغتين."
       : "A comprehensive dawah platform for spreading Islamic knowledge and content in two languages.",
@@ -190,13 +190,13 @@ export default async function LangLayout({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: siteName,
-    url: process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app",
+    url: process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app",
     inLanguage: l,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismail-dawah.vercel.app"}/${l}/search?q={search_term_string}`,
+        urlTemplate: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/${l}/search?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },

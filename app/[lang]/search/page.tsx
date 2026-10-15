@@ -31,7 +31,7 @@ export async function generateMetadata({
 
   const copy = COPY[lang];
   return {
-    title: `${copy.title} | أكاديمية إسماعيل أحمد نجيب`,
+    title: `${copy.title} | منصة إسماعيل أحمد نجيب`,
     description: copy.meta,
   };
 }

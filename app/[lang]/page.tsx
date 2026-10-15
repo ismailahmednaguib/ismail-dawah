@@ -45,11 +45,17 @@ function settingText(
 ): string {
   const value = settings[key];
 
-  if (typeof value === "string" && value.trim()) return value.trim();
-
+  // القيمة المترجمة (كائن {ar,en}) لها الأولوية على النص المفرد.
   if (value && typeof value === "object") {
     const localized = value[lang];
     if (typeof localized === "string" && localized.trim()) return localized.trim();
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const text = value.trim();
+    // لا نُسرّب نصًا غير مترجم (عربي) إلى الواجهة الإنجليزية.
+    if (lang === "en" && /[\u0600-\u06FF]/.test(text)) return fallback;
+    return text;
   }
 
   return fallback;
@@ -137,7 +143,7 @@ const UI: Record<Lang, UiText> = {
     statSections: "Sections & Content",
     statLanguages: "Languages",
     statSurahs: "Quran Surahs",
-    statFree: "100% Free",
+    statFree: "Free",
     learnTitle: "Learn Islamic Sciences",
     learnSubtitle:
       "Start with the fundamentals and progress in seeking Islamic knowledge",

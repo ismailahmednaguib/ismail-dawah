@@ -32,9 +32,19 @@ export default function Footer({
   const [remoteSettings, setRemoteSettings] = useState<Record<string, unknown> | null>(null);
   const effectiveSettings = remoteSettings ?? settings ?? null;
 
+  const ownerRaw = effectiveSettings?.ownerName;
+  const ownerText =
+    typeof ownerRaw === "string"
+      ? ownerRaw.trim()
+      : ownerRaw && typeof ownerRaw === "object"
+      ? String((ownerRaw as Record<string, unknown>)[lang] ?? "").trim()
+      : "";
+  // لا نُسرّب نصًا عربيًا إلى الواجهة الإنجليزية عند غياب ترجمة حقيقية للإعداد.
+  const ownerIsArabic = /[\u0600-\u06FF]/.test(ownerText);
+
   const brandName =
-    typeof effectiveSettings?.ownerName === "string" && effectiveSettings.ownerName.trim()
-      ? effectiveSettings.ownerName.trim()
+    ownerText.length > 0 && (isRTL || !ownerIsArabic)
+      ? ownerText
       : isRTL
       ? "إسماعيل أحمد نجيب"
       : "Ismail Ahmed Naguib";

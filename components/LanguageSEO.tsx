@@ -37,7 +37,7 @@ export default function LanguageSEO({
       {ogImage && <meta property="og:image" content={ogImage} />}
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="أكاديمية إسماعيل أحمد نجيب" />
+      <meta property="og:site_name" content="منصة إسماعيل أحمد نجيب الدعوية" />
       <meta property="og:locale" content={lang === 'ar' ? 'ar_EG' : `${lang}_${lang.toUpperCase()}`} />
 
       {/* Twitter */}

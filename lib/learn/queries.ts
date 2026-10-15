@@ -1,4 +1,5 @@
 // lib/learn/queries.ts
+import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 import type {
   ContentType,
@@ -10,8 +11,89 @@ import type {
 
 function getClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  // القراءة العامة تمرّ عبر الخادم فقط، ونستخدم مفتاح الخدمة لتفادي نقص سياسات RLS
+  // على الجداول الموحّدة. الأمان مضمون بفرض status='published' في كل استعلام.
+  const key =
+    process.env.SUPABASE_SERVICE_KEY?.trim() ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
   return createClient(url, key);
+}
+
+/**
+ * جلب ترجمة واحدة مع المراجع والتصنيفات.
+ * يتنازل تلقائيًا عن الوسائط إذا لم يكن جدول content_media موجودًا في البيئة.
+ */
+async function fetchTranslation(
+  supabase: ReturnType<typeof getClient>,
+  lang: string,
+  slug: string
+) {
+  const base = (withMedia: boolean) => `
+      *,
+      content:content_id (
+        *,
+        content_references (*),
+        ${withMedia ? 'content_media (*),' : ''}
+        content_terms (
+          taxonomy_id,
+          taxonomies (id, kind, name, slug, color, icon)
+        )
+      )
+    `;
+
+  let result = (await supabase
+    .from('content_translations')
+    .select(base(true))
+    .eq('lang', lang)
+    .eq('slug', slug)
+    .maybeSingle()) as { data: any; error: any };
+
+  if (result.error) {
+    result = (await supabase
+      .from('content_translations')
+      .select(base(false))
+      .eq('lang', lang)
+      .eq('slug', slug)
+      .maybeSingle()) as { data: any; error: any };
+  }
+
+  return result;
+}
+
+/** جلب كل ترجمات معرّف (slug) عبر اللغات، مع تحمّل غياب جدول الوسائط. */
+async function fetchTranslationsBySlug(
+  supabase: ReturnType<typeof getClient>,
+  slug: string
+) {
+  const base = (withMedia: boolean) => `
+      *,
+      content:content_id (
+        *,
+        content_references (*),
+        ${withMedia ? 'content_media (*),' : ''}
+        content_terms (
+          taxonomy_id,
+          taxonomies (id, kind, name, slug, color, icon)
+        )
+      )
+    `;
+
+  let result = (await supabase
+    .from('content_translations')
+    .select(base(true))
+    .eq('slug', slug)
+    .limit(20)) as { data: any; error: any };
+
+  if (result.error) {
+    result = (await supabase
+      .from('content_translations')
+      .select(base(false))
+      .eq('slug', slug)
+      .limit(20)) as { data: any; error: any };
+  }
+
+  return result;
 }
 
 /** لا نعرض للزوار إلا المراجع التي اعتمدها مراجع علمي. */
@@ -163,23 +245,7 @@ export async function getContentBySlug(
 ) {
   const supabase = getClient();
 
-  const { data, error } = await supabase
-    .from('content_translations')
-    .select(`
-      *,
-      content:content_id (
-        *,
-        content_references (*),
-        content_media (*),
-        content_terms (
-          taxonomy_id,
-          taxonomies (id, kind, name, slug, color, icon)
-        )
-      )
-    `)
-    .eq('lang', lang)
-    .eq('slug', slug)
-    .single();
+  const { data, error } = await fetchTranslation(supabase, lang, slug);
 
   if (error || !data) return null;
 
@@ -209,23 +275,7 @@ export async function getContentWithFallback(
   const supabase = getClient();
 
   // أولاً: حاول إيجاد الترجمة المطلوبة
-  const { data: translated } = await supabase
-    .from('content_translations')
-    .select(`
-      *,
-      content:content_id (
-        *,
-        content_references (*),
-        content_media (*),
-        content_terms (
-          taxonomy_id,
-          taxonomies (id, kind, name, slug, color, icon)
-        )
-      )
-    `)
-    .eq('lang', lang)
-    .eq('slug', slug)
-    .single();
+  const { data: translated } = await fetchTranslation(supabase, lang, slug);
 
   if (
     translated &&
@@ -244,22 +294,7 @@ export async function getContentWithFallback(
   }
 
   // ثانياً: إذا لم تتوفر، ابحث في اللغات الأخرى
-  const { data: fallbacks } = await supabase
-    .from('content_translations')
-    .select(`
-      *,
-      content:content_id (
-        *,
-        content_references (*),
-        content_media (*),
-        content_terms (
-          taxonomy_id,
-          taxonomies (id, kind, name, slug, color, icon)
-        )
-      )
-    `)
-    .eq('slug', slug)
-    .limit(20);
+  const { data: fallbacks } = await fetchTranslationsBySlug(supabase, slug);
 
   const fallback = (fallbacks ?? []).find(
     (candidate: any) =>

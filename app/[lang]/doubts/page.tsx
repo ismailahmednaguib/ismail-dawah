@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
 
 export const dynamic = "force-static";
@@ -142,7 +144,7 @@ const SECTIONS: DoubtSection[] = [
         en: "Separate the person from the doubt; do not attack the questioner because the question may be innocent.",
       },
       {
-        ar: "ابدأ بالم agreed عليه قبل الخوض في المختلف فيه.",
+        ar: "ابدأ بالمتفق عليه قبل الخوض في المختلف فيه.",
         en: "Begin with agreed-upon fundamentals before entering disputed details.",
       },
     ],
@@ -175,7 +177,7 @@ const SECTIONS: DoubtSection[] = [
   },
   {
     id: "context",
-    icon: "",
+    icon: "🫂",
     title: {
       ar: "مراعاة حال السائل",
       en: "Considering the Questioner's State",
@@ -253,7 +255,7 @@ const SECTIONS: DoubtSection[] = [
   },
   {
     id: "moderation",
-    icon: "️",
+    icon: "🧭",
     title: {
       ar: "الاعتدال بين التفريط والغلو",
       en: "Balance Between Negligence and Extremism",
@@ -437,7 +439,7 @@ const DOUBTS: DoubtQA[] = [
         en: "Belief in divine decree does not remove choice; a person acts by choice according to the intellect, will, and ability Allah gave him.",
       },
       {
-        ar: "الله يعلم ما سيكون، وعلمه لا يجبر العبد على الفعل، كما أن المعلم الذي يعلم أن تلميده سينجح لا يكون سببًا لإجباره.",
+        ar: "الله يعلم ما سيكون، وعلمه لا يجبر العبد على الفعل، كما أن المعلم الذي يعلم أن تلميذه سينجح لا يكون سببًا لإجباره.",
         en: "Allah knows what will be, but His knowledge does not compel the servant to act, just as a teacher who knows a student will succeed does not force him.",
       },
       {
@@ -636,7 +638,10 @@ export default async function DoubtsPage({
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"}>
+    <>
+      <Header lang={l} />
+
+      <main dir={isRTL ? "rtl" : "ltr"}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -962,6 +967,9 @@ export default async function DoubtsPage({
           </div>
         </div>
       </section>
-    </main>
+      </main>
+
+      <Footer lang={l} />
+    </>
   );
 }

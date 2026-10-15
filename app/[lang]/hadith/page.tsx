@@ -10,8 +10,8 @@ import { isValidLang, type Lang } from '@/lib/i18n';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'الحديث الشريف | أكاديمية إسماعيل',
-  description: 'تصفح محتوى الحديث الشريف الموثق في أكاديمية إسماعيل.',
+  title: 'الحديث الشريف | منصة إسماعيل أحمد نجيب',
+  description: 'تصفح محتوى الحديث الشريف الموثق في منصة إسماعيل أحمد نجيب.',
 };
 
 const COPY = {

@@ -306,7 +306,7 @@ export async function generateMetadata({
       type: "book",
       images: [
         {
-          url: "/icons/icon-512.png",
+          url: "/icon-512.png",
           width: 512,
           height: 512,
           alt: ui.title,
@@ -317,7 +317,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: ui.title,
       description: ui.description,
-      images: ["/icons/icon-512.png"],
+      images: ["/icon-512.png"],
     },
   };
 }
@@ -682,13 +682,19 @@ export default async function QuranPage({
                     {surah.name}
                   </h2>
 
-                  <p className="mb-1 text-sm font-bold text-slate-600 dark:text-slate-300">
-                    {surah.englishName}
-                  </p>
+                  {isRTL ? (
+                    <div className="mb-3" />
+                  ) : (
+                    <p className="mb-1 text-sm font-bold text-slate-600 dark:text-slate-300">
+                      {surah.englishName}
+                    </p>
+                  )}
 
-                  <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-                    {surah.englishNameTranslation}
-                  </p>
+                  {!isRTL && (
+                    <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                      {surah.englishNameTranslation}
+                    </p>
+                  )}
 
                   <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-xs font-bold text-slate-500 dark:border-night-700 dark:text-slate-400">
                     <span className="inline-flex items-center gap-1">

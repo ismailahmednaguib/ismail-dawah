@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!content) return { title: 'غير موجود' };
 
   return {
-    title: `${content.translation.title} | أكاديمية إسماعيل`,
+    title: `${content.translation.title} | منصة إسماعيل أحمد نجيب`,
     description: content.translation.summary?.slice(0, 160) ?? '',
     alternates: {
       canonical: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
@@ -87,14 +87,14 @@ export default async function LearnContentPage({ params }: PageProps) {
     dateModified: content.updated_at || undefined,
     publisher: {
       '@type': 'Organization',
-      name: currentLang === 'ar' ? 'أكاديمية إسماعيل أحمد نجيب' : 'Ismail Ahmed Naguib Academy',
+      name: currentLang === 'ar' ? 'منصة إسماعيل أحمد نجيب الدعوية' : 'Ismail Ahmed Naguib Dawah Platform',
       url: siteUrl,
     },
     ...(schemaType === 'Course'
       ? {
           provider: {
             '@type': 'Organization',
-            name: currentLang === 'ar' ? 'أكاديمية إسماعيل أحمد نجيب' : 'Ismail Ahmed Naguib Academy',
+            name: currentLang === 'ar' ? 'منصة إسماعيل أحمد نجيب الدعوية' : 'Ismail Ahmed Naguib Dawah Platform',
           },
         }
       : {}),

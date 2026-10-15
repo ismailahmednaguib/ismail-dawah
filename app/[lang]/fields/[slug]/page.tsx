@@ -650,13 +650,13 @@ export async function generateMetadata({
       url: `/${l}/fields/${slug}`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "article",
-      images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: field.title[l] }],
+      images: [{ url: "/icon-512.png", width: 512, height: 512, alt: field.title[l] }],
     },
     twitter: {
       card: "summary_large_image",
       title: field.title[l],
       description: field.description[l],
-      images: ["/icons/icon-512.png"],
+      images: ["/icon-512.png"],
     },
   };
 }

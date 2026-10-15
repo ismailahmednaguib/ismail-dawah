@@ -58,10 +58,20 @@ function localizedPath(lang: Lang, pathWithoutLang: string): string {
   return normalized === "/" ? `/${lang}` : `/${lang}${normalized}`;
 }
 
-function getText(value: unknown, fallback: string): string {
-  if (typeof value === "string" && value.trim()) {
-    return value.trim();
+function getText(value: unknown, fallback: string, lang?: Lang): string {
+  // القيمة المترجمة (كائن {ar,en}) لها الأولوية.
+  if (value && typeof value === "object" && lang) {
+    const localized = (value as Record<string, unknown>)[lang];
+    if (typeof localized === "string" && localized.trim()) return localized.trim();
   }
+
+  if (typeof value === "string" && value.trim()) {
+    const text = value.trim();
+    // لا نُسرّب نصًا غير مترجم (عربي) إلى الواجهة الإنجليزية.
+    if (lang === "en" && /[\u0600-\u06FF]/.test(text)) return fallback;
+    return text;
+  }
+
   return fallback;
 }
 
@@ -103,12 +113,14 @@ export default function Header({
 
   const brandName = getText(
     effectiveSettings?.ownerName,
-    isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib"
+    isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib",
+    lang
   );
 
   const brandTagline = getText(
     effectiveSettings?.motto,
-    isRTL ? "منصة دعوية شاملة" : "Complete Dawah Platform"
+    isRTL ? "منصة دعوية شاملة" : "Complete Dawah Platform",
+    lang
   );
 
   const [scrolled, setScrolled] = useState(false);
