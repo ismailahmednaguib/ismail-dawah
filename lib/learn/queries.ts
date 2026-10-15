@@ -13,6 +13,13 @@ function getClient() {
   return createClient(url, key);
 }
 
+/** لا نعرض للزوار إلا المراجع التي اعتمدها مراجع علمي. */
+function onlyVerifiedReferences<T extends { verified?: boolean }>(
+  references: T[] | null | undefined
+): T[] {
+  return (references ?? []).filter((reference) => reference.verified === true);
+}
+
 export interface LearnFilters {
   type?: ContentType;
   audience?: Audience;
@@ -159,7 +166,7 @@ export async function getContentBySlug(
   return {
     ...content,
     translation: data,
-    references: content.content_references ?? [],
+    references: onlyVerifiedReferences(content.content_references),
     terms: (content.content_terms ?? []).map((ct: any) => ct.taxonomies),
   };
 }
@@ -200,7 +207,7 @@ export async function getContentWithFallback(
       translation: translated,
       isTranslated: true,
       translationLang: lang,
-      references: translated.content.content_references ?? [],
+      references: onlyVerifiedReferences(translated.content.content_references),
       terms: (translated.content.content_terms ?? []).map((ct: any) => ct.taxonomies),
     };
   }
@@ -230,7 +237,7 @@ export async function getContentWithFallback(
       isTranslated: false,
       translationLang: fallback.lang,
       originalLang: fallback.content.lang_original,
-      references: fallback.content.content_references ?? [],
+      references: onlyVerifiedReferences(fallback.content.content_references),
       terms: (fallback.content.content_terms ?? []).map((ct: any) => ct.taxonomies),
     };
   }
