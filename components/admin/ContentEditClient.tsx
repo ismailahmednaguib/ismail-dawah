@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import StatusBadge from '@/components/admin/StatusBadge';
+import ContentTermsEditor from '@/components/admin/ContentTermsEditor';
 import type { ContentStatus } from '@/lib/types/content';
 
 type TranslationSummary = {
@@ -433,6 +434,8 @@ export default function ContentEditClient({
           </ul>
         )}
       </div>
+
+      <ContentTermsEditor contentId={content.id} canEdit={canEdit} />
 
       <Link
         href="/admin/content"

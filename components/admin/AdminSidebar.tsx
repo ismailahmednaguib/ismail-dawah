@@ -32,6 +32,7 @@ export default function AdminSidebar({
   const items: NavItem[] = [
     { href: '/admin', label: 'لوحة المعلومات', icon: '📊', show: true },
     { href: '/admin/content', label: 'المحتوى', icon: '📝', show: can(roles, 'content.read') },
+    { href: '/admin/taxonomies', label: 'التصنيفات', icon: '🏷️', show: can(roles, 'taxonomy.manage') },
     { href: '/admin/translations', label: 'الترجمات', icon: '🌐', show: can(roles, 'content.read') },
     { href: '/admin/review', label: 'المراجعة العلمية', icon: '🔍', show: can(roles, 'review.approve') },
     { href: '/admin/users', label: 'المستخدمون', icon: '👥', show: can(roles, 'users.manage') },
