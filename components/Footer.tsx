@@ -6,6 +6,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t, type Lang } from "@/lib/i18n";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
+import {
+  NAV_TREE,
+  applyNavigationConfig,
+  navHref,
+  navLabel,
+} from "@/lib/navigation";
 
 type FooterProps = {
   lang?: Lang;
@@ -111,40 +117,31 @@ export default function Footer({
     }
   };
 
-  const columns = [
-    {
-      title: isRTL ? "العبادات" : "Worship",
-      links: [
-        { href: `/${lang}/quran`, label: t(lang, "quran") },
-        { href: `/${lang}/prayer-times`, label: t(lang, "prayer_times") },
-        { href: `/${lang}/adhkar`, label: t(lang, "adhkar") },
-        { href: `/${lang}/qibla`, label: t(lang, "qibla") },
-        { href: `/${lang}/tasbih`, label: t(lang, "tasbih") },
-      ],
-    },
-    {
-      title: t(lang, "knowledge_responses"),
-      links: [
-        { href: `/${lang}/fatwa`, label: t(lang, "fatwa") },
-        { href: `/${lang}/fiqh`, label: isRTL ? "الفقه" : "Fiqh" },
-        { href: `/${lang}/atheism-response`, label: t(lang, "atheism_response") },
-        { href: `/${lang}/doubts`, label: t(lang, "doubts") },
-        { href: `/${lang}/hadith`, label: isRTL ? "الحديث" : "Hadith" },
-        { href: `/${lang}/prophets-stories`, label: t(lang, "prophets_stories") },
-        { href: `/${lang}/inheritance`, label: t(lang, "inheritance") },
-      ],
-    },
-    {
-      title: isRTL ? "الدعوة" : "Dawah",
-      links: [
-        { href: `/${lang}/dawah-guide`, label: t(lang, "dawah_guide") },
-        { href: `/${lang}/projects`, label: t(lang, "projects") },
-        { href: `/${lang}/khutab`, label: t(lang, "khutab") },
-        { href: `/${lang}/live`, label: t(lang, "live") },
-        { href: `/${lang}/embrace-islam`, label: t(lang, "embrace_islam") },
-      ],
-    },
-  ];
+  // الأعمدة تُبنى من هيكل التنقّل (lib/navigation) وتتأثر بإعدادات اللوحة.
+  const navTree = applyNavigationConfig(
+    (effectiveSettings as Record<string, unknown> | null)?.navigation,
+    NAV_TREE
+  );
+
+  const columns = (
+    [
+      { key: "sciences", fallbackTitle: isRTL ? "العلوم الشرعية" : "Sciences" },
+      { key: "tools", fallbackTitle: isRTL ? "الأدوات الإسلامية" : "Tools" },
+      { key: "about", fallbackTitle: isRTL ? "عن المنصة" : "About" },
+    ] as Array<{ key: string; fallbackTitle: string }>
+  )
+    .map(({ key, fallbackTitle }) => {
+      const group = navTree.find((node) => node.key === key);
+      const leaves = group ? group.children ?? [group] : [];
+      return {
+        title: group ? navLabel(group, lang) : fallbackTitle,
+        links: leaves.map((child) => ({
+          href: `/${lang}${navHref(child)}`,
+          label: navLabel(child, lang),
+        })),
+      };
+    })
+    .filter((col) => col.links.length > 0);
 
   const aboutText = t(lang, "about");
   const contactText = t(lang, "contact");

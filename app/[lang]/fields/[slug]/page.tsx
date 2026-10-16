@@ -140,19 +140,42 @@ export default async function FieldPage({
   const isRTL = l === "ar";
   const ui = UI[l];
 
-  const fields = await getPublicTaxonomies(l, "field");
-  const field = fields.find((f) => f.slug === slug);
+  // نبحث عن التصنيف في كل الأنواع (مجال/فرع/تحت-فرع/تصنيف)
+  const [fields, branches, subbranches, categories] = await Promise.all([
+    getPublicTaxonomies(l, "field"),
+    getPublicTaxonomies(l, "branch"),
+    getPublicTaxonomies(l, "subbranch"),
+    getPublicTaxonomies(l, "category"),
+  ]);
+  const groups: Array<{ kind: string; list: PublicTerm[] }> = [
+    { kind: "field", list: fields },
+    { kind: "branch", list: branches },
+    { kind: "subbranch", list: subbranches },
+    { kind: "category", list: categories },
+  ];
+  let field: PublicTerm | null = null;
+  let taxKind: string | undefined;
+  let siblings: PublicTerm[] = fields;
+  for (const g of groups) {
+    const found = g.list.find((f) => f.slug === slug);
+    if (found) {
+      field = found;
+      taxKind = g.kind;
+      siblings = g.list;
+      break;
+    }
+  }
   if (!field) notFound();
 
-  const currentIndex = fields.findIndex((f) => f.slug === slug);
-  const prevField = currentIndex > 0 ? fields[currentIndex - 1] : null;
+  const currentIndex = siblings.findIndex((f) => f.slug === slug);
+  const prevField = currentIndex > 0 ? siblings[currentIndex - 1] : null;
   const nextField =
-    currentIndex < fields.length - 1 ? fields[currentIndex + 1] : null;
-  const relatedFields = fields.filter((f) => f.slug !== field.slug).slice(0, 3);
+    currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
+  const relatedFields = siblings.filter((f) => f.slug !== field!.slug).slice(0, 3);
 
   const [lessons, articles] = await Promise.all([
-    getPublicList(l, "lesson", { taxonomySlug: slug, limit: 6 }),
-    getPublicList(l, "article", { taxonomySlug: slug, limit: 6 }),
+    getPublicList(l, "lesson", { taxonomySlug: slug, taxonomyKind: taxKind, limit: 6 }),
+    getPublicList(l, "article", { taxonomySlug: slug, taxonomyKind: taxKind, limit: 6 }),
   ]);
   const relatedContent: PublicItem[] = [...lessons, ...articles];
 

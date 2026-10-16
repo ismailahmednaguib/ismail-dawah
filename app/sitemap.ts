@@ -1,6 +1,7 @@
 // app/sitemap.ts
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
+import { NAV_TREE, flattenNav, navHref } from '@/lib/navigation';
 
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
    export const dynamic = 'force-dynamic';
@@ -10,54 +11,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // الصفحات الثابتة
+  // الصفحات الثابتة — تُشتق من هيكل التنقّل (lib/navigation).
   const staticPages: MetadataRoute.Sitemap = [];
   const languages = ['ar', 'en'];
 
-  const staticPaths = [
-    '',
-    '/search',
-    '/quran',
-    '/fatwa',
-    '/about',
-    '/contact',
-    '/adhkar',
-    '/tasbih',
-    '/prayer-times',
-    '/qibla',
-    '/zakat',
-    '/hajj-guide',
-    '/dawah-guide',
-    '/embrace-islam',
-    '/atheism-response',
-    '/doubts',
-    '/prophets-stories',
-    '/women-fatwas',
-    '/youth-issues',
-    '/khutab',
-    '/news',
-    '/articles',
-    '/live',
-    '/calendar',
-    '/map',
-    '/download',
-    '/faq',
-    '/privacy',
-    '/terms',
-    '/learn',
-    '/fields',
-    '/hadith',
-    '/fiqh',
-    '/responses',
-    '/dawah',
-    '/projects',
-    '/khatm-dua',
-    '/prayer-guide',
-    '/inheritance',
-    '/quran-memorization',
-    '/daily-wird',
-    '/ruqyah',
-  ];
+  const staticPaths = Array.from(
+    new Set([
+      '',
+      '/search',
+      ...flattenNav(NAV_TREE)
+        .map((node) => navHref(node))
+        .filter((href) => href && href.startsWith('/')),
+    ])
+  );
 
   for (const lang of languages) {
     for (const path of staticPaths) {

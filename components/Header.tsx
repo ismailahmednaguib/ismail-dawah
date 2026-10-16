@@ -6,6 +6,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
+import {
+  NAV_TREE,
+  applyNavigationConfig,
+  navHref,
+  navLabel,
+  type NavNode,
+} from "@/lib/navigation";
 
 // ============================================================
 // Types
@@ -296,134 +303,56 @@ export default function Header({
   // Navigation data
   // ==========================================================
 
-  const NAV = useMemo(
+  const navTree = useMemo(
     () =>
-      isRTL
-        ? [
-            { href: "", label: "الرئيسية" },
-            { href: "/quran", label: "القرآن" },
-            { href: "/hadith", label: "الحديث" },
-            { href: "/adhkar", label: "الأذكار" },
-            { href: "/prayer-times", label: "مواقيت الصلاة" },
-            { href: "/fatwa", label: "الفتاوى" },
-            { href: "/live", label: "البث المباشر" },
-          ]
-        : [
-            { href: "", label: "Home" },
-            { href: "/quran", label: "Quran" },
-            { href: "/hadith", label: "Hadith" },
-            { href: "/adhkar", label: "Adhkar" },
-            { href: "/prayer-times", label: "Prayer Times" },
-            { href: "/fatwa", label: "Fatwa" },
-            { href: "/live", label: "Live" },
-          ],
-    [isRTL]
+      applyNavigationConfig(
+        (effectiveSettings as Record<string, unknown> | null)?.navigation,
+        NAV_TREE
+      ),
+    [effectiveSettings]
   );
 
+  // الشجرة بعد تطبيق إخفاء الصفحات من اللوحة
+  const visibleTree = useMemo(() => {
+    const prune = (nodes: NavNode[]): NavNode[] =>
+      nodes
+        .map((node) => ({
+          ...node,
+          children: node.children ? prune(node.children) : undefined,
+        }))
+        .filter((node) => {
+          const hasChildren = (node.children?.length ?? 0) > 0;
+          if (hasChildren) return true;
+          return !isHiddenHref(navHref(node));
+        });
+    return prune(navTree);
+  }, [navTree, isHiddenHref]);
+
+  // العقد التي تظهر مباشرة في الشريط العلوي
+  const PRIMARY_KEYS = ["home", "sciences", "non-muslim", "responses", "tools", "fatwa"];
+
+  const NAV = useMemo(
+    () =>
+      visibleTree
+        .filter((node) => PRIMARY_KEYS.includes(node.key))
+        .map((node) => ({ href: navHref(node), label: navLabel(node, lang) })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [visibleTree, lang]
+  );
+
+  // مجموعات القائمة المنسدلة «المزيد»
   const MENU = useMemo(
     () =>
-      isRTL
-        ? [
-            {
-              title: "العبادات",
-              items: [
-                { href: "/prayer-guide", label: "دليل الصلاة" },
-                { href: "/hajj-guide", label: "دليل الحج" },
-                { href: "/zakat", label: "الزكاة" },
-                { href: "/daily-wird", label: "الورد اليومي" },
-                { href: "/quran-memorization", label: "حفظ القرآن" },
-              ],
-            },
-            {
-              title: "العلوم والردود",
-              items: [
-                { href: "/learn", label: "تعلّم" },
-                { href: "/fiqh", label: "الفقه" },
-                { href: "/articles", label: "المقالات" },
-                { href: "/women-fatwas", label: "فتاوى المرأة" },
-                { href: "/prophets-stories", label: "قصص الأنبياء" },
-                { href: "/doubts", label: "الشبهات" },
-                { href: "/responses", label: "مركز الردود" },
-                { href: "/atheism-response", label: "الرد على الإلحاد" },
-                { href: "/inheritance", label: "المواريث" },
-              ],
-            },
-            {
-              title: "الدعوة",
-              items: [
-                { href: "/dawah", label: "بوابة غير المسلمين" },
-                { href: "/dawah-guide", label: "دليل الدعوة" },
-                { href: "/fields", label: "المجالات الدعوية" },
-                { href: "/map", label: "الخريطة الدعوية" },
-                { href: "/projects", label: "المشاريع" },
-                { href: "/khutab", label: "الخطب" },
-                { href: "/embrace-islam", label: "ادخل الإسلام" },
-                { href: "/khatm-dua", label: "ختم الدعاء" },
-              ],
-            },
-            {
-              title: "أدوات",
-              items: [
-                { href: "/qibla", label: "اتجاه القبلة" },
-                { href: "/tasbih", label: "المسبحة" },
-                { href: "/calendar", label: "التقويم الهجري" },
-                { href: "/ruqyah", label: "الرقية الشرعية" },
-                { href: "/faq", label: "الأسئلة الشائعة" },
-                { href: "/search", label: "البحث" },
-              ],
-            },
-          ]
-        : [
-            {
-              title: "Worship",
-              items: [
-                { href: "/prayer-guide", label: "Prayer Guide" },
-                { href: "/hajj-guide", label: "Hajj Guide" },
-                { href: "/zakat", label: "Zakat" },
-                { href: "/daily-wird", label: "Daily Wird" },
-                { href: "/quran-memorization", label: "Quran Memorization" },
-              ],
-            },
-            {
-              title: "Knowledge",
-              items: [
-                { href: "/learn", label: "Learn" },
-                { href: "/fiqh", label: "Fiqh" },
-                { href: "/articles", label: "Articles" },
-                { href: "/women-fatwas", label: "Women's Fatwas" },
-                { href: "/prophets-stories", label: "Prophets Stories" },
-                { href: "/doubts", label: "Doubts" },
-                { href: "/responses", label: "Responses Center" },
-                { href: "/atheism-response", label: "Atheism Response" },
-                { href: "/inheritance", label: "Inheritance" },
-              ],
-            },
-            {
-              title: "Dawah",
-              items: [
-                { href: "/dawah", label: "Non-Muslim Portal" },
-                { href: "/dawah-guide", label: "Dawah Guide" },
-                { href: "/fields", label: "Dawah Fields" },
-                { href: "/map", label: "Dawah Map" },
-                { href: "/projects", label: "Projects" },
-                { href: "/khutab", label: "Khutbahs" },
-                { href: "/embrace-islam", label: "Embrace Islam" },
-                { href: "/khatm-dua", label: "Khatm Dua" },
-              ],
-            },
-            {
-              title: "Tools",
-              items: [
-                { href: "/qibla", label: "Qibla" },
-                { href: "/tasbih", label: "Tasbih" },
-                { href: "/calendar", label: "Hijri Calendar" },
-                { href: "/ruqyah", label: "Ruqyah" },
-                { href: "/faq", label: "FAQ" },
-                { href: "/search", label: "Search" },
-              ],
-            },
-          ],
-    [isRTL]
+      visibleTree
+        .filter((node) => node.key !== "home")
+        .map((group) => ({
+          title: navLabel(group, lang),
+          items: (group.children?.length ? group.children : [group]).map((child) => ({
+            href: navHref(child),
+            label: navLabel(child, lang),
+          })),
+        })),
+    [visibleTree, lang]
   );
 
   // قوائم مرشّحة بعد إخفاء الصفحات من لوحة التحكم
@@ -572,7 +501,7 @@ export default function Header({
               {megaOpen && (
                 <div
                   id="mega-menu"
-                  className={`absolute top-full mt-2 grid w-[min(640px,calc(100vw-2rem))] grid-cols-4 gap-4 rounded-3xl border border-primary-100 bg-white p-6 shadow-2xl animate-fade-in dark:border-night-700 dark:bg-night-800 ${
+                  className={`absolute top-full mt-2 grid max-h-[75vh] w-[min(980px,calc(100vw-2rem))] grid-cols-2 gap-x-6 gap-y-5 overflow-y-auto rounded-3xl border border-primary-100 bg-white p-6 shadow-2xl animate-fade-in sm:grid-cols-3 dark:border-night-700 dark:bg-night-800 ${
                     isRTL ? "left-0" : "right-0"
                   }`}
                 >

@@ -13,6 +13,8 @@ const PUBLIC_KEYS = new Set([
   'showPrayerBar', 'siteName', 'siteDescription', 'metaTitle', 'metaDescription',
   // التحكم في الأقسام والظهور (يقرأها الموقع لعرض/إخفاء الأقسام فورًا)
   'pageSections', 'sectionTitles', 'hiddenPages',
+  // هيكل التنقّل (يقرأه الهيدر والفوتر ليعكس إعدادات اللوحة)
+  'navigation',
 ]);
 
 function publicSettings(settings: Record<string, any>) {

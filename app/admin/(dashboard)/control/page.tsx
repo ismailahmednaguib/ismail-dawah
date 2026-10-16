@@ -15,10 +15,12 @@ import {
   mergeTitlesConfig,
   mergePagesVisibility,
 } from '@/lib/page-sections';
+import { flattenNav } from '@/lib/navigation';
 
 type TabId =
   | 'dashboard'
   | 'settings'
+  | 'navigation'
   | 'sections'
   | 'content'
   | 'taxonomies'
@@ -38,6 +40,7 @@ interface TabItem {
 const TABS: TabItem[] = [
   { id: 'dashboard', label: 'لوحة المعلومات', icon: '▦' },
   { id: 'settings', label: 'إعدادات المنصة', icon: '⚙' },
+  { id: 'navigation', label: 'القوائم والتنقّل', icon: '🧭' },
   { id: 'sections', label: 'الأقسام والظهور', icon: '👁' },
   { id: 'content', label: 'إدارة المحتوى', icon: '✎' },
   { id: 'taxonomies', label: 'التصنيفات', icon: '⌘' },
@@ -654,6 +657,273 @@ function SectionsTab() {
 }
 
 // ============================================================
+// تبويب القوائم والتنقّل (هيكل الموقع بالكامل)
+// ============================================================
+
+function NavigationTab() {
+  const [settings, setSettings] = useState<Record<string, any>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [query, setQuery] = useState('');
+  const [openGroup, setOpenGroup] = useState<string | null>('sciences');
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await apiFetch('/api/admin/settings', { cache: 'no-store' }).then(handleResponse);
+      setSettings(res.settings ?? {});
+    } catch (e) {
+      console.error('[NavigationTab]', e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const flat = useMemo(() => flattenNav(), []);
+
+  const config = useMemo<Record<string, any>>(
+    () => (settings.navigation && typeof settings.navigation === 'object' ? settings.navigation : {}),
+    [settings.navigation]
+  );
+
+  const setNode = useCallback((key: string, patch: Record<string, any>) => {
+    setSettings((prev) => {
+      const current =
+        prev.navigation && typeof prev.navigation === 'object' ? prev.navigation : {};
+      const node = current[key] && typeof current[key] === 'object' ? current[key] : {};
+      return { ...prev, navigation: { ...current, [key]: { ...node, ...patch } } };
+    });
+  }, []);
+
+  const toggleVisible = useCallback(
+    (key: string) => {
+      const cfg = config[key] || {};
+      setNode(key, { visible: cfg.visible === false });
+    },
+    [config, setNode]
+  );
+
+  const save = useCallback(async () => {
+    setSaving(true);
+    setMessage(null);
+    try {
+      await apiFetch('/api/admin/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ settings }),
+      });
+      setMessage({ type: 'success', text: 'تم الحفظ، وطُبّقت قوائم التنقّل على الموقع فورًا.' });
+      void load();
+    } catch (e: any) {
+      setMessage({ type: 'error', text: e.message || 'فشل حفظ القوائم.' });
+    } finally {
+      setSaving(false);
+    }
+  }, [settings, load]);
+
+  if (loading) {
+    return <div className="h-64 flex items-center justify-center text-stone-400">جارٍ التحميل…</div>;
+  }
+
+  const q = query.trim().toLowerCase();
+  const roots = flat.filter((node) => node.depth === 0 && node.key !== 'home');
+
+  const matches = (node: (typeof flat)[number]) => {
+    if (!q) return true;
+    const cfg = config[node.key] || {};
+    return (
+      node.key.toLowerCase().includes(q) ||
+      node.ar.includes(query.trim()) ||
+      node.en.toLowerCase().includes(q) ||
+      String(cfg.ar || '').includes(query.trim()) ||
+      String(cfg.en || '').toLowerCase().includes(q)
+    );
+  };
+
+  const renderRow = (node: (typeof flat)[number]) => {
+    const cfg = config[node.key] || {};
+    const isVisible = cfg.visible !== false;
+    return (
+      <div
+        key={node.key}
+        className={`rounded-xl border p-3 ${isVisible ? 'border-cream-200 bg-white' : 'border-dashed border-cream-300 bg-cream-50/60'}`}
+        style={{ marginInlineStart: `${node.depth * 14}px` }}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={isVisible}
+              onChange={() => toggleVisible(node.key)}
+              className="rounded text-primary-600 focus:ring-primary-500"
+            />
+            <span className="text-lg" aria-hidden="true">{node.icon}</span>
+            <span>
+              <span className={`block text-sm font-bold ${isVisible ? 'text-primary-900' : 'text-stone-400 line-through'}`}>
+                {cfg.ar?.trim() || node.ar}
+              </span>
+              <span className="block text-[11px] text-stone-400">{cfg.en?.trim() || node.en}</span>
+            </span>
+          </label>
+          <code className="rounded bg-cream-100 px-2 py-0.5 text-[10px] text-stone-500" dir="ltr">
+            {node.key}
+          </code>
+        </div>
+
+        <div className="mt-2 grid gap-2 sm:grid-cols-3">
+          <input
+            value={cfg.ar ?? ''}
+            onChange={(e) => setNode(node.key, { ar: e.target.value })}
+            placeholder={`العنوان (${node.ar})`}
+            className="input-islamic w-full text-xs"
+          />
+          <input
+            value={cfg.en ?? ''}
+            onChange={(e) => setNode(node.key, { en: e.target.value })}
+            placeholder={`English (${node.en})`}
+            className="input-islamic w-full text-xs"
+            dir="ltr"
+          />
+          <input
+            value={cfg.href ?? ''}
+            onChange={(e) => setNode(node.key, { href: e.target.value })}
+            placeholder={`الرابط (${node.href ?? `/topic/${node.key}`})`}
+            className="input-islamic w-full text-xs"
+            dir="ltr"
+          />
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader
+        title="القوائم والتنقّل"
+        subtitle="هيكل الموقع بالكامل: أظهر أو أخفِ أي عنصر، وعدّل اسمه (عربي/إنجليزي) ورابطه — يُطبَّق على الهيدر والفوتر فورًا"
+      />
+
+      {message && (
+        <div
+          className={`rounded-xl p-4 text-sm font-bold ${
+            message.type === 'success'
+              ? 'bg-green-50 text-green-800 border border-green-200'
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}
+        >
+          {message.text}
+        </div>
+      )}
+
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="ابحث في عناصر القائمة…"
+        className="input-islamic w-full max-w-md text-sm"
+      />
+
+      <p className="text-xs text-stone-500">
+        العنصر الذي بلا رابط يفتح صفحة تلقائية على <code dir="ltr">/topic/&lt;المعرّف&gt;</code> تعرض مواضيعه الفرعية ومحتواه.
+      </p>
+
+      <div className="space-y-4">
+        {roots.map((root) => {
+          const children = flat.filter((n) => n.parentKey === root.key);
+          const visibleChildren = children.filter(matches);
+          if (q && !matches(root) && visibleChildren.length === 0) return null;
+          const open = openGroup === root.key || Boolean(q);
+          const cfg = config[root.key] || {};
+          const isVisible = cfg.visible !== false;
+          return (
+            <div key={root.key} className="rounded-2xl border border-cream-200 bg-white p-4">
+              <button
+                type="button"
+                onClick={() => setOpenGroup((prev) => (prev === root.key ? null : root.key))}
+                className="flex w-full items-center justify-between gap-3"
+              >
+                <span className="flex items-center gap-2 text-start">
+                  <span className="text-xl" aria-hidden="true">{root.icon}</span>
+                  <span>
+                    <span className={`block font-black ${isVisible ? 'text-primary-950' : 'text-stone-400 line-through'}`}>
+                      {cfg.ar?.trim() || root.ar}
+                    </span>
+                    <span className="block text-[11px] text-stone-400">{cfg.en?.trim() || root.en}</span>
+                  </span>
+                </span>
+                <span className="text-stone-400">{open ? '▾' : '▸'}</span>
+              </button>
+
+              <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                <input
+                  value={cfg.ar ?? ''}
+                  onChange={(e) => setNode(root.key, { ar: e.target.value })}
+                  placeholder={`العنوان (${root.ar})`}
+                  className="input-islamic w-full text-xs"
+                />
+                <input
+                  value={cfg.en ?? ''}
+                  onChange={(e) => setNode(root.key, { en: e.target.value })}
+                  placeholder={`English (${root.en})`}
+                  className="input-islamic w-full text-xs"
+                  dir="ltr"
+                />
+                <input
+                  value={cfg.href ?? ''}
+                  onChange={(e) => setNode(root.key, { href: e.target.value })}
+                  placeholder={`الرابط (${root.href ?? `/topic/${root.key}`})`}
+                  className="input-islamic w-full text-xs"
+                  dir="ltr"
+                />
+              </div>
+              <label className="mt-2 inline-flex items-center gap-2 text-xs font-bold text-stone-500">
+                <input
+                  type="checkbox"
+                  checked={isVisible}
+                  onChange={() => toggleVisible(root.key)}
+                  className="rounded text-primary-600 focus:ring-primary-500"
+                />
+                إظهار هذه المجموعة
+              </label>
+
+              {open && (
+                <div className="mt-3 space-y-2">
+                  {visibleChildren.map((child) => (
+                    <div key={child.key}>
+                      {renderRow(child)}
+                      {flat
+                        .filter((n) => n.parentKey === child.key)
+                        .filter((n) => matches(n) || matches(child))
+                        .map((grand) => renderRow(grand))}
+                    </div>
+                  ))}
+                  {children.length === 0 && (
+                    <p className="text-xs text-stone-400">عنصر مفرد بدون مواضيع فرعية.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="sticky bottom-4 z-10">
+        <button
+          onClick={save}
+          disabled={saving}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-700 px-6 py-3 font-black text-white shadow-lg transition hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {saving ? 'جارٍ الحفظ…' : 'حفظ القوائم وتطبيقها فورًا'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // تبويب إدارة المحتوى (CRUD كامل)
 // ============================================================
 
@@ -1115,6 +1385,7 @@ function SimpleTab({ title, subtitle }: { title: string; subtitle: string }) {
 const TAB_COMPONENTS: Record<TabId, () => React.ReactElement> = {
   dashboard: DashboardTab,
   settings: SettingsTab,
+  navigation: NavigationTab,
   sections: SectionsTab,
   content: ContentTab,
   taxonomies: TaxonomiesTab,

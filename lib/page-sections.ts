@@ -338,6 +338,17 @@ export const PAGES: PageTuple[] = [
     ],
   ],
   [
+    "topic",
+    "/topic",
+    "صفحة موضوع/قسم",
+    "Topic Page",
+    [
+      S("hero", "الترويسة", "Hero"),
+      S("children", "المواضيع الفرعية", "Sub-topics"),
+      S("content", "محتوى ذو صلة", "Related Content"),
+    ],
+  ],
+  [
     "projects",
     "/projects",
     "المشاريع",
