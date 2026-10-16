@@ -51,7 +51,9 @@ begin
   foreach t in array private_tables loop
     if exists (
       select 1 from information_schema.tables
-      where table_schema = 'public' and table_name = t
+      where table_schema = 'public'
+        and table_name = t
+        and table_type = 'BASE TABLE'
     ) then
       -- ١) تشغيل RLS بلا سياسات ⇒ لا يقرأ أحد غير مفتاح الخدمة
       execute format('alter table public.%I enable row level security', t);
