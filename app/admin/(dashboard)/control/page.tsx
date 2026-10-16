@@ -6,7 +6,7 @@
  * كل تغيير يُحفظ يُطبَّق فورًا على الواجهة الأمامية.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type DragEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -667,6 +667,9 @@ function NavigationTab() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [query, setQuery] = useState('');
   const [openGroup, setOpenGroup] = useState<string | null>('sciences');
+  const [dragKey, setDragKey] = useState<string | null>(null);
+  const [dragParent, setDragParent] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -895,17 +898,85 @@ function NavigationTab() {
     );
   };
 
+  /** ينقل العقدة المسحوبة إلى موضع العقدة الهدف داخل نفس المجموعة. */
+  const dropOn = (targetKey: string, parentKey: string | null) => {
+    if (!dragKey || dragKey === targetKey) {
+      setDropTarget(null);
+      return;
+    }
+    const sibs = siblingsOf(parentKey);
+    const from = sibs.indexOf(dragKey);
+    const to = sibs.indexOf(targetKey);
+    if (from === -1 || to === -1) return;
+    const next = [...sibs];
+    next.splice(from, 1);
+    next.splice(to, 0, dragKey);
+    setOrder([...order.filter((k) => !sibs.includes(k)), ...next]);
+    setDragKey(null);
+    setDragParent(null);
+    setDropTarget(null);
+    setMessage({ type: 'success', text: 'تم تغيير الترتيب — اضغط «حفظ» للتطبيق على الموقع.' });
+  };
+
+  /** خصائص السحب والإفلات لصف في القائمة (داخل نفس المجموعة فقط). */
+  const dragProps = (nodeKey: string, parentKey: string | null) => {
+    const active = dragParent === parentKey;
+    return {
+      draggable: true,
+      onDragStart: (e: DragEvent<HTMLDivElement>) => {
+        // لا تبدأ السحب من داخل الحقول أو الأزرار (كي لا يتعارض مع الكتابة والضغط).
+        const el = e.target as HTMLElement | null;
+        if (el?.closest('input, textarea, select, button, a')) {
+          e.preventDefault();
+          return;
+        }
+        e.stopPropagation();
+        setDragKey(nodeKey);
+        setDragParent(parentKey);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', nodeKey);
+      },
+      onDragEnd: () => {
+        setDragKey(null);
+        setDragParent(null);
+        setDropTarget(null);
+      },
+      onDragOver: (e: DragEvent<HTMLDivElement>) => {
+        if (!active || !dragKey || dragKey === nodeKey) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (dropTarget !== nodeKey) setDropTarget(nodeKey);
+      },
+      onDrop: (e: DragEvent<HTMLDivElement>) => {
+        if (!active) return;
+        e.preventDefault();
+        e.stopPropagation();
+        dropOn(nodeKey, parentKey);
+      },
+      title: 'اسحب لإعادة الترتيب',
+    };
+  };
+
   const renderRow = (node: (typeof flat)[number]) => {
     const cfg = config[node.key] || {};
     const isVisible = cfg.visible !== false;
     return (
       <div
+        {...dragProps(node.key, node.parentKey)}
         key={node.key}
-        className={`rounded-xl border p-3 ${isVisible ? 'border-cream-200 bg-white' : 'border-dashed border-cream-300 bg-cream-50/60'}`}
-        style={{ marginInlineStart: `${node.depth * 14}px` }}
+        className={`rounded-xl border p-3 transition ${dropTarget === node.key ? 'border-primary-400 ring-2 ring-primary-200 ' : ''}${isVisible ? 'border-cream-200 bg-white' : 'border-dashed border-cream-300 bg-cream-50/60'}`}
+        style={{ marginInlineStart: `${node.depth * 14}px`, opacity: dragKey === node.key ? 0.5 : 1 }}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <label className="flex items-center gap-2">
+          <span className="flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              title="اسحب لإعادة الترتيب"
+              className="cursor-grab select-none text-base leading-none text-stone-300 hover:text-stone-500"
+            >
+              ⠿
+            </span>
+            <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={isVisible}
@@ -920,6 +991,7 @@ function NavigationTab() {
               <span className="block text-[11px] text-stone-400">{cfg.en?.trim() || node.en}</span>
             </span>
           </label>
+          </span>
           <span className="inline-flex items-center gap-2">
             <code className="rounded bg-cream-100 px-2 py-0.5 text-[10px] text-stone-500" dir="ltr">
               {node.key}
@@ -1120,6 +1192,7 @@ function NavigationTab() {
 
       <p className="text-xs text-stone-500">
         العنصر الذي بلا رابط يفتح صفحة تلقائية على <code dir="ltr">/topic/&lt;المعرّف&gt;</code> تعرض مواضيعه الفرعية ومحتواه.
+        {' '}يمكنك <b>سحب الصفوف وإفلاتها</b> لإعادة الترتيب داخل نفس المجموعة (أو استخدام ▲▼)، ثم اضغط «حفظ».
       </p>
 
       <div className="space-y-4">
@@ -1131,8 +1204,22 @@ function NavigationTab() {
           const cfg = config[root.key] || {};
           const isVisible = cfg.visible !== false;
           return (
-            <div key={root.key} className="rounded-2xl border border-cream-200 bg-white p-4">
+            <div
+              {...dragProps(root.key, null)}
+              key={root.key}
+              className={`rounded-2xl border bg-white p-4 transition ${
+                dropTarget === root.key ? 'border-primary-400 ring-2 ring-primary-200' : 'border-cream-200'
+              }`}
+              style={{ opacity: dragKey === root.key ? 0.5 : 1 }}
+            >
               <div className="flex items-center gap-2">
+                <span
+                  aria-hidden="true"
+                  title="اسحب لإعادة الترتيب"
+                  className="cursor-grab select-none text-base leading-none text-stone-300 hover:text-stone-500"
+                >
+                  ⠿
+                </span>
                 <button
                   type="button"
                   onClick={() => setOpenGroup((prev) => (prev === root.key ? null : root.key))}

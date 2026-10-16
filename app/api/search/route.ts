@@ -14,6 +14,18 @@ const MADHHABS: Madhhab[] = [
   'jafari',
 ];
 
+/**
+ * قراءة عدد صحيح موجب من معامل الرابط.
+ * تعود إلى القيمة الافتراضية إذا كان المعامل غائبًا أو غير صالح
+ * (Number(null) تساوي 0، فنعالج الغياب صراحةً).
+ */
+function positiveInt(raw: string | null, fallback: number, max: number): number {
+  if (raw === null || raw.trim() === '') return fallback;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(1, Math.floor(n)));
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const rawQuery = searchParams.get('q')?.trim() ?? '';
@@ -31,12 +43,8 @@ export async function GET(req: NextRequest) {
   const madhhab = MADHHABS.includes(requestedMadhhab as Madhhab)
     ? (requestedMadhhab as Madhhab)
     : undefined;
-  const pageValue = Number(searchParams.get('page'));
-  const perPageValue = Number(searchParams.get('per_page'));
-  const page = Number.isFinite(pageValue) ? Math.max(1, Math.floor(pageValue)) : 1;
-  const perPage = Number.isFinite(perPageValue)
-    ? Math.min(50, Math.max(1, Math.floor(perPageValue)))
-    : 20;
+  const page = positiveInt(searchParams.get('page'), 1, 10_000);
+  const perPage = positiveInt(searchParams.get('per_page'), 20, 50);
 
   if (!isValidLang(requestedLang)) {
     return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });

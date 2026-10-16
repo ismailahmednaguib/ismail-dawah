@@ -1,5 +1,5 @@
 // app/[lang]/learn/[type]/[slug]/page.tsx
-import { getContentBySlug } from '@/lib/learn/queries';
+import { getContentWithFallback } from '@/lib/learn/queries';
 import ReferenceDisplay from '@/components/learn/ReferenceDisplay';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -31,7 +31,7 @@ interface MediaSummary {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, type, slug } = await params;
-  const content = await getContentBySlug(lang, type, slug);
+  const content = await getContentWithFallback(lang, type, slug);
 
   if (!content) return { title: 'غير موجود' };
 
@@ -41,6 +41,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
     },
+    // لا نُفهرس الصفحات التي تعرض المحتوى بلغته الأصلية (تفاديًا لتكرار المحتوى).
+    ...(content.isTranslated === false ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title: content.translation.title,
       description: content.translation.summary ?? '',
@@ -55,7 +57,7 @@ export default async function LearnContentPage({ params }: PageProps) {
   if (!isValidLang(lang)) notFound();
 
   const currentLang = lang as Lang;
-  const content = await getContentBySlug(lang, type, slug);
+  const content = await getContentWithFallback(lang, type, slug);
 
   if (!content) notFound();
 
@@ -145,6 +147,22 @@ export default async function LearnContentPage({ params }: PageProps) {
             <p className="text-lg text-stone-600 dark:text-gray-400 leading-relaxed">
               {t.summary}
             </p>
+          )}
+
+          {content.isTranslated === false && (
+            <div className="mt-4 rounded-2xl border border-gold-200 bg-gold-50/70 p-4 text-sm leading-relaxed text-gold-800 dark:border-gold-900/30 dark:bg-gold-950/20 dark:text-gold-200">
+              {currentLang === 'ar'
+                ? 'هذا المحتوى متاح حاليًا باللغة العربية فقط، والعمل جارٍ على ترجمته.'
+                : 'This content is currently available in Arabic only; its translation is in progress.'}{' '}
+              {content.translationLang && content.translationLang !== currentLang && (
+                <Link
+                  href={`/${content.translationLang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`}
+                  className="font-bold underline"
+                >
+                  {currentLang === 'ar' ? 'اقرأه باللغة الأصلية' : 'Read the original'}
+                </Link>
+              )}
+            </div>
           )}
 
           {/* معلومات إضافية */}
