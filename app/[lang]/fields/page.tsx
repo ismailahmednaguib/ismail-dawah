@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import { getPublicTaxonomies, type PublicTerm } from "@/lib/learn/public";
+import { getPublicTaxonomies, getPublicTaxonomyCounts, type PublicTerm } from "@/lib/learn/public";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -26,6 +26,9 @@ type UILang = {
   verse: string;
   verseSource: string;
   totalFields: string;
+  available: string;
+  itemUnit: string;
+  soon: string;
   languages: string;
   comprehensive: string;
   freeAccess: string;
@@ -58,6 +61,9 @@ const UI: Record<string, UILang> = {
     verse: "﴿ وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا ﴾",
     verseSource: "سورة البقرة — الآية 31",
     totalFields: "مجال شرعي",
+    available: "مجال متاح الآن",
+    itemUnit: "مادة",
+    soon: "قريبًا",
     languages: "لغتان",
     comprehensive: "شامل",
     freeAccess: "مجاني بالكامل",
@@ -85,6 +91,9 @@ const UI: Record<string, UILang> = {
     verse: "\"And He taught Adam the names - all of them.\"",
     verseSource: "Surah Al-Baqarah — Verse 31",
     totalFields: "Islamic Fields",
+    available: "Fields available now",
+    itemUnit: "items",
+    soon: "Coming soon",
     languages: "Languages",
     comprehensive: "Comprehensive",
     freeAccess: "100% Free",
@@ -165,7 +174,15 @@ export default async function FieldsPage({
   const ui = UI[L];
   const isRTL = L === "ar";
 
-  const fields = await getPublicTaxonomies(L, "field");
+  const [fieldsRaw, counts] = await Promise.all([
+    getPublicTaxonomies(L, "field"),
+    getPublicTaxonomyCounts(),
+  ]);
+  // الفعّالة أولًا، ثم الفارغة (قريبًا) في الآخر.
+  const fields = [...fieldsRaw].sort(
+    (a, b) => (counts[b.slug] ?? 0) - (counts[a.slug] ?? 0)
+  );
+  const activeCount = fields.filter((f) => (counts[f.slug] ?? 0) > 0).length;
   const fieldColor = (term: PublicTerm) => term.color ?? "from-primary-500 to-primary-600";
 
   const jsonLd = {
@@ -209,7 +226,7 @@ export default async function FieldsPage({
         stats={
           gate.visible("k1")
             ? [
-                { value: String(fields.length), label: ui.totalFields },
+                { value: String(activeCount), label: ui.available },
                 { value: "2", label: ui.languages },
                 { value: "100%", label: ui.comprehensive },
                 { value: "✓", label: ui.freeAccess },
@@ -251,16 +268,20 @@ export default async function FieldsPage({
             />
           )}
           <CardGrid cols={3}>
-            {fields.map((field) => (
-              <InfoCard
-                key={field.id}
-                href={`/${L}/fields/${field.slug}`}
-                icon={field.icon ?? "📖"}
-                title={field.name}
-                cta={ui.explore}
-                gradientClass={fieldColor(field)}
-              />
-            ))}
+            {fields.map((field) => {
+              const count = counts[field.slug] ?? 0;
+              return (
+                <InfoCard
+                  key={field.id}
+                  href={`/${L}/fields/${field.slug}`}
+                  icon={field.icon ?? "📖"}
+                  title={field.name}
+                  cta={ui.explore}
+                  gradientClass={count > 0 ? fieldColor(field) : undefined}
+                  badge={count > 0 ? `${count} ${ui.itemUnit}` : ui.soon}
+                />
+              );
+            })}
           </CardGrid>
         </section>
       )}

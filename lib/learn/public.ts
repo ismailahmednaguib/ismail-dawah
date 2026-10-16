@@ -322,9 +322,32 @@ export async function getPublicTaxonomyBySlug(
 }
 
 // ============================================================
-// إحصاءات (للواجهة الرئيسية)
+// عدد عناصر المحتوى لكل تصنيف (مفتاح = slug)
 // ============================================================
 
+export async function getPublicTaxonomyCounts(): Promise<Record<string, number>> {
+  const supabase = getClient();
+  const [taxRes, termRes] = await Promise.all([
+    supabase.from('taxonomies').select('id, slug'),
+    supabase.from('content_terms').select('taxonomy_id'),
+  ]);
+  if (taxRes.error || termRes.error) return {};
+
+  const slugById = new Map<string, string>(
+    (taxRes.data ?? []).map((t: any) => [t.id as string, t.slug as string])
+  );
+  const counts: Record<string, number> = {};
+  for (const row of termRes.data ?? []) {
+    const slug = slugById.get((row as any).taxonomy_id);
+    if (!slug) continue;
+    counts[slug] = (counts[slug] ?? 0) + 1;
+  }
+  return counts;
+}
+
+// ============================================================
+// إحصاءات (للواجهة الرئيسية)
+// ============================================================
 export async function getPublicCounts(
   lang: string
 ): Promise<Record<string, number>> {
