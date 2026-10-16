@@ -185,10 +185,17 @@ export const NAV_TREE: NavNode[] = [
 // الإعدادات القابلة للتحكم
 // ============================================================
 
-export type NavigationConfig = Record<
-  string,
-  { visible?: boolean; ar?: string; en?: string; href?: string }
->;
+export interface NavNodeOverride {
+  visible?: boolean;
+  ar?: string;
+  en?: string;
+  href?: string;
+}
+
+/** مفتاح خاص لتخزين ترتيب العقد المخصّص (مصفوفة مفاتيح). */
+export const NAV_ORDER_KEY = "__order";
+
+export type NavigationConfig = Record<string, NavNodeOverride | string[]>;
 
 /** نسخة مسطّحة من الشجرة (كل العقد). */
 export type FlatNavNode = NavNode & { parentKey: string | null; depth: number };
@@ -228,8 +235,24 @@ export function navBreadcrumb(key: string): NavNode[] {
 // دمج إعدادات لوحة التحكم مع الشجرة الافتراضية
 // ============================================================
 
+function readOrder(cfg: NavigationConfig): string[] {
+  const raw = cfg[NAV_ORDER_KEY];
+  return Array.isArray(raw) ? raw.filter((x): x is string => typeof x === "string") : [];
+}
+
+/** ترتيب العقد حسب مصفوفة المفاتيح المخصّصة (والباقي يرجع لترتيبه الطبيعي). */
+function sortByOrder(nodes: NavNode[], order: string[]): NavNode[] {
+  if (order.length === 0) return nodes;
+  const rank = new Map(order.map((key, i) => [key, i]));
+  return nodes
+    .map((node, i) => ({ node, i, r: rank.has(node.key) ? (rank.get(node.key) as number) : Number.POSITIVE_INFINITY }))
+    .sort((a, b) => (a.r - b.r) || (a.i - b.i))
+    .map((x) => x.node);
+}
+
 function mergeNode(node: NavNode, config: NavigationConfig): NavNode {
-  const override = config[node.key] || {};
+  const raw = config[node.key];
+  const override = (raw && !Array.isArray(raw) ? raw : {}) as NavNodeOverride;
   const children = node.children?.map((child) => mergeNode(child, config));
   return {
     ...node,
@@ -240,7 +263,7 @@ function mergeNode(node: NavNode, config: NavigationConfig): NavNode {
   };
 }
 
-/** يطبّق الإعدادات المخزّنة على الشجرة ويحذف العقد المخفية (مع أبنائها). */
+/** يطبّق الإعدادات المخزّنة على الشجرة ويحذف العقد المخفية (مع أبنائها) ويرتّبها. */
 export function applyNavigationConfig(
   config: NavigationConfig | unknown,
   tree: NavNode[] = NAV_TREE
@@ -249,18 +272,19 @@ export function applyNavigationConfig(
     config && typeof config === "object" && !Array.isArray(config)
       ? (config as NavigationConfig)
       : {};
+  const order = readOrder(cfg);
 
   const walk = (nodes: NavNode[]): NavNode[] => {
     const out: NavNode[] = [];
     for (const node of nodes) {
-      if (cfg[node.key]?.visible === false) continue;
+      if (!Array.isArray(cfg[node.key]) && (cfg[node.key] as NavNodeOverride | undefined)?.visible === false) continue;
       const merged = mergeNode(node, cfg);
       if (merged.children) {
         merged.children = walk(merged.children);
       }
       out.push(merged);
     }
-    return out;
+    return sortByOrder(out, order);
   };
 
   return walk(tree);

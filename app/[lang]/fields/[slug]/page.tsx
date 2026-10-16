@@ -1,8 +1,9 @@
 // app/[lang]/fields/[slug]/page.tsx
+// صفحة مجال/فرع/تحت-فرع — تعتمد نظام التصميم الموحّد (components/ui).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import {
@@ -14,7 +15,8 @@ import {
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import TopBar from "@/components/TopBar";
+import ContentCard from "@/components/learn/ContentCard";
+import { PageHero, SectionHeader, CardGrid, InfoCard, EmptyState } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -27,54 +29,45 @@ const UI: Record<string, {
   explore: string;
   topicsTitle: string;
   topicsDesc: string;
-  booksTitle: string;
-  booksDesc: string;
-  faqTitle: string;
   relatedTitle: string;
-  relatedFields: string;
   nextField: string;
   prevField: string;
-  author: string;
   allFields: string;
-  notFoundTitle: string;
-  notFoundDesc: string;
-  backToFields: string;
+  noContent: string;
+  lessons: string;
+  articles: string;
+  content: string;
+  kinds: Record<string, string>;
 }> = {
   ar: {
     home: "الرئيسية",
     explore: "استكشف",
-    topicsTitle: "المواضيع الرئيسية",
-    topicsDesc: "أهم المواضيع التي يغطيها هذا المجال",
-    booksTitle: "كتب مقترحة",
-    booksDesc: "أهم المراجع في هذا المجال",
-    faqTitle: "أسئلة شائعة",
+    topicsTitle: "محتوى ذو صلة",
+    topicsDesc: "أحدث ما نُشر في هذا المجال",
     relatedTitle: "مجالات ذات صلة",
-    relatedFields: "مجالات مرتبطة",
     nextField: "المجال التالي",
     prevField: "المجال السابق",
-    author: "المؤلف",
     allFields: "جميع المجالات",
-    notFoundTitle: "المجال غير موجود",
-    notFoundDesc: "عذراً، لم نتمكن من العثور على هذا المجال.",
-    backToFields: "العودة للمجالات",
+    noContent: "لا يوجد محتوى منشور في هذا المجال بعد.",
+    lessons: "دروس",
+    articles: "مقالات",
+    content: "محتوى",
+    kinds: { field: "مجال شرعي", branch: "فرع", subbranch: "موضوع", category: "تصنيف" },
   },
   en: {
     home: "Home",
     explore: "Explore",
-    topicsTitle: "Main Topics",
-    topicsDesc: "Key topics covered in this field",
-    booksTitle: "Recommended Books",
-    booksDesc: "Important references in this field",
-    faqTitle: "Frequently Asked Questions",
+    topicsTitle: "Related content",
+    topicsDesc: "Latest published in this field",
     relatedTitle: "Related Fields",
-    relatedFields: "Related fields",
     nextField: "Next Field",
     prevField: "Previous Field",
-    author: "Author",
     allFields: "All Fields",
-    notFoundTitle: "Field Not Found",
-    notFoundDesc: "Sorry, we couldn't find this field.",
-    backToFields: "Back to Fields",
+    noContent: "No published content in this field yet.",
+    lessons: "Lessons",
+    articles: "Articles",
+    content: "Content",
+    kinds: { field: "Islamic Field", branch: "Branch", subbranch: "Topic", category: "Category" },
   },
 };
 
@@ -100,10 +93,7 @@ export async function generateMetadata({
     description: field.name,
     alternates: {
       canonical: `/${l}/fields/${slug}`,
-      languages: {
-        ar: `/ar/fields/${slug}`,
-        en: `/en/fields/${slug}`,
-      },
+      languages: { ar: `/ar/fields/${slug}`, en: `/en/fields/${slug}` },
     },
     openGraph: {
       title: field.name,
@@ -169,8 +159,7 @@ export default async function FieldPage({
 
   const currentIndex = siblings.findIndex((f) => f.slug === slug);
   const prevField = currentIndex > 0 ? siblings[currentIndex - 1] : null;
-  const nextField =
-    currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
+  const nextField = currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
   const relatedFields = siblings.filter((f) => f.slug !== field!.slug).slice(0, 3);
 
   const [lessons, articles] = await Promise.all([
@@ -179,10 +168,10 @@ export default async function FieldPage({
   ]);
   const relatedContent: PublicItem[] = [...lessons, ...articles];
 
-  const fieldColor = (term: PublicTerm) =>
-    term.color ?? "from-primary-500 to-primary-600";
+  const fieldColor = (term: PublicTerm) => term.color ?? "from-primary-500 to-primary-600";
   const color = fieldColor(field);
   const icon = field.icon ?? "📖";
+  const kindLabel = ui.kinds[taxKind ?? "field"] ?? ui.kinds.field;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -203,186 +192,107 @@ export default async function FieldPage({
 
       <Header lang={l} />
 
-      <TopBar
+      <PageHero
+        icon={icon}
         title={field.name}
-        backHref={`/${l}/fields`}
-        showBookmark={false}
-        breadcrumb={[
+        subtitle={ui.topicsDesc}
+        badge={kindLabel}
+        crumbs={[
           { label: ui.home, href: `/${l}` },
           { label: ui.allFields, href: `/${l}/fields` },
           { label: field.name },
         ]}
+        stats={
+          gate.visible("k1")
+            ? [
+                { value: String(lessons.length), label: ui.lessons },
+                { value: String(articles.length), label: ui.articles },
+                { value: String(relatedContent.length), label: ui.content },
+              ]
+            : undefined
+        }
       />
 
-      <section className="container-page py-10 md:py-14">
-        {/* ===== Hero مخصص ===== */}
-        {gate.visible('k0') && (<>
-        <div className={`card relative mb-8 overflow-hidden border-2 border-transparent p-8 md:p-12 bg-gradient-to-br ${color} text-white`}>
-          <div className="absolute inset-0 bg-black/20" />
-
-          <div className="relative mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-white/20 text-5xl backdrop-blur-sm shadow-2xl">
-                {icon}
-              </span>
-            </div>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight md:text-5xl"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {field.name}
-            </h1>
-          </div>
-        </div>
-
-        </>)}
-        {/* ===== إحصائيات ===== */}
-        {gate.visible('k1') && (<>
-        <div className="mb-10 grid grid-cols-3 gap-4">
-          <StatCard icon="📚" value={lessons.length} label={isRTL ? "دروس" : "Lessons"} color={color} />
-          <StatCard icon="✍️" value={articles.length} label={isRTL ? "مقالات" : "Articles"} color={color} />
-          <StatCard icon="✨" value={relatedContent.length} label={isRTL ? "محتوى" : "Content"} color={color} />
-        </div>
-
-        </>)}
-        {/* ===== محتوى مرتبط ===== */}
-        {gate.visible('k2') && (<>
-        <div className="mb-12">
-          <div className="mb-6 text-center">
-            <h2 className="section-title mb-0">{ui.topicsTitle}</h2>
-            <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
-            </div>
-            <p className="section-subtitle mx-auto max-w-2xl">{ui.topicsDesc}</p>
-          </div>
-
+      {gate.visible("k2") && (
+        <section className="container-page py-14 md:py-16">
+          <SectionHeader icon="📚" title={ui.topicsTitle} subtitle={ui.topicsDesc} />
           {relatedContent.length > 0 ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <CardGrid cols={3}>
               {relatedContent.map((item) => (
-                <Link
+                <ContentCard
                   key={item.id}
-                  href={`/${l}/learn/${item.content_type}/${item.slug}`}
-                  className="card card-interactive group relative overflow-hidden p-5"
-                >
-                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${color}`} />
-                  <div className="flex items-start gap-3">
-                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${color} text-lg text-white shadow-md`}>
-                      {contentIcon(item.content_type)}
-                    </span>
-                    <div className="min-w-0">
-                      <h3
-                        className="text-base font-black text-slate-900 dark:text-white"
-                        style={{ fontFamily: "var(--font-amiri)" }}
-                      >
-                        {item.title}
-                      </h3>
-                      {item.summary && (
-                        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                          {item.summary}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </Link>
+                  lang={l}
+                  type={item.content_type}
+                  slug={item.slug}
+                  title={item.title}
+                  summary={item.summary}
+                  published_at={item.published_at}
+                  isFallback={item.isFallback}
+                />
               ))}
-            </div>
+            </CardGrid>
           ) : (
-            <div className="card border-dashed px-6 py-12 text-center">
-              <p className="mb-2 text-4xl">📭</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                {isRTL
-                  ? "لا يوجد محتوى منشور في هذا المجال بعد."
-                  : "No published content in this field yet."}
-              </p>
-            </div>
+            <EmptyState icon="📭" title={ui.noContent} />
           )}
-        </div>
+        </section>
+      )}
 
-        </>)}
-        {/* ===== مجالات ذات صلة ===== */}
-        {gate.visible('k3') && (<>
-        {relatedFields.length > 0 && (
-          <div className="mb-12">
-            <div className="mb-6 text-center">
-              <h2 className="section-title mb-0">{ui.relatedTitle}</h2>
-              <div className="islamic-divider my-0">
-                <span className="text-xl text-gold-500">✦</span>
-              </div>
-            </div>
+      {gate.visible("k3") && relatedFields.length > 0 && (
+        <section className="container-page pb-14">
+          <SectionHeader icon="🔗" title={ui.relatedTitle} />
+          <CardGrid cols={3}>
+            {relatedFields.map((relField) => (
+              <InfoCard
+                key={relField.id}
+                href={`/${l}/fields/${relField.slug}`}
+                icon={relField.icon ?? "📖"}
+                title={relField.name}
+                cta={ui.explore}
+                gradientClass={fieldColor(relField)}
+              />
+            ))}
+          </CardGrid>
+        </section>
+      )}
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {relatedFields.map((relField) => (
-                <Link
-                  key={relField.id}
-                  href={`/${l}/fields/${relField.slug}`}
-                  className="card card-interactive group relative overflow-hidden p-6"
-                >
-                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${fieldColor(relField)}`} />
-                  <div className="mb-4 flex items-center gap-3">
-                    <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(relField)} text-2xl text-white shadow-md`}>
-                      {relField.icon ?? "📖"}
-                    </span>
-                    <h3
-                      className="text-lg font-black text-slate-900 dark:text-white"
-                      style={{ fontFamily: "var(--font-amiri)" }}
-                    >
-                      {relField.name}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
+      {gate.visible("k4") && (
+        <section className="container-page pb-14">
+          <div className="grid gap-4 md:grid-cols-2">
+            {prevField && (
+              <Link
+                href={`/${l}/fields/${prevField.slug}`}
+                className="card card-interactive group flex items-center gap-4 p-5"
+              >
+                <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(prevField)} text-2xl text-white shadow-md`}>
+                  {prevField.icon ?? "📖"}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">← {ui.prevField}</p>
+                  <p className="truncate font-black text-slate-900 dark:text-white">{prevField.name}</p>
+                </div>
+              </Link>
+            )}
+
+            {nextField && (
+              <Link
+                href={`/${l}/fields/${nextField.slug}`}
+                className="card card-interactive group flex items-center gap-4 p-5 text-end md:text-start"
+              >
+                <div className="min-w-0 flex-1 text-end md:text-start">
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">{ui.nextField} →</p>
+                  <p className="truncate font-black text-slate-900 dark:text-white">{nextField.name}</p>
+                </div>
+                <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(nextField)} text-2xl text-white shadow-md`}>
+                  {nextField.icon ?? "📖"}
+                </span>
+              </Link>
+            )}
           </div>
-        )}
+        </section>
+      )}
 
-        </>)}
-        {/* ===== التنقل بين المجالات ===== */}
-        {gate.visible('k4') && (<>
-        <div className="mb-10 grid gap-4 md:grid-cols-2">
-          {prevField && (
-            <Link
-              href={`/${l}/fields/${prevField.slug}`}
-              className="card card-interactive group flex items-center gap-4 p-5"
-            >
-              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(prevField)} text-2xl text-white shadow-md`}>
-                {prevField.icon ?? "📖"}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                  ← {ui.prevField}
-                </p>
-                <p className="truncate font-black text-slate-900 dark:text-white">
-                  {prevField.name}
-                </p>
-              </div>
-            </Link>
-          )}
-
-          {nextField && (
-            <Link
-              href={`/${l}/fields/${nextField.slug}`}
-              className="card card-interactive group flex items-center gap-4 p-5 text-end md:text-start"
-            >
-              <div className="min-w-0 flex-1 text-end md:text-start">
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
-                  {ui.nextField} →
-                </p>
-                <p className="truncate font-black text-slate-900 dark:text-white">
-                  {nextField.name}
-                </p>
-              </div>
-              <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(nextField)} text-2xl text-white shadow-md`}>
-                {nextField.icon ?? "📖"}
-              </span>
-            </Link>
-          )}
-        </div>
-
-        </>)}
-        {/* ===== CTA العودة ===== */}
-        {gate.visible('k5') && (<>
-        <div className="text-center">
+      {gate.visible("k5") && (
+        <div className="container-page pb-16 text-center">
           <Link href={`/${l}/fields`} className="btn-primary inline-flex items-center gap-2">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={isRTL ? "rotate-180" : ""}>
               <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -390,63 +300,9 @@ export default async function FieldPage({
             {ui.allFields}
           </Link>
         </div>
-        </>)}
-      </section>
+      )}
 
       <Footer lang={l} />
     </main>
   );
 }
-
-// ============================================================
-// مكون StatCard
-// ============================================================
-
-function StatCard({
-  icon, value, label, color,
-}: {
-  icon: string;
-  value: number | string;
-  label: string;
-  color: string;
-}) {
-  return (
-    <div className="card p-5 text-center">
-      <div className="mb-2 flex justify-center">
-        <span className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-2xl text-white shadow-md`}>
-          {icon}
-        </span>
-      </div>
-      <p className="text-2xl font-black text-slate-900 dark:text-white">{value}</p>
-      <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-// ============================================================
-// أيقونة نوع المحتوى المرتبط
-// ============================================================
-
-function contentIcon(type: string): string {
-  switch (type) {
-    case "lesson":
-      return "📚";
-    case "article":
-      return "✍️";
-    case "fatwa":
-      return "⚖️";
-    case "hadith":
-      return "📜";
-    case "khutbah":
-      return "🕌";
-    case "faq":
-      return "❓";
-    case "story":
-      return "📖";
-    default:
-      return "📄";
-  }
-}
-

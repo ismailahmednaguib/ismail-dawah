@@ -1,8 +1,8 @@
 // app/[lang]/topic/[slug]/page.tsx
 // صفحة مجموعة/موضوع عامة تُبنى من هيكل التنقّل (lib/navigation).
 // تُستخدم لكل عقدة في القائمة لا تملك صفحة مخصّصة، وتعرض أبناءها + محتوى مرتبط.
+// تعتمد نظام التصميم الموحّد من components/ui.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
@@ -20,8 +20,8 @@ import { getPublicList, type PublicItem } from "@/lib/learn/public";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import TopBar from "@/components/TopBar";
 import ContentCard from "@/components/learn/ContentCard";
+import { PageHero, SectionHeader, CardGrid, InfoCard, EmptyState, type Crumb } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -30,17 +30,19 @@ const UI: Record<string, Record<string, string>> = {
     home: "الرئيسية",
     subTopics: "المواضيع الفرعية",
     related: "محتوى ذو صلة",
-    noContent: "لا يوجد محتوى منشور في هذا القسم بعد. يمكن للمشرف إضافة محتوى من لوحة التحكم.",
+    noContent: "لا يوجد محتوى منشور في هذا القسم بعد.",
+    noContentHint: "سيظهر المحتوى هنا تلقائيًا بمجرد نشره من لوحة التحكم.",
     exploreAll: "استكشف كل المواضيع",
-    readMore: "اقرأ المزيد",
+    itemsLabel: "عنصرًا",
   },
   en: {
     home: "Home",
     subTopics: "Sub-topics",
     related: "Related content",
-    noContent: "No published content in this section yet. An admin can add content from the dashboard.",
+    noContent: "No published content in this section yet.",
+    noContentHint: "Content will appear here automatically once published.",
     exploreAll: "Explore all topics",
-    readMore: "Read more",
+    itemsLabel: "items",
   },
 };
 
@@ -63,9 +65,7 @@ async function getRelated(lang: Lang, node: NavNode): Promise<PublicItem[]> {
     types.map((type) =>
       getPublicList(lang, type, {
         limit: 6,
-        ...(node.taxonomy
-          ? { taxonomySlug: node.taxonomy }
-          : { search }),
+        ...(node.taxonomy ? { taxonomySlug: node.taxonomy } : { search }),
       }).catch(() => [] as PublicItem[])
     )
   );
@@ -91,13 +91,15 @@ export async function generateMetadata({
   const node = findNavNode(slug);
   if (!node) return {};
   const title = navLabel(node, l);
+  const description = node.desc ? (l === "ar" ? node.desc.ar : node.desc.en) : title;
   return {
     title,
-    description: node.desc ? (l === "ar" ? node.desc.ar : node.desc.en) : title,
+    description,
     alternates: {
       canonical: `/${l}/topic/${slug}`,
       languages: { ar: `/ar/topic/${slug}`, en: `/en/topic/${slug}` },
     },
+    openGraph: { title, description, type: "website" },
   };
 }
 
@@ -123,123 +125,65 @@ export default async function TopicPage({
   const items = await getRelated(l, node);
   const children = node.children ?? [];
 
+  const breadcrumb: Crumb[] = [
+    { label: ui.home, href: `/${l}` },
+    ...crumb.slice(0, -1).map((c) => ({ label: navLabel(c, l), href: `/${l}${navHref(c)}` })),
+    { label: title },
+  ];
+
   return (
     <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <Header lang={l} settings={settings} />
 
       {gate.visible("hero") && (
-        <>
-          <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-16 text-white">
-            <div className="container-page">
-              <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-primary-100" aria-label="breadcrumb">
-                <Link href={`/${l}`} className="hover:text-white">
-                  {ui.home}
-                </Link>
-                {crumb.slice(0, -1).map((c) => (
-                  <span key={c.key} className="flex items-center gap-2">
-                    <span aria-hidden="true">/</span>
-                    <Link href={`/${l}${navHref(c)}`} className="hover:text-white">
-                      {navLabel(c, l)}
-                    </Link>
-                  </span>
-                ))}
-              </nav>
-
-              <div className="flex items-start gap-4">
-                {node.icon && (
-                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-3xl">
-                    {node.icon}
-                  </span>
-                )}
-                <div>
-                  <h1 className="text-3xl font-black md:text-4xl">{title}</h1>
-                  {node.desc && (
-                    <p className="mt-3 max-w-2xl text-primary-100">
-                      {l === "ar" ? node.desc.ar : node.desc.en}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </section>
-        </>
+        <PageHero
+          icon={node.icon}
+          title={title}
+          subtitle={node.desc ? (isRTL ? node.desc.ar : node.desc.en) : undefined}
+          crumbs={breadcrumb}
+          stats={items.length > 0 ? [{ value: String(items.length), label: ui.itemsLabel }] : undefined}
+        />
       )}
 
-      <TopBar
-        title={title}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: ui.home, href: `/${l}` },
-          ...crumb.slice(0, -1).map((c) => ({
-            label: navLabel(c, l),
-            href: `/${l}${navHref(c)}`,
-          })),
-          { label: title },
-        ]}
-      />
-
       {children.length > 0 && gate.visible("children") && (
-        <>
-          <section className="container-page py-12">
-            <h2 className="mb-6 text-2xl font-black text-primary-900 dark:text-white">
-              {ui.subTopics}
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {children.map((child) => (
-                <Link
-                  key={child.key}
-                  href={`/${l}${navHref(child)}`}
-                  className="card card-interactive flex items-start gap-3 p-5"
-                >
-                  <span className="text-2xl" aria-hidden="true">
-                    {child.icon}
-                  </span>
-                  <span>
-                    <span className="block font-bold text-primary-900 dark:text-white">
-                      {navLabel(child, l)}
-                    </span>
-                    {child.desc && (
-                      <span className="mt-1 block text-sm text-slate-500 dark:text-slate-400">
-                        {l === "ar" ? child.desc.ar : child.desc.en}
-                      </span>
-                    )}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-        </>
+        <section className="container-page py-14 md:py-16">
+          <SectionHeader icon="🗂️" title={gate.title("children", ui.subTopics, l)} />
+          <CardGrid cols={3} gap={4}>
+            {children.map((child) => (
+              <InfoCard
+                key={child.key}
+                href={`/${l}${navHref(child)}`}
+                icon={child.icon}
+                title={navLabel(child, l)}
+                desc={child.desc ? (isRTL ? child.desc.ar : child.desc.en) : undefined}
+              />
+            ))}
+          </CardGrid>
+        </section>
       )}
 
       {gate.visible("content") && (
-        <>
-          <section className="container-page pb-16">
-            <h2 className="mb-6 text-2xl font-black text-primary-900 dark:text-white">
-              {ui.related}
-            </h2>
-            {items.length > 0 ? (
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((item) => (
-                  <ContentCard
-                    key={item.id}
-                    lang={l}
-                    type={item.content_type}
-                    slug={item.slug}
-                    title={item.title}
-                    summary={item.summary}
-                    published_at={item.published_at}
-                    isFallback={item.isFallback}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center text-slate-500 dark:border-night-700 dark:bg-night-800 dark:text-slate-400">
-                {ui.noContent}
-              </div>
-            )}
-          </section>
-        </>
+        <section className="container-page pb-16">
+          <SectionHeader icon="📚" title={gate.title("content", ui.related, l)} />
+          {items.length > 0 ? (
+            <CardGrid cols={3}>
+              {items.map((item) => (
+                <ContentCard
+                  key={item.id}
+                  lang={l}
+                  type={item.content_type}
+                  slug={item.slug}
+                  title={item.title}
+                  summary={item.summary}
+                  published_at={item.published_at}
+                  isFallback={item.isFallback}
+                />
+              ))}
+            </CardGrid>
+          ) : (
+            <EmptyState icon="🗂️" title={ui.noContent} desc={ui.noContentHint} actionHref={`/${l}/fields`} actionLabel={ui.exploreAll} />
+          )}
+        </section>
       )}
 
       <Footer lang={l} settings={settings} />

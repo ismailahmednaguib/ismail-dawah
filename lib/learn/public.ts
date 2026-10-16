@@ -31,6 +31,7 @@ export interface PublicTerm {
   icon: string | null;
   color: string | null;
   parent_id?: string | null;
+  lang?: string | null;
 }
 
 export interface PublicItem {
@@ -130,7 +131,7 @@ export async function getPublicList(
   const limit = clampLimit(options.limit);
 
   if (options.taxonomySlug) {
-    const tax = await getPublicTaxonomyBySlug(options.taxonomySlug, options.taxonomyKind);
+    const tax = await getPublicTaxonomyBySlug(options.taxonomySlug, options.taxonomyKind, lang);
     if (!tax) return [];
     const { data: links } = await supabase
       .from('content_terms')
@@ -292,18 +293,32 @@ export async function getPublicTaxonomies(
 
 export async function getPublicTaxonomyBySlug(
   slug: string,
-  kind?: string
+  kind?: string,
+  lang: string = 'ar'
 ): Promise<PublicTerm | null> {
   const supabase = getClient();
   let q = supabase
     .from('taxonomies')
-    .select('id, kind, parent_id, name, slug, icon, color')
+    .select('id, kind, parent_id, lang, name, slug, icon, color')
     .eq('slug', slug)
-    .limit(1);
+    .limit(10);
   if (kind) q = q.eq('kind', kind);
   const { data, error } = (await q) as { data: any; error: any };
   if (error || !data || data.length === 0) return null;
-  return data[0] as PublicTerm;
+  const rows = data as PublicTerm[];
+  // التصنيفات مخزّنة صفًّا لكل لغة؛ نفضّل لغة الواجهة ثم العربية (المرتبط بها المحتوى).
+  const pickByLang = (list: PublicTerm[]) =>
+    list.find((r) => r.lang === lang) ?? list.find((r) => r.lang === 'ar') ?? list[0];
+
+  if (kind) return pickByLang(rows);
+
+  // قد يتكرّر نفس الـslug بين الأنواع (field/subbranch)؛ نحسم الترتيب
+  // بنفس أولوية صفحة /fields/[slug] لضمان نتائج ثابتة.
+  for (const k of ['field', 'branch', 'subbranch', 'category']) {
+    const matched = rows.filter((r) => r.kind === k);
+    if (matched.length > 0) return pickByLang(matched);
+  }
+  return pickByLang(rows);
 }
 
 // ============================================================

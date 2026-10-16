@@ -708,6 +708,67 @@ function NavigationTab() {
     [config, setNode]
   );
 
+  // ---- الترتيب المخصّص (__order) ----
+  const order = useMemo<string[]>(
+    () => (Array.isArray(config.__order) ? (config.__order as string[]) : []),
+    [config]
+  );
+
+  const setOrder = useCallback((next: string[]) => {
+    setSettings((prev) => {
+      const current =
+        prev.navigation && typeof prev.navigation === 'object' ? prev.navigation : {};
+      return { ...prev, navigation: { ...current, __order: next } };
+    });
+  }, []);
+
+  /** أبناء عقدة معيّنة بالترتيب الفعلي (المخصّص ثم الطبيعي). */
+  const siblingsOf = useCallback(
+    (parentKey: string | null) => {
+      const keys = flat.filter((n) => n.parentKey === parentKey).map((n) => n.key);
+      const rank = new Map(order.map((k, i) => [k, i]));
+      return keys
+        .map((k, i) => ({ k, i, r: rank.has(k) ? (rank.get(k) as number) : Number.POSITIVE_INFINITY }))
+        .sort((a, b) => a.r - b.r || a.i - b.i)
+        .map((x) => x.k);
+    },
+    [flat, order]
+  );
+
+  const move = useCallback(
+    (key: string, parentKey: string | null, dir: -1 | 1) => {
+      const sibs = siblingsOf(parentKey);
+      const i = sibs.indexOf(key);
+      const j = i + dir;
+      if (i < 0 || j < 0 || j >= sibs.length) return;
+      const next = sibs.slice();
+      [next[i], next[j]] = [next[j], next[i]];
+      setOrder([...order.filter((k) => !next.includes(k)), ...next]);
+    },
+    [order, siblingsOf, setOrder]
+  );
+
+  const MoveButtons = ({ nodeKey, parentKey }: { nodeKey: string; parentKey: string | null }) => (
+    <span className="inline-flex items-center gap-1">
+      <button
+        type="button"
+        title="تحريك لأعلى"
+        onClick={() => move(nodeKey, parentKey, -1)}
+        className="rounded-lg border border-cream-300 bg-white px-2 py-0.5 text-[11px] leading-none text-stone-600 hover:bg-cream-100"
+      >
+        ▲
+      </button>
+      <button
+        type="button"
+        title="تحريك لأسفل"
+        onClick={() => move(nodeKey, parentKey, 1)}
+        className="rounded-lg border border-cream-300 bg-white px-2 py-0.5 text-[11px] leading-none text-stone-600 hover:bg-cream-100"
+      >
+        ▼
+      </button>
+    </span>
+  );
+
   const save = useCallback(async () => {
     setSaving(true);
     setMessage(null);
@@ -769,9 +830,12 @@ function NavigationTab() {
               <span className="block text-[11px] text-stone-400">{cfg.en?.trim() || node.en}</span>
             </span>
           </label>
-          <code className="rounded bg-cream-100 px-2 py-0.5 text-[10px] text-stone-500" dir="ltr">
-            {node.key}
-          </code>
+          <span className="inline-flex items-center gap-2">
+            <code className="rounded bg-cream-100 px-2 py-0.5 text-[10px] text-stone-500" dir="ltr">
+              {node.key}
+            </code>
+            <MoveButtons nodeKey={node.key} parentKey={node.parentKey} />
+          </span>
         </div>
 
         <div className="mt-2 grid gap-2 sm:grid-cols-3">
@@ -840,22 +904,25 @@ function NavigationTab() {
           const isVisible = cfg.visible !== false;
           return (
             <div key={root.key} className="rounded-2xl border border-cream-200 bg-white p-4">
-              <button
-                type="button"
-                onClick={() => setOpenGroup((prev) => (prev === root.key ? null : root.key))}
-                className="flex w-full items-center justify-between gap-3"
-              >
-                <span className="flex items-center gap-2 text-start">
-                  <span className="text-xl" aria-hidden="true">{root.icon}</span>
-                  <span>
-                    <span className={`block font-black ${isVisible ? 'text-primary-950' : 'text-stone-400 line-through'}`}>
-                      {cfg.ar?.trim() || root.ar}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOpenGroup((prev) => (prev === root.key ? null : root.key))}
+                  className="flex flex-1 items-center justify-between gap-3"
+                >
+                  <span className="flex items-center gap-2 text-start">
+                    <span className="text-xl" aria-hidden="true">{root.icon}</span>
+                    <span>
+                      <span className={`block font-black ${isVisible ? 'text-primary-950' : 'text-stone-400 line-through'}`}>
+                        {cfg.ar?.trim() || root.ar}
+                      </span>
+                      <span className="block text-[11px] text-stone-400">{cfg.en?.trim() || root.en}</span>
                     </span>
-                    <span className="block text-[11px] text-stone-400">{cfg.en?.trim() || root.en}</span>
                   </span>
-                </span>
-                <span className="text-stone-400">{open ? '▾' : '▸'}</span>
-              </button>
+                  <span className="text-stone-400">{open ? '▾' : '▸'}</span>
+                </button>
+                <MoveButtons nodeKey={root.key} parentKey={null} />
+              </div>
 
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 <input
