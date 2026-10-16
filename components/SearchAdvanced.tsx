@@ -111,6 +111,9 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [facets, setFacets] = useState<Record<string, number>>({});
   const [error, setError] = useState(false);
   const [typeFilter, setTypeFilter] = useState(searchParams.get('type') ?? '');
   const [audienceFilter, setAudienceFilter] = useState(searchParams.get('audience') ?? '');
@@ -126,7 +129,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
     setError(false);
 
     try {
-      const qs = new URLSearchParams({ q: trimmedQuery, lang });
+      const qs = new URLSearchParams({ q: trimmedQuery, lang, page: String(page), per_page: '20' });
       if (typeFilter) qs.set('type', typeFilter);
       if (audienceFilter) qs.set('audience', audienceFilter);
       if (ageFilter) qs.set('age', ageFilter);
@@ -139,14 +142,18 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       const json = await res.json();
       setResults(json.data ?? []);
       setTotal(json.total ?? 0);
+      setTotalPages(json.total_pages ?? 0);
+      setFacets(json.facets ?? {});
     } catch {
       setResults([]);
       setTotal(0);
+      setTotalPages(0);
+      setFacets({});
       setError(true);
     } finally {
       setLoading(false);
     }
-  }, [ageFilter, audienceFilter, lang, levelFilter, madhhabFilter, query, typeFilter]);
+  }, [ageFilter, audienceFilter, lang, levelFilter, madhhabFilter, page, query, typeFilter]);
 
   // بحث فوري مع تأخير
   useEffect(() => {
@@ -156,18 +163,28 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       } else {
         setResults([]);
         setTotal(0);
+        setTotalPages(0);
+        setFacets({});
         setError(false);
+        setPage(1);
       }
     }, 400);
     return () => clearTimeout(timer);
   }, [query, doSearch]);
 
+  const changeFilter = (setter: (value: string) => void) => (value: string) => {
+    setter(value);
+    setPage(1);
+  };
+
   const filters: SelectFilter[] = [
-    { label: copy.audience, value: audienceFilter, options: AUDIENCE_OPTIONS, onChange: setAudienceFilter },
-    { label: copy.age, value: ageFilter, options: AGE_OPTIONS, onChange: setAgeFilter },
-    { label: copy.level, value: levelFilter, options: LEVEL_OPTIONS, onChange: setLevelFilter },
-    { label: copy.madhhab, value: madhhabFilter, options: MADHHAB_OPTIONS, onChange: setMadhhabFilter },
+    { label: copy.audience, value: audienceFilter, options: AUDIENCE_OPTIONS, onChange: changeFilter(setAudienceFilter) },
+    { label: copy.age, value: ageFilter, options: AGE_OPTIONS, onChange: changeFilter(setAgeFilter) },
+    { label: copy.level, value: levelFilter, options: LEVEL_OPTIONS, onChange: changeFilter(setLevelFilter) },
+    { label: copy.madhhab, value: madhhabFilter, options: MADHHAB_OPTIONS, onChange: changeFilter(setMadhhabFilter) },
   ];
+
+  const allCount = Object.values(facets).reduce((sum, n) => sum + n, 0);
 
   return (
     <div className="space-y-6">
@@ -176,7 +193,10 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setPage(1);
+          }}
           placeholder={copy.placeholder}
           className="w-full rounded-2xl border-2 border-slate-200 bg-white px-6 py-4 text-lg shadow-sm focus:border-primary-500 focus:outline-none dark:border-night-700 dark:bg-night-800"
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
@@ -196,7 +216,10 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
             <button
               key={option.value || 'all'}
               type="button"
-              onClick={() => setTypeFilter(option.value)}
+              onClick={() => {
+                setTypeFilter(option.value);
+                setPage(1);
+              }}
               className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
                 typeFilter === option.value
                   ? 'bg-primary-600 text-white shadow-sm'
@@ -205,6 +228,10 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
             >
               {option.icon ? `${option.icon} ` : ''}
               {lang === 'ar' ? option.ar : option.en}
+              {(() => {
+                const count = option.value === '' ? allCount : facets[option.value] ?? 0;
+                return count > 0 ? <span className="ms-1 opacity-70">({count})</span> : null;
+              })()}
             </button>
           ))}
         </div>
@@ -283,6 +310,30 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
                   </div>
                 </a>
               ))}
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 disabled:opacity-40 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
+              >
+                {lang === 'ar' ? 'السابق' : 'Previous'}
+              </button>
+              <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
+                {page} / {totalPages}
+              </span>
+              <button
+                type="button"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 disabled:opacity-40 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
+              >
+                {lang === 'ar' ? 'التالي' : 'Next'}
+              </button>
             </div>
           )}
         </div>

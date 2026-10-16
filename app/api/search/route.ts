@@ -49,7 +49,9 @@ export async function GET(req: NextRequest) {
       data: [],
       total: 0,
       page,
+      per_page: perPage,
       total_pages: 0,
+      facets: {},
       suggestions: [],
     });
   }
@@ -61,11 +63,27 @@ export async function GET(req: NextRequest) {
 
   const from = (page - 1) * perPage;
 
-  // البحث في المحتوى، مع عزل بحث القرآن عن المحتوى الموحد.
+  // 1) مطابقة النص في جدول الترجمات أولًا (يتفادى قيود الفلترة على الموارد المدمجة في PostgREST).
+  const { data: matchRows, error: matchError } = await supabase
+    .from('content_translations')
+    .select('content_id')
+    .eq('lang', lang)
+    .or(`title.ilike.%${q}%,body_plain.ilike.%${q}%`)
+    .limit(500);
+
+  if (matchError) {
+    return NextResponse.json({ error: matchError.message }, { status: 500 });
+  }
+
+  const matchedIds = Array.from(
+    new Set(((matchRows ?? []) as Array<{ content_id: string }>).map((r) => r.content_id))
+  );
+
+  // 2) البحث في المحتوى بالاعتماد على المعرّفات المطابقة، مع بقية الفلاتر والترقيم.
   let data: any[] = [];
   let count = 0;
 
-  if (type !== 'quran') {
+  if (type !== 'quran' && matchedIds.length > 0) {
     let query = supabase
       .from('content')
       .select(`
@@ -76,7 +94,7 @@ export async function GET(req: NextRequest) {
         levels,
         published_at,
         views,
-        content_translations!inner (
+        content_translations (
           title,
           slug,
           summary,
@@ -84,8 +102,7 @@ export async function GET(req: NextRequest) {
         )
       `, { count: 'exact' })
       .eq('status', 'published')
-      .eq('content_translations.lang', lang)
-      .or(`content_translations.title.ilike.%${q}%,content_translations.body_plain.ilike.%${q}%`);
+      .in('id', matchedIds);
 
     if (type) query = query.eq('content_type', type);
     if (audience) query = query.contains('audience', [audience]);
@@ -124,7 +141,9 @@ export async function GET(req: NextRequest) {
   }
 
   const results = (data ?? []).map((item: any) => {
-    const t = item.content_translations?.[0];
+    const t =
+      (item.content_translations ?? []).find((x: any) => x.lang === lang) ??
+      item.content_translations?.[0];
     return {
       id: item.id,
       type: item.content_type,
@@ -137,11 +156,36 @@ export async function GET(req: NextRequest) {
     };
   });
 
+  // إحصاءات الأنواع (facets): عدد النتائج لكل نوع مع تطبيق بقية الفلاتر.
+  const facets: Record<string, number> = {};
+  if (type !== 'quran' && matchedIds.length > 0) {
+    let facetQuery = supabase
+      .from('content')
+      .select('content_type')
+      .eq('status', 'published')
+      .in('id', matchedIds);
+
+    if (audience) facetQuery = facetQuery.contains('audience', [audience]);
+    if (age) facetQuery = facetQuery.contains('age_groups', [age]);
+    if (level) facetQuery = facetQuery.contains('levels', [level]);
+    if (madhhab) facetQuery = facetQuery.contains('madhhabs', [madhhab]);
+
+    const { data: facetRows } = await facetQuery.limit(1000);
+    for (const row of (facetRows ?? []) as Array<{ content_type: string }>) {
+      facets[row.content_type] = (facets[row.content_type] ?? 0) + 1;
+    }
+  }
+  if (!type || type === 'quran') {
+    facets.quran = quranResults.length;
+  }
+
   return NextResponse.json({
     data: [...quranResults, ...results],
     total: (count ?? 0) + quranResults.length,
     page,
+    per_page: perPage,
     total_pages: Math.ceil((count ?? 0) / perPage),
+    facets,
     query: q,
   });
 }

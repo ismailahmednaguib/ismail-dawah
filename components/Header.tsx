@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 import {
@@ -103,6 +103,19 @@ export default function Header({
   );
 
   const isRTL = lang === "ar";
+
+  // اختصار لوحة المفاتيح ⌘K / Ctrl+K → صفحة البحث الموحّد.
+  const router = useRouter();
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        router.push(localizedPath(lang, "/search"));
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [lang, router]);
 
   const pathWithoutLang = useMemo(
     () => getPathWithoutLang(normalizedPathname),
@@ -543,6 +556,7 @@ export default function Header({
             <Link
               href={localizedPath(lang, "/search")}
               aria-label={isRTL ? "بحث" : "Search"}
+              title={isRTL ? "بحث (Ctrl+K)" : "Search (Ctrl+K)"}
               className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${iconBtnClass}`}
             >
               <svg
