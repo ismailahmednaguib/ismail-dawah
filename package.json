@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "qa:content": "node scripts/content-qa.mjs",
+    "check:smoke": "node scripts/smoke-content.mjs",
+    "check:fields": "node scripts/check-fields.mjs",
+    "check:tax": "node scripts/tax-coverage.mjs",
+    "check:links": "node scripts/crawl-links.mjs --max=2500"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
