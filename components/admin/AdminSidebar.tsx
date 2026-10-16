@@ -42,6 +42,7 @@ export default function AdminSidebar({
     { href: "/admin/newsletter", label: "النشرة البريدية", icon: "✉", show: can(roles, "notifications.manage") },
     { href: "/admin/users", label: "المستخدمون والأدوار", icon: "♙", show: can(roles, "users.manage") },
     { href: "/admin/audit", label: "سجل التدقيق", icon: "≡", show: can(roles, "audit.read") },
+    { href: "/admin/backup", label: "النسخ الاحتياطي", icon: "⬇", show: can(roles, "settings.manage") },
     { href: "/admin/settings", label: "إعدادات المنصة", icon: "⚙", show: can(roles, "settings.manage") },
   ];
 

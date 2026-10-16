@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import { decodeParam } from "@/lib/params";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import {
@@ -19,6 +20,19 @@ import ContentCard from "@/components/learn/ContentCard";
 import { PageHero, SectionHeader, CardGrid, InfoCard, EmptyState } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
+
+/** أنواع المحتوى التي تُعرض في صفحة المجال/الفرع. */
+const FIELD_CONTENT_TYPES = [
+  "lesson",
+  "article",
+  "fatwa",
+  "faq",
+  "hadith",
+  "khutbah",
+  "story",
+  "video",
+  "page",
+] as const;
 
 // ============================================================
 // نصوص الواجهة العامة
@@ -80,7 +94,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ lang: string; slug: string }>;
 }): Promise<Metadata> {
-  const { lang, slug } = await params;
+  const { lang, slug: rawSlug } = await params;
+  const slug = decodeParam(rawSlug);
   if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
@@ -121,7 +136,8 @@ export default async function FieldPage({
 }: {
   params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { lang, slug } = await params;
+  const { lang, slug: rawSlug } = await params;
+  const slug = decodeParam(rawSlug);
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;
@@ -162,11 +178,34 @@ export default async function FieldPage({
   const nextField = currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
   const relatedFields = siblings.filter((f) => f.slug !== field!.slug).slice(0, 3);
 
-  const [lessons, articles] = await Promise.all([
-    getPublicList(l, "lesson", { taxonomySlug: slug, taxonomyKind: taxKind, limit: 6 }),
-    getPublicList(l, "article", { taxonomySlug: slug, taxonomyKind: taxKind, limit: 6 }),
-  ]);
-  const relatedContent: PublicItem[] = [...lessons, ...articles];
+  // نعرض في صفحة المجال كل أنواع المحتوى المرتبط به، لا الدروس والمقالات فقط؛
+  // وإلّا ظهر الباب فارغًا رغم أن تحتَه فتاوى أو أحاديث أو صفحات تعريفية.
+  const lists = await Promise.all(
+    FIELD_CONTENT_TYPES.map((type) =>
+      getPublicList(l, type, {
+        taxonomySlug: slug,
+        taxonomyKind: taxKind,
+        includeDescendants: true,
+        limit: 6,
+      })
+    )
+  );
+
+  const seenIds = new Set<string>();
+  const relatedContent: PublicItem[] = lists
+    .flat()
+    .filter((item) => {
+      if (seenIds.has(item.id)) return false;
+      seenIds.add(item.id);
+      return true;
+    })
+    .sort((a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? ""))
+    .slice(0, 9);
+
+  const countsByType = new Map<string, number>();
+  for (const item of lists.flat()) {
+    countsByType.set(item.content_type, (countsByType.get(item.content_type) ?? 0) + 1);
+  }
 
   const fieldColor = (term: PublicTerm) => term.color ?? "from-primary-500 to-primary-600";
   const color = fieldColor(field);
@@ -205,8 +244,8 @@ export default async function FieldPage({
         stats={
           gate.visible("k1")
             ? [
-                { value: String(lessons.length), label: ui.lessons },
-                { value: String(articles.length), label: ui.articles },
+                { value: String(countsByType.get("lesson") ?? 0), label: ui.lessons },
+                { value: String(countsByType.get("article") ?? 0), label: ui.articles },
                 { value: String(relatedContent.length), label: ui.content },
               ]
             : undefined

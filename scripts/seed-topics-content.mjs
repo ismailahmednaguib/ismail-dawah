@@ -14,9 +14,12 @@ import crypto from 'node:crypto';
 import { TOPICS as BATCH_1 } from './topics-data.mjs';
 import { TOPICS as BATCH_2 } from './topics-data-2.mjs';
 import { TOPICS as BATCH_3 } from './topics-data-3.mjs';
+import { TOPICS as BATCH_4 } from './topics-data-4.mjs';
+import { TOPICS as BATCH_5 } from './topics-data-5.mjs';
+import { TOPICS as BATCH_6 } from './topics-data-6.mjs';
 
 /** كل دفعات المحتوى مجمّعة. */
-const TOPICS = [...BATCH_1, ...BATCH_2, ...BATCH_3];
+const TOPICS = [...BATCH_1, ...BATCH_2, ...BATCH_3, ...BATCH_4, ...BATCH_5, ...BATCH_6];
 
 function loadEnv(file) {
   const out = {};
@@ -75,8 +78,9 @@ async function main() {
   const missing = [];
 
   TOPICS.forEach((topic, i) => {
-    const taxonomyId = byKey.get(`subbranch|ar|${topic.sub}`);
-    if (!taxonomyId) missing.push(topic.sub);
+    const kind = topic.kind ?? 'subbranch';
+    const taxonomyId = byKey.get(`${kind}|ar|${topic.sub}`);
+    if (!taxonomyId) missing.push(`${kind}:${topic.sub}`);
 
     const id = detUuid(`content:topic:${topic.slug}`);
     contents.push({
@@ -96,17 +100,19 @@ async function main() {
 
     for (const lang of ['ar', 'en']) {
       const t = topic[lang];
-      const slug = lang === 'ar' ? topic.slug : `${topic.slug}-en`;
+      // نفس الـslug في اللغتين: مبدّل اللغة يبدّل مقطع اللغة فقط ويُبقي بقية المسار،
+      // فاختلاف الـslug بين اللغتين يكسر رابط التبديل.
       translations.push({
         content_id: id,
         lang,
-        slug,
+        slug: topic.slug,
         title: t.title,
         summary: t.summary,
         body: t.body,
         body_plain: t.body,
-        is_machine_translated: false,
-        is_reviewed: true,
+        // الترجمة الإنجليزية آلية (بمساعدة الذكاء الاصطناعي) وتحتاج مراجعة بشرية.
+        is_machine_translated: lang !== 'ar',
+        is_reviewed: false,
       });
     }
 

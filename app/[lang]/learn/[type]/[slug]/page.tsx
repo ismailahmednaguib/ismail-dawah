@@ -10,6 +10,7 @@ import JsonLd from '@/components/JsonLd';
 import ContentProgressControl from '@/components/learn/ContentProgressControl';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
+import { decodeParam } from '@/lib/params';
 
 interface PageProps {
   params: Promise<{ lang: string; type: string; slug: string }>;
@@ -30,7 +31,9 @@ interface MediaSummary {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { lang, type, slug } = await params;
+  const { lang, type: rawType, slug: rawSlug } = await params;
+  const type = decodeParam(rawType);
+  const slug = decodeParam(rawSlug);
   const content = await getContentWithFallback(lang, type, slug);
 
   if (!content) return { title: 'غير موجود' };
@@ -53,7 +56,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function LearnContentPage({ params }: PageProps) {
-  const { lang, type, slug } = await params;
+  const { lang, type: rawType, slug: rawSlug } = await params;
+  const type = decodeParam(rawType);
+  const slug = decodeParam(rawSlug);
   if (!isValidLang(lang)) notFound();
 
   const currentLang = lang as Lang;
@@ -209,7 +214,7 @@ export default async function LearnContentPage({ params }: PageProps) {
               {media.map((item) => (
                 <div key={item.id} className="card overflow-hidden p-4">
                   {item.type === 'image' && (
-                    <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" />
+                    <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" decoding="async" />
                   )}
                   {item.type === 'audio' && <audio controls preload="metadata" className="w-full" src={item.url} />}
                   {item.type === 'video' && <video controls preload="metadata" className="w-full rounded-xl" src={item.url} />}

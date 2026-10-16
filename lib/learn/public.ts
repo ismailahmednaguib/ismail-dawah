@@ -57,6 +57,12 @@ export interface PublicListOptions {
   taxonomySlug?: string;
   /** نوع التصنيف المطلوب عند التصفية. */
   taxonomyKind?: string;
+  /**
+   * تضمين محتوى التصنيفات الأبناء والأحفاد (فرع/فرع فرعي/تصنيف).
+   * بدونه تُعرض العناصر المرتبطة بالتصنيف نفسه فقط، وقد تظهر صفحة المجال
+   * فارغة رغم أن تحته فروعًا ممتلئة.
+   */
+  includeDescendants?: boolean;
   audience?: string;
   level?: string;
   search?: string;
@@ -93,6 +99,52 @@ function clampLimit(value?: number): number {
   const n = Number(value ?? DEFAULT_LIMIT);
   if (!Number.isFinite(n)) return DEFAULT_LIMIT;
   return Math.min(MAX_LIMIT, Math.max(1, Math.floor(n)));
+}
+
+/**
+ * يجمع معرّفات كل التصنيفات التي تنتمي إلى *المفهوم* نفسه ثم كل أبنائها.
+ *
+ * لماذا؟ هرم التصنيفات في قاعدة البيانات غير مترابط تمامًا:
+ *   • سطور «المجال» (field) بلا أب وبلا أبناء.
+ *   • سطور «الفرع الفرعي» معلّقة على «الباب» (branch) لا على المجال.
+ *   • المعرّف نفسه قد يوجد في أكثر من نوع (مثل tajweed مجالًا وفرعًا فرعيًا).
+ * لذلك نجمع بمعرّف (slug) واحد كل السطور المطابقة + كل أحفادها، فيظهر في صفحة
+ * المجال محتوى فروعه بدل صفحة فارغة.
+ */
+async function collectTaxonomyGroupIds(
+  supabase: ReturnType<typeof getClient>,
+  slug: string,
+  rootId: string
+): Promise<string[]> {
+  const { data: sameSlug } = await supabase
+    .from('taxonomies')
+    .select('id')
+    .eq('slug', slug)
+    .limit(50);
+
+  const collected = new Set<string>([rootId]);
+  for (const row of (sameSlug ?? []) as Array<{ id: string }>) {
+    collected.add(row.id);
+  }
+
+  let frontier = [...collected];
+
+  for (let depth = 0; depth < 5 && frontier.length > 0; depth += 1) {
+    const { data } = await supabase
+      .from('taxonomies')
+      .select('id')
+      .in('parent_id', frontier);
+
+    const next = ((data ?? []) as Array<{ id: string }>)
+      .map((row) => row.id)
+      .filter((id) => !collected.has(id));
+
+    if (next.length === 0) break;
+    for (const id of next) collected.add(id);
+    frontier = next;
+  }
+
+  return [...collected];
 }
 
 function mapItem(row: any, isFallback: boolean): PublicItem {
@@ -133,12 +185,17 @@ export async function getPublicList(
   if (options.taxonomySlug) {
     const tax = await getPublicTaxonomyBySlug(options.taxonomySlug, options.taxonomyKind, lang);
     if (!tax) return [];
+
+    const taxonomyIds = options.includeDescendants
+      ? await collectTaxonomyGroupIds(supabase, tax.slug, tax.id)
+      : [tax.id];
+
     const { data: links } = await supabase
       .from('content_terms')
       .select('content_id')
-      .eq('taxonomy_id', tax.id)
+      .in('taxonomy_id', taxonomyIds)
       .limit(MAX_LIMIT * 5);
-    const ids = (links ?? []).map((l: any) => l.content_id);
+    const ids = [...new Set((links ?? []).map((l: any) => l.content_id))];
     if (ids.length === 0) return [];
 
     const filtered = await runListQuery(supabase, lang, type, options, limit, ids);

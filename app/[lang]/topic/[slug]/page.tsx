@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import { decodeParam } from "@/lib/params";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import {
@@ -65,7 +66,9 @@ async function getRelated(lang: Lang, node: NavNode): Promise<PublicItem[]> {
     types.map((type) =>
       getPublicList(lang, type, {
         limit: 6,
-        ...(node.taxonomy ? { taxonomySlug: node.taxonomy } : { search }),
+        ...(node.taxonomy
+          ? { taxonomySlug: node.taxonomy, includeDescendants: true }
+          : { search }),
       }).catch(() => [] as PublicItem[])
     )
   );
@@ -85,7 +88,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ lang: string; slug: string }>;
 }): Promise<Metadata> {
-  const { lang, slug } = await params;
+  const { lang, slug: rawSlug } = await params;
+  const slug = decodeParam(rawSlug);
   if (!isValidLang(lang)) return {};
   const l = lang as Lang;
   const node = findNavNode(slug);
@@ -108,7 +112,8 @@ export default async function TopicPage({
 }: {
   params: Promise<{ lang: string; slug: string }>;
 }) {
-  const { lang, slug } = await params;
+  const { lang, slug: rawSlug } = await params;
+  const slug = decodeParam(rawSlug);
   if (!isValidLang(lang)) notFound();
 
   const l = lang as Lang;

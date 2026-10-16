@@ -2,9 +2,11 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { NAV_TREE, flattenNav, navHref } from '@/lib/navigation';
+import { encodeUrl } from '@/lib/url';
 
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
-   export const dynamic = 'force-dynamic';
+
+export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,13 +38,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const lang of languages) {
     for (const [path, depth] of pathDepth) {
       staticPages.push({
-        url: `${BASE_URL}/${lang}${path}`,
+        url: encodeUrl(`${BASE_URL}/${lang}${path}`),
         lastModified: new Date(),
         changeFrequency: depth === 0 ? 'daily' : depth === 1 ? 'weekly' : 'monthly',
         priority: priorityFor(depth),
         alternates: {
           languages: Object.fromEntries(
-            languages.map((l) => [l, `${BASE_URL}/${l}${path}`])
+            languages.map((l) => [l, encodeUrl(`${BASE_URL}/${l}${path}`)])
           ),
         },
       });
@@ -74,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     );
 
     return translations.map((t: any) => ({
-      url: `${BASE_URL}/${t.lang}/learn/${item.content_type}/${t.slug}`,
+      url: encodeUrl(`${BASE_URL}/${t.lang}/learn/${item.content_type}/${t.slug}`),
       lastModified: new Date(item.updated_at),
       changeFrequency: 'monthly' as const,
       priority: contentPriority(item.content_type),
@@ -82,7 +84,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         languages: Object.fromEntries(
           translations
             .filter((x: any) => x.slug)
-            .map((x: any) => [x.lang, `${BASE_URL}/${x.lang}/learn/${item.content_type}/${x.slug}`])
+            .map((x: any) => [
+              x.lang,
+              encodeUrl(`${BASE_URL}/${x.lang}/learn/${item.content_type}/${x.slug}`),
+            ])
         ),
       },
     }));

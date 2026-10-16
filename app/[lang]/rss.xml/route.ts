@@ -2,6 +2,7 @@
 // خلاصة RSS لأحدث المحتوى المنشور لكل لغة.
 import { createClient } from '@supabase/supabase-js';
 import { isValidLang } from '@/lib/i18n';
+import { contentUrl, encodeUrl } from '@/lib/url';
 
 export const runtime = 'nodejs';
 export const revalidate = 3600;
@@ -51,20 +52,20 @@ export async function GET(_req: Request, { params }: { params: Promise<{ lang: s
     .slice(0, 30);
 
   const meta = FEED_TITLES[lang] ?? FEED_TITLES.ar;
-  const feedUrl = `${BASE_URL}/${lang}/rss.xml`;
+  const feedUrl = encodeUrl(`${BASE_URL}/${lang}/rss.xml`);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${esc(meta.title)}</title>
-    <link>${esc(`${BASE_URL}/${lang}`)}</link>
+    <link>${esc(encodeUrl(`${BASE_URL}/${lang}`))}</link>
     <description>${esc(meta.desc)}</description>
     <language>${esc(lang)}</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <atom:link href="${esc(feedUrl)}" rel="self" type="application/rss+xml" />
 ${items
   .map((row) => {
-    const url = `${BASE_URL}/${lang}/learn/${row.content.content_type}/${row.slug}`;
+    const url = contentUrl(BASE_URL, lang, row.content.content_type, row.slug);
     return `    <item>
       <title>${esc(row.title)}</title>
       <link>${esc(url)}</link>
