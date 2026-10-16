@@ -876,18 +876,6 @@ export default async function RuqyahPage({
               </div>
             </Link>
 
-            <Link href={`/${l}/khatm-dua`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🌙</span>
-              <div className="min-w-0">
-                <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
-                  {ui.khatmDuaPage}
-                </h3>
-                <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-slate-400">
-                  {ui.khatmDuaPageDesc}
-                </p>
-              </div>
-            </Link>
-
             <Link href={`/${l}/doubts`} className="card card-interactive group flex items-center gap-3 p-5">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">❓</span>
               <div className="min-w-0">

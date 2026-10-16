@@ -406,12 +406,6 @@ const DAWAH_ITEMS: SectionItem[] = [
     desc: { ar: "17 مجالاً شرعياً متنوعاً", en: "17 diverse Islamic fields" },
   },
   {
-    href: "/projects",
-    icon: "🏗️",
-    title: { ar: "المشاريع", en: "Projects" },
-    desc: { ar: "ساهم في صدقة جارية", en: "Contribute to ongoing charity" },
-  },
-  {
     href: "/khutab",
     icon: "🎤",
     title: { ar: "مكتبة الخطب", en: "Khutbah Library" },
@@ -422,12 +416,6 @@ const DAWAH_ITEMS: SectionItem[] = [
     icon: "📺",
     title: { ar: "البث المباشر", en: "Live Stream" },
     desc: { ar: "تابع الدروس الحية", en: "Watch live lessons" },
-  },
-  {
-    href: "/khatm-dua",
-    icon: "🤝",
-    title: { ar: "ختم الدعاء", en: "Khatm Dua" },
-    desc: { ar: "برنامج دعائي جماعي", en: "Collective dua program" },
   },
 ];
 
