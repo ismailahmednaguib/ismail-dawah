@@ -13,6 +13,7 @@ import {
   type Role,
 } from "@/lib/auth";
 import { isOwnerEmail } from "@/lib/admin/owner";
+import { rateLimitGuard } from "@/lib/rate-limit";
 
 // ============================================================
 // Types
@@ -279,6 +280,9 @@ async function queryRowByEmail(
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  const limited = await rateLimitGuard(req, "login");
+  if (limited) return limited;
+
   try {
     let body: LoginBody;
 

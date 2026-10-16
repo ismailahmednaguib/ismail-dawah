@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { rateLimitGuard } from "@/lib/rate-limit";
 import {
   createHmac,
   pbkdf2Sync,
@@ -618,6 +619,9 @@ function setSessionCookie(res: NextResponse, token: string): void {
 // ============================================================
 
 export async function POST(req: Request) {
+  const limited = await rateLimitGuard(req, "admin-login");
+  if (limited) return limited;
+
   const ip = getClientIP(req);
   const userAgent = getUserAgent(req);
   const timestamp = new Date().toISOString();

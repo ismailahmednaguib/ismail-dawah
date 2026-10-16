@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
+import { rateLimitGuard } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -943,6 +944,9 @@ export async function GET(req: NextRequest) {
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  const limited = await rateLimitGuard(req, 'questions');
+  if (limited) return limited;
+
   const ip = getClientIP(req);
 
   try {

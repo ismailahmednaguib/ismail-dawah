@@ -163,3 +163,48 @@
 | subbranch | التقنية والذكاء الاصطناعي | `technology` | 0 |
 | subbranch | البيئة | `environment` | 0 |
 | subbranch | المسلمون في الغرب | `minorities` | 0 |
+
+---
+
+# تدقيق الأمان وRLS — ١٧ أكتوبر ٢٠٢٦
+
+## 🔴 نتيجة حرجة (مُصلَحة بـ migration)
+
+الفحص آليًّا بـ `npm run qa:rls` (يقرأ كل جدول بالمفتاح العام `anon`، أي نفس ما يملكه أي زائر)
+أثبت أن **RLS لم يكن مفعَّلًا** على جداول خاصة في الإنتاج، وكانت مقروءة بالفعل:
+
+| الجدول | الصفوف المكشوفة | ما كان يُسرَّب |
+|---|---:|---|
+| `admin_users` | ٢ | `email` · `password_hash` · `salt` · `role` · `token_version` |
+| `admin_login_attempts` | ١٤ | بريد الإدارة · عناوين IP · `user_agent` |
+| `user_roles` | ١ | معرّفات المستخدمين وأدوارهم |
+| `page_views` | ٢٨٤ | الصفحات المزارة · المراجع · وكلاء المستخدم |
+| ١١ جدولًا آخر | ٠ (فارغة) | قابلة للقراءة، تُسرّب فور امتلائها: `audit_log` · `activity_log` · `analytics_events` · `site_settings` · `review_queue` · `newsletter_subscribers` · `learner_content_progress` · `user_favorites` · `user_questions` · `media_library` · `users` |
+
+**الخطر**: كشف تجزئة كلمة مرور المدير تُتيح هجومًا خارجيًّا على الكلمة دون لمس الخادم،
+وكشف بريد الإدارة وعناوين المهاجمين، وبيانات الزوار.
+
+**الإصلاح**: `supabase/migrations/20261017_rls_hardening.sql` — يُشغّل RLS على الجداول الخاصة
+دون أي سياسة عامة، ويسحب صلاحيات `anon`/`authenticated` (طبقتان).
+لا يتأثّر التطبيق: كل قراءة خادمية تستخدم مفتاح الخدمة وهو يتجاوز RLS.
+تحقّق: `npm run qa:rls` بعد التنفيذ يجب أن يعطي ٠ مكشوف.
+
+## الجداول العامة المعتمدة (لا تُقفل)
+
+`content` · `content_translations` · `taxonomies` · `content_terms`
+— لأن `/api/search` و`sitemap.xml` و`rss.xml` تقرأها بالمفتاح العام عمدًا.
+
+## بند متبقٍّ (منخفض الخطورة)
+
+المفتاح العام يقرأ **كل** صفوف `content` (بما فيها غير المنشور)، لأن RLS غير مفعَّل عليها.
+التضييق الممكن: تفعيل RLS مع سياسة `status = 'published'` (وسياسة مرافقة على
+`content_translations` بشرط وجود المحتوى المنشور). أثره الوظيفي يحتاج اختبارًا كاملًا
+لأن البحث والخريطة يعتمدان المفتاح العام — لذلك أُجّل عن قصد.
+
+## ترويسات الحماية
+
+مُطبَّقة في `next.config.ts` على كل المسارات (متحقَّق منها على الخادم):
+`Content-Security-Policy` · `Strict-Transport-Security` · `X-Frame-Options: DENY` ·
+`X-Content-Type-Options: nosniff` · `Referrer-Policy` · `Permissions-Policy` ·
+`Cross-Origin-Opener-Policy` · وإخفاء `X-Powered-By`.
+

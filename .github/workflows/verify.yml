@@ -1,0 +1,126 @@
+name: verify
+
+# بوّابات الجودة — لا يُدمج تغيير قبل أن تمرّ الفحوصات.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── ١) فحوصات ثابتة: لا تحتاج قاعدة بيانات ولا شبكة ──────────────────────
+  static:
+    name: الأنواع · الاختبارات · اللينت · المفاتيح
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: فحص الأنواع
+        run: npm run typecheck
+
+      - name: اختبارات الوحدة
+        run: npm run test:unit
+
+      - name: اللينت
+        run: npm run lint
+
+      - name: فحص تسرّب المفاتيح
+        run: npm run qa:secrets
+
+  # ── ٢) هل أسرار البيئة متاحة؟ ────────────────────────────────────────────
+  detect:
+    name: كشف أسرار البيئة
+    runs-on: ubuntu-latest
+    outputs:
+      has_env: ${{ steps.check.outputs.has_env }}
+    steps:
+      - id: check
+        env:
+          SUPA: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        run: |
+          if [ -n "$SUPA" ]; then
+            echo "has_env=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_env=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::لم تُضبط أسرار Supabase — تُخطّى فحوصات قاعدة البيانات والبناء."
+          fi
+
+  # ── ٣) البناء + قبول المحتوى على خادم حقيقي ──────────────────────────────
+  integration:
+    name: البناء · الروابط · المحتوى
+    needs: [static, detect]
+    if: needs.detect.outputs.has_env == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: البناء (يُفشل عند أي خطأ نوع أو لينت)
+        run: npm run build
+
+      - name: تشغيل الخادم
+        run: |
+          npm start > server.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS -o /dev/null http://localhost:3000/ar; then
+              echo "الخادم جاهز بعد ${i} محاولة"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::لم يستجب الخادم"
+          tail -n 100 server.log
+          exit 1
+
+      - name: كل روابط المحتوى (٤٣٨ رابطًا)
+        run: npm run check:smoke
+
+      - name: تغطية التصنيفات
+        run: npm run check:tax
+
+      - name: صفحات المفاهيم
+        run: npm run check:fields
+
+      - name: جودة المحتوى
+        run: npm run qa:content
+
+      - name: المصادر الشرعية (تقرير)
+        run: npm run qa:citations
+
+      - name: مصفوفة المحتوى (تقرير)
+        run: npm run qa:matrix
+
+      - name: تدقيق صلاحيات الجداول (تقرير)
+        run: npm run qa:rls
+        continue-on-error: true
+
+      - name: الزحف الكامل — لا روابط مكسورة
+        run: npm run check:links
+
+      - name: سجل الخادم عند الفشل
+        if: failure()
+        run: tail -n 200 server.log

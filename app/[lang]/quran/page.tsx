@@ -367,7 +367,7 @@ export default async function QuranPage({
   const type = rawType === "meccan" || rawType === "medinan" ? rawType : "all";
 
   let surahs: Surah[] = [];
-  let loadError = false;
+  const loadError = false;
 
   try {
     surahs = await fetchSurahs();

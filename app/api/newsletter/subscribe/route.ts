@@ -1,6 +1,7 @@
 // app/api/newsletter/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { subscribeEmail } from "@/lib/email";
+import { rateLimitGuard } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -572,7 +573,15 @@ export async function POST(req: NextRequest) {
     const email = normalizeEmail(body.email);
     const name = sanitizeText(body.name, 100);
 
-    // 5) Rate limit — نستخدم invalid key لو الإيميل غير صالح
+    // 5) حدّ مشترك بين كل نسخ الخادم (طبقة أولى) فوق المحدد المحلي (طبقة ثانية)
+    const sharedLimit = await rateLimitGuard(req, "newsletter", {
+      identities: email ? [email] : [],
+      message: messages.rateLimited,
+    });
+
+    if (sharedLimit) return sharedLimit;
+
+    // 5ب) Rate limit — نستخدم invalid key لو الإيميل غير صالح
     const rate = consumeRateLimit(ip, email || `invalid:${ip}`);
 
     if (rate.limited) {

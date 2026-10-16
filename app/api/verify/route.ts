@@ -1,6 +1,7 @@
 // app/api/verify/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { rateLimitGuard } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -200,6 +201,9 @@ function extractProvidedKey(req: NextRequest): string | null {
 // ============================================================
 
 export async function GET(req: NextRequest) {
+  const limited = await rateLimitGuard(req, 'verify');
+  if (limited) return limited;
+
   const ip = getClientIP(req);
 
   try {

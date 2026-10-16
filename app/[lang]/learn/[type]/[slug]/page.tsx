@@ -1,6 +1,7 @@
 // app/[lang]/learn/[type]/[slug]/page.tsx
 import { getContentWithFallback } from '@/lib/learn/queries';
 import ReferenceDisplay from '@/components/learn/ReferenceDisplay';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -11,6 +12,18 @@ import ContentProgressControl from '@/components/learn/ContentProgressControl';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import { decodeParam } from '@/lib/params';
+
+/**
+ * الصور المخزَّنة في Supabase قابلة للتحسين عبر next/image؛ أما الروابط الخارجية
+ * التي يكتبها المحرّر فتُعرض بوسم img عادي (لا يُتحقّق من نطاقها).
+ */
+function isOptimizableImage(url: string): boolean {
+  try {
+    return new URL(url).host.endsWith('.supabase.co');
+  } catch {
+    return false;
+  }
+}
 
 interface PageProps {
   params: Promise<{ lang: string; type: string; slug: string }>;
@@ -214,7 +227,18 @@ export default async function LearnContentPage({ params }: PageProps) {
               {media.map((item) => (
                 <div key={item.id} className="card overflow-hidden p-4">
                   {item.type === 'image' && (
-                    <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" decoding="async" />
+                    isOptimizableImage(item.url) ? (
+                      <Image
+                        src={item.url}
+                        alt={item.alt_text || item.title || ''}
+                        width={1200}
+                        height={800}
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        className="h-auto w-full rounded-xl object-cover"
+                      />
+                    ) : (
+                      <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" decoding="async" />
+                    )
                   )}
                   {item.type === 'audio' && <audio controls preload="metadata" className="w-full" src={item.url} />}
                   {item.type === 'video' && <video controls preload="metadata" className="w-full rounded-xl" src={item.url} />}

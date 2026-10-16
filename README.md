@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# منصة إسماعيل أحمد نجيب الدعوية
 
-## Getting Started
+منصة محتوى إسلامي عربي/إنجليزي مبنية على **Next.js 15 (App Router)** و**Supabase**،
+بنظام تصميم واحد (فيروزي + ذهبي) ولوحة تحكم تُدير المحتوى والبنية والقوائم والإعدادات.
 
-First, run the development server:
+---
+
+## التشغيل السريع
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # خادم التطوير على http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## الأوامر
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| الأمر | ما يفعله |
+|---|---|
+| `npm run dev` | خادم التطوير (Turbopack) |
+| `npm run build` | بناء الإنتاج — **يُفشل عند أي خطأ نوع أو ESLint** |
+| `npm start` | تشغيل نسخة الإنتاج |
+| `npm run verify` | الأنواع + اختبارات الوحدة + البناء (البوّابة الأساسية) |
+| `npm run typecheck` | فحص الأنواع وحده |
+| `npm run test:unit` | اختبارات الوحدة (مُشغّل Node المدمج، بلا اعتماديات) |
+| `npm run lint` | ESLint |
+| `npm run qa:content` | جودة المحتوى (حقول فارغة · حروف دخيلة · تكرار) — `--json` للتصحيح الآلي |
+| `npm run qa:secrets` | فحص تسرّب المفاتيح إلى الكود أو المتصفح |
+| `npm run qa:citations` | النصوص الشرعية التي تحتاج مرجعًا موثّقًا (`--strict` لإلزامها) |
+| `npm run qa:matrix` | تغطية كل باب بأنواع المحتوى وكشف الناقص |
+| `npm run check:smoke` | كل روابط المحتوى المنشور (٤٣٨ رابطًا) — يحتاج خادمًا يعمل |
+| `npm run check:tax` | ٠ مفهوم فارغ · ٠ باب بأقل من ٣ عناصر |
+| `npm run check:fields` | صفحات المفاهيم لا تكون فارغة |
+| `npm run check:links` | زحف كامل — ٠ رابط مكسور |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> التشغيل والصيانة والحوادث والنسخ الاحتياطي: **`RUNBOOK.md`**.
+> خطة التطوير وحالتها: **`ROADMAP.md`** (المكتمل) و**`ROADMAP_V3.md`** (القادم).
 
-## Learn More
+## البنية
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  [lang]/                 صفحات الزوار (ar · en) — RTL/LTR
+    fields/[slug]         صفحات الباب/المجال/الفرع (تجميع مع كل الأحفاد)
+    learn/[type]/[slug]   صفحة المادة (درس · مقال · فتوى · حديث · خطبة · قصة · فيديو)
+    topic/[slug]          صفحات عُقد القائمة الرئيسية
+  admin/(dashboard)/      لوحة التحكم: المحتوى · التصنيفات · الترجمات · جودة المحتوى
+                          المراجعة · الأسئلة · المستخدمون · التحليلات · الأمان
+                          النسخ الاحتياطي · الإعدادات
+  api/                    مسارات الخدمة (مصادقة · محتوى · بحث · تحليلات · حدّ معدّل)
+components/               نظام التصميم الموحّد + الهيدر/الفوتر + مكونات اللوحة
+lib/
+  params.ts               فكّ ترميز بارامترات المسار (حرج)
+  navigation.ts           شجرة القائمة المرجعية (NAV_TREE)
+  rate-limit.ts           حدّ المعدّل المشترك (Postgres + احتياطي في الذاكرة)
+  learn/public.ts         قراءة المحتوى العام وتجميع التصنيفات
+scripts/                   سكربتات التحقق والبيانات والترحيل
+supabase/migrations/       تغييرات قاعدة البيانات (تُنفَّذ يدويًّا في SQL Editor)
+tests/                     اختبارات الوحدة
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## قواعد لا تُخالف
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **بارامترات المسار لا تُفكّ ترميزها تلقائيًّا** — استخدم `decodeParam` من `lib/params.ts`
+  في كل صفحة ديناميكية، وإلا فشل أي معرّف عربي (404).
+- **معرّف المحتوى (slug) متطابق في اللغتين**؛ مبدّل اللغة يبدّل مقطع اللغة فقط.
+- **الترجمة الإنجليزية آلية**: `is_machine_translated = true` و`is_reviewed = false`
+  حتى تُعتمد من `/admin/quality`.
+- **هرم التصنيفات**: باب ← مجال ← فرع ← تصنيف. لا تعدّل `parent_id` يدويًّا؛
+  حرّر `PARENTS` في `scripts/relink-taxonomies.mjs` ثم شغّله (معاينة ثم `--commit`).
+- **لا تكتب حدّ معدّل في الذاكرة فقط** — استخدم `rateLimitGuard` من `lib/rate-limit.ts`.
+- أي ميزة جديدة يجب أن تكون **قابلة للتحكم من اللوحة**.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+التفاصيل الكاملة في **`AGENTS.md`**.
