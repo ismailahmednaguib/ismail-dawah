@@ -15,7 +15,7 @@ import {
   mergeTitlesConfig,
   mergePagesVisibility,
 } from '@/lib/page-sections';
-import { flattenNav } from '@/lib/navigation';
+import { flattenNav, type CustomNavNode } from '@/lib/navigation';
 
 type TabId =
   | 'dashboard'
@@ -722,6 +722,65 @@ function NavigationTab() {
     });
   }, []);
 
+  // ---- العناصر المخصّصة (__custom) ----
+  const customs = useMemo<CustomNavNode[]>(
+    () => (Array.isArray(config.__custom) ? (config.__custom as CustomNavNode[]) : []),
+    [config]
+  );
+
+  const [draft, setDraft] = useState<{ ar: string; en: string; icon: string; href: string; parentKey: string }>({
+    ar: '',
+    en: '',
+    icon: '',
+    href: '',
+    parentKey: '',
+  });
+
+  const setCustoms = useCallback((next: CustomNavNode[]) => {
+    setSettings((prev) => {
+      const current =
+        prev.navigation && typeof prev.navigation === 'object' ? prev.navigation : {};
+      return { ...prev, navigation: { ...current, __custom: next } };
+    });
+  }, []);
+
+  const addCustom = useCallback(() => {
+    if (!draft.ar.trim() || !draft.en.trim()) {
+      setMessage({ type: 'error', text: 'اكتب عنوان العنصر بالعربية والإنجليزية.' });
+      return;
+    }
+    const key = `custom-${Date.now().toString(36)}`;
+    setCustoms([
+      ...customs,
+      {
+        key,
+        ar: draft.ar.trim(),
+        en: draft.en.trim(),
+        icon: draft.icon.trim() || undefined,
+        href: draft.href.trim() || undefined,
+        parentKey: draft.parentKey || null,
+      },
+    ]);
+    setDraft({ ar: '', en: '', icon: '', href: '', parentKey: '' });
+    setMessage({ type: 'success', text: 'أُضيف العنصر — اضغط «حفظ» للتطبيق على الموقع.' });
+  }, [customs, draft, setCustoms]);
+
+  const updateCustom = useCallback(
+    (key: string, patch: Partial<CustomNavNode>) => {
+      setCustoms(customs.map((c) => (c.key === key ? { ...c, ...patch } : c)));
+    },
+    [customs, setCustoms]
+  );
+
+  const removeCustom = useCallback(
+    (key: string) => {
+      if (!window.confirm('حذف هذا العنصر من القائمة؟')) return;
+      setCustoms(customs.filter((c) => c.key !== key));
+      setMessage({ type: 'success', text: 'حُذف العنصر — اضغط «حفظ» للتطبيق على الموقع.' });
+    },
+    [customs, setCustoms]
+  );
+
   /** أبناء عقدة معيّنة بالترتيب الفعلي (المخصّص ثم الطبيعي). */
   const siblingsOf = useCallback(
     (parentKey: string | null) => {
@@ -948,6 +1007,114 @@ function NavigationTab() {
           className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-100"
         >
           ♻️ استعادة الافتراضي
+        </button>
+      </div>
+
+      {/* عناصر مخصّصة */}
+      <div className="rounded-2xl border border-cream-200 bg-cream-50/60 p-4">
+        <h4 className="mb-1 text-sm font-black text-primary-950">➕ عناصر مخصّصة في القائمة</h4>
+        <p className="mb-3 text-[11px] text-stone-500">
+          أضف أي رابط تريده (داخلي أو خارجي) إلى القائمة العلوية أو إلى أي مجموعة فرعية.
+        </p>
+
+        {customs.length > 0 && (
+          <ul className="mb-4 space-y-2">
+            {customs.map((c) => {
+              const parent = c.parentKey ? flat.find((x) => x.key === c.parentKey) : null;
+              return (
+                <li key={c.key} className="rounded-xl border border-cream-200 bg-white p-3">
+                  <div className="grid gap-2 sm:grid-cols-4">
+                    <input
+                      value={c.ar}
+                      onChange={(e) => updateCustom(c.key, { ar: e.target.value })}
+                      placeholder="العنوان (عربي)"
+                      className="input-islamic w-full text-xs"
+                    />
+                    <input
+                      value={c.en}
+                      onChange={(e) => updateCustom(c.key, { en: e.target.value })}
+                      placeholder="English"
+                      dir="ltr"
+                      className="input-islamic w-full text-xs"
+                    />
+                    <input
+                      value={c.icon ?? ''}
+                      onChange={(e) => updateCustom(c.key, { icon: e.target.value })}
+                      placeholder="أيقونة (اختياري)"
+                      className="input-islamic w-full text-xs"
+                    />
+                    <input
+                      value={c.href ?? ''}
+                      onChange={(e) => updateCustom(c.key, { href: e.target.value })}
+                      placeholder="/رابط"
+                      dir="ltr"
+                      className="input-islamic w-full text-xs"
+                    />
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[11px] text-stone-500">
+                      الموضع: {parent ? `${parent.icon ?? ''} ${parent.ar}` : '— الجذر —'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => removeCustom(c.key)}
+                      className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700 hover:bg-red-100"
+                    >
+                      🗑️ حذف
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <div className="grid gap-2 sm:grid-cols-5">
+          <input
+            value={draft.ar}
+            onChange={(e) => setDraft({ ...draft, ar: e.target.value })}
+            placeholder="العنوان (عربي)"
+            className="input-islamic w-full text-xs"
+          />
+          <input
+            value={draft.en}
+            onChange={(e) => setDraft({ ...draft, en: e.target.value })}
+            placeholder="English"
+            dir="ltr"
+            className="input-islamic w-full text-xs"
+          />
+          <input
+            value={draft.icon}
+            onChange={(e) => setDraft({ ...draft, icon: e.target.value })}
+            placeholder="أيقونة (اختياري)"
+            className="input-islamic w-full text-xs"
+          />
+          <input
+            value={draft.href}
+            onChange={(e) => setDraft({ ...draft, href: e.target.value })}
+            placeholder="/رابط (اختياري)"
+            dir="ltr"
+            className="input-islamic w-full text-xs"
+          />
+          <select
+            value={draft.parentKey}
+            onChange={(e) => setDraft({ ...draft, parentKey: e.target.value })}
+            className="input-islamic w-full text-xs"
+          >
+            <option value="">— الجذر —</option>
+            {flat.map((node) => (
+              <option key={node.key} value={node.key}>
+                {node.ar}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          type="button"
+          onClick={addCustom}
+          className="mt-3 rounded-lg bg-primary-600 px-4 py-2 text-xs font-bold text-white hover:bg-primary-700"
+        >
+          ➕ إضافة إلى القائمة
         </button>
       </div>
 

@@ -195,7 +195,21 @@ export interface NavNodeOverride {
 /** مفتاح خاص لتخزين ترتيب العقد المخصّص (مصفوفة مفاتيح). */
 export const NAV_ORDER_KEY = "__order";
 
-export type NavigationConfig = Record<string, NavNodeOverride | string[]>;
+/** مفتاح خاص لتخزين العناصر المخصّصة التي يضيفها المشرف من لوحة التحكم. */
+export const NAV_CUSTOM_KEY = "__custom";
+
+export interface CustomNavNode {
+  /** معرّف فريد يُولّد في لوحة التحكم (custom-<timestamp>) */
+  key: string;
+  ar: string;
+  en: string;
+  icon?: string;
+  href?: string;
+  /** مفتاح العقدة الأب، أو null للجذر */
+  parentKey?: string | null;
+}
+
+export type NavigationConfig = Record<string, NavNodeOverride | string[] | CustomNavNode[]>;
 
 /** نسخة مسطّحة من الشجرة (كل العقد). */
 export type FlatNavNode = NavNode & { parentKey: string | null; depth: number };
@@ -240,6 +254,29 @@ function readOrder(cfg: NavigationConfig): string[] {
   return Array.isArray(raw) ? raw.filter((x): x is string => typeof x === "string") : [];
 }
 
+/** يقرأ العناصر المخصّصة المخزّنة (مع التحقق من صحتها). */
+export function readCustomNav(cfg: NavigationConfig | unknown): CustomNavNode[] {
+  const raw = (cfg as NavigationConfig | undefined)?.[NAV_CUSTOM_KEY];
+  if (!Array.isArray(raw)) return [];
+  return (raw as unknown[])
+    .filter(
+      (x): x is CustomNavNode =>
+        !!x &&
+        typeof x === "object" &&
+        typeof (x as CustomNavNode).key === "string" &&
+        typeof (x as CustomNavNode).ar === "string" &&
+        typeof (x as CustomNavNode).en === "string"
+    )
+    .map((x) => ({
+      key: x.key,
+      ar: x.ar,
+      en: x.en,
+      icon: typeof x.icon === "string" ? x.icon : undefined,
+      href: typeof x.href === "string" ? x.href : undefined,
+      parentKey: typeof x.parentKey === "string" ? x.parentKey : null,
+    }));
+}
+
 /** ترتيب العقد حسب مصفوفة المفاتيح المخصّصة (والباقي يرجع لترتيبه الطبيعي). */
 function sortByOrder(nodes: NavNode[], order: string[]): NavNode[] {
   if (order.length === 0) return nodes;
@@ -273,21 +310,37 @@ export function applyNavigationConfig(
       ? (config as NavigationConfig)
       : {};
   const order = readOrder(cfg);
+  const customs = readCustomNav(cfg);
+
+  const asNode = (c: CustomNavNode): NavNode => ({
+    key: c.key,
+    ar: c.ar,
+    en: c.en,
+    icon: c.icon,
+    href: c.href,
+  });
 
   const walk = (nodes: NavNode[]): NavNode[] => {
     const out: NavNode[] = [];
     for (const node of nodes) {
       if (!Array.isArray(cfg[node.key]) && (cfg[node.key] as NavNodeOverride | undefined)?.visible === false) continue;
       const merged = mergeNode(node, cfg);
-      if (merged.children) {
-        merged.children = walk(merged.children);
+      const kids = merged.children ? [...merged.children] : [];
+      for (const custom of customs) {
+        if ((custom.parentKey ?? null) === node.key) kids.push(asNode(custom));
       }
+      if (kids.length) merged.children = walk(kids);
       out.push(merged);
     }
     return sortByOrder(out, order);
   };
 
-  return walk(tree);
+  const withRootCustoms = [...tree];
+  for (const custom of customs) {
+    if (!custom.parentKey) withRootCustoms.push(asNode(custom));
+  }
+
+  return walk(withRootCustoms);
 }
 
 /** الرابط الفعلي لعقدة (بإضافة البادئة اللغوية لاحقًا في المكوّن). */
