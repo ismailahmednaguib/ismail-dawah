@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import { PageHero } from '@/components/ui';
 
 const COPY: Record<string, any> = {
   ar: {
@@ -56,12 +57,15 @@ export default async function SearchPage({
       >
         <LanguageSEO path="/search" lang={currentLang} />
 
-        <section className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 px-4 py-12 text-white">
-          <div className="mx-auto max-w-4xl text-center">
-            <h1 className="mb-3 text-3xl font-bold md:text-4xl">🔍 {copy.title}</h1>
-            <p className="text-lg text-primary-100">{copy.subtitle}</p>
-          </div>
-        </section>
+        <PageHero
+          icon="🔍"
+          title={copy.title}
+          subtitle={copy.subtitle}
+          crumbs={[
+            { label: currentLang === 'ar' ? 'الرئيسية' : 'Home', href: `/${lang}` },
+            { label: copy.title },
+          ]}
+        />
 
         <div className="mx-auto max-w-4xl px-4 py-8">
           <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-primary-50 dark:bg-night-800" />}>

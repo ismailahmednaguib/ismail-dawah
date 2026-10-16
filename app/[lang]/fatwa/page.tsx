@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero, Callout } from "@/components/ui";
 import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
 
 export const dynamic = "force-dynamic";
@@ -451,55 +452,33 @@ export default async function FatwaPage({
         ]}
       />
 
+      {gate.visible('k0') && (
+        <PageHero
+          icon="⚖️"
+          badge={isRTL ? "⚖️ أسئلة شرعية" : "⚖️ Islamic Questions"}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: isRTL ? "الرئيسية" : "Home", href: `/${l}` },
+            { label: ui.title },
+          ]}
+        />
+      )}
+
       <section className="container-page py-10 md:py-14">
-        {/* ===== Hero محسّن ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 16l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">
-              ⚖️ {isRTL ? "أسئلة شرعية" : "Islamic Questions"}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-
-            {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+        {gate.visible('k0') && (
+          <div className="mb-8">
+            <Callout icon="🕌" tone="gold">
               <p
-                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
                 style={{ fontFamily: "var(--font-quran)" }}
               >
                 {ui.verse}
               </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
-                {ui.verseSource}
-              </p>
-            </div>
+              <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{ui.verseSource}</p>
+            </Callout>
           </div>
-        </div>
-
-        </>)}
+        )}
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">

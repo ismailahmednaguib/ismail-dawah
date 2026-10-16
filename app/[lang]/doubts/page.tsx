@@ -7,6 +7,7 @@ import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero } from "@/components/ui";
 import TopBar from "@/components/TopBar";
 import { getPublicList, type PublicItem } from "@/lib/learn/public";
 
@@ -471,31 +472,20 @@ export default async function DoubtsPage({
         ]}
       />
 
+      {gate.visible('k0') && (
+        <PageHero
+          icon="🧠"
+          badge={isRTL ? "🧠 شبهات وردود" : "🧠 Doubts and Responses"}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: isRTL ? "الرئيسية" : "Home", href: `/${l}` },
+            { label: ui.title },
+          ]}
+        />
+      )}
+
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="badge-primary mb-5">
-              🧠 {isRTL ? "شبهات وردود" : "Doubts and Responses"}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-          </div>
-        </div>
-
-        </>)}
         {/* ===== تنقل سريع ===== */}
         {gate.visible('k1') && (<>
         <div className="card mb-8 p-6 md:p-7">

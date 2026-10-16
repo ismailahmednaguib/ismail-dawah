@@ -9,6 +9,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import { PageHero } from '@/components/ui';
 import type { AgeGroup, Audience, ContentType, EduLevel, Madhhab } from '@/lib/types/content';
 
 const COPY: Record<string, any> = {
@@ -94,17 +95,15 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
         dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
         className="min-h-screen bg-slate-50 dark:bg-night-900"
       >
-      {/* الهيدر */}
-      <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 px-4 py-12 text-white">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            📚 {copy.title}
-          </h1>
-          <p className="text-primary-100 text-lg">
-            {copy.subtitle}
-          </p>
-        </div>
-      </div>
+      <PageHero
+        icon="📚"
+        title={copy.title}
+        subtitle={copy.subtitle}
+        crumbs={[
+          { label: currentLang === 'ar' ? 'الرئيسية' : 'Home', href: `/${lang}` },
+          { label: copy.title },
+        ]}
+      />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* الفلاتر */}

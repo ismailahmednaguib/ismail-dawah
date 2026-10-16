@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero } from "@/components/ui";
 
 export const dynamic = "force-static";
 
@@ -82,15 +83,16 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
     <>
       <Header lang={L} />
       <main dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
-        <section className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-950 px-4 py-16 text-white">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-bold mb-6">
-              🛡️
-            </div>
-            <h1 className="text-3xl font-black md:text-5xl mb-4">{c.title}</h1>
-            <p className="mx-auto mt-2 max-w-2xl text-primary-100 text-lg">{c.subtitle}</p>
-          </div>
-        </section>
+        <PageHero
+          icon="🛡️"
+          badge={L === "ar" ? "مركز الردود" : "Responses Center"}
+          title={c.title}
+          subtitle={c.subtitle}
+          crumbs={[
+            { label: L === "ar" ? "الرئيسية" : "Home", href: `/${L}` },
+            { label: c.title },
+          ]}
+        />
 
         <section className="py-16">
           <div className="max-w-5xl mx-auto px-4">

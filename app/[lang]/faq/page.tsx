@@ -9,6 +9,7 @@ import { faqJsonLd } from "@/lib/seo";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero, Callout } from "@/components/ui";
 
 // ============================================================
 // الأنواع
@@ -642,55 +643,33 @@ export default async function FaqPage({
         ]}
       />
 
+      {gate.visible('k0') && (
+        <PageHero
+          icon="❓"
+          badge={isRTL ? "❓ الأسئلة الشائعة" : "❓ FAQ"}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: ui.home, href: `/${l}` },
+            { label: ui.title },
+          ]}
+        />
+      )}
+
       <section className="container-page py-10 md:py-14">
-        {/* ===== Hero محسّن ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">
-              ❓ {isRTL ? "الأسئلة الشائعة" : "FAQ"}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-
-            {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+        {gate.visible('k0') && (
+          <div className="mb-8">
+            <Callout icon="🕌" tone="gold">
               <p
-                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
                 style={{ fontFamily: "var(--font-quran)" }}
               >
                 {ui.verse}
               </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
-                {ui.verseSource}
-              </p>
-            </div>
+              <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{ui.verseSource}</p>
+            </Callout>
           </div>
-        </div>
-
-        </>)}
+        )}
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">

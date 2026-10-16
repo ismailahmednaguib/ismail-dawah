@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import ContentCard from '@/components/learn/ContentCard';
 import { getPublishedContent } from '@/lib/learn/queries';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import { PageHero } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -77,13 +78,15 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
         dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
         className="min-h-screen bg-slate-50 dark:bg-night-900"
       >
-        <section className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-950 px-4 py-14 text-white">
-          <div className="mx-auto max-w-5xl text-center">
-            <p className="mb-3 text-5xl">💬</p>
-            <h1 className="text-3xl font-bold md:text-4xl">{copy.title}</h1>
-            <p className="mx-auto mt-3 max-w-2xl text-primary-100">{copy.subtitle}</p>
-          </div>
-        </section>
+        <PageHero
+          icon="💬"
+          title={copy.title}
+          subtitle={copy.subtitle}
+          crumbs={[
+            { label: currentLang === 'ar' ? 'الرئيسية' : 'Home', href: `/${lang}` },
+            { label: copy.title },
+          ]}
+        />
 
         <div className="mx-auto max-w-6xl px-4 py-8">
           <form className="mx-auto flex max-w-3xl gap-2" method="get">

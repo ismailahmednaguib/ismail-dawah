@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero } from "@/components/ui";
 import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
 
 export const dynamic = "force-dynamic";
@@ -498,40 +499,20 @@ export default async function ArticlesPage({
         ]}
       />
 
+      {gate.visible('k0') && (
+        <PageHero
+          icon="✍️"
+          badge={isRTL ? "✍️ مقالات مختارة" : "✍️ Selected Articles"}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: isRTL ? "الرئيسية" : "Home", href: `/${l}` },
+            { label: ui.title },
+          ]}
+        />
+      )}
+
       <section className="container-page py-10 md:py-14">
-        {/* ===== Hero ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-20 w-20 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">✍️ {isRTL ? "مقالات مختارة" : "Selected Articles"}</span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-          </div>
-        </div>
-
-        </>)}
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">
