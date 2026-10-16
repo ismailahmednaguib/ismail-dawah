@@ -42,7 +42,7 @@ const n = (
 export const NAV_TREE: NavNode[] = [
   n("home", "الرئيسية", "Home", "🏠", ""),
 
-  n("live", "البث المباشر", "Live Stream", "📡", "/live"),
+  n("live", "البث المباشر", "Live Stream", "📡", "/live", undefined, { desc: { ar: "بث مباشر للدروس والمجالس العلمية", en: "Live lessons and study circles" } }),
 
   n("sciences", "علوم الدين", "Islamic Sciences", "📚", "/fields", [
     n("aqeedah", "العقيدة وأصول الدين", "Creed & Fundamentals", "🕌", undefined, [
@@ -163,7 +163,7 @@ export const NAV_TREE: NavNode[] = [
     n("progress", "تقدّم الحفظ والتعلّم", "Learning Progress", "📈", "/account"),
     n("notifications", "الإشعارات", "Notifications", "🔔", "/account"),
     n("settings", "الإعدادات", "Settings", "⚙️", "/account"),
-  ]),
+  ], { desc: { ar: "إشاراتك المرجعية وتقدّمك وإشعاراتك وإعداداتك", en: "Bookmarks, progress, notifications and settings" } }),
 
   n("about", "عن المنصة", "About", "ℹ️", "/about", [
     n("about-sheikh", "عن الشيخ", "About the Sheikh", "👤", "/about"),
@@ -172,13 +172,13 @@ export const NAV_TREE: NavNode[] = [
     n("faq", "الأسئلة الشائعة", "FAQ", "❓", "/faq"),
     n("privacy-terms", "الخصوصية والشروط", "Privacy & Terms", "📄", "/privacy"),
     n("download-app", "تحميل التطبيق", "Download App", "📥", "/download"),
-  ]),
+  ], { desc: { ar: "تعرّف على الشيخ والمنصة، وتواصل معنا، وأسئلة شائعة", en: "About the sheikh, contact us and the FAQ" } }),
 
   n("app", "التطبيق", "The App", "📱", "/download", [
     n("apk", "تحميل APK", "Download APK", "📥", "/download"),
     n("push-notifications", "إشعارات الجوال", "Mobile Notifications", "🔔", "/download"),
     n("offline", "وضع عدم الاتصال", "Offline Mode", "📴", "/download"),
-  ]),
+  ], { desc: { ar: "حمّل التطبيق واستخدمه في أي وقت بدون إنترنت", en: "Download the app and use it offline" } }),
 ];
 
 // ============================================================

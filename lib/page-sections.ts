@@ -34,6 +34,7 @@ export const PAGES: PageTuple[] = [
     [
       S("hero", "الترويسة", "Hero"),
       S("quickTools", "الأدوات السريعة", "Quick Tools"),
+      S("sections", "أبواب الموقع", "Site Sections"),
       S("paths", "مسارات الزائر", "Visitor Paths"),
       S("learn", "قسم تعلّم", "Learn Section"),
       S("responses", "العلوم والردود", "Knowledge & Responses"),

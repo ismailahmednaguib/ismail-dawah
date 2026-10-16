@@ -11,6 +11,13 @@ import ContentCard from "@/components/learn/ContentCard";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { getPublicCounts, getPublicList, type PublicItem } from "@/lib/learn/public";
+import {
+  NAV_TREE,
+  applyNavigationConfig,
+  navHref,
+  navLabel,
+  type NavNode,
+} from "@/lib/navigation";
 
 // المحتوى يُقرأ من قاعدة البيانات وقت الطلب حتى تظهر تعديلات لوحة التحكم فورًا.
 export const dynamic = "force-dynamic";
@@ -114,6 +121,10 @@ type UiText = {
   latestStories: string;
   viewAll: string;
   readMore: string;
+  sectionsTitle: string;
+  sectionsSubtitle: string;
+  sectionsItems: string;
+  sectionsExplore: string;
 };
 
 const UI: Record<string, UiText> = {
@@ -168,6 +179,10 @@ const UI: Record<string, UiText> = {
     latestStories: "من قصص الأنبياء",
     viewAll: "عرض الكل",
     readMore: "اقرأ المزيد",
+    sectionsTitle: "أبواب الموقع",
+    sectionsSubtitle: "كل ما تحتاجه في مكان واحد — اختر الباب الذي تريد أن تبدأ منه",
+    sectionsItems: "موضوعًا",
+    sectionsExplore: "تصفّح القسم",
   },
   en: {
     badge: "✨ Comprehensive Dawah Platform",
@@ -224,6 +239,10 @@ const UI: Record<string, UiText> = {
     latestStories: "From the Prophets' Stories",
     viewAll: "View all",
     readMore: "Read more",
+    sectionsTitle: "Explore the Platform",
+    sectionsSubtitle: "Everything you need in one place — pick a section to begin",
+    sectionsItems: "topics",
+    sectionsExplore: "Browse section",
   },
 };
 
@@ -511,6 +530,13 @@ export default async function HomePage({
   };
   const verse = getVerseOfTheDay(l);
 
+  // أبواب الموقع — مبنية على هيكل التنقّل (تتأثر بإعدادات اللوحة).
+  const navTree = applyNavigationConfig(
+    (settings as Record<string, unknown>).navigation,
+    NAV_TREE
+  );
+  const topGroups = navTree.filter((node) => node.key !== "home");
+
   const [counts, latestLessons, latestFatwas, latestArticles, latestHadith, latestDoubts, latestKhutab, latestStories] =
     await Promise.all([
       getPublicCounts(l),
@@ -661,6 +687,38 @@ export default async function HomePage({
                 {isRTL ? tool.title.ar : tool.title.en}
               </span>
             </Link>
+          ))}
+        </div>
+      </section>
+      )}
+
+      {/* ============ أبواب الموقع ============ */}
+      {gate.visible('sections') && topGroups.length > 0 && (
+      <section className="container-page py-14 md:py-16">
+        <div className="mb-9 text-center">
+          <h2
+            className="section-title mb-0"
+            style={{ fontFamily: "var(--font-amiri)" }}
+          >
+            🗺️ {gate.title('sections', ui.sectionsTitle, l)}
+          </h2>
+          <div className="islamic-divider my-0" aria-hidden="true">
+            <span className="text-xl text-gold-500">✦</span>
+          </div>
+          <p className="section-subtitle mx-auto max-w-2xl">
+            {ui.sectionsSubtitle}
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {topGroups.map((group) => (
+            <GatewayCard
+              key={group.key}
+              node={group}
+              lang={l}
+              itemsLabel={ui.sectionsItems}
+              exploreLabel={ui.sectionsExplore}
+            />
           ))}
         </div>
       </section>
@@ -1127,6 +1185,87 @@ function PathCard({ item, lang }: { item: LearningPath; lang: Lang }) {
       <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
         {isRTL ? item.desc.ar : item.desc.en}
       </p>
+    </Link>
+  );
+}
+
+// ============================================================
+// GatewayCard — بطاقة باب من أبواب الموقع (من هيكل التنقّل)
+// ============================================================
+
+function GatewayCard({
+  node,
+  lang,
+  itemsLabel,
+  exploreLabel,
+}: {
+  node: NavNode;
+  lang: Lang;
+  itemsLabel: string;
+  exploreLabel: string;
+}) {
+  const isRTL = lang === "ar";
+  const count = node.children?.length ?? 0;
+  const desc = node.desc ? (isRTL ? node.desc.ar : node.desc.en) : "";
+
+  return (
+    <Link
+      href={`/${lang}${navHref(node)}`}
+      className="card card-interactive group relative flex h-full flex-col overflow-hidden p-6 transition-all duration-300 hover:-translate-y-1"
+    >
+      <div
+        aria-hidden="true"
+        className="gradient-primary absolute inset-x-0 top-0 h-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      />
+
+      <div className="mb-4 flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-3xl shadow-sm dark:bg-primary-900/40"
+        >
+          {node.icon}
+        </span>
+        <h3
+          className="text-lg font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300"
+          style={{ fontFamily: "var(--font-amiri)" }}
+        >
+          {navLabel(node, lang)}
+        </h3>
+      </div>
+
+      {desc && (
+        <p className="mb-4 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+          {desc}
+        </p>
+      )}
+
+      <div className="mt-auto flex items-center justify-between gap-3">
+        {count > 0 ? (
+          <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-200">
+            {count} {itemsLabel}
+          </span>
+        ) : (
+          <span />
+        )}
+        <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary-700 dark:text-primary-300">
+          {exploreLabel}
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            focusable="false"
+            className={`transition-transform duration-300 ${isRTL ? "rotate-180 group-hover:-translate-x-1" : "group-hover:translate-x-1"}`}
+          >
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </span>
+      </div>
     </Link>
   );
 }
