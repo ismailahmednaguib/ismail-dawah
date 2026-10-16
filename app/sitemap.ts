@@ -11,30 +11,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // الصفحات الثابتة — تُشتق من هيكل التنقّل (lib/navigation).
+  // الصفحات الثابتة — تُشتق من هيكل التنقّل (lib/navigation) مع أولويات حسب العمق.
   const staticPages: MetadataRoute.Sitemap = [];
   const languages = ['ar', 'en'];
 
-  const staticPaths = Array.from(
-    new Set([
-      '',
-      '/search',
-      ...flattenNav(NAV_TREE)
-        .map((node) => navHref(node))
-        .filter((href) => href && href.startsWith('/')),
-    ])
-  );
+  // خريطة: المسار → أقل عمق في شجرة التنقّل (لحساب الأولوية).
+  const pathDepth = new Map<string, number>();
+  pathDepth.set('', 0);
+  pathDepth.set('/search', 2);
+  for (const node of flattenNav(NAV_TREE)) {
+    const href = navHref(node);
+    if (!href || !href.startsWith('/')) continue;
+    const prev = pathDepth.get(href);
+    if (prev === undefined || node.depth < prev) pathDepth.set(href, node.depth);
+  }
+
+  const priorityFor = (depth: number) => {
+    if (depth === 0) return 1;
+    if (depth === 1) return 0.9;
+    if (depth === 2) return 0.7;
+    return 0.5;
+  };
 
   for (const lang of languages) {
-    for (const path of staticPaths) {
+    for (const [path, depth] of pathDepth) {
       staticPages.push({
         url: `${BASE_URL}/${lang}${path}`,
         lastModified: new Date(),
-        changeFrequency: 'weekly',
-        priority: path === '' ? 1 : 0.7,
+        changeFrequency: depth === 0 ? 'daily' : depth === 1 ? 'weekly' : 'monthly',
+        priority: priorityFor(depth),
         alternates: {
           languages: Object.fromEntries(
-            languages.map(l => [l, `${BASE_URL}/${l}${path}`])
+            languages.map((l) => [l, `${BASE_URL}/${l}${path}`])
           ),
         },
       });
@@ -52,6 +60,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     `)
     .eq('status', 'published');
 
+  // أولوية أعلى للفتاوى والمقالات لأنها تتبدّل أكثر.
+  const contentPriority = (type: string) => {
+    if (type === 'fatwa' || type === 'article') return 0.8;
+    if (type === 'lesson' || type === 'khutbah' || type === 'hadith') return 0.7;
+    return 0.6;
+  };
+
   const supportedLanguages = new Set(languages);
   const dynamicPages: MetadataRoute.Sitemap = (content ?? []).flatMap((item: any) => {
     const translations = (item.content_translations ?? []).filter((t: any) =>
@@ -62,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${BASE_URL}/${t.lang}/learn/${item.content_type}/${t.slug}`,
       lastModified: new Date(item.updated_at),
       changeFrequency: 'monthly' as const,
-      priority: 0.8,
+      priority: contentPriority(item.content_type),
       alternates: {
         languages: Object.fromEntries(
           translations

@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero, Callout } from "@/components/ui";
 
 export const dynamic = "force-static";
 
@@ -583,55 +584,32 @@ export default async function AtheismResponsePage({
         ]}
       />
 
-      <section className="container-page py-10 md:py-14">
-        {/* ===== Hero محسّن ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-.52.07-1.04.07-1.56.07-1.95 0-3.79-.5-5.39-1.39C7.44 17.11 9.61 16 12 16s4.56 1.11 5.95 2.61c-1.6.89-3.44 1.39-5.39 1.39-.52 0-1.04 0-1.56-.07zM17.88 18.2c-.16-.4-.35-.79-.57-1.15-.22-.37-.48-.71-.77-1.02-.29-.32-.61-.61-.97-.86-.36-.25-.75-.47-1.17-.64-.42-.17-.86-.3-1.32-.39-.46-.08-.93-.12-1.42-.12s-.96.04-1.42.12c-.46.09-.9.22-1.32.39-.42.17-.81.39-1.17.64-.36.25-.68.54-.97.86-.29.31-.55.65-.77 1.02-.22.36-.41.75-.57 1.15-1.42-1.34-2.3-3.23-2.3-5.33 0-3.87 3.13-7 7-7s7 3.13 7 7c0 2.1-.88 3.99-2.3 5.33z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">
-              🧠 {isRTL ? "شبهات وردود" : "Doubts and Responses"}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-
-            {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+      {gate.visible('k0') && (
+        <PageHero
+          icon="🧠"
+          badge={isRTL ? "🧠 شبهات وردود" : "🧠 Doubts and Responses"}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: isRTL ? "الرئيسية" : "Home", href: `/${l}` },
+            { label: ui.title },
+          ]}
+        >
+          <div className="mt-7">
+            <Callout icon="🕌" tone="gold">
               <p
-                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
                 style={{ fontFamily: "var(--font-quran)" }}
               >
                 {ui.verse}
               </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
-                {ui.verseSource}
-              </p>
-            </div>
+              <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{ui.verseSource}</p>
+            </Callout>
           </div>
-        </div>
+        </PageHero>
+      )}
 
-        </>)}
+      <section className="container-page py-10 md:py-14">
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">

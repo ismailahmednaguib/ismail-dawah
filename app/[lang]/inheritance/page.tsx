@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero, Callout } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -888,51 +889,28 @@ export default async function InheritancePage({
         ]}
       />
 
+      <PageHero
+        icon="📜"
+        badge={isRTL ? "📜 الفرائض" : "📜 Faraid"}
+        title={ui.title}
+        subtitle={ui.description}
+        crumbs={[
+          { label: ui.home, href: `/${l}` },
+          { label: ui.title },
+        ]}
+      />
+
       <section className="container-page py-10 md:py-14">
-        {/* ===== Hero محسّن ===== */}
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">
-              📜 {isRTL ? "الفرائض" : "Faraid"}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
+        <div className="mb-8">
+          <Callout icon="🕌" tone="gold">
+            <p
+              className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+              style={{ fontFamily: "var(--font-quran)" }}
             >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
+              {ui.verse}
             </p>
-
-            {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
-              <p
-                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
-                style={{ fontFamily: "var(--font-quran)" }}
-              >
-                {ui.verse}
-              </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
-                {ui.verseSource}
-              </p>
-            </div>
-          </div>
+            <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{ui.verseSource}</p>
+          </Callout>
         </div>
 
         {/* ===== إحصائيات سريعة ===== */}

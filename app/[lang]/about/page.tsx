@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero } from "@/components/ui";
 
 // ============================================================
 // الأنواع
@@ -610,43 +611,20 @@ export default async function AboutPage({
         ]}
       />
 
+      {gate.visible('k0') && (
+        <PageHero
+          icon="ℹ️"
+          badge={isRTL ? PLATFORM_NAME.ar : PLATFORM_NAME.en}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: ui.home, href: `/${l}` },
+            { label: ui.title },
+          ]}
+        />
+      )}
+
       <section className="container-page py-10 md:py-14">
-        {/* ===== ترويسة ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-20 w-20 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 3a9 9 0 1 0 9 9c0-1.5-.4-3-1.2-4.2A7 7 0 0 1 12 3z" />
-                  <circle cx="17" cy="6" r="1.5" fill="#d4af37" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">
-              ℹ️ {isRTL ? PLATFORM_NAME.ar : PLATFORM_NAME.en}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-          </div>
-        </div>
-
-        </>)}
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">

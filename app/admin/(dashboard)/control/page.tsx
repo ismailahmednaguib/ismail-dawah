@@ -769,6 +769,37 @@ function NavigationTab() {
     </span>
   );
 
+  const resetAll = useCallback(() => {
+    if (!window.confirm('سيتم حذف كل تعديلات القوائم (الأسماء والروابط والترتيب والإخفاء) والرجوع للافتراضي. متابعة؟')) return;
+    setSettings((prev) => ({ ...prev, navigation: {} }));
+    setMessage({ type: 'success', text: 'تمت الاستعادة إلى الافتراضي — اضغط حفظ للتطبيق.' });
+  }, []);
+
+  const exportJson = useCallback(() => {
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'navigation.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [config]);
+
+  const importJson = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result || '{}'));
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('bad');
+        setSettings((prev) => ({ ...prev, navigation: parsed }));
+        setMessage({ type: 'success', text: 'تم استيراد القوائم — اضغط حفظ للتطبيق.' });
+      } catch {
+        setMessage({ type: 'error', text: 'ملف القوائم غير صالح.' });
+      }
+    };
+    reader.readAsText(file);
+  }, []);
+
   const save = useCallback(async () => {
     setSaving(true);
     setMessage(null);
@@ -889,6 +920,36 @@ function NavigationTab() {
         placeholder="ابحث في عناصر القائمة…"
         className="input-islamic w-full max-w-md text-sm"
       />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={exportJson}
+          className="rounded-lg border border-cream-300 bg-white px-3 py-2 text-xs font-bold text-stone-600 hover:bg-cream-100"
+        >
+          ⬇️ تصدير القوائم
+        </button>
+        <label className="cursor-pointer rounded-lg border border-cream-300 bg-white px-3 py-2 text-xs font-bold text-stone-600 hover:bg-cream-100">
+          ⬆️ استيراد القوائم
+          <input
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) importJson(file);
+              e.target.value = '';
+            }}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={resetAll}
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-100"
+        >
+          ♻️ استعادة الافتراضي
+        </button>
+      </div>
 
       <p className="text-xs text-stone-500">
         العنصر الذي بلا رابط يفتح صفحة تلقائية على <code dir="ltr">/topic/&lt;المعرّف&gt;</code> تعرض مواضيعه الفرعية ومحتواه.

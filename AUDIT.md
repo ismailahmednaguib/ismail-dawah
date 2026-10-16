@@ -5,17 +5,17 @@
 | المسار | أسطر | Metadata | TopBar | PageHero | العرض |
 |---|---:|---|:--:|:--:|---|
 | `/{lang}` | 865 | نعم | — | — | نعم |
-| `/{lang}/about` | 1000 | نعم | نعم | — | ثابت |
+| `/{lang}/about` | 978 | نعم | نعم | نعم | ثابت |
 | `/{lang}/account` | 794 | نعم | نعم | — | نعم |
-| `/{lang}/adhkar` | 344 | نعم | نعم | — | ثابت |
+| `/{lang}/adhkar` | 324 | نعم | نعم | نعم | ثابت |
 | `/{lang}/articles` | 1117 | نعم | نعم | نعم | نعم |
-| `/{lang}/atheism-response` | 1008 | نعم | نعم | — | نعم |
-| `/{lang}/bookmarks` | 870 | نعم (layout) | — | — | ثابت |
+| `/{lang}/atheism-response` | 986 | نعم | نعم | نعم | نعم |
+| `/{lang}/bookmarks` | 849 | نعم (layout) | — | نعم | ثابت |
 | `/{lang}/calendar` | 958 | نعم | نعم | — | نعم |
-| `/{lang}/contact` | 964 | نعم | نعم | — | نعم |
-| `/{lang}/daily-wird` | 381 | نعم | نعم | — | ثابت |
+| `/{lang}/contact` | 944 | نعم | نعم | نعم | نعم |
+| `/{lang}/daily-wird` | 358 | نعم | نعم | نعم | ثابت |
 | `/{lang}/dawah` | 140 | نعم | — | نعم | نعم |
-| `/{lang}/dawah-guide` | 1237 | نعم | نعم | — | ثابت |
+| `/{lang}/dawah-guide` | 1215 | نعم | نعم | نعم | ثابت |
 | `/{lang}/doubts` | 784 | نعم | نعم | نعم | نعم |
 | `/{lang}/download` | 855 | نعم | نعم | — | نعم |
 | `/{lang}/embrace-islam` | 1002 | نعم | نعم | — | نعم |
@@ -26,7 +26,7 @@
 | `/{lang}/fiqh` | 168 | نعم | — | — | نعم |
 | `/{lang}/hadith` | 163 | نعم | — | نعم | نعم |
 | `/{lang}/hajj-guide` | 1552 | نعم | نعم | — | ثابت |
-| `/{lang}/inheritance` | 1575 | نعم | نعم | — | نعم |
+| `/{lang}/inheritance` | 1553 | نعم | نعم | نعم | نعم |
 | `/{lang}/khutab` | 836 | نعم (layout) | نعم | — | ثابت |
 | `/{lang}/learn` | 192 | نعم | — | نعم | ثابت |
 | `/{lang}/learn/{type}/{slug}` | 218 | نعم | — | — | ثابت |

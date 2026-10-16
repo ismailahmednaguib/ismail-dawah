@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero, Callout } from "@/components/ui";
 
 // ============================================================
 // الأنواع
@@ -722,55 +723,32 @@ export default async function DawahGuidePage({
         ]}
       />
 
-      <section className="container-page py-10 md:py-14">
-        {/* ===== Hero محسّن ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-12">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">
-              🤝 {isRTL ? "منهج الداعية" : "Da'ee Methodology"}
-            </span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {ui.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {ui.description}
-            </p>
-
-            {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+      {gate.visible('k0') && (
+        <PageHero
+          icon="🤝"
+          badge={isRTL ? "🤝 منهج الداعية" : "🤝 Da'ee Methodology"}
+          title={ui.title}
+          subtitle={ui.description}
+          crumbs={[
+            { label: isRTL ? "الرئيسية" : "Home", href: `/${l}` },
+            { label: ui.title },
+          ]}
+        >
+          <div className="mt-7">
+            <Callout icon="🕌" tone="gold">
               <p
-                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
                 style={{ fontFamily: "var(--font-quran)" }}
               >
                 {ui.verse}
               </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
-                {ui.verseSource}
-              </p>
-            </div>
+              <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{ui.verseSource}</p>
+            </Callout>
           </div>
-        </div>
+        </PageHero>
+      )}
 
-        </>)}
+      <section className="container-page py-10 md:py-14">
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-5">

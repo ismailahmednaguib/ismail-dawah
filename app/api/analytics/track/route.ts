@@ -254,6 +254,9 @@ function okResponse() {
   return NextResponse.json({ ok: true });
 }
 
+// نُنبّه مرّة واحدة فقط إذا كان جدول التحليلات غير موجود (لتفادي إغراق السجلات).
+let analyticsTableMissingNotified = false;
+
 // ============================================================
 // POST /api/analytics/track
 // ============================================================
@@ -365,10 +368,20 @@ export async function POST(req: NextRequest) {
     );
 
     if (result?.error) {
-      console.error(
-        "[AnalyticsTrack] Supabase insert error:",
-        result.error.message
-      );
+      const message = result.error.message ?? "";
+      const tableMissing =
+        /could not find the table|does not exist|schema cache|relation .* does not exist/i.test(message);
+
+      if (tableMissing) {
+        if (!analyticsTableMissingNotified) {
+          analyticsTableMissingNotified = true;
+          console.warn(
+            "[AnalyticsTrack] جدول public.analytics_events غير موجود — نفّذ supabase/migrations/20261016_analytics_events.sql. (تم كتم التنبيه المتكرر)"
+          );
+        }
+      } else {
+        console.error("[AnalyticsTrack] Supabase insert error:", message);
+      }
     }
 
     // دائمًا نرد ok حتى لا نكشف تفاصيل أو نكسر العميل

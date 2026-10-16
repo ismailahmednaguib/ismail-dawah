@@ -7,6 +7,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { PageHero, Callout } from "@/components/ui";
 import AdhkarContent from "./adhkar-content";
 
 // ============================================================
@@ -182,53 +183,32 @@ export default async function AdhkarPage({
         ]}
       />
 
-      <section className="container-page pt-10 md:pt-14">
-        {/* ===== Hero محسّن ===== */}
-        {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden p-8 md:p-10">
-          <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
-
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
-              <span
-                className="flex h-20 w-20 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #06b6d4, #0e7490)" }}
-              >
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
-                </svg>
-              </span>
-            </div>
-
-            <span className="badge-primary mb-5">🤲 {m.title}</span>
-
-            <h1
-              className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              {m.title}
-            </h1>
-
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {m.description}
-            </p>
-
-            {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
+      {gate.visible('k0') && (
+        <PageHero
+          icon="🤲"
+          badge={isRTL ? "الأذكار" : "Adhkar"}
+          title={m.title}
+          subtitle={m.description}
+          crumbs={[
+            { label: isRTL ? "الرئيسية" : "Home", href: `/${l}` },
+            { label: m.title },
+          ]}
+        >
+          <div className="mt-7">
+            <Callout icon="🕌" tone="gold">
               <p
-                className="mb-2 text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
+                className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
                 style={{ fontFamily: "var(--font-quran)" }}
               >
                 {m.verse}
               </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
-                {m.verseSource}
-              </p>
-            </div>
+              <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{m.verseSource}</p>
+            </Callout>
           </div>
-        </div>
+        </PageHero>
+      )}
 
-        </>)}
+      <section className="container-page pt-10 md:pt-14">
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">

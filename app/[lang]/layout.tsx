@@ -59,6 +59,9 @@ export async function generateMetadata({
         en: `${baseUrl}/en`,
         "x-default": `${baseUrl}/ar`,
       },
+      types: {
+        "application/rss+xml": `${baseUrl}/${l}/rss.xml`,
+      },
     },
     openGraph: {
       type: "website",

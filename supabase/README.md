@@ -5,6 +5,7 @@
    - `20261015_public_verified_references.sql`
    - `20261015_content_media.sql`
    - `20261015_learner_content_progress.sql`
+   - `20261016_analytics_events.sql`
 3. راجع سياسات RLS من لوحة Supabase بعد التنفيذ.
 4. ضع `SUPABASE_SERVICE_ROLE_KEY` ومفاتيح الجلسات في بيئة الخادم فقط، ولا تستخدمها في مكونات العميل.
 5. أنشئ bucket الرفع باسم `UPLOAD_BUCKET`، واترك `UPLOAD_AUTO_CREATE_BUCKET=false` في الإنتاج.
