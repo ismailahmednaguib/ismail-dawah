@@ -31,6 +31,7 @@ npm run check:tax                 # ٠ باب فارغ · ٠ باب بأقل م�
 npm run check:fields              # ٠ صفحة مفهوم فارغة
 npm run qa:content                # ٠ ملاحظة جودة (--json للتصحيح الآلي)
 npm run qa:secrets                # ٠ تسريب مفاتيح
+npm run qa:theme                  # ٠ لون هوية قديم
 npm run qa:rls                    # ٠ جدول خاص مكشوف للزائر
 npm run check:links              # ٠ رابط مكسور
 ```
@@ -45,7 +46,7 @@ npm run check:links              # ٠ رابط مكسور
 2. **اقرأ السجل**: مخرجات `npm start`، وسجل الخادم على Vercel (Functions).
 3. **مصادر الأعطال الشائعة** (بالترتيب):
    - جدول أو عمود ناقص في Supabase → نفّذ الـ migration المعلّقة من `supabase/migrations/`.
-   - أسرار بيئة ناقصة (`NEXT_PUBLIC_SUPABASE_URL` · `SUPABASE_SERVICE_KEY` · `SESSION_SECRET`).
+   - أسرار أو إعدادات بيئة ناقصة (`NEXT_PUBLIC_SUPABASE_URL` · `SUPABASE_SERVICE_KEY` · `APP_SESSION_SECRET` · `USER_SESSION_SECRET` · `ADMIN_SESSION_SECRET` · `CSRF_REQUIRE_ORIGIN=true`).
    - تخزين مؤقّت قديم → احذف `.next` وأعد البناء.
 4. **الرجوع للخلف**: `git revert <commit>` ثم أعد النشر. لا تُعد كتابة التاريخ.
 
@@ -53,7 +54,7 @@ npm run check:links              # ٠ رابط مكسور
 
 | ما تريده | المكان |
 |---|---|
-| حدّ المحاولات لكل نطاق (دخول · تسجيل · أسئلة · نشرة…) | `/admin/security` |
+| حدّ المحاولات لكل نطاق (دخول · تسجيل · أسئلة · نشرة · مساعد) | `/admin/security` |
 | اعتماد الترجمات الآلية أو إرجاعها | `/admin/quality` |
 | مراجعة النصوص الشرعية | `/admin/review` |
 | إحصاءات الزيارات وأكثر الصفحات | `/admin/analytics` |
@@ -97,6 +98,14 @@ npm run check:links              # ٠ رابط مكسور
 |---|---|---|
 | `20261017_rls_hardening.sql` | 🚨 يُشغّل RLS على الجداول الخاصة ويسحب صلاحيات `anon` | جداول خاصة مقروءة لأي زائر (منها `admin_users`) |
 | `20261017_security_and_review.sql` | جدول `rate_limits` + دالة ذرّية + عمود `reviewed_at` | حدّ المعدّل يعمل في الذاكرة فقط · تاريخ المراجعة لا يُسجَّل |
+| `20261016_dawah_journey.sql` | جدول اشتراكات رحلة البريد الاختيارية | نموذج الرحلة يتوقف بأمان حتى تُنفَّذ الهجرة |
+| `20261016_dawah_assignments.sql` | توزيع طلبات الحوار على فريق الدعوة | يظهر تنبيه migration في لوحة الأسئلة حتى تُنفَّذ |
+
+المساعد المقيّد لا يحتاج جدولًا جديدًا: يقرأ المحتوى المنشور فقط، ويظل مغلقًا حتى ضبط `AI_ASSISTANT_API_KEY` و`AI_ASSISTANT_ENDPOINT` وتفعيله من `/admin/settings`.
+
+واجهة المحتوى العامة `/api/public/content` مغلقة افتراضيًا وتُفعّل من `/admin/settings`. حدّها المعدّل يُضبط من `/admin/security` تحت «واجهة المحتوى العامة».
+
+رحلة البريد لا تُفعّل إلا من `/admin/settings` بعد ضبط `CRON_SECRET` و`RESEND_API_KEY` و`EMAIL_FROM`، ويستدعي Vercel المسار `/api/cron/dawah-journey` مرة يوميًا.
 
 بعد التنفيذ: `npm run qa:rls` (يجب ٠ مكشوف) وأعد تحميل `/admin/security`.
 

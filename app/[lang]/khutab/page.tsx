@@ -163,10 +163,10 @@ const UI: Record<string,
 /** تدرّجات لونية تُوزّع على البطاقات بالتناوب (نفس تدرّجات التصميم). */
 const KHUTBAH_GRADIENTS = [
   "from-primary-500 to-primary-700",
-  "from-rose-500 to-rose-700",
-  "from-indigo-500 to-indigo-700",
-  "from-amber-500 to-amber-700",
-  "from-purple-500 to-purple-700",
+  "from-gold-500 to-gold-700",
+  "from-night-500 to-night-700",
+  "from-primary-600 to-primary-800",
+  "from-gold-600 to-gold-800",
 ];
 
 /** أسماء التصنيف الافتراضية عند غياب التصنيفات في الـCMS. */
@@ -323,7 +323,7 @@ export default function KhutabPage() {
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
         {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-amber-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-gold-800 dark:from-amber-950/30 dark:via-gray-900 dark:to-primary-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">

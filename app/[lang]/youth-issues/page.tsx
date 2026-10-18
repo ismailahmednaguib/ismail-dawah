@@ -170,7 +170,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "وَلْيَسْتَعْفِفِ الَّذِينَ لَا يَجِدُونَ نِكَاحًا حَتَّىٰ يُغْنِيَهُمُ اللَّهُ مِن فَضْلِهِ",
     ayahSource: { ar: "سورة النور — الآية 33", en: "Surah An-Nur — Verse 33" },
-    gradient: "from-rose-500 to-rose-700",
+    gradient: "from-primary-500 to-primary-700",
   },
   {
     id: "social-media-addiction",
@@ -202,7 +202,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا",
     ayahSource: { ar: "سورة النساء — الآية 103", en: "Surah An-Nisa — Verse 103" },
-    gradient: "from-purple-500 to-purple-700",
+    gradient: "from-night-500 to-night-700",
   },
   {
     id: "depression-anxiety",
@@ -218,7 +218,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
     ayahSource: { ar: "سورة الرعد — الآية 28", en: "Surah Ar-Ra'd — Verse 28" },
-    gradient: "from-indigo-500 to-indigo-700",
+    gradient: "from-primary-500 to-primary-700",
   },
   {
     id: "loss-of-purpose",
@@ -250,7 +250,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "الْأَخِلَّاءُ يَوْمَئِذٍ بَعْضُهُمْ لِبَعْضٍ عَدُوٌّ إِلَّا الْمُتَّقِينَ",
     ayahSource: { ar: "سورة الزخرف — الآية 67", en: "Surah Az-Zukhruf — Verse 67" },
-    gradient: "from-amber-500 to-amber-700",
+    gradient: "from-gold-500 to-gold-700",
   },
   {
     id: "financial-pressure",
@@ -266,7 +266,7 @@ const ISSUES: YouthIssue[] = [
     },
     ayah: "وَلَا تَتَمَنَّوْا مَا فَضَّلَ اللَّهُ بِهِ بَعْضَكُمْ عَلَىٰ بَعْضٍ",
     ayahSource: { ar: "سورة النساء — الآية 32", en: "Surah An-Nisa — Verse 32" },
-    gradient: "from-orange-500 to-orange-700",
+    gradient: "from-gold-500 to-gold-700",
   },
   {
     id: "religious-disconnection",
@@ -409,14 +409,14 @@ export default async function YouthIssuesPage({
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
         {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden border-2 border-violet-200 bg-gradient-to-br from-violet-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-violet-800 dark:from-violet-950/30 dark:via-gray-900 dark:to-primary-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-primary-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #8b5cf6, #0e7490)" }}
+                style={{ background: "linear-gradient(135deg, #0e7490, #d4af37)" }}
               >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />

@@ -43,7 +43,7 @@ export function IconCard({
     teal: "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400",
     gold: "bg-gold-100 dark:bg-gold-700/20 text-gold-600 dark:text-gold-400",
     emerald: "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400",
-    purple: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
+    purple: "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400",
   };
 
   const content = (

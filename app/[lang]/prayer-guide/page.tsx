@@ -244,7 +244,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 3,
     icon: "📖",
-    gradient: "from-purple-500 to-purple-700",
+    gradient: "from-primary-500 to-primary-700",
     title: { ar: "دعاء الاستفتاح والفاتحة", en: "Opening Du'a and Al-Fatihah" },
     desc: {
       ar: "اقرأ دعاء الاستفتاح، ثم استعذ بالله، ثم اقرأ الفاتحة.",
@@ -260,7 +260,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 4,
     icon: "🙇",
-    gradient: "from-amber-500 to-amber-700",
+    gradient: "from-gold-500 to-gold-700",
     title: { ar: "الركوع", en: "Ruku (Bowing)" },
     desc: {
       ar: "كبّر وانحنِ حتى تطمئن راكعاً، وسبّح ثلاثاً: سبحان ربي العظيم.",
@@ -276,7 +276,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 5,
     icon: "🧍",
-    gradient: "from-rose-500 to-rose-700",
+    gradient: "from-gold-500 to-gold-700",
     title: { ar: "الرفع من الركوع", en: "Rising from Ruku" },
     desc: {
       ar: "ارفع من الركوع قائلاً: سمع الله لمن حمده، ثم: ربنا ولك الحمد.",
@@ -292,7 +292,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 6,
     icon: "🤲",
-    gradient: "from-indigo-500 to-indigo-700",
+    gradient: "from-primary-500 to-primary-700",
     title: { ar: "السجود", en: "Sujud (Prostration)" },
     desc: {
       ar: "اسجد على سبعة أعضاء، وسبّح: سبحان ربي الأعلى ثلاثاً.",
@@ -324,7 +324,7 @@ const STEPS: PrayerStep[] = [
   {
     num: 8,
     icon: "☮️",
-    gradient: "from-pink-500 to-pink-700",
+    gradient: "from-night-500 to-night-700",
     title: { ar: "التشهد والتسليم", en: "Tashahhud and Taslim" },
     desc: {
       ar: "في آخر الصلاة، اقرأ التشهد والصلاة الإبراهيمية، ثم سلّم يميناً وشمالاً.",

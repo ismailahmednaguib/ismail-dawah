@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import { rateLimitGuard } from "@/lib/rate-limit";
+import { isAllowedMutationOrigin } from "@/lib/security/origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -944,6 +945,13 @@ export async function GET(req: NextRequest) {
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  if (!isAllowedMutationOrigin(req)) {
+    return jsonResponse(
+      { ok: false, error: "الطلب مرفوض من مصدر غير موثوق." },
+      403
+    );
+  }
+
   const limited = await rateLimitGuard(req, 'questions');
   if (limited) return limited;
 

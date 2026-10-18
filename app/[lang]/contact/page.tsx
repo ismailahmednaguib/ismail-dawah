@@ -2,12 +2,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { handleContactForm } from "@/lib/email";
 import { CONTACT_INFO, SITE_NAME, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
-import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
@@ -414,17 +414,6 @@ export default async function ContactPage({
       />
 
       <Header lang={l} />
-
-      <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: ui.home, href: `/${l}` },
-          { label: ui.title },
-        ]}
-      />
 
       {gate.visible('k1') && (
         <PageHero

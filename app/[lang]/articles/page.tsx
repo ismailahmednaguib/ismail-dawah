@@ -2,10 +2,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero } from "@/components/ui";
@@ -112,8 +112,8 @@ const CATEGORIES: Category[] = [
   { id: "quran", ar: "القرآن", en: "Quran", icon: "📖", color: "from-primary-500 to-primary-600" },
   { id: "fiqh", ar: "الفقه", en: "Fiqh", icon: "⚖️", color: "from-primary-500 to-primary-600" },
   { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "🌿", color: "from-primary-500 to-primary-600" },
-  { id: "stories", ar: "القصص", en: "Stories", icon: "📜", color: "from-amber-500 to-amber-600" },
-  { id: "family", ar: "الأسرة", en: "Family", icon: "🏡", color: "from-rose-500 to-rose-600" },
+  { id: "stories", ar: "القصص", en: "Stories", icon: "📜", color: "from-gold-500 to-gold-600" },
+  { id: "family", ar: "الأسرة", en: "Family", icon: "🏡", color: "from-gold-500 to-gold-600" },
 ];
 
 // ============================================================
@@ -487,17 +487,6 @@ export default async function ArticlesPage({
       />
 
       <Header lang={l} />
-
-      <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: ui.home, href: `/${l}` },
-          { label: ui.title },
-        ]}
-      />
 
       {gate.visible('k0') && (
         <PageHero

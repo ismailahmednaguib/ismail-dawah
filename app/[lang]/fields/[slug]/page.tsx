@@ -208,7 +208,6 @@ export default async function FieldPage({
   }
 
   const fieldColor = (term: PublicTerm) => term.color ?? "from-primary-500 to-primary-600";
-  const color = fieldColor(field);
   const icon = field.icon ?? "📖";
   const kindLabel = ui.kinds[taxKind ?? "field"] ?? ui.kinds.field;
 

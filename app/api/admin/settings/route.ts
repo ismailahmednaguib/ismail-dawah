@@ -79,7 +79,7 @@ function settingsRowsToRecord(rows: SettingsRow[]): Record<string, unknown> {
 function settingsToRows(settings: Record<string, unknown>) {
   const rows: Array<Record<string, unknown>> = [];
   // مفاتيح غير مرتبطة بلغة (تُخزَّن مرة واحدة لا لكل لغة).
-  const nonLocalized = new Set(['pageSections', 'sectionTitles', 'hiddenPages', 'navigation']);
+  const nonLocalized = new Set(['pageSections', 'sectionTitles', 'hiddenPages', 'navigation', 'dawahJourney', 'assistant']);
 
   for (const [rawKey, value] of Object.entries(settings)) {
     const key = rawKey === 'siteName'

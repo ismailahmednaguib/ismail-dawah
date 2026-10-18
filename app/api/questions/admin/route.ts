@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import { isOwnerEmail } from "@/lib/admin/owner";
+import { isAllowedMutationOrigin } from "@/lib/security/origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -1110,6 +1111,13 @@ export async function GET(req: NextRequest) {
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  if (!isAllowedMutationOrigin(req)) {
+    return jsonResponse(
+      { ok: false, error: "الطلب مرفوض من مصدر غير موثوق." },
+      403
+    );
+  }
+
   const ip = getClientIP(req);
   const userAgent = getUserAgent(req);
 

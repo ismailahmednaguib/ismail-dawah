@@ -193,6 +193,16 @@ export default async function LearnContentPage({ params }: PageProps) {
                 👁️ {content.views} {currentLang === 'ar' ? 'مشاهدة' : 'views'}
               </span>
             )}
+            {content.reviewer_id && (
+              <span className="rounded-full bg-primary-50 px-3 py-1 text-primary-800 dark:bg-primary-900/40 dark:text-primary-200">
+                ✓ {currentLang === 'ar' ? 'اعتمده' : 'Reviewed by'} {content.reviewerName || (currentLang === 'ar' ? 'مراجع علمي' : 'a scholar reviewer')}
+              </span>
+            )}
+            {(content.reviewed_at || content.reviewer_id) && (
+              <span>
+                🗓️ {currentLang === 'ar' ? 'آخر مراجعة' : 'Last review'}: {new Date(content.reviewed_at || content.updated_at).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US')}
+              </span>
+            )}
           </div>
         </header>
 
@@ -214,7 +224,7 @@ export default async function LearnContentPage({ params }: PageProps) {
 
         {/* المحتوى */}
         <div
-          className="prose prose-cyan max-w-none dark:prose-invert prose-headings:text-primary-950 dark:prose-headings:text-white"
+          className="prose max-w-none dark:prose-invert prose-headings:text-primary-950 dark:prose-headings:text-white prose-a:text-primary-700 dark:prose-a:text-primary-300"
           dangerouslySetInnerHTML={{ __html: safeBody }}
         />
 
@@ -237,6 +247,8 @@ export default async function LearnContentPage({ params }: PageProps) {
                         className="h-auto w-full rounded-xl object-cover"
                       />
                     ) : (
+                      // روابط الوسائط الخارجية لا يمكن إضافتها كلها إلى remotePatterns؛ تُعرض بعد تنظيف URL من الخادم.
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" decoding="async" />
                     )
                   )}

@@ -2,11 +2,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, languages, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { faqJsonLd } from "@/lib/seo";
-import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
@@ -420,7 +420,7 @@ const UI: Record<string,
     verseSource: "سورة النحل — الآية 43",
     totalQuestions: "سؤال",
     totalCategories: "تصنيف",
-    languages: "لغتان",
+    languages: "لغات متاحة",
     alwaysUpdated: "تحديث مستمر",
     relatedTitle: "صفحات ذات صلة",
     aboutPage: "من نحن",
@@ -457,7 +457,7 @@ const UI: Record<string,
     verseSource: "Surah An-Nahl — Verse 43",
     totalQuestions: "Questions",
     totalCategories: "Categories",
-    languages: "Languages",
+    languages: "Available languages",
     alwaysUpdated: "Always Updated",
     relatedTitle: "Related Pages",
     aboutPage: "About Us",
@@ -632,17 +632,6 @@ export default async function FaqPage({
 
       <Header lang={l} />
 
-      <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: ui.home, href: `/${l}` },
-          { label: ui.title },
-        ]}
-      />
-
       {gate.visible('k0') && (
         <PageHero
           icon="❓"
@@ -675,7 +664,7 @@ export default async function FaqPage({
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="❓" label={ui.totalQuestions} value={FAQS.length} color="primary" />
           <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
-          <StatCard icon="🌍" label={ui.languages} value={2} color="primary" />
+          <StatCard icon="🌍" label={ui.languages} value={languages.length} color="primary" />
           <StatCard icon="🔄" label={ui.alwaysUpdated} value="✓" color="gold" />
         </div>
 

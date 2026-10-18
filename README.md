@@ -21,10 +21,11 @@ npm run dev          # خادم التطوير على http://localhost:3000
 | `npm start` | تشغيل نسخة الإنتاج |
 | `npm run verify` | الأنواع + اختبارات الوحدة + البناء (البوّابة الأساسية) |
 | `npm run typecheck` | فحص الأنواع وحده |
-| `npm run test:unit` | اختبارات الوحدة (مُشغّل Node المدمج، بلا اعتماديات) |
+| `npm run test:unit` | اختبارات الوحدة المتسلسلة داخل العملية (بلا اعتماديات) |
 | `npm run lint` | ESLint |
 | `npm run qa:content` | جودة المحتوى (حقول فارغة · حروف دخيلة · تكرار) — `--json` للتصحيح الآلي |
 | `npm run qa:secrets` | فحص تسرّب المفاتيح إلى الكود أو المتصفح |
+| `npm run qa:theme` | فحص عدم رجوع ألوان الهوية القديمة |
 | `npm run qa:citations` | النصوص الشرعية التي تحتاج مرجعًا موثّقًا (`--strict` لإلزامها) |
 | `npm run qa:matrix` | تغطية كل باب بأنواع المحتوى وكشف الناقص |
 | `npm run check:smoke` | كل روابط المحتوى المنشور (٤٣٨ رابطًا) — يحتاج خادمًا يعمل |
@@ -69,5 +70,13 @@ tests/                     اختبارات الوحدة
   حرّر `PARENTS` في `scripts/relink-taxonomies.mjs` ثم شغّله (معاينة ثم `--commit`).
 - **لا تكتب حدّ معدّل في الذاكرة فقط** — استخدم `rateLimitGuard` من `lib/rate-limit.ts`.
 - أي ميزة جديدة يجب أن تكون **قابلة للتحكم من اللوحة**.
+
+واجهة المحتوى العامة اختيارية ومغلقة افتراضيًا: فعّل `publicApiEnabled` من `/admin/settings`، ثم استخدم
+`/api/public/content?lang=ar&type=article&q=...` لقراءة العناوين والملخصات المنشورة فقط.
+وبعد التفعيل نفسه يمكن استخدام `/api/public/prayer-times?latitude=30.04&longitude=31.24&method=3` لمواقيت الصلاة العامة.
+
+المساعد المعرفي المقيّد في صفحة البحث مغلق افتراضيًا؛ لتفعيله اضبط `AI_ASSISTANT_API_KEY` و`AI_ASSISTANT_ENDPOINT` على الخادم ثم فعّله من `/admin/settings`. لا يستخدم إلا المحتوى المنشور ويعرض مصادر الإجابة.
+
+المسارات الحساسة تتحقق من `Origin`/`Referer` في الإنتاج؛ اترك `CSRF_REQUIRE_ORIGIN=true`، واستخدم `CSRF_ALLOWED_ORIGINS` للنطاقات الإضافية الموثوقة فقط.
 
 التفاصيل الكاملة في **`AGENTS.md`**.

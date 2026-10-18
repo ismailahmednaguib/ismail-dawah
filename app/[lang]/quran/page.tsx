@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { SURAHS } from "@/lib/data";
@@ -400,7 +400,7 @@ export default async function QuranPage({
         name: isRTL ? "القرآن الكريم" : "The Holy Quran",
         inLanguage: l,
         numberOfPages: 604,
-        numberOfChapters: surahs.length || 114,
+        numberOfChapters: surahs.length,
         author: {
           "@type": "Organization",
           name: isRTL ? "الله سبحانه وتعالى" : "Allah (God)",
@@ -507,13 +507,13 @@ export default async function QuranPage({
           <StatCard
             icon="📖"
             label={ui.totalSurahs}
-            value={formatNumber(surahs.length || 114, l)}
+            value={formatNumber(surahs.length, l)}
             color="primary"
           />
           <StatCard
             icon="✨"
             label={ui.totalAyahs}
-            value={formatNumber(totalAyahs || 6236, l)}
+            value={formatNumber(totalAyahs, l)}
             color="gold"
           />
           <StatCard

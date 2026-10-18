@@ -2,13 +2,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero } from "@/components/ui";
-import TopBar from "@/components/TopBar";
 import { getPublicList, type PublicItem } from "@/lib/learn/public";
 
 export const dynamic = "force-dynamic";
@@ -454,22 +454,6 @@ export default async function DoubtsPage({
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd),
         }}
-      />
-
-      <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          {
-            label: ui.home,
-            href: `/${l}`,
-          },
-          {
-            label: ui.title,
-          },
-        ]}
       />
 
       {gate.visible('k0') && (

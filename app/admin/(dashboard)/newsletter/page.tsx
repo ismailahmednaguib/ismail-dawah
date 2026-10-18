@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import NewsletterSubscribersClient from '@/components/admin/NewsletterSubscribersClient';
+import DawahJourneySubscribersClient from '@/components/admin/DawahJourneySubscribersClient';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
 
@@ -20,6 +21,7 @@ export default async function NewsletterPage() {
         <p className="mt-2 text-sm leading-6 text-stone-500">راجع المشتركين وأوقف أو أعد تفعيل الاشتراك من مكان واحد.</p>
       </div>
       <NewsletterSubscribersClient />
+      <div className="mt-8"><DawahJourneySubscribersClient /></div>
     </div>
   );
 }

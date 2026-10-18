@@ -1,10 +1,10 @@
 // app/[lang]/adhkar/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
@@ -171,17 +171,6 @@ export default async function AdhkarPage({
       />
 
       <Header lang={l} />
-
-      <TopBar
-        title={m.title}
-        subtitle={m.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: m.home, href: `/${l}` },
-          { label: m.title },
-        ]}
-      />
 
       {gate.visible('k0') && (
         <PageHero

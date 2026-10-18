@@ -706,7 +706,7 @@ export default function MemorizationPlan({
           <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
             {ui.totalMemorized}
           </p>
-          <p className="mt-1 text-2xl font-black text-cyan-700 dark:text-cyan-300">
+          <p className="mt-1 text-2xl font-black text-primary-700 dark:text-primary-300">
             {formatNumber(totalMemorized, L)} / {formatNumber(TOTAL_AYAHS, L)}
           </p>
         </div>
@@ -724,7 +724,7 @@ export default function MemorizationPlan({
           <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
             {ui.streak}
           </p>
-          <p className="mt-1 text-2xl font-black text-amber-700 dark:text-amber-300">
+          <p className="mt-1 text-2xl font-black text-gold-700 dark:text-gold-300">
             {formatNumber(state.streak, L)}
           </p>
         </div>
@@ -753,7 +753,7 @@ export default function MemorizationPlan({
             id="memorization-surah"
             value={selectedSurah}
             onChange={(e) => setSelectedSurah(Number(e.target.value))}
-            className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-600 dark:border-night-700 dark:bg-night-800 dark:text-white"
+            className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-primary-600 dark:border-night-700 dark:bg-night-800 dark:text-white"
           >
             {SURAHS.map((s) => (
               <option key={s.n} value={s.n}>
@@ -778,7 +778,7 @@ export default function MemorizationPlan({
             max={50}
             value={state.dailyGoal}
             onChange={onGoalChange}
-            className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-cyan-600 dark:border-night-700 dark:bg-night-800 dark:text-white"
+            className="w-full rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-900 outline-none transition focus:border-primary-600 dark:border-night-700 dark:bg-night-800 dark:text-white"
           />
 
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -794,14 +794,14 @@ export default function MemorizationPlan({
             {surah.n}. {isRTL ? surah.ar : surah.en}
           </h3>
 
-          <span className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-700 dark:bg-cyan-950/35 dark:text-cyan-300">
+          <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-bold text-primary-700 dark:bg-primary-950/35 dark:text-primary-300">
             {formatNumber(memorizedInSurah, L)} / {formatNumber(surah.a, L)}
           </span>
         </div>
 
         <div className="mb-2 h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-night-700">
           <div
-            className="h-3 rounded-full bg-gradient-to-r from-cyan-600 to-primary-500 transition-all"
+            className="h-3 rounded-full bg-gradient-to-r from-primary-600 to-primary-500 transition-all"
             style={{ width: `${Math.min(100, surahPercent)}%` }}
           />
         </div>
@@ -812,19 +812,19 @@ export default function MemorizationPlan({
       </div>
 
       {/* Overall progress */}
-      <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5 dark:border-amber-900/30 dark:bg-amber-950/15">
+      <div className="mb-6 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/30 dark:bg-gold-950/15">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-lg font-black text-slate-900 dark:text-white">
             {ui.totalProgress}
           </h3>
-          <span className="text-sm font-black text-amber-700 dark:text-amber-300">
+          <span className="text-sm font-black text-gold-700 dark:text-gold-300">
             {totalPercent.toFixed(1)}%
           </span>
         </div>
 
         <div className="h-3 w-full overflow-hidden rounded-full bg-white/70 dark:bg-night-800">
           <div
-            className="h-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 transition-all"
+            className="h-3 rounded-full bg-gradient-to-r from-gold-500 to-gold-600 transition-all"
             style={{ width: `${Math.min(100, totalPercent)}%` }}
           />
         </div>
@@ -840,7 +840,7 @@ export default function MemorizationPlan({
           <button
             type="button"
             onClick={() => addToSurah(1)}
-            className="rounded-xl bg-cyan-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-cyan-800"
+            className="rounded-xl bg-primary-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-800"
           >
             {ui.addOne}
           </button>
@@ -848,7 +848,7 @@ export default function MemorizationPlan({
           <button
             type="button"
             onClick={() => addToSurah(5)}
-            className="rounded-xl bg-cyan-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-cyan-700"
+            className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
           >
             {ui.addFive}
           </button>
@@ -864,7 +864,7 @@ export default function MemorizationPlan({
           <button
             type="button"
             onClick={() => addToSurah(state.dailyGoal)}
-            className="rounded-xl bg-amber-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-amber-700"
+            className="rounded-xl bg-gold-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-gold-700"
           >
             {ui.addGoal}
           </button>
@@ -884,7 +884,7 @@ export default function MemorizationPlan({
         <button
           type="button"
           onClick={resetSurahProgress}
-          className="rounded-xl border-2 border-amber-300 px-4 py-2 text-sm font-bold text-amber-700 transition hover:bg-amber-50 dark:border-amber-800/50 dark:text-amber-300 dark:hover:bg-amber-950/20"
+          className="rounded-xl border-2 border-gold-300 px-4 py-2 text-sm font-bold text-gold-700 transition hover:bg-gold-50 dark:border-gold-800/50 dark:text-gold-300 dark:hover:bg-gold-950/20"
         >
           {ui.resetSurah}
         </button>

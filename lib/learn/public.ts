@@ -386,7 +386,10 @@ export async function getPublicTaxonomyCounts(): Promise<Record<string, number>>
   const supabase = getClient();
   const [taxRes, termRes] = await Promise.all([
     supabase.from('taxonomies').select('id, slug'),
-    supabase.from('content_terms').select('taxonomy_id'),
+    supabase
+      .from('content_terms')
+      .select('taxonomy_id, content:content_id!inner(status)')
+      .eq('content.status', 'published'),
   ]);
   if (taxRes.error || termRes.error) return {};
 

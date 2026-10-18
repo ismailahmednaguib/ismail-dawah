@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/dawah-journey",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

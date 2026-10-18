@@ -7,8 +7,9 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
-import type { Lang } from "@/lib/i18n";
-
+import { languages, type Lang } from "@/lib/i18n";
+
+
 import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع
@@ -141,7 +142,7 @@ const UI: Record<string,
     fieldsPageDesc: "17 مجالاً شرعياً متنوعاً.",
     fatwasCount: "فتوى",
     categoriesCount: "فئات",
-    languages: "لغتان",
+    languages: "لغات متاحة",
     freeAlways: "مجاني",
     heroVerse: "﴿ وَالْمُؤْمِنُونَ وَالْمُؤْمِنَاتُ بَعْضُهُمْ أَوْلِيَاءُ بَعْضٍ ﴾",
     heroVerseSource: "سورة التوبة — الآية 71",
@@ -193,7 +194,7 @@ const UI: Record<string,
     fieldsPageDesc: "17 diverse Islamic fields.",
     fatwasCount: "Fatwas",
     categoriesCount: "Categories",
-    languages: "Languages",
+    languages: "Available languages",
     freeAlways: "Free",
     heroVerse: "\"The believing men and believing women are allies of one another.\"",
     heroVerseSource: "Surah At-Tawbah — Verse 71",
@@ -235,10 +236,10 @@ type ApiFatwa = {
 
 // نصوص حرفية حتى يلتقطها Tailwind عند البناء.
 const GRADIENTS = [
-  "from-pink-500 to-rose-600",
   "from-primary-500 to-primary-700",
-  "from-purple-500 to-purple-700",
-  "from-rose-500 to-rose-700",
+  "from-primary-500 to-primary-700",
+  "from-gold-500 to-gold-700",
+  "from-night-500 to-night-700",
 ];
 
 // يحوّل عنصر CMS إلى شكل الفتوى الذي يتوقعه التصميم الحالي.
@@ -377,18 +378,18 @@ export default function WomenFatwasPage() {
       <section className="container-page py-10 md:py-14">
         {/* ===== Hero محسّن ===== */}
         {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden border-2 border-pink-200 bg-gradient-to-br from-pink-50 via-cream-dark to-rose-50 p-8 md:p-12 dark:border-pink-800 dark:from-pink-950/30 dark:via-gray-900 dark:to-rose-950/30">
+        <div className="card relative mb-8 overflow-hidden border-2 border-primary-200 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 md:p-12 dark:border-primary-800 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
 
           {/* زخارف */}
-          <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-pink-200/40 blur-3xl dark:bg-pink-800/20" />
-          <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-rose-200/40 blur-3xl dark:bg-rose-800/20" />
+          <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-primary-200/40 blur-3xl dark:bg-primary-800/20" />
+          <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-gold-200/40 blur-3xl dark:bg-gold-800/20" />
 
           <div className="relative mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
-                style={{ background: "linear-gradient(135deg, #ec4899, #d4af37)" }}
+                style={{ background: "linear-gradient(135deg, #0e7490, #d4af37)" }}
               >
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
@@ -432,7 +433,7 @@ export default function WomenFatwasPage() {
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📜" label={ui.fatwasCount} value={fatwas.length} color="primary" />
           <StatCard icon="📂" label={ui.categoriesCount} value={categories.length} color="gold" />
-          <StatCard icon="🌍" label={ui.languages} value={2} color="primary" />
+          <StatCard icon="🌍" label={ui.languages} value={languages.length} color="primary" />
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 
@@ -457,19 +458,19 @@ export default function WomenFatwasPage() {
                 icon="🎯"
                 title={ui.why1Title}
                 description={ui.why1Desc}
-                color="from-pink-500 to-pink-600"
+                color="from-primary-500 to-primary-600"
               />
               <WhyCard
                 icon="💎"
                 title={ui.why2Title}
                 description={ui.why2Desc}
-                color="from-rose-500 to-rose-600"
+                color="from-gold-500 to-gold-600"
               />
               <WhyCard
                 icon="🌸"
                 title={ui.why3Title}
                 description={ui.why3Desc}
-                color="from-purple-500 to-purple-600"
+                color="from-night-500 to-night-600"
               />
             </div>
           </div>
@@ -519,8 +520,8 @@ export default function WomenFatwasPage() {
             onClick={() => setFilter("all")}
             className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
               filter === "all"
-                ? "bg-gradient-to-r from-pink-500 to-rose-600 text-white shadow-lg shadow-pink-500/25"
-                : "border border-slate-200 bg-white text-slate-600 hover:border-pink-300 hover:bg-pink-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
+                ? "bg-gradient-to-r from-primary-500 to-primary-700 text-white shadow-lg shadow-primary-500/25"
+                : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
             }`}
           >
             <span>🌸</span>
@@ -548,8 +549,8 @@ export default function WomenFatwasPage() {
                 onClick={() => setFilter(cat.ar)}
                 className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all ${
                   isActive
-                    ? "bg-gradient-to-r from-pink-500 to-rose-600 text-white shadow-lg shadow-pink-500/25"
-                    : "border border-slate-200 bg-white text-slate-600 hover:border-pink-300 hover:bg-pink-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
+                    ? "bg-gradient-to-r from-primary-500 to-primary-700 text-white shadow-lg shadow-primary-500/25"
+                    : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
                 }`}
               >
                 <span>{icon}</span>
@@ -669,7 +670,7 @@ export default function WomenFatwasPage() {
                     </div>
 
                     <span
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-pink-100 text-lg font-black text-pink-700 transition-transform dark:bg-pink-900/40 dark:text-pink-300 ${
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-lg font-black text-primary-700 transition-transform dark:bg-primary-900/40 dark:text-primary-300 ${
                         isOpen ? "rotate-45" : ""
                       }`}
                     >
@@ -680,8 +681,8 @@ export default function WomenFatwasPage() {
                   {isOpen && (
                     <div className="border-t border-slate-100 p-6 pt-4 dark:border-night-700">
                       {/* الإجابة */}
-                      <div className="mb-4 rounded-2xl border-r-4 border-pink-500 bg-pink-50 p-5 dark:border-pink-400 dark:bg-pink-950/20 rtl:border-l-4 rtl:border-r-0">
-                        <p className="mb-2 text-sm font-black text-pink-700 dark:text-pink-300">
+                      <div className="mb-4 rounded-2xl border-r-4 border-primary-500 bg-primary-50 p-5 dark:border-primary-400 dark:bg-primary-950/20 rtl:border-l-4 rtl:border-r-0">
+                        <p className="mb-2 text-sm font-black text-primary-700 dark:text-primary-300">
                           💡 {ui.answer}
                         </p>
                         <p className="leading-relaxed text-slate-700 dark:text-slate-200">

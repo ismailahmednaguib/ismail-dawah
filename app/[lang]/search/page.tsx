@@ -8,8 +8,11 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { PageHero } from '@/components/ui';
+import ConstrainedAssistant from '@/components/assistant/ConstrainedAssistant';
+import { getSiteSettings } from '@/lib/content';
+import { normalizeAssistantConfig } from '@/lib/assistant-core';
 
-const COPY: Record<string, any> = {
+const COPY: Record<Lang, { title: string; subtitle: string; meta: string }> = {
   ar: {
     title: 'البحث الموحد',
     subtitle: 'ابحث في كل محتوى المنصة: القرآن، الأحاديث، المقالات، الفتاوى، والدروس',
@@ -47,6 +50,9 @@ export default async function SearchPage({
 
   const currentLang = lang as Lang;
   const copy = COPY[currentLang];
+  const settings = await getSiteSettings();
+  const assistant = normalizeAssistantConfig(settings.assistant);
+  const assistantEnabled = assistant.enabled && Boolean(process.env.AI_ASSISTANT_API_KEY);
 
   return (
     <>
@@ -71,6 +77,7 @@ export default async function SearchPage({
           <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-primary-50 dark:bg-night-800" />}>
             <SearchAdvanced lang={currentLang} />
           </Suspense>
+          <ConstrainedAssistant lang={currentLang} enabled={assistantEnabled} />
         </div>
       </main>
       <Footer lang={currentLang} />

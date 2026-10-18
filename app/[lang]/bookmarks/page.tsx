@@ -158,8 +158,8 @@ const CATEGORY_CONFIG: Record<string, { ar: string; en: string; icon: string; co
   quran: { ar: "قرآن", en: "Quran", icon: "📖", color: "from-primary-500 to-primary-600" },
   adhkar: { ar: "أذكار", en: "Adhkar", icon: "🤲", color: "from-primary-500 to-primary-600" },
   fatwa: { ar: "فتاوى", en: "Fatwas", icon: "⚖️", color: "from-primary-500 to-primary-600" },
-  articles: { ar: "مقالات", en: "Articles", icon: "✍️", color: "from-amber-500 to-amber-600" },
-  stories: { ar: "قصص", en: "Stories", icon: "📜", color: "from-purple-500 to-purple-600" },
+  articles: { ar: "مقالات", en: "Articles", icon: "✍️", color: "from-gold-500 to-gold-600" },
+  stories: { ar: "قصص", en: "Stories", icon: "📜", color: "from-gold-500 to-gold-600" },
   guides: { ar: "أدلة", en: "Guides", icon: "🗺️", color: "from-primary-500 to-primary-600" },
   other: { ar: "أخرى", en: "Other", icon: "📌", color: "from-gray-500 to-gray-600" },
 };
@@ -208,6 +208,21 @@ function createId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
+function normalizeBookmark(value: unknown): Bookmark {
+  const item = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+
+  return {
+    id: String(item.id ?? createId()),
+    title: String(item.title ?? ""),
+    url: String(item.url ?? "#"),
+    category: String(item.category ?? "other"),
+    createdAt: Number(item.createdAt ?? Date.now()),
+    excerpt: item.excerpt ? String(item.excerpt) : undefined,
+  };
+}
+
 function normalize(value: string): string {
   return value.trim().toLowerCase();
 }
@@ -241,14 +256,7 @@ export default function BookmarksPage() {
 
         if (Array.isArray(parsed)) {
           const normalized: Bookmark[] = parsed
-            .map((item: any) => ({
-              id: String(item?.id ?? createId()),
-              title: String(item?.title ?? ""),
-              url: String(item?.url ?? "#"),
-              category: String(item?.category ?? "other"),
-              createdAt: Number(item?.createdAt ?? Date.now()),
-              excerpt: item?.excerpt ? String(item.excerpt) : undefined,
-            }))
+            .map(normalizeBookmark)
             .filter(
               (item) =>
                 item.id &&
@@ -367,14 +375,7 @@ export default function BookmarksPage() {
 
         if (Array.isArray(parsed)) {
           const imported: Bookmark[] = parsed
-            .map((item: any) => ({
-              id: String(item?.id ?? createId()),
-              title: String(item?.title ?? ""),
-              url: String(item?.url ?? "#"),
-              category: String(item?.category ?? "other"),
-              createdAt: Number(item?.createdAt ?? Date.now()),
-              excerpt: item?.excerpt ? String(item.excerpt) : undefined,
-            }))
+            .map(normalizeBookmark)
             .filter((item) => item.id && item.title && isSafeUrl(item.url));
 
           // دمج مع الموجود (تجنب التكرار)

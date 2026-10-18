@@ -21,7 +21,7 @@ const CONTENT_TABLES = [
   'content_media',
 ] as const;
 
-const SETTINGS_TABLES = ['site_settings'] as const;
+const SETTINGS_TABLES = ['site_settings', 'dawah_journey_subscribers', 'dawah_request_assignments'] as const;
 
 const LABELS: Record<string, string> = {
   content: 'عناصر المحتوى',
@@ -31,6 +31,8 @@ const LABELS: Record<string, string> = {
   content_references: 'المراجع الشرعية',
   content_media: 'الوسائط',
   site_settings: 'إعدادات المنصة',
+  dawah_journey_subscribers: 'مشتركو رحلة غير المسلمين',
+  dawah_request_assignments: 'توزيع طلبات الحوار',
 };
 
 async function countRows(table: string): Promise<number | null> {

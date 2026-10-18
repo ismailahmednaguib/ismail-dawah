@@ -1,8 +1,10 @@
 import 'server-only';
 
-/** البريد الموثوق لحساب مالك المنصة. يتم ضبطه في متغير بيئة ولا يظهر للمتصفح. */
+/** البريد الموثوق لحساب مالك المنصة. يبقى على الخادم ولا يظهر للمتصفح. */
+const DEFAULT_OWNER_EMAIL = 'ismailahmednaguib@gmail.com';
+
 export function getOwnerEmail(): string {
-  return process.env.OWNER_EMAIL?.trim().toLowerCase() || '';
+  return process.env.OWNER_EMAIL?.trim().toLowerCase() || DEFAULT_OWNER_EMAIL;
 }
 
 export function isOwnerEmail(email: string | null | undefined): boolean {

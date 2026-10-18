@@ -75,6 +75,7 @@ export interface Content {
   sort_order: number;
   author_id: string | null;
   reviewer_id: string | null;
+  reviewed_at: string | null;
   published_at: string | null;
   expires_at: string | null;
   views: number;

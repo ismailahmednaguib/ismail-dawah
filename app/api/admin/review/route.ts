@@ -106,6 +106,7 @@ export async function POST(req: NextRequest) {
         .update({
           status: 'published',
           reviewer_id: session.userId,
+          reviewed_at: new Date().toISOString(),
           published_at: new Date().toISOString(),
           updated_by: session.userId,
         })
@@ -145,6 +146,7 @@ export async function POST(req: NextRequest) {
         .update({
           status: 'draft',
           reviewer_id: session.userId,
+          reviewed_at: null,
           updated_by: session.userId,
         })
         .eq('id', content_id);

@@ -2,14 +2,14 @@
 // دليل المجالات الشرعية — يعتمد نظام التصميم الموحّد (components/ui).
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, languages, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { getPublicTaxonomies, getPublicTaxonomyCounts, type PublicTerm } from "@/lib/learn/public";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, SectionHeader, CardGrid, InfoCard, Callout, RelatedGrid } from "@/components/ui";
+import { PageHero, SectionHeader, CardGrid, InfoCard, Callout, RelatedGrid, EmptyState } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,7 @@ type UILang = {
   totalFields: string;
   available: string;
   itemUnit: string;
-  soon: string;
+  noFields: string;
   languages: string;
   comprehensive: string;
   freeAccess: string;
@@ -63,8 +63,8 @@ const UI: Record<string, UILang> = {
     totalFields: "مجال شرعي",
     available: "مجال متاح الآن",
     itemUnit: "مادة",
-    soon: "قريبًا",
-    languages: "لغتان",
+    noFields: "لا توجد مجالات منشورة حاليًا",
+    languages: "لغات متاحة",
     comprehensive: "شامل",
     freeAccess: "مجاني بالكامل",
     introTitle: "لماذا مجالات متعددة؟",
@@ -93,8 +93,8 @@ const UI: Record<string, UILang> = {
     totalFields: "Islamic Fields",
     available: "Fields available now",
     itemUnit: "items",
-    soon: "Coming soon",
-    languages: "Languages",
+    noFields: "No published fields are available yet",
+    languages: "Available languages",
     comprehensive: "Comprehensive",
     freeAccess: "100% Free",
     introTitle: "Why Multiple Fields?",
@@ -178,11 +178,13 @@ export default async function FieldsPage({
     getPublicTaxonomies(L, "field"),
     getPublicTaxonomyCounts(),
   ]);
-  // الفعّالة أولًا، ثم الفارغة (قريبًا) في الآخر.
-  const fields = [...fieldsRaw].sort(
+  // لا نعرض بابًا بلا مادة منشورة؛ هذا يمنع صفحات «قريبًا» الفارغة من الظهور للزائر.
+  const fields = fieldsRaw
+    .filter((field) => (counts[field.slug] ?? 0) > 0)
+    .sort(
     (a, b) => (counts[b.slug] ?? 0) - (counts[a.slug] ?? 0)
   );
-  const activeCount = fields.filter((f) => (counts[f.slug] ?? 0) > 0).length;
+  const activeCount = fields.length;
   const fieldColor = (term: PublicTerm) => term.color ?? "from-primary-500 to-primary-600";
 
   const jsonLd = {
@@ -227,7 +229,7 @@ export default async function FieldsPage({
           gate.visible("k1")
             ? [
                 { value: String(activeCount), label: ui.available },
-                { value: "2", label: ui.languages },
+                { value: String(languages.length), label: ui.languages },
                 { value: "100%", label: ui.comprehensive },
                 { value: "✓", label: ui.freeAccess },
               ]
@@ -277,12 +279,13 @@ export default async function FieldsPage({
                   icon={field.icon ?? "📖"}
                   title={field.name}
                   cta={ui.explore}
-                  gradientClass={count > 0 ? fieldColor(field) : undefined}
-                  badge={count > 0 ? `${count} ${ui.itemUnit}` : ui.soon}
+                  gradientClass={fieldColor(field)}
+                  badge={`${count} ${ui.itemUnit}`}
                 />
               );
             })}
           </CardGrid>
+          {fields.length === 0 && <EmptyState icon="📭" title={ui.noFields} />}
         </section>
       )}
 

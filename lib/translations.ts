@@ -182,9 +182,9 @@ const arTranslations = {
 
   // 📊 الإحصائيات
   sections_count: "قسم ومحتوى",
-  languages_count: "لغتان",
+  languages_count: "لغات متاحة",
   surahs_count: "سورة",
-  completely_free: "مجاني 100%",
+  completely_free: "متاح مجانًا",
 
   // 📖 أقسام الصفحة الرئيسية
   learn_guides: "تعلّم ودلائل",
@@ -566,7 +566,7 @@ const enTranslations: TranslationDictionary = {
   sections_count: "Sections",
   languages_count: "Languages",
   surahs_count: "Surahs",
-  completely_free: "100% Free",
+  completely_free: "Free access",
 
   // 📖 Homepage Section Titles
   learn_guides: "Learn & Guides",

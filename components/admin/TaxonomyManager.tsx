@@ -19,6 +19,8 @@ const KIND_OPTIONS = [
   { value: 'tag', label: 'وسم' },
   { value: 'field', label: 'مجال' },
   { value: 'series', label: 'سلسلة' },
+  { value: 'religion', label: 'دين أو اتجاه فكري' },
+  { value: 'religion_resource', label: 'محور دعوي' },
 ];
 
 function makeSlug(value: string): string {

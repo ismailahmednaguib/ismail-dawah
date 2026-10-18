@@ -2,10 +2,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
@@ -286,12 +286,12 @@ function categoryIcon(categoryId: string): string {
 function categoryColor(categoryId: string): string {
   const colors: Record<string, string> = {
     prayer: "from-primary-500 to-primary-600",
-    fasting: "from-indigo-500 to-indigo-600",
-    zakat: "from-amber-500 to-amber-600",
-    hajj: "from-rose-500 to-rose-600",
-    family: "from-pink-500 to-pink-600",
+    fasting: "from-primary-500 to-primary-600",
+    zakat: "from-gold-500 to-gold-600",
+    hajj: "from-gold-500 to-gold-600",
+    family: "from-primary-500 to-primary-600",
     transactions: "from-primary-500 to-primary-600",
-    aqeedah: "from-purple-500 to-purple-600",
+    aqeedah: "from-night-500 to-night-600",
     ethics: "from-primary-500 to-primary-600",
   };
   return colors[categoryId] ?? "from-slate-500 to-slate-600";
@@ -440,17 +440,6 @@ export default async function FatwaPage({
       />
 
       <Header lang={l} />
-
-      <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: ui.home, href: `/${l}` },
-          { label: ui.title },
-        ]}
-      />
 
       {gate.visible('k0') && (
         <PageHero

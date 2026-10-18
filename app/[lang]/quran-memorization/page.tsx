@@ -2,7 +2,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+import { SURAHS } from "@/lib/data";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
@@ -221,6 +223,7 @@ export default async function QuranMemorizationPage({
   const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "quran-memorization", l);
   const ui = UI[l];
   const isRTL = l === "ar";
+  const totalAyahs = SURAHS.reduce((sum, surah) => sum + surah.ayahs, 0);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -369,8 +372,8 @@ export default async function QuranMemorizationPage({
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatCard icon="📖" label={ui.statsTotalSurahs} value={114} color="primary" />
-          <StatCard icon="✨" label={ui.statsTotalAyahs} value={6236} color="gold" />
+          <StatCard icon="📖" label={ui.statsTotalSurahs} value={SURAHS.length} color="primary" />
+          <StatCard icon="✨" label={ui.statsTotalAyahs} value={totalAyahs} color="gold" />
           <StatCard icon="📊" label={ui.statsTracking} value="✓" color="primary" />
           <StatCard icon="🎁" label={ui.statsFree} value="100%" color="gold" />
         </div>

@@ -103,6 +103,28 @@ function onlyVerifiedReferences<T extends { verified?: boolean }>(
   return (references ?? []).filter((reference) => reference.verified === true);
 }
 
+async function addReviewerName(
+  supabase: ReturnType<typeof getClient>,
+  content: Record<string, any>
+) {
+  const reviewerId = typeof content.reviewer_id === 'string' ? content.reviewer_id : '';
+  if (!reviewerId) return content;
+
+  try {
+    const { data } = await supabase
+      .from('user_roles')
+      .select('full_name')
+      .eq('user_id', reviewerId)
+      .maybeSingle();
+    return {
+      ...content,
+      reviewerName: typeof data?.full_name === 'string' && data.full_name.trim() ? data.full_name.trim() : null,
+    };
+  } catch {
+    return { ...content, reviewerName: null };
+  }
+}
+
 const MAX_PER_PAGE = 48;
 const MAX_SEARCH_LENGTH = 120;
 
@@ -254,7 +276,7 @@ export async function getContentBySlug(
   if (content.content_type !== type) return null;
 
   return {
-    ...content,
+    ...(await addReviewerName(supabase, content)),
     translation: data,
     references: onlyVerifiedReferences(content.content_references),
     media: content.content_media ?? [],
@@ -271,7 +293,7 @@ export async function getContentWithFallback(
   lang: string,
   type: string,
   slug: string
-) {
+): Promise<any> {
   const supabase = getClient();
 
   // أولاً: حاول إيجاد الترجمة المطلوبة
@@ -283,7 +305,7 @@ export async function getContentWithFallback(
     translated.content?.content_type === type
   ) {
     return {
-      ...translated.content,
+      ...(await addReviewerName(supabase, translated.content)),
       translation: translated,
       isTranslated: true,
       translationLang: lang,
@@ -304,7 +326,7 @@ export async function getContentWithFallback(
 
   if (fallback && fallback.content?.status === 'published') {
     return {
-      ...fallback.content,
+      ...(await addReviewerName(supabase, fallback.content)),
       translation: fallback,
       isTranslated: false,
       translationLang: fallback.lang,

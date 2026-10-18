@@ -381,6 +381,7 @@ export async function approveContent(
     .update({
       status: 'published',
       reviewer_id: reviewerId,
+      reviewed_at: new Date().toISOString(),
       published_at: new Date().toISOString(),
       updated_by: reviewerId,
     })
@@ -411,6 +412,7 @@ export async function rejectContent(
     .update({
       status: 'rejected',
       reviewer_id: reviewerId,
+      reviewed_at: null,
       updated_by: reviewerId,
     })
     .eq('id', contentId);

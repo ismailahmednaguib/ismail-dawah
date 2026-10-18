@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, languages, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
@@ -107,7 +108,7 @@ const UI: Record<string, UILang> = {
     hadith: "الْمُسْلِمُونَ عَلَى شُرُوطِهِمْ",
     hadithSource: "رواه أبو داود والحاكم وصححه",
     sectionsCount: "بند",
-    languagesCount: "لغتان",
+    languagesCount: "لغات متاحة",
     lastUpdateLabel: "آخر تحديث",
     freeAlways: "مجاني دائماً",
     ctaTitle: "هل عندك سؤال عن الشروط؟",
@@ -141,7 +142,7 @@ const UI: Record<string, UILang> = {
     hadith: "Muslims are bound by their conditions.",
     hadithSource: "Narrated by Abu Dawud and Al-Hakim",
     sectionsCount: "Sections",
-    languagesCount: "Languages",
+    languagesCount: "Available languages",
     lastUpdateLabel: "Last Update",
     freeAlways: "Always Free",
     ctaTitle: "Have a question about the terms?",
@@ -682,7 +683,7 @@ export default async function TermsPage({
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📋" label={ui.sectionsCount} value={SECTIONS.length} color="primary" />
-          <StatCard icon="🌍" label={ui.languagesCount} value={2} color="gold" />
+          <StatCard icon="🌍" label={ui.languagesCount} value={languages.length} color="gold" />
           <StatCard
             icon="📅"
             label={ui.lastUpdateLabel}

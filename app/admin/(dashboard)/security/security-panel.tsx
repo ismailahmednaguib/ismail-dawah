@@ -23,6 +23,8 @@ const SCOPE_HINTS: Record<string, string> = {
   register: "منع إنشاء حسابات وهمية بالجملة",
   questions: "منع إغراق صندوق الأسئلة",
   newsletter: "منع إساءة استخدام النشرة",
+  "public-api": "حماية واجهة المحتوى العامة",
+  assistant: "تقليل إساءة استخدام المساعد وتكلفة مزود الذكاء الاصطناعي",
   analytics: "يُطبَّق في الذاكرة (حجم مرتفع)",
   verify: "حماية مسار التحقق",
   upload: "يُطبَّق في الذاكرة داخل تقييد الرفع",
@@ -128,7 +130,7 @@ export default function SecurityPanel() {
       </div>
 
       {message && (
-        <p className="border-b border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-700 dark:text-emerald-300">
+        <p className="border-b border-primary-500/20 bg-primary-500/10 px-4 py-2 text-sm text-primary-700 dark:text-primary-300">
           {message}
         </p>
       )}

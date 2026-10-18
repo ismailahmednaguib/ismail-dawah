@@ -68,6 +68,8 @@ const PRIVATE_TABLES = [
   'site_settings',
   'review_queue',
   'newsletter_subscribers',
+  'dawah_journey_subscribers',
+  'dawah_request_assignments',
   'learner_content_progress',
   'user_favorites',
   'user_questions',
@@ -161,7 +163,7 @@ export default async function SecurityPage() {
                   <td className="p-3 font-mono text-xs" dir="ltr">{row.key}</td>
                   <td className="p-3 font-mono text-xs opacity-70" dir="ltr">{row.value}</td>
                   <td className="p-3">{row.why}</td>
-                  <td className="p-3 text-emerald-600 dark:text-emerald-400">✔ مفعَّل</td>
+                  <td className="p-3 text-primary-600 dark:text-primary-400">✔ مفعَّل</td>
                 </tr>
               ))}
             </tbody>
@@ -186,7 +188,7 @@ export default async function SecurityPage() {
             </span>
           )}
           {leaking.length === 0 && open.length === 0 && (
-            <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+            <span className="rounded-full bg-primary-500/10 px-3 py-1 text-xs font-bold text-primary-700 dark:text-primary-300">
               ✔ لا جدول خاص مكشوف
             </span>
           )}
@@ -236,7 +238,7 @@ export default async function SecurityPage() {
         <ul className="divide-y divide-black/5 dark:divide-white/10">
           {HARDENING.map((row) => (
             <li key={row.item} className="flex flex-wrap items-start gap-3 p-4">
-              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              <span className="rounded-full bg-primary-500/10 px-2 py-0.5 text-xs font-bold text-primary-700 dark:text-primary-300">
                 {row.state}
               </span>
               <div className="min-w-0 flex-1">

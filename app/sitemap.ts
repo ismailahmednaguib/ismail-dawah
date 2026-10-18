@@ -3,6 +3,7 @@ import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { NAV_TREE, flattenNav, navHref } from '@/lib/navigation';
 import { encodeUrl } from '@/lib/url';
+import { RELIGION_ENTRIES, RELIGION_RESOURCES } from '@/lib/religions';
 
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
 
@@ -27,6 +28,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const prev = pathDepth.get(href);
     if (prev === undefined || node.depth < prev) pathDepth.set(href, node.depth);
   }
+  // صفحات الأديان والموارد معروفة برمجيًا لكنها ليست كلها روابط مستقلة في القائمة.
+  for (const entry of RELIGION_ENTRIES) pathDepth.set(`/religions/${entry.slug}`, 2);
+  for (const resource of RELIGION_RESOURCES) pathDepth.set(`/religions/resources/${resource.slug}`, 2);
 
   const priorityFor = (depth: number) => {
     if (depth === 0) return 1;

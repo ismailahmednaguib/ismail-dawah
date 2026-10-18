@@ -2,13 +2,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, languages, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero } from "@/components/ui";
+import { applyNavigationConfig, flattenNav, NAV_TREE } from "@/lib/navigation";
 
 // ============================================================
 // الأنواع
@@ -137,9 +138,9 @@ const UI: Record<string, UILang> = {
       "المحتوى العام للتوعية، ولا يغني عن مراجعة أهل العلم في النوازل والمسائل الدقيقة.",
     statsTitle: "المنصة في أرقام",
     statsSections: "قسم ومحتوى",
-    statsLanguages: "لغتان",
+    statsLanguages: "لغات متاحة",
     statsTools: "أداة عملية",
-    statsFree: "مجاني 100%",
+    statsFree: "مفتوح الوصول",
   },
   en: {
     title: "About Us",
@@ -185,9 +186,9 @@ const UI: Record<string, UILang> = {
       "General content is for awareness and does not replace consulting qualified scholars in detailed or unusual matters.",
     statsTitle: "Platform in Numbers",
     statsSections: "Sections",
-    statsLanguages: "Languages",
+    statsLanguages: "Available languages",
     statsTools: "Practical Tools",
-    statsFree: "100% Free",
+    statsFree: "Open access",
   },
 };
 
@@ -563,6 +564,12 @@ export default async function AboutPage({
   const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "about", l);
   const ui = UI[l];
   const isRTL = l === "ar";
+  const aboutNav = applyNavigationConfig(
+    (__pageSettings as Record<string, unknown>).navigation,
+    NAV_TREE
+  );
+  const sectionCount = Math.max(0, flattenNav(aboutNav).filter((node) => node.key !== "home").length);
+  const toolCount = aboutNav.find((node) => node.key === "tools")?.children?.length ?? 0;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -600,17 +607,6 @@ export default async function AboutPage({
 
       <Header lang={l} />
 
-      <TopBar
-        title={ui.title}
-        subtitle={ui.subtitle}
-        backHref={`/${l}`}
-        showBookmark={false}
-        breadcrumb={[
-          { label: ui.home, href: `/${l}` },
-          { label: ui.title },
-        ]}
-      />
-
       {gate.visible('k0') && (
         <PageHero
           icon="ℹ️"
@@ -628,10 +624,10 @@ export default async function AboutPage({
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <StatCard number="35+" label={ui.statsSections} icon="📚" />
-          <StatCard number="2" label={ui.statsLanguages} icon="🌍" />
-          <StatCard number="15+" label={ui.statsTools} icon="🛠️" />
-          <StatCard number="100%" label={ui.statsFree} icon="✨" />
+          <StatCard number={String(sectionCount)} label={ui.statsSections} icon="📚" />
+          <StatCard number={String(languages.length)} label={ui.statsLanguages} icon="🌍" />
+          <StatCard number={String(toolCount)} label={ui.statsTools} icon="🛠️" />
+          <StatCard number="✓" label={ui.statsFree} icon="✨" />
         </div>
 
         </>)}
@@ -734,7 +730,9 @@ export default async function AboutPage({
 
             <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
               <p className="text-sm font-black text-gold-700 dark:text-gold-300">
-                {isRTL ? "محتوى نافع • تصميم مريح • لغتان • بدون تعقيد" : "Beneficial content • Comfortable design • Two languages • No complexity"}
+                {isRTL
+                  ? `محتوى نافع • تصميم مريح • ${languages.length} لغات متاحة • بدون تعقيد`
+                  : `Beneficial content • Comfortable design • ${languages.length} available languages • No complexity`}
               </p>
             </div>
           </div>

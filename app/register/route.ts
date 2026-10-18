@@ -12,6 +12,7 @@ import {
   setUserSessionCookies,
   type Role,
 } from "@/lib/auth";
+import { isAllowedMutationOrigin } from "@/lib/security/origin";
 
 // ============================================================
 // Types
@@ -235,6 +236,13 @@ async function queryRowByEmail(
 // ============================================================
 
 export async function POST(req: NextRequest) {
+  if (!isAllowedMutationOrigin(req)) {
+    return NextResponse.json(
+      { ok: false, error: "الطلب مرفوض من مصدر غير موثوق." },
+      { status: 403 }
+    );
+  }
+
   try {
     let body: RegisterBody;
 

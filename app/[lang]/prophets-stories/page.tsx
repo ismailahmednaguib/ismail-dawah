@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Lang } from "@/lib/i18n";
+import { languages, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
@@ -135,7 +136,7 @@ const PROPHETS: Prophet[] = [
     id: "ibrahim",
     icon: "🔥",
     order: 3,
-    gradient: "from-amber-500 to-amber-700",
+    gradient: "from-gold-500 to-gold-700",
     tags: {
       ar: ["التوحيد", "الخلة", "الكعبة", "التضحية"],
       en: ["Tawhid", "Friendship with Allah", "Kaaba", "Sacrifice"],
@@ -179,7 +180,7 @@ const PROPHETS: Prophet[] = [
     id: "musa",
     icon: "🌊",
     order: 4,
-    gradient: "from-indigo-500 to-indigo-700",
+    gradient: "from-primary-500 to-primary-700",
     tags: {
       ar: ["التوراة", "فرعون", "البحر", "العدل"],
       en: ["Torah", "Pharaoh", "Sea", "Justice"],
@@ -311,7 +312,7 @@ const PROPHETS: Prophet[] = [
     id: "yusuf",
     icon: "🌟",
     order: 7,
-    gradient: "from-violet-500 to-violet-700",
+    gradient: "from-night-500 to-night-700",
     tags: {
       ar: ["العفة", "الصبر", "التعبير", "العفو"],
       en: ["Chastity", "Patience", "Interpretation", "Forgiveness"],
@@ -443,7 +444,7 @@ const PROPHETS: Prophet[] = [
     id: "yunus",
     icon: "🐋",
     order: 10,
-    gradient: "from-cyan-500 to-cyan-700",
+    gradient: "from-primary-500 to-primary-700",
     tags: {
       ar: ["الحوت", "الدعاء", "التوبة", "الرحمة"],
       en: ["Whale", "Supplication", "Repentance", "Mercy"],
@@ -552,7 +553,7 @@ const UI: Record<string,
     verseSource: "سورة هود — الآية 120",
     prophetsCount: "نبي ورسول",
     lessonsCount: "درس مستفاد",
-    languages: "لغتان",
+    languages: "لغات متاحة",
     searchLabel: "بحث ذكي",
     introTitle: "لماذا قصص الأنبياء؟",
     introDesc:
@@ -592,7 +593,7 @@ const UI: Record<string,
     verseSource: "Surah Hud — Verse 120",
     prophetsCount: "Prophets",
     lessonsCount: "Lessons",
-    languages: "Languages",
+    languages: "Available languages",
     searchLabel: "Smart Search",
     introTitle: "Why Prophets' Stories?",
     introDesc:
@@ -846,7 +847,7 @@ export default async function ProphetsStoriesPage({
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="🕌" label={ui.prophetsCount} value={PROPHETS.length} color="primary" />
           <StatCard icon="💡" label={ui.lessonsCount} value={`${formatNumber(totalLessons, l)}+`} color="gold" />
-          <StatCard icon="🌍" label={ui.languages} value={2} color="primary" />
+          <StatCard icon="🌍" label={ui.languages} value={languages.length} color="primary" />
           <StatCard icon="🔍" label={ui.searchLabel} value="✓" color="gold" />
         </div>
 

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, requireAuthResponse } from "@/lib/auth";
+import { isAllowedMutationOrigin } from "@/lib/security/origin";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,13 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!isAllowedMutationOrigin(request)) {
+    return NextResponse.json(
+      { ok: false, error: "untrusted_origin" },
+      { status: 403 }
+    );
+  }
+
   const auth = await requireAuthResponse(request, authRedirect(request));
   if (!auth.ok) return auth.response;
 
@@ -185,6 +193,13 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if (!isAllowedMutationOrigin(request)) {
+    return NextResponse.json(
+      { ok: false, error: "untrusted_origin" },
+      { status: 403 }
+    );
+  }
+
   const auth = await requireAuthResponse(request, authRedirect(request));
   if (!auth.ok) return auth.response;
 

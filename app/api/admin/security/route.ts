@@ -21,6 +21,8 @@ const SCOPE_LABELS: Record<string, string> = {
   register: 'إنشاء حساب',
   questions: 'إرسال سؤال',
   newsletter: 'الاشتراك في النشرة',
+  'public-api': 'واجهة المحتوى العامة',
+  assistant: 'أسئلة المساعد المقيّد',
   analytics: 'أحداث التحليلات',
   verify: 'روابط التحقق',
   upload: 'رفع الملفات',

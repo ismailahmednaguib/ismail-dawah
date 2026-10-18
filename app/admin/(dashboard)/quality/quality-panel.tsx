@@ -3,6 +3,7 @@
 // طابور مراجعة الترجمات: اعتماد أو إلغاء، مع ملخّص جودة يُحدَّث لحظيًّا.
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 
 type Row = {
   id: string;
@@ -23,7 +24,16 @@ type ApiResponse = {
   filter?: string;
   counts?: { returned: number; missingBody: number; shortBody: number };
   stats?: { pending: number; machine: number; reviewed: number; total: number };
-  citations?: { id: string; lang: string; slug: string; title: string; mentions: number }[];
+  citations?: {
+    id: string;
+    contentId: string;
+    lang: string;
+    slug: string;
+    title: string;
+    mentions: number;
+    references: number;
+    verifiedReferences: number;
+  }[];
   rows?: Row[];
   canReview?: boolean;
 };
@@ -105,7 +115,7 @@ export default function QualityPanel() {
           </div>
           <div className="h-3 min-w-[200px] flex-1 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
             <div
-              className="h-full rounded-full bg-emerald-500 transition-all"
+              className="h-full rounded-full bg-primary-500 transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -134,13 +144,15 @@ export default function QualityPanel() {
           <ul className="mt-3 space-y-1 text-sm">
             {data.citations?.map((row) => (
               <li key={row.id} className="flex items-center justify-between gap-3 border-t border-black/5 py-1.5 dark:border-white/10">
-                <span className="truncate">
+                <Link href={`/admin/content/${row.contentId}`} className="truncate font-bold text-primary-700 underline-offset-4 hover:underline dark:text-primary-300">
                   <span className="rounded bg-black/5 px-1.5 py-0.5 text-xs dark:bg-white/10">
                     {row.lang}
                   </span>{" "}
                   {row.title}
+                </Link>
+                <span className="shrink-0 text-xs opacity-70">
+                  {row.mentions} إشارة · {row.references === 0 ? "بلا مرجع" : `${row.references} مرجع بلا اعتماد`}
                 </span>
-                <span className="shrink-0 text-xs opacity-70">{row.mentions} إشارة</span>
               </li>
             ))}
           </ul>
@@ -169,7 +181,7 @@ export default function QualityPanel() {
         </div>
 
         {message && (
-          <p className="border-b border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-700 dark:text-emerald-300">
+          <p className="border-b border-primary-500/20 bg-primary-500/10 px-4 py-2 text-sm text-primary-700 dark:text-primary-300">
             {message}
           </p>
         )}
@@ -226,7 +238,7 @@ export default function QualityPanel() {
                     </td>
                     <td className="p-3 text-xs">
                       {row.is_reviewed ? (
-                        <span className="text-emerald-600 dark:text-emerald-400">
+                        <span className="text-primary-600 dark:text-primary-400">
                           ✔ مُعتمَدة
                           {row.reviewed_at
                             ? ` · ${new Date(row.reviewed_at).toLocaleDateString("ar")}`

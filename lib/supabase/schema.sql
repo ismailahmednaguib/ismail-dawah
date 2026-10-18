@@ -57,6 +57,7 @@ create table content (
   sort_order int not null default 0,
   author_id uuid references auth.users(id),
   reviewer_id uuid references auth.users(id),
+  reviewed_at timestamptz,
   published_at timestamptz,
   expires_at timestamptz,
   views int not null default 0,

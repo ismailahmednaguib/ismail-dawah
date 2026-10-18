@@ -1,6 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { DEFAULT_DAWAH_JOURNEY_CONFIG } from '@/lib/dawah-journey';
+import { DEFAULT_ASSISTANT_CONFIG } from '@/lib/assistant-core';
 
 type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
@@ -39,6 +41,9 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   meetingTime: { ar: '', en: '' },
   meetingPlace: { ar: '', en: '' },
   showPrayerBar: false,
+  publicApiEnabled: false,
+  dawahJourney: DEFAULT_DAWAH_JOURNEY_CONFIG,
+  assistant: DEFAULT_ASSISTANT_CONFIG,
 };
 
 function text(value: unknown): string {
@@ -182,6 +187,35 @@ export default function SiteSettingsClient() {
         [lang]: value,
       },
     }));
+  };
+
+  const setJourney = (patch: Record<string, unknown>) => {
+    setSettings((current) => ({
+      ...current,
+      dawahJourney: {
+        ...DEFAULT_DAWAH_JOURNEY_CONFIG,
+        ...(current.dawahJourney && typeof current.dawahJourney === 'object' ? current.dawahJourney : {}),
+        ...patch,
+      },
+    }));
+  };
+
+  const setJourneyDay = (index: number, field: 'subject' | 'body', lang: 'ar' | 'en', value: string) => {
+    setSettings((current) => {
+      const journey = current.dawahJourney && typeof current.dawahJourney === 'object'
+        ? current.dawahJourney
+        : DEFAULT_DAWAH_JOURNEY_CONFIG;
+      const days = Array.isArray(journey.days) ? [...journey.days] : [...DEFAULT_DAWAH_JOURNEY_CONFIG.days];
+      const day = days[index] && typeof days[index] === 'object' ? days[index] : DEFAULT_DAWAH_JOURNEY_CONFIG.days[index];
+      days[index] = {
+        ...day,
+        [field]: {
+          ...(day[field] && typeof day[field] === 'object' ? day[field] : {}),
+          [lang]: value,
+        },
+      };
+      return { ...current, dawahJourney: { ...journey, days } };
+    });
   };
 
   const save = async () => {
@@ -349,6 +383,83 @@ export default function SiteSettingsClient() {
               </div>
             </div>
           ))}
+        </div>
+      </Section>
+
+      <Section title="رحلة غير المسلم البريدية" description="فعّل رحلة اختيارية من سبعة أيام وعدّل رسائلها. لن تُرسل أي رسالة ما لم تفعّلها وتضبط مزود البريد في بيئة الخادم.">
+        <div className="space-y-5">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/60 p-4">
+            <input
+              type="checkbox"
+              checked={Boolean(settings.dawahJourney?.enabled)}
+              onChange={(event) => setJourney({ enabled: event.target.checked })}
+              className="mt-1 h-4 w-4 accent-primary-700"
+            />
+            <span>
+              <span className="block text-sm font-black text-primary-950">تفعيل الاشتراك في الرحلة</span>
+              <span className="mt-1 block text-xs leading-6 text-stone-500">يظهر النموذج في «اختبر مسارك الدعوي» فقط عند التفعيل.</span>
+            </span>
+          </label>
+          <InputField
+            label="الفاصل بين الرسائل بالساعات"
+            value={String(settings.dawahJourney?.intervalHours ?? 24)}
+            onChange={(value) => setJourney({ intervalHours: Math.max(1, Math.min(168, Number(value) || 24)) })}
+            dir="ltr"
+          />
+          <div className="space-y-4">
+            {DEFAULT_DAWAH_JOURNEY_CONFIG.days.map((day, index) => (
+              <div key={day.href + index} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+                <p className="mb-3 text-sm font-black text-primary-950">اليوم {index + 1}</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <TextareaField label="موضوع الرسالة — العربية" value={text(settings.dawahJourney?.days?.[index]?.subject?.ar) || day.subject.ar} onChange={(value) => setJourneyDay(index, 'subject', 'ar', value)} rows={2} />
+                  <TextareaField label="Subject — English" value={text(settings.dawahJourney?.days?.[index]?.subject?.en) || day.subject.en} onChange={(value) => setJourneyDay(index, 'subject', 'en', value)} rows={2} />
+                  <TextareaField label="نص الرسالة — العربية" value={text(settings.dawahJourney?.days?.[index]?.body?.ar) || day.body.ar} onChange={(value) => setJourneyDay(index, 'body', 'ar', value)} rows={4} />
+                  <TextareaField label="Email body — English" value={text(settings.dawahJourney?.days?.[index]?.body?.en) || day.body.en} onChange={(value) => setJourneyDay(index, 'body', 'en', value)} rows={4} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      <Section title="الواجهات العامة" description="واجهات قراءة عامة اختيارية للمطورين: عناوين وملخصات المحتوى المنشور ومواقيت الصلاة، دون بيانات خاصة.">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
+          <input type="checkbox" checked={Boolean(settings.publicApiEnabled)} onChange={(event) => setValue('publicApiEnabled', event.target.checked)} className="mt-1 h-4 w-4 accent-primary-700" />
+          <span>
+              <span className="block text-sm font-black text-primary-950">تفعيل الواجهات العامة</span>
+              <span className="mt-1 block text-xs leading-6 text-stone-500">يشمل `/api/public/content` و`/api/public/prayer-times`، مع حدّ معدل قابل للتعديل من مركز الأمان.</span>
+          </span>
+        </label>
+      </Section>
+
+      <Section title="المساعد المعرفي المقيّد" description="لا يظهر للزوار إلا بعد التفعيل، ويبحث في المحتوى المنشور فقط ثم يرسل مقتطفات المصادر إلى مزود الذكاء الاصطناعي. لا تستخدمه للفتاوى الشخصية.">
+        <div className="space-y-4">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/60 p-4">
+            <input
+              type="checkbox"
+              checked={Boolean(settings.assistant?.enabled)}
+              onChange={(event) => setValue('assistant', { ...DEFAULT_ASSISTANT_CONFIG, ...(settings.assistant || {}), enabled: event.target.checked })}
+              className="mt-1 h-4 w-4 accent-primary-700"
+            />
+            <span>
+              <span className="block text-sm font-black text-primary-950">تفعيل المساعد للزوار</span>
+              <span className="mt-1 block text-xs leading-6 text-stone-500">يتطلب ضبط `AI_ASSISTANT_API_KEY` على الخادم. يظل مغلقًا افتراضيًا.</span>
+            </span>
+          </label>
+          <div className="grid gap-4 md:grid-cols-2">
+            <InputField
+              label="اسم النموذج"
+              value={text(settings.assistant?.model) || DEFAULT_ASSISTANT_CONFIG.model}
+              onChange={(value) => setValue('assistant', { ...DEFAULT_ASSISTANT_CONFIG, ...(settings.assistant || {}), model: value })}
+              dir="ltr"
+            />
+            <InputField
+              label="أقصى عدد للمصادر"
+              value={String(settings.assistant?.maxSources ?? DEFAULT_ASSISTANT_CONFIG.maxSources)}
+              onChange={(value) => setValue('assistant', { ...DEFAULT_ASSISTANT_CONFIG, ...(settings.assistant || {}), maxSources: Math.max(1, Math.min(8, Number(value) || DEFAULT_ASSISTANT_CONFIG.maxSources)) })}
+              dir="ltr"
+            />
+          </div>
         </div>
       </Section>
 

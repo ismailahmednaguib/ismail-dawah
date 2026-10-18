@@ -8,7 +8,19 @@ import { getSupabaseAdmin } from '@/lib/supabase/admin';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const CITATION_PATTERNS = ['قال تعالى', 'قال الله', 'قال رسول', 'قال ﷺ', 'صلى الله عليه وسلم'];
+const CITATION_PATTERNS = [
+  'قال تعالى',
+  'قال الله',
+  'قال رسول الله',
+  'قال رسول',
+  'قال النبي',
+  'قال ﷺ',
+  'صلى الله عليه وسلم',
+  'رواه البخاري',
+  'رواه مسلم',
+  'أخرجه',
+  'في الصحيحين',
+];
 const SHORT_BODY = 220;
 const MAX_ROWS = 60;
 
@@ -23,6 +35,15 @@ type Row = {
   is_reviewed: boolean;
   reviewed_at: string | null;
   updated_at: string | null;
+};
+
+type CitationTranslation = {
+  id: string;
+  content_id: string;
+  lang: string;
+  slug: string;
+  title: string;
+  body: string | null;
 };
 
 function countMatches(text: string | null, needles: string[]): number {
@@ -102,17 +123,44 @@ export async function GET(req: Request) {
     supabase.from('content_translations').select('id', { head: true, count: 'exact' }),
   ]);
 
-  const citations = rows
-    .map((row) => ({
-      id: row.id,
-      lang: row.lang,
-      slug: row.slug,
-      title: row.title,
-      mentions: countMatches(`${row.title ?? ''}\n${row.body ?? ''}`, CITATION_PATTERNS),
-    }))
-    .filter((row) => row.mentions > 0)
-    .sort((a, b) => b.mentions - a.mentions)
-    .slice(0, 15);
+  const { data: citationData } = await supabase
+    .from('content_translations')
+    .select('id, content_id, lang, slug, title, body, content:content_id!inner(status)')
+    .eq('content.status', 'published')
+    .in('lang', ['ar', 'en'])
+    .order('updated_at', { ascending: false })
+    .limit(2000);
+
+  const citationTranslations = (citationData ?? []) as CitationTranslation[];
+  const citationIds = [...new Set(citationTranslations.map((row) => row.content_id).filter(Boolean))];
+  const { data: referenceData } = citationIds.length > 0
+    ? await supabase.from('content_references').select('content_id, verified').in('content_id', citationIds)
+    : { data: [] as Array<{ content_id: string; verified: boolean }> };
+
+  const referenceCounts = new Map<string, { total: number; verified: number }>();
+  for (const reference of referenceData ?? []) {
+    const current = referenceCounts.get(reference.content_id) ?? { total: 0, verified: 0 };
+    current.total += 1;
+    if (reference.verified) current.verified += 1;
+    referenceCounts.set(reference.content_id, current);
+  }
+
+  const citations = citationTranslations
+    .map((row) => {
+      const counts = referenceCounts.get(row.content_id) ?? { total: 0, verified: 0 };
+      return {
+        id: row.id,
+        contentId: row.content_id,
+        lang: row.lang,
+        slug: row.slug,
+        title: row.title,
+        mentions: countMatches(`${row.title ?? ''}\n${row.body ?? ''}`, CITATION_PATTERNS),
+        references: counts.total,
+        verifiedReferences: counts.verified,
+      };
+    })
+    .filter((row) => row.mentions > 0 && row.verifiedReferences === 0)
+    .sort((a, b) => b.mentions - a.mentions);
 
   const stats = {
     pending: pendingCount.count ?? 0,

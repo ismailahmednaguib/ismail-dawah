@@ -89,7 +89,7 @@ export const NAV_TREE: NavNode[] = [
       n("ruqyah", "الرقية الشرعية", "Ruqyah", "🛡️", "/ruqyah"),
       n("ibadat-amaliyah", "العبادات العملية", "Practical Worship", "🛠️", "/topic/ibadat-amaliyah"),
     ]),
-    n("dawah-sciences", "الدعوة والخطابة", "Dawah & Oratory", "📢", undefined, [
+    n("dawah-sciences", "الدعوة والمجتمع", "Dawah & Community", "📢", undefined, [
       n("dawah-manhaj", "منهج الدعوة إلى الله", "Dawah Methodology", "📢", "/fields/dawah-manhaj", undefined, { taxonomy: "dawah-manhaj" }),
       n("hiwar", "مهارات الحوار والمناظرة", "Dialogue & Debate Skills", "🤝", "/dawah-guide"),
       n("khutab", "الخطب والمحاضرات", "Khutbahs & Lectures", "🎤", "/khutab"),
@@ -99,6 +99,7 @@ export const NAV_TREE: NavNode[] = [
   ], { desc: { ar: "موسوعة علوم الدين: عقيدة، قرآن، حديث، فقه، سيرة، تزكية، ودعوة", en: "Encyclopedia of Islamic sciences" } }),
 
   n("non-muslim", "بوابة غير المسلمين", "Non-Muslim Portal", "🌍", "/dawah", [
+    n("dawah-path", "اختبر مسارك الدعوي", "Find your learning path", "🧭", "/dawah/path"),
     n("what-is-islam", "ما هو الإسلام؟", "What is Islam?", "🕌"),
     n("who-is-muhammad", "من هو محمد ﷺ؟", "Who is Muhammad ﷺ?", "🌟"),
     n("quran-intro", "القرآن الكريم (مقدمة)", "The Quran (Intro)", "📖", "/quran"),
@@ -110,6 +111,16 @@ export const NAV_TREE: NavNode[] = [
     n("non-muslim-faq", "أسئلة شائعة من غير المسلمين", "FAQ from Non-Muslims", "❓", "/faq"),
     n("ask-daee", "تواصل مع داعية / اطرح سؤالًا", "Ask a Daee", "💬", "/contact"),
   ], { desc: { ar: "تعريف مبسّط بالإسلام لمن يبحث عنه", en: "A simple introduction to Islam" } }),
+
+  n("religions", "الأديان والفكر", "Religions & Thought", "🌍", "/religions", [
+    n("religions-methodology", "منهج المقارنة والحوار", "Comparison & Dialogue Method", "📜", "/religions/methodology"),
+    n("religions-world", "أديان العالم", "World Religions", "🌐", "/religions"),
+    n("religions-thought", "المذاهب الفكرية", "Schools of Thought", "💡", "/religions/atheism"),
+    n("religions-comparison", "جداول المقارنة", "Comparison Tables", "⚖️", "/religions/comparison"),
+    n("religions-questions", "أسئلة غير المسلمين", "Questions from Non-Muslims", "❓", "/religions/resources/questions"),
+    n("religions-previous-books", "الإسلام في الكتب السابقة", "Islam in Earlier Scriptures", "📚", "/religions/resources/previous-books"),
+    n("religions-stories", "قصص المهتدين", "Stories of Converts", "🤝", "/religions/resources/stories"),
+  ], { desc: { ar: "تعريف منصف وموثق بالأديان والمذاهب الفكرية مع الحوار بالحسنى", en: "Fair, sourced study of religions and ideas with respectful dialogue" } }),
 
   n("responses", "مركز الردود على الشبهات والتيارات", "Responses Center", "🛡️", "/responses", [
     n("doubts-quran", "شبهات حول القرآن", "Doubts about the Quran", "📖", "/doubts"),
@@ -351,5 +362,13 @@ export function navHref(node: NavNode): string {
 
 /** اسم العقدة حسب اللغة. */
 export function navLabel(node: NavNode, lang: Lang): string {
-  return lang === "ar" ? node.ar : node.en;
+  const value = (lang === "ar" ? node.ar : node.en).trim();
+  const looksLikeRawHref = /^\/(?:ar|en)(?:\/|$)/i.test(value) || /^(?:https?:)?\/\//i.test(value);
+
+  if (!looksLikeRawHref && value) return value;
+
+  // بعض الإعدادات القديمة كانت تحفظ الرابط بدل اسم العنصر.
+  const original = findNavNode(node.key);
+  const fallback = original ? (lang === "ar" ? original.ar : original.en) : "";
+  return fallback.trim() || (lang === "ar" ? "قسم" : "Section");
 }

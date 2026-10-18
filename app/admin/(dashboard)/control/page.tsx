@@ -78,13 +78,13 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
 }
 
 const STATUS_MAP: Record<string, { className: string; label: string }> = {
-  published: { className: 'bg-green-100 text-green-800', label: 'منشور' },
+  published: { className: 'bg-primary-100 text-primary-800', label: 'منشور' },
   draft: { className: 'bg-slate-100 text-slate-600', label: 'مسودة' },
   in_review: { className: 'bg-gold-100 text-gold-800', label: 'تحت المراجعة' },
   archived: { className: 'bg-slate-200 text-slate-500', label: 'مؤرشف' },
   rejected: { className: 'bg-red-100 text-red-800', label: 'مرفوض' },
   pending: { className: 'bg-gold-100 text-gold-800', label: 'معلق' },
-  approved: { className: 'bg-green-100 text-green-800', label: 'مُعتمد' },
+  approved: { className: 'bg-primary-100 text-primary-800', label: 'مُعتمد' },
   changes_requested: { className: 'bg-red-100 text-red-800', label: 'تعديلات مطلوبة' },
 };
 
@@ -207,7 +207,7 @@ function DashboardTab() {
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
               <span className="text-primary-100">قاعدة البيانات</span>
-              <span className="flex items-center gap-1 text-green-400 font-bold">متصل ✓</span>
+              <span className="flex items-center gap-1 text-primary-400 font-bold">متصل ✓</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-primary-100">اللوحات الفرعية</span>
@@ -215,7 +215,7 @@ function DashboardTab() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-primary-100">حفظ فوري</span>
-              <span className="flex items-center gap-1 text-green-400 font-bold">مفعل ✓</span>
+              <span className="flex items-center gap-1 text-primary-400 font-bold">مفعل ✓</span>
             </div>
           </div>
         </div>
@@ -310,7 +310,7 @@ function SettingsTab() {
         <div
           className={`rounded-xl p-4 text-sm font-bold ${
             message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
+              ? 'bg-primary-50 text-primary-800 border border-primary-200'
               : 'bg-red-50 text-red-800 border border-red-200'
           }`}
         >
@@ -508,7 +508,7 @@ function SectionsTab() {
         <div
           className={`rounded-xl p-4 text-sm font-bold ${
             message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
+              ? 'bg-primary-50 text-primary-800 border border-primary-200'
               : 'bg-red-50 text-red-800 border border-red-200'
           }`}
         >
@@ -559,7 +559,7 @@ function SectionsTab() {
                 <button
                   type="button"
                   onClick={() => setAllSections(pageKey, true)}
-                  className="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-bold text-green-800 hover:bg-green-100"
+                      className="rounded-lg bg-primary-50 px-3 py-1.5 text-xs font-bold text-primary-800 hover:bg-primary-100"
                 >
                   إظهار كل الأقسام
                 </button>
@@ -1037,7 +1037,7 @@ function NavigationTab() {
         <div
           className={`rounded-xl p-4 text-sm font-bold ${
             message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
+              ? 'bg-primary-50 text-primary-800 border border-primary-200'
               : 'bg-red-50 text-red-800 border border-red-200'
           }`}
         >
@@ -1718,7 +1718,7 @@ function ReviewTab() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => decide(item.id, item.content_id, 'approve', '')}
-                        className="px-3 py-1.5 rounded-lg bg-green-50 text-green-800 text-xs font-bold hover:bg-green-100 transition"
+                        className="px-3 py-1.5 rounded-lg bg-primary-50 text-primary-800 text-xs font-bold hover:bg-primary-100 transition"
                       >
                         اعتماد
                       </button>

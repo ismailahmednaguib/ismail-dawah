@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, languages, type Lang } from "@/lib/i18n";
+import { SURAHS } from "@/lib/data";
 import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -119,9 +120,9 @@ const UI: Record<string, UiText> = {
     cta1: "ابدأ رحلة العلم",
     cta2: "البث المباشر",
     statSections: "قسم ومحتوى",
-    statLanguages: "لغتان",
+    statLanguages: "لغات متاحة",
     statSurahs: "سورة قرآنية",
-    statFree: "مجاني بالكامل",
+    statFree: "مفتوح الوصول",
     learnTitle: "تعلّم العلوم الشرعية",
     learnSubtitle: "ابدأ بأساسيات الدين وتدرّج في طلب العلم الشرعي",
     responsesTitle: "العلوم والردود",
@@ -175,9 +176,9 @@ const UI: Record<string, UiText> = {
     cta1: "Start Learning",
     cta2: "Live Stream",
     statSections: "Sections & Content",
-    statLanguages: "Languages",
+    statLanguages: "Available languages",
     statSurahs: "Quran Surahs",
-    statFree: "Free",
+    statFree: "Open access",
     learnTitle: "Learn Islamic Sciences",
     learnSubtitle:
       "Start with the fundamentals and progress in seeking Islamic knowledge",
@@ -326,7 +327,10 @@ export default async function HomePage({
     (settings as Record<string, unknown>).navigation,
     NAV_TREE
   );
-  const topGroups = navTree.filter((node) => node.key !== "home");
+  const primaryKeys = ["non-muslim", "tools", "sciences", "religions", "dawah-sciences"];
+  const topGroups = primaryKeys
+    .map((key) => navTree.find((node) => node.key === key))
+    .filter((node): node is NavNode => Boolean(node));
 
   const [counts, latestLessons, latestFatwas, latestArticles, latestHadith, latestDoubts, latestKhutab, latestStories] =
     await Promise.all([
@@ -440,9 +444,9 @@ export default async function HomePage({
 
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
             <HeroStatCard value={`${Math.max(counts.total, 0)}+`} label={ui.statSections} />
-            <HeroStatCard value="2" label={ui.statLanguages} />
-            <HeroStatCard value="114" label={ui.statSurahs} />
-            <HeroStatCard value="100%" label={ui.statFree} />
+            <HeroStatCard value={String(languages.length)} label={ui.statLanguages} />
+            <HeroStatCard value={String(SURAHS.length)} label={ui.statSurahs} />
+            <HeroStatCard value="✓" label={ui.statFree} />
           </div>
         </div>
 

@@ -29,6 +29,8 @@ const CONTENT_TABLES: Record<string, string> = {
 
 const SETTINGS_TABLES: Record<string, string> = {
   site_settings: '*',
+  dawah_journey_subscribers: '*',
+  dawah_request_assignments: '*',
 };
 
 const PAGE_SIZE = 1000;

@@ -96,7 +96,7 @@ function CountdownUnit({
       }`}
     >
       <span
-        className={`font-black tabular-nums text-cyan-700 dark:text-cyan-300 ${
+        className={`font-black tabular-nums text-primary-700 dark:text-primary-300 ${
           large ? "text-4xl md:text-5xl" : "text-3xl md:text-4xl"
         }`}
       >
@@ -212,7 +212,7 @@ export function LiveCountdown({
       dir={isRTL ? "rtl" : "ltr"}
       aria-live="polite"
       aria-label={title ?? defaultTitle}
-      className={`rounded-3xl border border-gold-200 bg-gradient-to-br from-white via-gold-50/40 to-cyan-50/40 p-5 shadow-lg dark:border-gold-900/30 dark:from-night-900 dark:via-gold-950/10 dark:to-cyan-950/10 ${className}`}
+      className={`rounded-3xl border border-gold-200 bg-gradient-to-br from-white via-gold-50/40 to-primary-50/40 p-5 shadow-lg dark:border-gold-900/30 dark:from-night-900 dark:via-gold-950/10 dark:to-primary-950/10 ${className}`}
     >
       <p className="mb-4 text-center text-sm font-black text-slate-600 dark:text-slate-300">
         {title ?? defaultTitle}
