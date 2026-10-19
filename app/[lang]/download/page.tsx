@@ -9,6 +9,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CopyLinkButton from "@/components/download/CopyLinkButton";
+import { resolvePlayStoreUrl } from "@/lib/store";
 
 export const dynamic = "force-static";
 
@@ -29,6 +30,9 @@ type UILang = {
   requirements: string;
   platform: string;
   downloadApk: string;
+  playStore: string;
+  playStoreDesc: string;
+  apkDirect: string;
   directLink: string;
   backHome: string;
   noteTitle: string;
@@ -105,6 +109,9 @@ const UI: Record<string, UILang> = {
     requirements: "المتطلبات",
     platform: "المنصة",
     downloadApk: "تحميل APK",
+    playStore: "احصل عليه من Google Play",
+    playStoreDesc: "الطريقة الموصى بها للتثبيت والتحديث التلقائي.",
+    apkDirect: "أو نزّل ملف APK مباشرة",
     directLink: "رابط التحميل المباشر",
     backHome: "العودة للرئيسية",
     noteTitle: "ملاحظات مهمة",
@@ -169,6 +176,9 @@ const UI: Record<string, UILang> = {
     requirements: "Requirements",
     platform: "Platform",
     downloadApk: "Download APK",
+    playStore: "Get it on Google Play",
+    playStoreDesc: "The recommended way to install and receive updates.",
+    apkDirect: "Or download the APK directly",
     directLink: "Direct download link",
     backHome: "Back to Home",
     noteTitle: "Important notes",
@@ -304,6 +314,17 @@ export default async function DownloadPage({
   const ui = UI[l];
   const isRTL = l === "ar";
 
+  const playStoreUrl = resolvePlayStoreUrl(
+    __pageSettings?.playStoreUrl,
+    process.env.NEXT_PUBLIC_PLAY_STORE_URL
+  );
+
+  const faq1Answer = playStoreUrl
+    ? isRTL
+      ? "التطبيق متاح الآن على Google Play، ويمكنك أيضًا تحميل ملف APK مباشرة من هذه الصفحة."
+      : "The app is now available on Google Play. You can also download the APK directly from this page."
+    : ui.faq1A;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -315,6 +336,7 @@ export default async function DownloadPage({
     operatingSystem: "Android 8.0+",
     softwareVersion: VERSION,
     downloadUrl: DIRECT_APK_URL,
+    ...(playStoreUrl ? { installUrl: playStoreUrl } : {}),
     fileFormat: "application/vnd.android.package-archive",
     fileSize: FILE_SIZE,
     description: ui.description,
@@ -337,7 +359,7 @@ export default async function DownloadPage({
       {
         "@type": "Question",
         name: ui.faq1Q,
-        acceptedAnswer: { "@type": "Answer", text: ui.faq1A },
+        acceptedAnswer: { "@type": "Answer", text: faq1Answer },
       },
       {
         "@type": "Question",
@@ -358,7 +380,7 @@ export default async function DownloadPage({
   };
 
   return (
-    <main
+    <main id="main-content" tabIndex={-1}
       dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-cream-dark dark:bg-gray-900"
     >
@@ -453,10 +475,29 @@ export default async function DownloadPage({
 
               {/* زر التحميل الرئيسي */}
               <div className="mb-5 rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100 p-6 dark:from-primary-900/20 dark:to-primary-900/10">
+                {playStoreUrl ? (
+                  <>
+                    <a
+                      href={playStoreUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mb-3 flex w-full items-center justify-center gap-3 rounded-xl bg-slate-900 px-6 py-4 text-lg font-black text-white transition-colors hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+                    >
+                      <span aria-hidden="true">▶</span>
+                      {ui.playStore}
+                    </a>
+                    <p className="mb-4 text-center text-sm text-slate-600 dark:text-slate-300">
+                      {ui.playStoreDesc}
+                    </p>
+                    <p className="mb-3 text-center text-xs font-bold text-slate-500 dark:text-slate-400">
+                      {ui.apkDirect}
+                    </p>
+                  </>
+                ) : null}
                 <a
                   href={PROXY_DOWNLOAD_URL}
                   download={FILE_NAME}
-                  className="btn-primary w-full justify-center gap-2 !py-4 text-lg"
+                  className={`${playStoreUrl ? "btn-gold" : "btn-primary"} w-full justify-center gap-2 !py-4 text-lg`}
                 >
                   <svg
                     width="24"
@@ -643,7 +684,7 @@ export default async function DownloadPage({
           </h2>
 
           <div className="space-y-4">
-            <FaqItem question={ui.faq1Q} answer={ui.faq1A} />
+            <FaqItem question={ui.faq1Q} answer={faq1Answer} />
             <FaqItem question={ui.faq2Q} answer={ui.faq2A} />
             <FaqItem question={ui.faq3Q} answer={ui.faq3A} />
             <FaqItem question={ui.faq4Q} answer={ui.faq4A} />

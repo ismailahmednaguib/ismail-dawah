@@ -41,6 +41,7 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   meetingTime: { ar: '', en: '' },
   meetingPlace: { ar: '', en: '' },
   showPrayerBar: false,
+  playStoreUrl: '',
   publicApiEnabled: false,
   dawahJourney: DEFAULT_DAWAH_JOURNEY_CONFIG,
   assistant: DEFAULT_ASSISTANT_CONFIG,
@@ -384,6 +385,19 @@ export default function SiteSettingsClient() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section title="التطبيق والتوزيع" description="رابط صفحة التطبيق في Google Play. يُقبل رابط https الرسمي فقط، ويُعرض تلقائيًا في صفحة التحميل بدل الاعتماد على ملف APK وحده.">
+        <InputField
+          label="رابط Google Play"
+          value={text(settings.playStoreUrl)}
+          onChange={(value) => setValue('playStoreUrl', value)}
+          dir="ltr"
+          placeholder="https://play.google.com/store/apps/details?id=..."
+        />
+        <p className="mt-2 text-xs leading-6 text-stone-500">
+          اتركه فارغًا حتى نشر التطبيق. عند إضافته سيظهر زر المتجر أولًا، ويبقى ملف APK متاحًا كخيار ثانوي.
+        </p>
       </Section>
 
       <Section title="رحلة غير المسلم البريدية" description="فعّل رحلة اختيارية من سبعة أيام وعدّل رسائلها. لن تُرسل أي رسالة ما لم تفعّلها وتضبط مزود البريد في بيئة الخادم.">

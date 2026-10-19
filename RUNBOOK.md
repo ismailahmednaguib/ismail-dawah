@@ -90,6 +90,14 @@ npm run check:links              # ٠ رابط مكسور
 | `lib/rate-limit.ts` | حدّ المعدّل المشترك (لا تعِدْه للذاكرة فقط) |
 | `middleware.ts` | حماية `/admin` وتوجيه اللغة |
 
+## ٧.١) نشر تطبيق أندرويد على Google Play
+
+1. ابنِ حزمة AAB من مشروع `android/` بالمفتاح `android.keystore` (أو ارفعها إلى Play App Signing).
+2. **بعد** اعتماد مفتاح التوقيع النهائي من Play Console، انسخ بصمة SHA-256 وحدّثها في `public/.well-known/assetlinks.json`. إن اختلفت البصمة سيفتح التطبيق متصفحًا بدل فتحه كتطبيق مستقل.
+3. انشر الإصدار، ثم اضبط رابط الصفحة من `/admin/settings` → «التطبيق والتوزيع» (`playStoreUrl`)، أو عبر `NEXT_PUBLIC_PLAY_STORE_URL` كبديل. الإعدادات تتقدّم على متغير البيئة.
+4. يظهر زر Google Play أولًا في `/ar/download` و`/en/download`، ويبقى ملف APK خيارًا ثانويًا. الرابط غير الصالح أو غير الرسمي يُرفض ولا يُعرض.
+5. لا تحذف `public/.well-known/assetlinks.json` ولا تغيّر `packageId` (`com.ismail.dawah`) بعد النشر.
+
 ## ٨) migrations معلّقة على الإنتاج
 
 هذه ملفات تُنفَّذ **يدويًّا** في SQL Editor بلوحة Supabase (لا يوجد مسار آلي لها):
