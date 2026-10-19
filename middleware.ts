@@ -1,6 +1,7 @@
 // middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { preferredLanguageFromHeader } from './lib/i18n/config';
 
 const ENABLED_LANGUAGES = ['ar', 'en'];
 const DEFAULT_LANGUAGE = 'ar';
@@ -28,8 +29,13 @@ export function middleware(request: NextRequest) {
   );
 
   if (!pathnameHasLang) {
-    // إعادة التوجيه إلى اللغة الافتراضية
-    const newUrl = new URL(`/${DEFAULT_LANGUAGE}${pathname}`, request.url);
+    // الجذر فقط يحترم لغة المتصفح؛ بقية المسارات بلا لغة تعود للعربية.
+    const preferred = preferredLanguageFromHeader(
+      request.headers.get('accept-language')
+    );
+    const lang = pathname === '/' ? preferred : DEFAULT_LANGUAGE;
+    const suffix = pathname === '/' ? '' : pathname;
+    const newUrl = new URL(`/${lang}${suffix}`, request.url);
     return NextResponse.redirect(newUrl, 308);
   }
 

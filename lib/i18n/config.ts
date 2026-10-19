@@ -41,3 +41,34 @@ export function getDirection(code: string): 'rtl' | 'ltr' {
 export function getLocale(code: string): string {
   return getLanguageConfig(code)?.locale ?? 'en-US';
 }
+
+/**
+ * لغة الزائر من ترويسة Accept-Language، باختيار أعلى أولوية بين العربية والإنجليزية.
+ * تُستخدم في توجيه الجذر فقط؛ بقية المسارات تبقى افتراضية.
+ */
+export function preferredLanguageFromHeader(
+  header: string | null | undefined
+): 'ar' | 'en' {
+  if (!header) return 'ar';
+
+  const entries = header
+    .split(',')
+    .map((part) => {
+      const [tag, ...params] = part.trim().split(';');
+      const qParam = params.find((param) => param.trim().startsWith('q='));
+      const q = qParam ? Number(qParam.split('=')[1]) : 1;
+      return {
+        tag: tag.trim().toLowerCase(),
+        q: Number.isFinite(q) ? q : 0,
+      };
+    })
+    .filter((entry) => entry.tag && entry.q > 0)
+    .sort((a, b) => b.q - a.q);
+
+  for (const entry of entries) {
+    if (entry.tag === 'en' || entry.tag.startsWith('en-')) return 'en';
+    if (entry.tag === 'ar' || entry.tag.startsWith('ar-')) return 'ar';
+  }
+
+  return 'ar';
+}

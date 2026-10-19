@@ -3,7 +3,7 @@
   "short_name": "إسماعيل أحمد نجيب",
   "description": "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد.",
   "id": "/",
-  "start_url": "/ar",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
