@@ -29,6 +29,8 @@ const COPY = {
     explore: 'استكشف القسم',
     materials: 'مادة منشورة',
     noMaterials: 'تُضاف المواد الموثقة من لوحة التحكم بعد مراجعتها.',
+    inPreparation: 'قيد الإعداد والمراجعة',
+    resourcesDesc: 'بوابات مرتبطة بالقسم، تُنشر مادتها بعد التوثيق والمراجعة.',
     resources: 'بوابات إضافية',
     contact: 'تواصل مع داعية',
   },
@@ -43,6 +45,8 @@ const COPY = {
     explore: 'Explore section',
     materials: 'published materials',
     noMaterials: 'Sourced material is added from the dashboard after review.',
+    inPreparation: 'In preparation and review',
+    resourcesDesc: 'Related gateways whose material is published after sourcing and review.',
     resources: 'More resources',
     contact: 'Talk to a daee',
   },
@@ -85,7 +89,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
   return (
     <>
       <Header lang={currentLang} />
-      <main dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
         {gate.visible('k0') && <PageHero
           icon="◈"
           title={copy.title}
@@ -127,7 +131,15 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
                 <Link key={entry.slug} href={`/${currentLang}/religions/${entry.slug}`} className="card card-interactive group p-6">
                   <div className="flex items-start justify-between gap-4">
                     <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-3xl dark:bg-primary-900/40">{entry.icon}</span>
-                    <span className="rounded-full bg-cream-100 px-3 py-1 text-xs font-bold text-stone-600 dark:bg-night-800 dark:text-stone-300">{counts[index]} {copy.materials}</span>
+                    {counts[index] > 0 ? (
+                      <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-bold text-primary-800 dark:bg-primary-900/50 dark:text-primary-200">
+                        {counts[index]} {copy.materials}
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-gold-100 px-3 py-1 text-xs font-bold text-gold-800 dark:bg-gold-900/40 dark:text-gold-200">
+                        ⏳ {copy.inPreparation}
+                      </span>
+                    )}
                   </div>
                   <h3 className="mt-5 text-xl font-black text-primary-950 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">{localized(entry.title, currentLang)}</h3>
                   <p className="mt-3 min-h-20 leading-7 text-slate-600 dark:text-slate-300">{localized(entry.summary, currentLang)}</p>
@@ -141,7 +153,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
           {gate.visible('k3') && <section aria-labelledby="religions-resources-title">
             <div className="mb-6">
               <h2 id="religions-resources-title" className="section-title mb-1">{copy.resources}</h2>
-              <p className="section-subtitle">{copy.noMaterials}</p>
+              <p className="section-subtitle">{copy.resourcesDesc}</p>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {RELIGION_RESOURCES.map((resource) => (

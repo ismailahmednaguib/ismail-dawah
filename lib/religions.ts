@@ -131,6 +131,81 @@ export const METHODOLOGY_POINTS: LocalizedText[] = [
   { ar: 'مراجعة شرعية ومراجعة متخصصة عند الإمكان قبل الاعتماد.', en: 'Use Islamic and subject-matter review before approval whenever possible.' },
 ];
 
+/**
+ * خطة صفحة الدين (ثمانية أقسام). تُعرض كإطار عمل للصفحة قبل نشر المادة،
+ * حتى يعرف الزائر ما سيجده ويعرف المحرر ما يجب أن يغطيه قبل الاعتماد.
+ */
+export const RELIGION_PAGE_SECTIONS: Array<{
+  key: string;
+  title: LocalizedText;
+  hint: LocalizedText;
+}> = [
+  {
+    key: 'origins',
+    title: { ar: 'نبذة تاريخية وانتشار', en: 'History and demographics' },
+    hint: {
+      ar: 'النشأة والسياق التاريخي وأرقام الانتشار من مصادر مستقلة.',
+      en: 'Origins, historical context, and demographics from independent sources.',
+    },
+  },
+  {
+    key: 'scriptures',
+    title: { ar: 'المصادر والنصوص المقدسة', en: 'Sources and scriptures' },
+    hint: {
+      ar: 'النصوص المعتمدة عند أتباعه، ونسخها وترجماتها المعتمدة.',
+      en: 'Authoritative texts, editions, and accepted translations.',
+    },
+  },
+  {
+    key: 'beliefs',
+    title: { ar: 'أهم المعتقدات', en: 'Core beliefs' },
+    hint: {
+      ar: 'عرض المعتقد كما يفهمه أتباعه لا كما يصفه خصومه.',
+      en: 'Present beliefs as adherents understand them, not as opponents describe them.',
+    },
+  },
+  {
+    key: 'denominations',
+    title: { ar: 'الطوائف والتيارات', en: 'Denominations and movements' },
+    hint: {
+      ar: 'التمييز بين ما يتفق عليه الاتباع وما تختلف فيه الطوائف.',
+      en: 'Distinguish shared beliefs from genuine differences among denominations.',
+    },
+  },
+  {
+    key: 'agreements',
+    title: { ar: 'نقاط الاتفاق مع الإسلام', en: 'Common ground with Islam' },
+    hint: {
+      ar: 'مواطن الاتفاق الحقيقية دون تهويل أو اختزال للفروق.',
+      en: 'Genuine points of agreement without overstating or erasing differences.',
+    },
+  },
+  {
+    key: 'differences',
+    title: { ar: 'نقاط الاختلاف بإنصاف', en: 'Differences, fairly presented' },
+    hint: {
+      ar: 'بيان الاختلاف بدقته وسياقه، مع تجنب الاقتطاع.',
+      en: 'State differences accurately and in context, avoiding selective quotation.',
+    },
+  },
+  {
+    key: 'questions',
+    title: { ar: 'أسئلة أتباعه عن الإسلام', en: 'Their questions about Islam' },
+    hint: {
+      ar: 'الأسئلة الشائعة مع إجابات موثقة تحيل إلى المصدر.',
+      en: 'Common questions with sourced answers that link to the reference.',
+    },
+  },
+  {
+    key: 'references',
+    title: { ar: 'المراجع', en: 'References' },
+    hint: {
+      ar: 'قائمة مصادر قابلة للتحقق، مع تاريخ المراجعة واسم المراجع.',
+      en: 'A verifiable source list with review date and reviewer.',
+    },
+  },
+];
+
 export const COMPARISON_DIMENSIONS: LocalizedText[] = [
   { ar: 'التصور عن الإله والوجود', en: 'God and existence' },
   { ar: 'مصادر المعرفة والنصوص', en: 'Sources and scriptures' },
