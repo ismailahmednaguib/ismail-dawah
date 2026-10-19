@@ -128,6 +128,7 @@ npm run import:hadith-refs -- --commit     # كتابة
 | `20261017_security_and_review.sql` | جدول `rate_limits` + دالة ذرّية + عمود `reviewed_at` | حدّ المعدّل يعمل في الذاكرة فقط · تاريخ المراجعة لا يُسجَّل |
 | `20261016_dawah_journey.sql` | جدول اشتراكات رحلة البريد الاختيارية | نموذج الرحلة يتوقف بأمان حتى تُنفَّذ الهجرة |
 | `20261016_dawah_assignments.sql` | توزيع طلبات الحوار على فريق الدعوة | يظهر تنبيه migration في لوحة الأسئلة حتى تُنفَّذ |
+| `20261018_public_content_read_repair.sql` | 🚨 يعيد صلاحية قراءة `content` · `content_translations` · `content_references` للزائر | تعطّل البحث و`sitemap.xml` و`rss.xml`، وظهور «جداول عامة blocked» في `qa:rls` |
 
 المساعد المقيّد لا يحتاج جدولًا جديدًا: يقرأ المحتوى المنشور فقط، ويظل مغلقًا حتى ضبط `AI_ASSISTANT_API_KEY` و`AI_ASSISTANT_ENDPOINT` وتفعيله من `/admin/settings`.
 
