@@ -16,6 +16,8 @@
     "qa:rls": "node scripts/audit-rls.mjs",
     "qa:rls:strict": "node scripts/audit-rls.mjs --strict",
     "qa:citations": "node scripts/check-citations.mjs",
+    "import:quran-refs": "node --experimental-strip-types scripts/import-quran-references.ts",
+    "import:hadith-refs": "node --experimental-strip-types scripts/import-hadith-references.ts",
     "qa:matrix": "node scripts/content-matrix.mjs",
     "check:smoke": "node scripts/smoke-content.mjs",
     "check:fields": "node scripts/check-fields.mjs",
