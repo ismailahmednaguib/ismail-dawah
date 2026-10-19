@@ -18,6 +18,7 @@
     "qa:citations": "node scripts/check-citations.mjs",
     "import:quran-refs": "node --experimental-strip-types scripts/import-quran-references.ts",
     "import:hadith-refs": "node --experimental-strip-types scripts/import-hadith-references.ts",
+    "fix:citations": "node --experimental-strip-types scripts/apply-citation-fixes.ts",
     "qa:matrix": "node scripts/content-matrix.mjs",
     "check:smoke": "node scripts/smoke-content.mjs",
     "check:fields": "node scripts/check-fields.mjs",

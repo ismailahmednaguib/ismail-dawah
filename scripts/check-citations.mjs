@@ -44,6 +44,36 @@ const MARKERS = [
   'في الصحيحين',
 ];
 
+// ذكر «صلى الله عليه وسلم» وحده ليس اقتباسًا شرعيًّا: قد يرد في سياق سردي
+// («وُلد النبي صلى الله عليه وسلم في مكة»). فلا يُعدّ إشارة إلا إذا اقترن
+// بعلامة تنصيص قريبة تدلّ على نصّ مقتبس يحتاج مصدرًا.
+const HONORIFIC = 'صلى الله عليه وسلم';
+const QUOTE_MARK = /[«"“]/;
+
+function hasNearbyQuote(text, index, length) {
+  const before = text.slice(Math.max(0, index - 80), index);
+  const after = text.slice(index + length, index + length + 60);
+  return QUOTE_MARK.test(after) || QUOTE_MARK.test(before);
+}
+
+function matchedMarkers(text) {
+  const hits = [];
+  for (const marker of MARKERS) {
+    let from = 0;
+    while (true) {
+      const index = text.indexOf(marker, from);
+      if (index < 0) break;
+      if (marker === HONORIFIC && !hasNearbyQuote(text, index, marker.length)) {
+        from = index + marker.length;
+        continue;
+      }
+      hits.push(marker);
+      break;
+    }
+  }
+  return hits;
+}
+
 async function getAll(table, select) {
   const rows = [];
   for (let offset = 0; offset < 50000; offset += 1000) {
@@ -86,7 +116,7 @@ for (const row of translations) {
   if (row.lang !== 'ar' && row.lang !== 'en') continue;
 
   const haystack = `${row.title ?? ''}\n${row.summary ?? ''}\n${row.body ?? ''}`;
-  const hits = MARKERS.filter((marker) => haystack.includes(marker));
+  const hits = matchedMarkers(haystack);
   if (hits.length === 0) continue;
 
   const refs = refsByContent.get(row.content_id) ?? { total: 0, verified: 0 };
