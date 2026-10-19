@@ -17,7 +17,7 @@ export default async function AdminDashboardShell({
         userName={session.fullName ?? session.email}
         roles={session.roles}
       />
-      <main className="min-w-0 flex-1 overflow-x-hidden p-4 md:p-6 lg:p-8">
+      <main id="main-content" tabIndex={-1} className="min-w-0 flex-1 overflow-x-hidden p-4 md:p-6 lg:p-8">
         <div className="mx-auto w-full max-w-7xl">{children}</div>
       </main>
     </div>

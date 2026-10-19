@@ -74,7 +74,7 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
   return (
     <>
       <Header lang={currentLang} />
-      <main
+      <main id="main-content" tabIndex={-1}
         dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
         className="min-h-screen bg-slate-50 dark:bg-night-900"
       >

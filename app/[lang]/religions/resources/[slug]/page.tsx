@@ -55,7 +55,7 @@ export default async function ReligionsResourcePage({ params }: PageProps) {
   return (
     <>
       <Header lang={lang} />
-      <main dir={isArabic ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={isArabic ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
         {gate.visible('k0') && <PageHero icon={resource.icon} title={localized(resource.title, lang)} subtitle={localized(resource.summary, lang)} crumbs={[{ label: copy.home, href: `/${lang}` }, { label: copy.section, href: `/${lang}/religions` }, { label: localized(resource.title, lang) }]} />}
         <div className="container-page space-y-8 py-10 md:py-14">
           {gate.visible('k1') && <section aria-labelledby="resource-materials-title">

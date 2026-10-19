@@ -94,7 +94,7 @@ export default async function LoginPage({
   const isRTL = l === "ar";
 
   return (
-    <main
+    <main id="main-content" tabIndex={-1}
       dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-cream-dark dark:bg-gray-900"
     >

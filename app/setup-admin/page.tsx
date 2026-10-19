@@ -95,7 +95,7 @@ function Shell({
       : "border-gold-500";
 
   return (
-    <main
+    <main id="main-content" tabIndex={-1}
       dir="rtl"
       className="flex min-h-screen items-center justify-center bg-cream-dark px-4 py-12"
     >

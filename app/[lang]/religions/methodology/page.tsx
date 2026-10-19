@@ -48,7 +48,7 @@ export default async function ReligionsMethodologyPage({ params }: { params: Pro
   return (
     <>
       <Header lang={current} />
-      <main dir={current === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={current === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
         {gate.visible('k0') && <PageHero icon="📜" title={copy.title} subtitle={copy.subtitle} crumbs={[{ label: current === 'ar' ? 'الرئيسية' : 'Home', href: `/${current}` }, { label: copy.title }]} />}
         <div className="container-page max-w-5xl space-y-8 py-10 md:py-14">
           {gate.visible('k1') && <section className="card p-6 md:p-9">

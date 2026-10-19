@@ -69,7 +69,7 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
   return (
     <>
       <Header lang={L} />
-      <main dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <main id="main-content" tabIndex={-1} dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
         <PageHero
           icon="◈"
           badge={L === "ar" ? "بوابة غير المسلمين" : "Non-Muslim Portal"}

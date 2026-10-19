@@ -448,7 +448,7 @@ export default async function DoubtsPage({
     <>
       <Header lang={l} />
 
-      <main dir={isRTL ? "rtl" : "ltr"}>
+      <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

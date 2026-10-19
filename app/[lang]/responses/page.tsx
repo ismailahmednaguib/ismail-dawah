@@ -91,7 +91,7 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
   return (
     <>
       <Header lang={L} />
-      <main dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <main id="main-content" tabIndex={-1} dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
         <PageHero
           icon="🛡️"
           badge={L === "ar" ? "مركز الردود" : "Responses Center"}

@@ -306,7 +306,7 @@ export default function KhutabPage() {
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+    <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <Header lang={L} />
 
       <TopBar

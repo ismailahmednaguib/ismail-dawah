@@ -1,5 +1,6 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import HtmlDir from "@/components/HtmlDir";
 import SkipLink from "@/components/SkipLink";
@@ -215,6 +216,14 @@ export default function RootLayout({
             "var(--font-cairo-source), ui-sans-serif, system-ui, sans-serif",
         }}
       >
+        {/*
+          يضبط اللغة والاتجاه قبل أول رسم، فلا تظهر صفحة إنجليزية
+          باتجاه عربي أو بلغة خاطئة لقارئ الشاشة أثناء التحميل.
+        */}
+        <Script id="html-lang-dir" strategy="beforeInteractive">
+          {`(function(){try{var p=location.pathname.split('/')[1];var l=p==='en'?'en':'ar';document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;document.documentElement.classList.toggle('dark', s==='dark'||(!s&&d));}catch(e){}})();`}
+        </Script>
+
         <HtmlDir />
 
         <SkipLink />
@@ -223,9 +232,12 @@ export default function RootLayout({
 
         <AnalyticsTracker />
 
-        <div id="main-content" tabIndex={-1}>
-          {children}
-        </div>
+        {/*
+          لا نضع id="main-content" هنا: كل صفحة تضع الهيدر داخل children،
+          فكان الرابط يتخطى إلى غلاف يشمل الهيدر نفسه. الصفحات العامة تضع
+          المعرّف على <main> بعد الهيدر مباشرة.
+        */}
+        <div>{children}</div>
       </body>
     </html>
   );

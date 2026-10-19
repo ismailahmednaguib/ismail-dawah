@@ -94,7 +94,7 @@ export default async function FiqhPage({ params, searchParams }: PageProps) {
   return (
     <>
       <Header lang={currentLang} />
-      <main dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 dark:bg-night-900">
         <section className="gradient-hero px-4 py-14 text-white">
           <div className="container-page text-center">
             <p className="mb-3 text-5xl">⚖️</p>

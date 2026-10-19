@@ -65,7 +65,7 @@ export default function NotFound() {
   }, [t.documentTitle]);
 
   return (
-    <main
+    <main id="main-content" tabIndex={-1}
       lang={lang}
       dir={lang === "ar" ? "rtl" : "ltr"}
       className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-night-950 px-4 py-16 text-white"

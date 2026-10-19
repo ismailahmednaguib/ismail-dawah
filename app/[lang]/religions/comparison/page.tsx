@@ -45,7 +45,7 @@ export default async function ReligionsComparisonPage({ params }: { params: Prom
   return (
     <>
       <Header lang={current} />
-      <main dir={isArabic ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={isArabic ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
         {gate.visible('k0') && <PageHero
           icon="⚖️"
           title={isArabic ? 'جداول المقارنة' : 'Comparison Tables'}
