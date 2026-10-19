@@ -9,6 +9,13 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
+import type { Fraction } from "@/lib/calculators/fraction";
+import {
+  calculateInheritance,
+  type DeceasedGender,
+  type HeirKey,
+  type InheritanceWarningCode,
+} from "@/lib/calculators/inheritance";
 
 export const dynamic = "force-dynamic";
 
@@ -29,39 +36,12 @@ type SearchParams = {
   fullSisters?: string | string[];
 };
 
-type DeceasedGender = "male" | "female";
 type YesNo = "yes" | "no";
-
-type HeirKey =
-  | "spouse"
-  | "father"
-  | "mother"
-  | "sons"
-  | "daughters"
-  | "fullBrothers"
-  | "fullSisters";
 
 interface CurrencyOption {
   id: string;
   symbolAr: string;
   symbolEn: string;
-}
-
-interface HeirRow {
-  key: HeirKey;
-  labelAr: string;
-  labelEn: string;
-  count: number;
-  share: Fraction;
-  perShare: Fraction | null;
-}
-
-interface CalculationResult {
-  rows: HeirRow[];
-  warnings: string[];
-  appliedAwl: boolean;
-  appliedRadd: boolean;
-  totalShare: Fraction;
 }
 
 // ============================================================
@@ -77,84 +57,6 @@ const CURRENCIES: CurrencyOption[] = [
   { id: "EUR", symbolAr: "€", symbolEn: "EUR" },
   { id: "GBP", symbolAr: "£", symbolEn: "GBP" },
 ];
-
-// ============================================================
-// الكسور — حساب دقيق بدون أخطاء فاصلة عائمة
-// ============================================================
-
-function gcd(a: number, b: number): number {
-  a = Math.abs(a);
-  b = Math.abs(b);
-  while (b) {
-    const t = b;
-    b = a % b;
-    a = t;
-  }
-  return a || 1;
-}
-
-class Fraction {
-  readonly n: number;
-  readonly d: number;
-
-  constructor(n: number = 0, d: number = 1) {
-    if (d === 0) throw new Error("Denominator cannot be zero");
-
-    let num = n;
-    let den = d;
-
-    if (den < 0) {
-      num = -num;
-      den = -den;
-    }
-
-    if (num === 0) {
-      this.n = 0;
-      this.d = 1;
-      return;
-    }
-
-    const g = gcd(num, den);
-    this.n = num / g;
-    this.d = den / g;
-  }
-
-  add(other: Fraction): Fraction {
-    return new Fraction(this.n * other.d + other.n * this.d, this.d * other.d);
-  }
-
-  sub(other: Fraction): Fraction {
-    return new Fraction(this.n * other.d - other.n * this.d, this.d * other.d);
-  }
-
-  mul(other: Fraction): Fraction {
-    return new Fraction(this.n * other.n, this.d * other.d);
-  }
-
-  div(other: Fraction): Fraction {
-    if (other.isZero()) return new Fraction(0);
-    return new Fraction(this.n * other.d, this.d * other.n);
-  }
-
-  isZero(): boolean {
-    return this.n === 0;
-  }
-
-  toNumber(): number {
-    return this.n / this.d;
-  }
-
-  toString(): string {
-    return this.d === 1 ? String(this.n) : `${this.n}/${this.d}`;
-  }
-}
-
-const ZERO = new Fraction(0);
-const ONE = new Fraction(1);
-
-function f(n: number, d: number = 1): Fraction {
-  return new Fraction(n, d);
-}
 
 // ============================================================
 // نصوص الواجهة
@@ -491,251 +393,27 @@ function formatAmount(value: number, lang: Lang, currencyId: string): string {
   }
 }
 
-function sumShares(shares: Record<HeirKey, Fraction>): Fraction {
-  return Object.values(shares).reduce((acc, share) => acc.add(share), ZERO);
-}
-
-// ============================================================
-// الحساب
-// ============================================================
-
-function calculateInheritance(input: {
-  lang: Lang;
-  deceasedGender: DeceasedGender;
-  hasSpouse: boolean;
-  hasFather: boolean;
-  hasMother: boolean;
-  sons: number;
-  daughters: number;
-  fullBrothers: number;
-  fullSisters: number;
-  ui: (typeof UI)[Lang];
-}): CalculationResult {
-  const {
-    deceasedGender,
-    hasSpouse,
-    hasFather,
-    hasMother,
-    sons,
-    daughters,
-    fullBrothers,
-    fullSisters,
-    ui,
-  } = input;
-
-  const warnings: string[] = [];
-  const hasAnyHeir =
-    hasSpouse ||
-    hasFather ||
-    hasMother ||
-    sons > 0 ||
-    daughters > 0 ||
-    fullBrothers > 0 ||
-    fullSisters > 0;
-
-  if (!hasAnyHeir) {
-    return {
-      rows: [],
-      warnings: [ui.noHeirs],
-      appliedAwl: false,
-      appliedRadd: false,
-      totalShare: ZERO,
-    };
+function heirLabel(
+  key: HeirKey,
+  gender: DeceasedGender,
+  ui: (typeof UI)[Lang]
+): string {
+  switch (key) {
+    case "spouse":
+      return gender === "male" ? ui.wife : ui.husband;
+    case "father":
+      return ui.father;
+    case "mother":
+      return ui.mother;
+    case "sons":
+      return ui.sonsLabel;
+    case "daughters":
+      return ui.daughtersLabel;
+    case "fullBrothers":
+      return ui.fullBrothersLabel;
+    case "fullSisters":
+      return ui.fullSistersLabel;
   }
-
-  const hasDescendant = sons + daughters > 0;
-  const hasMaleDescendant = sons > 0;
-  const siblingCount = fullBrothers + fullSisters;
-  const siblingsBlocked = hasMaleDescendant || hasFather;
-
-  const shares: Record<HeirKey, Fraction> = {
-    spouse: ZERO,
-    father: ZERO,
-    mother: ZERO,
-    sons: ZERO,
-    daughters: ZERO,
-    fullBrothers: ZERO,
-    fullSisters: ZERO,
-  };
-
-  // ===== الزوج / الزوجة =====
-  if (hasSpouse) {
-    if (deceasedGender === "male") {
-      shares.spouse = hasDescendant ? f(1, 8) : f(1, 4);
-    } else {
-      shares.spouse = hasDescendant ? f(1, 4) : f(1, 2);
-    }
-  }
-
-  // ===== الأب =====
-  if (hasFather && hasDescendant) {
-    shares.father = f(1, 6);
-  }
-
-  // ===== الأم =====
-  const specialUmariyyah =
-    hasSpouse &&
-    hasFather &&
-    hasMother &&
-    !hasDescendant &&
-    siblingCount === 0;
-
-  if (hasMother) {
-    if (specialUmariyyah) {
-      const remainderAfterSpouse = ONE.sub(shares.spouse);
-      shares.mother = f(1, 3).mul(remainderAfterSpouse);
-    } else if (hasDescendant || siblingCount >= 2) {
-      shares.mother = f(1, 6);
-    } else {
-      shares.mother = f(1, 3);
-    }
-  }
-
-  // ===== البنات =====
-  if (daughters > 0 && sons === 0) {
-    shares.daughters = daughters === 1 ? f(1, 2) : f(2, 3);
-  }
-
-  // ===== الأخوات الشقيقات =====
-  if (
-    !siblingsBlocked &&
-    fullSisters > 0 &&
-    fullBrothers === 0 &&
-    !hasDescendant
-  ) {
-    shares.fullSisters = fullSisters === 1 ? f(1, 2) : f(2, 3);
-  }
-
-  // ===== العول =====
-  let fixedSum = sumShares(shares);
-  let appliedAwl = false;
-
-  if (fixedSum.toNumber() > 1 + 1e-12) {
-    const factor = ONE.div(fixedSum);
-    (Object.keys(shares) as HeirKey[]).forEach((key) => {
-      shares[key] = shares[key].mul(factor);
-    });
-    fixedSum = ONE;
-    appliedAwl = true;
-    warnings.push(ui.awl);
-  }
-
-  let residue = ONE.sub(fixedSum);
-  if (residue.n < 0) residue = ZERO;
-
-  let appliedRadd = false;
-
-  // ===== توزيع الباقي: العصبة ثم الرد =====
-  if (residue.toNumber() > 1e-12) {
-    if (sons > 0) {
-      const parts = 2 * sons + daughters;
-      if (parts > 0) {
-        const sonsShare = residue.mul(f(2 * sons, parts));
-        const daughtersShare = residue.mul(f(daughters, parts));
-        shares.sons = shares.sons.add(sonsShare);
-        shares.daughters = shares.daughters.add(daughtersShare);
-        residue = ZERO;
-        if (daughters > 0) warnings.push(ui.sonsDaughtersRule);
-      }
-    } else if (hasFather) {
-      shares.father = shares.father.add(residue);
-      residue = ZERO;
-    } else if (fullBrothers > 0 && !siblingsBlocked) {
-      const parts = 2 * fullBrothers + fullSisters;
-      if (parts > 0) {
-        const brothersShare = residue.mul(f(2 * fullBrothers, parts));
-        const sistersShare = residue.mul(f(fullSisters, parts));
-        shares.fullBrothers = shares.fullBrothers.add(brothersShare);
-        shares.fullSisters = shares.fullSisters.add(sistersShare);
-        residue = ZERO;
-        if (fullSisters > 0) warnings.push(ui.brothersSistersRule);
-      }
-    } else {
-      const raddCandidates: HeirKey[] = [
-        "father",
-        "mother",
-        "daughters",
-        "fullSisters",
-      ];
-      const candidates = raddCandidates.filter(
-        (key) => shares[key].toNumber() > 1e-12
-      );
-      if (candidates.length > 0) {
-        const total = candidates.reduce(
-          (acc, key) => acc.add(shares[key]),
-          ZERO
-        );
-        if (total.toNumber() > 0) {
-          candidates.forEach((key) => {
-            const portion = shares[key].div(total);
-            shares[key] = shares[key].add(residue.mul(portion));
-          });
-          appliedRadd = true;
-          warnings.push(ui.radd);
-        }
-      } else if (shares.spouse.toNumber() > 1e-12) {
-        shares.spouse = shares.spouse.add(residue);
-        warnings.push(ui.spouseOnly);
-      }
-      residue = ZERO;
-    }
-  }
-
-  // ===== ملاحظات إضافية =====
-  if (daughters > 0 && fullBrothers > 0 && !hasFather && sons === 0) {
-    warnings.push(ui.daughtersBlockNote);
-  }
-
-  const rows: HeirRow[] = [];
-
-  const addRow = (
-    key: HeirKey,
-    labelAr: string,
-    labelEn: string,
-    count: number,
-    share: Fraction
-  ) => {
-    if (share.toNumber() <= 1e-12) return;
-    rows.push({
-      key,
-      labelAr,
-      labelEn,
-      count,
-      share,
-      perShare: count > 0 ? share.div(f(count, 1)) : null,
-    });
-  };
-
-  if (hasSpouse) {
-    addRow(
-      "spouse",
-      deceasedGender === "male" ? ui.wife : ui.husband,
-      deceasedGender === "male" ? "Wife" : "Husband",
-      1,
-      shares.spouse
-    );
-  }
-
-  if (hasFather) addRow("father", ui.father, "Father", 1, shares.father);
-  if (hasMother) addRow("mother", ui.mother, "Mother", 1, shares.mother);
-  if (sons > 0) addRow("sons", ui.sonsLabel, ui.sonsLabel, sons, shares.sons);
-  if (daughters > 0) {
-    addRow("daughters", ui.daughtersLabel, ui.daughtersLabel, daughters, shares.daughters);
-  }
-  if (fullBrothers > 0) {
-    addRow("fullBrothers", ui.fullBrothersLabel, ui.fullBrothersLabel, fullBrothers, shares.fullBrothers);
-  }
-  if (fullSisters > 0) {
-    addRow("fullSisters", ui.fullSistersLabel, ui.fullSistersLabel, fullSisters, shares.fullSisters);
-  }
-
-  return {
-    rows,
-    warnings,
-    appliedAwl,
-    appliedRadd,
-    totalShare: sumShares(shares),
-  };
 }
 
 // ============================================================
@@ -825,8 +503,17 @@ export default async function InheritancePage({
   const fullBrothers = parseCount(sp.fullBrothers);
   const fullSisters = parseCount(sp.fullSisters);
 
-  const result = calculateInheritance({
-    lang: l,
+  const warningText: Record<InheritanceWarningCode, string> = {
+    no_heirs: ui.noHeirs,
+    awl: ui.awl,
+    radd: ui.radd,
+    spouse_only: ui.spouseOnly,
+    sons_daughters_rule: ui.sonsDaughtersRule,
+    brothers_sisters_rule: ui.brothersSistersRule,
+    daughters_block_note: ui.daughtersBlockNote,
+  };
+
+  const inherited = calculateInheritance({
     deceasedGender,
     hasSpouse,
     hasFather,
@@ -835,8 +522,12 @@ export default async function InheritancePage({
     daughters,
     fullBrothers,
     fullSisters,
-    ui,
   });
+
+  const result = {
+    ...inherited,
+    warnings: inherited.warnings.map((code) => warningText[code]),
+  };
 
   // JSON-LD
   const jsonLd = {
@@ -870,7 +561,7 @@ export default async function InheritancePage({
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+    <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -1323,7 +1014,7 @@ export default async function InheritancePage({
                             className="border-b border-slate-100 last:border-b-0 dark:border-night-700"
                           >
                             <td className="p-3 font-bold text-slate-800 dark:text-slate-100">
-                              {isRTL ? row.labelAr : row.labelEn}
+                              {heirLabel(row.key, deceasedGender, ui)}
                             </td>
 
                             <td className="p-3 text-center text-slate-600 dark:text-slate-300">

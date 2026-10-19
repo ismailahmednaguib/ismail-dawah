@@ -8,15 +8,23 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import {
+  GOLD_NISAB_GRAMS,
+  SILVER_NISAB_GRAMS,
+  calculateZakat,
+  firstValue as getFirstValue,
+  normalizeIrrigation,
+  normalizeNisabBasis,
+  parseNonNegativeNumber,
+  type Irrigation,
+  type ZakatWarningCode,
+} from "@/lib/calculators/zakat";
 
 export const dynamic = "force-dynamic";
 
 // ============================================================
 // الأنواع
 // ============================================================
-
-type NisabBasis = "silver" | "gold";
-type Irrigation = "rain" | "irrigated" | "mixed";
 
 type SearchParams = {
   currency?: string | string[];
@@ -42,14 +50,6 @@ interface CurrencyOption {
 // ============================================================
 // الثوابت
 // ============================================================
-
-const GOLD_NISAB_GRAMS = 85;
-const SILVER_NISAB_GRAMS = 595;
-const ZAKAT_RATE = 0.025;
-
-const CROPS_RAIN_RATE = 0.1;
-const CROPS_IRRIGATED_RATE = 0.05;
-const CROPS_MIXED_RATE = 0.075;
 
 const CURRENCIES: CurrencyOption[] = [
   { id: "EGP", symbolAr: "ج.م", symbolEn: "EGP" },
@@ -372,18 +372,6 @@ const UI: Record<string,
 // دوال مساعدة
 // ============================================================
 
-function getFirstValue(value?: string | string[]): string {
-  if (Array.isArray(value)) return value[0] ?? "";
-  return value ?? "";
-}
-
-function parseNonNegativeNumber(value?: string | string[]): number {
-  const raw = getFirstValue(value).replace(/,/g, "").trim();
-  if (!raw) return 0;
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
-}
-
 function formatNumber(value: number, lang: Lang): string {
   const safe = Number.isFinite(value) ? value : 0;
   try {
@@ -403,27 +391,9 @@ function formatCurrency(value: number, lang: Lang, currencyId: string): string {
   return `${formatNumber(value, lang)} ${symbol}`;
 }
 
-function normalizeNisabBasis(value?: string | string[]): NisabBasis {
-  const raw = getFirstValue(value).toLowerCase();
-  return raw === "gold" ? "gold" : "silver";
-}
-
-function normalizeIrrigation(value?: string | string[]): Irrigation {
-  const raw = getFirstValue(value).toLowerCase();
-  if (raw === "irrigated") return "irrigated";
-  if (raw === "mixed") return "mixed";
-  return "rain";
-}
-
 function normalizeCurrency(value?: string | string[]): string {
   const raw = getFirstValue(value).toUpperCase();
   return CURRENCIES.some((c) => c.id === raw) ? raw : "EGP";
-}
-
-function cropRate(irrigation: Irrigation): number {
-  if (irrigation === "irrigated") return CROPS_IRRIGATED_RATE;
-  if (irrigation === "mixed") return CROPS_MIXED_RATE;
-  return CROPS_RAIN_RATE;
 }
 
 function cropRateLabel(irrigation: Irrigation): string {
@@ -524,38 +494,41 @@ export default async function ZakatPage({
   const debts = parseNonNegativeNumber(sp.debts);
   const crops = parseNonNegativeNumber(sp.crops);
 
-  const goldValue = goldGrams * goldPrice;
-  const silverValue = silverGrams * silverPrice;
-  const metalValue = goldValue + silverValue;
+  const result = calculateZakat({
+    cash,
+    goldGrams,
+    silverGrams,
+    goldPrice,
+    silverPrice,
+    goods,
+    receivables,
+    debts,
+    crops,
+    nisabBasis,
+    irrigation,
+    submitted,
+  });
 
-  const totalAssets = cash + goods + receivables + metalValue;
-  const netWealth = Math.max(0, totalAssets - debts);
+  const {
+    metalValue,
+    totalAssets,
+    netWealth,
+    nisabValue,
+    canCalculateMonetaryNisab,
+    reachedMetalNisabByWeight,
+    payable,
+    zakatAmount,
+    cropZakat,
+  } = result;
 
-  const goldNisabValue = GOLD_NISAB_GRAMS * goldPrice;
-  const silverNisabValue = SILVER_NISAB_GRAMS * silverPrice;
-
-  let nisabValue = nisabBasis === "gold" ? goldNisabValue : silverNisabValue;
-  if (nisabValue <= 0) nisabValue = Math.max(goldNisabValue, silverNisabValue);
-
-  const canCalculateMonetaryNisab = nisabValue > 0;
-  const reachedMetalNisabByWeight =
-    goldGrams >= GOLD_NISAB_GRAMS || silverGrams >= SILVER_NISAB_GRAMS;
-
-  const payable = canCalculateMonetaryNisab
-    ? netWealth >= nisabValue
-    : reachedMetalNisabByWeight && netWealth > 0;
-
-  const zakatAmount = canCalculateMonetaryNisab && payable ? netWealth * ZAKAT_RATE : 0;
-
-  const rate = cropRate(irrigation);
-  const cropZakat = crops > 0 ? crops * rate : 0;
-
-  const warnings: string[] = [];
-  if (goldGrams > 0 && goldPrice <= 0) warnings.push(ui.warningGoldPrice);
-  if (silverGrams > 0 && silverPrice <= 0) warnings.push(ui.warningSilverPrice);
-  if (!canCalculateMonetaryNisab && submitted) warnings.push(ui.warningNisab);
-  if (debts > totalAssets && submitted) warnings.push(ui.warningDebts);
-  if (crops > 0) warnings.push(ui.warningCropsThreshold);
+  const warningText: Record<ZakatWarningCode, string> = {
+    gold_price_missing: ui.warningGoldPrice,
+    silver_price_missing: ui.warningSilverPrice,
+    nisab_unknown: ui.warningNisab,
+    debts_exceed_assets: ui.warningDebts,
+    crops_threshold: ui.warningCropsThreshold,
+  };
+  const warnings = result.warnings.map((code) => warningText[code]);
 
   // JSON-LD
   const jsonLd = {
@@ -621,7 +594,7 @@ export default async function ZakatPage({
   };
 
   return (
-    <main dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+    <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
