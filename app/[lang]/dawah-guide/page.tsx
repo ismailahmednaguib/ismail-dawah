@@ -310,7 +310,7 @@ const PRINCIPLES: Principle[] = [
   },
   {
     id: "istiqamah",
-    icon: "🌱",
+    icon: "✦",
     title: { ar: "الاستمرارية", en: "Consistency" },
     description: {
       ar: "الدعوة ليست خطبة واحدة أو منشورًا واحدًا، بل مسار طويل من الصبر والمتابعة.",
@@ -745,7 +745,7 @@ export default async function DawahGuidePage({
           <StatCard icon="🧭" label={ui.stepsCount} value={DAWAH_STEPS.length} color="gold" />
           <StatCard icon="🛠️" label={ui.skillsCount} value={SKILLS.length} color="primary" />
           <StatCard icon="⚠️" label={ui.mistakesCount} value={MISTAKES.length} color="gold" />
-          <StatCard icon="✅" label={ui.checklistCount} value={CHECKLIST.length} color="primary" />
+          <StatCard icon="✓" label={ui.checklistCount} value={CHECKLIST.length} color="primary" />
         </div>
 
         </>)}
@@ -779,7 +779,7 @@ export default async function DawahGuidePage({
             <QuickNavLink href="#steps" icon="🧭" label={ui.stepsTitle} />
             <QuickNavLink href="#skills" icon="🛠️" label={ui.skillsTitle} />
             <QuickNavLink href="#mistakes" icon="⚠️" label={ui.mistakesTitle} />
-            <QuickNavLink href="#checklist" icon="✅" label={ui.checklistTitle} />
+              <QuickNavLink href="#checklist" icon="✓" label={ui.checklistTitle} />
           </div>
         </div>
 

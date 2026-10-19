@@ -31,13 +31,13 @@ const COPY: Record<string, any> = {
 
 const TRACKS = {
   ar: [
-    { value: 'non_muslim', icon: '🌍', title: 'أتعرف على الإسلام', text: 'مدخل هادئ وواضح لمن يريد التعرف على الإسلام.' },
-    { value: 'muslim_new', icon: '🌱', title: 'المسلم الجديد', text: 'خطوات عملية لبناء الأساسيات بثبات.' },
+    { value: 'non_muslim', icon: '◈', title: 'أتعرف على الإسلام', text: 'مدخل هادئ وواضح لمن يريد التعرف على الإسلام.' },
+    { value: 'muslim_new', icon: '✦', title: 'المسلم الجديد', text: 'خطوات عملية لبناء الأساسيات بثبات.' },
     { value: 'student', icon: '📚', title: 'طالب العلم', text: 'محتوى مرتب لمن يريد التوسع والتدرج.' },
   ],
   en: [
-    { value: 'non_muslim', icon: '🌍', title: 'Discover Islam', text: 'A clear and calm starting point for learning about Islam.' },
-    { value: 'muslim_new', icon: '🌱', title: 'New Muslim', text: 'Practical steps for building a strong foundation.' },
+    { value: 'non_muslim', icon: '◈', title: 'Discover Islam', text: 'A clear and calm starting point for learning about Islam.' },
+    { value: 'muslim_new', icon: '✦', title: 'New Muslim', text: 'Practical steps for building a strong foundation.' },
     { value: 'student', icon: '📚', title: 'Knowledge Seeker', text: 'Structured content for steady, deeper learning.' },
   ],
 } as const;

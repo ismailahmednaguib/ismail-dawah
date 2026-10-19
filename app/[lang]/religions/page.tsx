@@ -87,7 +87,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
       <Header lang={currentLang} />
       <main dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
         {gate.visible('k0') && <PageHero
-          icon="🌍"
+          icon="◈"
           title={copy.title}
           subtitle={copy.subtitle}
           crumbs={[{ label: currentLang === 'ar' ? 'الرئيسية' : 'Home', href: `/${currentLang}` }, { label: copy.title }]}

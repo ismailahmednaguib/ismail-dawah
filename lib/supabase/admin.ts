@@ -107,7 +107,9 @@ export function requiresScholarReview(content: {
   return Boolean(
     content.needs_scholar_review ||
       content.is_sensitive ||
-      content.content_type === 'fatwa'
+      content.content_type === 'fatwa' ||
+      content.content_type === 'hadith' ||
+      content.content_type === 'khutbah'
   );
 }
 
@@ -157,7 +159,9 @@ export async function createContent(
   const needsScholarReview = Boolean(
     input.needs_scholar_review ||
       input.is_sensitive ||
-      input.content_type === 'fatwa'
+      input.content_type === 'fatwa' ||
+      input.content_type === 'hadith' ||
+      input.content_type === 'khutbah'
   );
 
   // 1. إنشاء المحتوى الرئيسي

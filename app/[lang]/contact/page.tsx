@@ -447,7 +447,7 @@ export default async function ContactPage({
                     : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
                 }`}
               >
-                {status === "sent" ? "✅" : "⚠️"}
+                {status === "sent" ? "✓" : "⚠️"}
               </span>
 
               <div>

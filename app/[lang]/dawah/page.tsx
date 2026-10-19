@@ -71,7 +71,7 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
       <Header lang={L} />
       <main dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
         <PageHero
-          icon="🌍"
+          icon="◈"
           badge={L === "ar" ? "بوابة غير المسلمين" : "Non-Muslim Portal"}
           title={c.title}
           subtitle={c.subtitle}
@@ -108,7 +108,7 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
 
         <section className="py-16 bg-gold-50">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-2xl font-black text-primary-950 text-center mb-10">أسئلة شائعة</h2>
+            <h2 className="text-2xl font-black text-primary-950 text-center mb-10">{L === "ar" ? "أسئلة شائعة" : "Frequently Asked Questions"}</h2>
             <div className="space-y-3">
               {c.faq.map((item, i) => (
                 <div key={i} className="rounded-2xl border border-cream-200 bg-white p-4 shadow-sm">
@@ -132,8 +132,21 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
   );
 }
 
-export const metadata: Metadata = {
-  title: "بوابة غير المسلمين | إسماعيل أحمد نجيب",
-  description: "تعريف بالإسلام لغير المسلمين، رد على الأسئلة الشائعة، ومقارنة الأديان.",
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params;
+  const isEnglish = lang === "en";
+
+  return {
+    title: isEnglish ? "Dawah to Non-Muslims | Ismail Ahmed Naguib" : "بوابة غير المسلمين | إسماعيل أحمد نجيب",
+    description: isEnglish
+      ? "A clear introduction to Islam, answers to common questions, and a respectful path for learning."
+      : "تعريف واضح بالإسلام، وإجابات عن الأسئلة الشائعة، ومسار محترم للتعلم.",
+    alternates: {
+      languages: {
+        ar: "/ar/dawah",
+        en: "/en/dawah",
+      },
+    },
+  };
+}
 

@@ -1091,7 +1091,7 @@ export default async function HajjGuidePage({
               ⚠️ {ui.mistakesTitle}
             </a>
             <a href="#checklist" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              ✅ {ui.checklistTitle}
+              ✓ {ui.checklistTitle}
             </a>
           </div>
         </div>

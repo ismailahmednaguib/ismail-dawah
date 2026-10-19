@@ -472,7 +472,7 @@ export default async function YouthIssuesPage({
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="💡" label={ui.issuesCount} value={ISSUES.length} color="primary" />
-          <StatCard icon="✅" label={ui.solutionsCount} value={ISSUES.length} color="gold" />
+          <StatCard icon="✓" label={ui.solutionsCount} value={ISSUES.length} color="gold" />
           <StatCard icon="📖" label={ui.versesCount} value={ISSUES.length} color="primary" />
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
@@ -549,7 +549,7 @@ export default async function YouthIssuesPage({
                   {/* الحل */}
                   <div className="mb-4 rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                     <h4 className="mb-2 text-sm font-black text-white/90">
-                      ✅ {ui.solution}
+                      ✓ {ui.solution}
                     </h4>
                     <p className="text-sm leading-relaxed text-white/90">
                       {issue.solution[L]}

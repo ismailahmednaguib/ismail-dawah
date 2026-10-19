@@ -280,7 +280,7 @@ export default function DailyWirdClient({
             color="primary"
           />
           <StatCard
-            icon="✅"
+            icon="✓"
             label={UI.totalDone}
             value={`${formatNumber(completedTotal)}/${formatNumber(totalTasks)}`}
             color="gold"

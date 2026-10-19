@@ -193,7 +193,7 @@ const SECTIONS: TermsSection[] = [
   },
   {
     id: "acceptable-use",
-    icon: "✅",
+    icon: "✓",
     title: { ar: "الاستخدام المقبول", en: "Acceptable Use" },
     paragraphs: [
       {
@@ -683,7 +683,7 @@ export default async function TermsPage({
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📋" label={ui.sectionsCount} value={SECTIONS.length} color="primary" />
-          <StatCard icon="🌍" label={ui.languagesCount} value={languages.length} color="gold" />
+          <StatCard icon="◈" label={ui.languagesCount} value={languages.length} color="gold" />
           <StatCard
             icon="📅"
             label={ui.lastUpdateLabel}

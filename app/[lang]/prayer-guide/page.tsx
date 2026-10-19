@@ -578,7 +578,7 @@ export default async function PrayerGuidePage({
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📋" label={ui.stepsCount} value={STEPS.length} color="primary" />
           <StatCard icon="🕐" label={ui.prayersCount} value={PRAYERS.length} color="gold" />
-          <StatCard icon="✅" label={ui.conditionsCount} value={conditions.length} color="primary" />
+          <StatCard icon="✓" label={ui.conditionsCount} value={conditions.length} color="primary" />
           <StatCard icon="⚠️" label={ui.nullifiersCount} value={nullifiers.length} color="gold" />
         </div>
 
@@ -735,7 +735,7 @@ export default async function PrayerGuidePage({
               className="section-title mb-0"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              ✅ {ui.conditionsTitle}
+              ✓ {ui.conditionsTitle}
             </h2>
             <div className="islamic-divider my-0">
               <span className="text-xl text-gold-500">✦</span>

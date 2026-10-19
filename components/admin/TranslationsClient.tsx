@@ -11,7 +11,7 @@ const STATUS_CONFIG: Record<string, { label: string; icon: string; className: st
   not_started: { label: 'لم تبدأ', icon: '⬜', className: 'bg-stone-100 text-stone-500' },
   machine_translated: { label: 'ترجمة آلية', icon: '🤖', className: 'bg-orange-100 text-orange-700' },
   in_progress: { label: 'قيد الترجمة', icon: '✍️', className: 'bg-primary-100 text-primary-700' },
-  reviewed: { label: 'تمت المراجعة', icon: '✅', className: 'bg-primary-100 text-primary-700' },
+  reviewed: { label: 'تمت المراجعة', icon: '✓', className: 'bg-primary-100 text-primary-700' },
   published: { label: 'منشور', icon: '📢', className: 'bg-primary-100 text-primary-700' },
 };
 

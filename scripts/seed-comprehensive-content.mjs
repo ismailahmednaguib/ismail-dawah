@@ -88,7 +88,7 @@ async function main() {
   addBranch('branch', 'ar', 'التزكية والأخلاق', 'tazkiyah', '🌿', '#0e7490', 6);
   addBranch('branch', 'ar', 'الدعوة والخطابة', 'dawah', '🤝', '#c9a227', 7);
   addBranch('branch', 'ar', 'الردود على الشبهات والتيارات', 'responses', '🛡️', '#c9a227', 8);
-  addBranch('branch', 'ar', 'بوابة غير المسلمين', 'non-muslim', '🌍', '#c9a227', 9);
+  addBranch('branch', 'ar', 'بوابة غير المسلمين', 'non-muslim', '◈', '#c9a227', 9);
   addBranch('branch', 'ar', 'الأدوات الإسلامية', 'tools', '🛠️', '#0e7490', 10);
 
   // -------------------- تصنيفات فرعية --------------------

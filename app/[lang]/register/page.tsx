@@ -251,7 +251,7 @@ export default function RegisterPage() {
       });
       const j = await r.json();
       if (j.ok) {
-        setMsg({ type: "success", text: "✅ " + ui.successMessage });
+        setMsg({ type: "success", text: "✓ " + ui.successMessage });
         setTimeout(() => router.push(`/${lang}/account`), 1500);
       } else {
         setMsg({ type: "error", text: "❌ " + (j.error || ui.errorMessage) });

@@ -82,8 +82,8 @@ export const NAV_TREE: NavNode[] = [
       n("islamic-history", "التاريخ الإسلامي", "Islamic History", "📜", "/fields/islamic-history", undefined, { taxonomy: "islamic-history" }),
       n("tarajim", "تراجم العلماء", "Scholars' Biographies", "📖", "/prophets-stories"),
     ]),
-    n("tazkiyah", "التزكية والأخلاق", "Purification & Ethics", "🌿", undefined, [
-      n("raqaiq", "الرقائق وتهذيب النفوس", "Spiritual Refinement", "🌿", "/fields/tazkiyah-nafs", undefined, { taxonomy: "tazkiyah-nafs" }),
+    n("tazkiyah", "التزكية والأخلاق", "Purification & Ethics", "✦", undefined, [
+      n("raqaiq", "الرقائق وتهذيب النفوس", "Spiritual Refinement", "✦", "/fields/tazkiyah-nafs", undefined, { taxonomy: "tazkiyah-nafs" }),
       n("akhlaq", "الأخلاق والآداب", "Ethics & Manners", "🤲", "/fields/akhlaq", undefined, { taxonomy: "akhlaq" }),
       n("adhkar-duaa", "الأذكار والدعاء والرقية", "Adhkar, Dua & Ruqyah", "🤲", "/adhkar"),
       n("ruqyah", "الرقية الشرعية", "Ruqyah", "🛡️", "/ruqyah"),
@@ -98,7 +98,7 @@ export const NAV_TREE: NavNode[] = [
     n("library", "المكتبة العلمية", "Knowledge Library", "📚", "/learn"),
   ], { desc: { ar: "موسوعة علوم الدين: عقيدة، قرآن، حديث، فقه، سيرة، تزكية، ودعوة", en: "Encyclopedia of Islamic sciences" } }),
 
-  n("non-muslim", "بوابة غير المسلمين", "Non-Muslim Portal", "🌍", "/dawah", [
+  n("non-muslim", "بوابة غير المسلمين", "Non-Muslim Portal", "◈", "/dawah", [
     n("dawah-path", "اختبر مسارك الدعوي", "Find your learning path", "🧭", "/dawah/path"),
     n("what-is-islam", "ما هو الإسلام؟", "What is Islam?", "🕌"),
     n("who-is-muhammad", "من هو محمد ﷺ؟", "Who is Muhammad ﷺ?", "🌟"),
@@ -112,7 +112,7 @@ export const NAV_TREE: NavNode[] = [
     n("ask-daee", "تواصل مع داعية / اطرح سؤالًا", "Ask a Daee", "💬", "/contact"),
   ], { desc: { ar: "تعريف مبسّط بالإسلام لمن يبحث عنه", en: "A simple introduction to Islam" } }),
 
-  n("religions", "الأديان والفكر", "Religions & Thought", "🌍", "/religions", [
+  n("religions", "الأديان والفكر", "Religions & Thought", "◈", "/religions", [
     n("religions-methodology", "منهج المقارنة والحوار", "Comparison & Dialogue Method", "📜", "/religions/methodology"),
     n("religions-world", "أديان العالم", "World Religions", "🌐", "/religions"),
     n("religions-thought", "المذاهب الفكرية", "Schools of Thought", "💡", "/religions/atheism"),
@@ -159,7 +159,7 @@ export const NAV_TREE: NavNode[] = [
   n("articles", "المقالات والمدونة", "Articles & Blog", "📖", "/articles", [
     n("articles-dawah", "مقالات دعوية", "Dawah Articles", "📢", "/articles"),
     n("articles-aqeedah", "مقالات عقائدية", "Creed Articles", "🕌", "/articles"),
-    n("articles-akhlaq", "مقالات أخلاقية", "Ethics Articles", "🌿", "/articles"),
+    n("articles-akhlaq", "مقالات أخلاقية", "Ethics Articles", "✦", "/articles"),
     n("articles-archive", "أرشيف المقالات", "Articles Archive", "🗄️", "/articles"),
   ], { desc: { ar: "مقالات متنوعة في الدعوة والعقيدة والأخلاق", en: "Articles on dawah, creed and ethics" } }),
 

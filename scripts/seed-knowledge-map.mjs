@@ -101,7 +101,7 @@ const NEW_SUBBRANCHES = [
   ['medicine', 'الطب والبيوإثيقا', '🩺'],
   ['technology', 'التقنية والذكاء الاصطناعي', '🤖'],
   ['environment', 'البيئة', '🌱'],
-  ['minorities', 'المسلمون في الغرب', '🌍'],
+  ['minorities', 'المسلمون في الغرب', '◈'],
 ];
 
 const NEW_FIELDS = [

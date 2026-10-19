@@ -79,7 +79,7 @@ async function main() {
     { name: 'التزكية والأخلاق', slug: 'tazkiyah', icon: '🌿', color: '#0e7490' },
     { name: 'الدعوة والخطابة', slug: 'dawah', icon: '🤝', color: '#c9a227' },
     { name: 'الردود على الشبهات والتيارات', slug: 'responses', icon: '🛡️', color: '#c9a227' },
-    { name: 'بوابة غير المسلمين', slug: 'non-muslim', icon: '🌍', color: '#c9a227' },
+    { name: 'بوابة غير المسلمين', slug: 'non-muslim', icon: '◈', color: '#c9a227' },
     { name: 'الأدوات الإسلامية', slug: 'tools', icon: '🛠️', color: '#0e7490' },
   ];
 

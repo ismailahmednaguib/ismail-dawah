@@ -73,7 +73,7 @@ const DAYS: WirdDay[] = [
     tasks: [
       { id: "tuesday-fatwa", icon: "❓", ar: "تعلم حكمًا شرعيًا تحتاجه في يومك", en: "Learn a practical Islamic ruling", href: "/fatwa", hrefLabelAr: "الفتاوى", hrefLabelEn: "Fatwas" },
       { id: "tuesday-review", icon: "🔂", ar: "راجع محفوظك السابق", en: "Revise previous memorization", href: "/quran-memorization", hrefLabelAr: "الحفظ", hrefLabelEn: "Memorization" },
-      { id: "tuesday-gratitude", icon: "🌿", ar: "اشكر الله على ثلاث نعم", en: "Thank Allah for three blessings" },
+      { id: "tuesday-gratitude", icon: "✦", ar: "اشكر الله على ثلاث نعم", en: "Thank Allah for three blessings" },
       { id: "tuesday-salawat", icon: "🕊️", ar: "صلِّ على النبي ﷺ مئة مرة", en: "Send 100 blessings upon the Prophet ﷺ", href: "/tasbih", hrefLabelAr: "المسبحة", hrefLabelEn: "Tasbih" },
     ],
   },

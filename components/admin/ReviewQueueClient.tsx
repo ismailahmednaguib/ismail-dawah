@@ -111,7 +111,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
         <div className="text-center py-12 text-stone-400">جارٍ التحميل...</div>
       ) : items.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 p-12 text-center">
-          <p className="text-4xl mb-3">✅</p>
+          <p className="text-4xl mb-3">✓</p>
           <p className="text-stone-500 dark:text-gray-400">لا يوجد محتوى في طابور المراجعة</p>
         </div>
       ) : (
@@ -142,7 +142,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                           : 'bg-red-100 text-red-700'
                       }`}
                     >
-                      {item.status === 'pending' ? '⏳ في الانتظار' : item.status === 'approved' ? '✅ تمت الموافقة' : '🔄 يحتاج تعديلات'}
+                      {item.status === 'pending' ? '⏳ في الانتظار' : item.status === 'approved' ? '✓ تمت الموافقة' : '🔄 يحتاج تعديلات'}
                     </span>
                   </div>
                   <h3 className="font-bold text-primary-950 dark:text-white">
@@ -167,7 +167,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                       disabled={actionLoading === item.id}
                       className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-800 transition disabled:opacity-50"
                     >
-                      ✅ موافقة
+              ✓ موافقة
                     </button>
                     <button
                       onClick={() => setNotesDialog({ show: true, itemId: item.id, action: 'reject' })}
@@ -189,7 +189,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full shadow-2xl">
             <h3 className="text-lg font-bold text-primary-950 dark:text-gold mb-3">
-              {notesDialog.action === 'approve' ? '✅ الموافقة على المحتوى' : '❌ طلب تعديلات'}
+              {notesDialog.action === 'approve' ? '✓ الموافقة على المحتوى' : '❌ طلب تعديلات'}
             </h3>
             <textarea
               value={notes}

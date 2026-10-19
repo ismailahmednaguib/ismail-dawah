@@ -46,7 +46,7 @@ type SearchParams = {
 const PROPHETS: Prophet[] = [
   {
     id: "adam",
-    icon: "🌍",
+    icon: "◈",
     order: 1,
     gradient: "from-primary-500 to-primary-700",
     tags: {
@@ -847,7 +847,7 @@ export default async function ProphetsStoriesPage({
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="🕌" label={ui.prophetsCount} value={PROPHETS.length} color="primary" />
           <StatCard icon="💡" label={ui.lessonsCount} value={`${formatNumber(totalLessons, l)}+`} color="gold" />
-          <StatCard icon="🌍" label={ui.languages} value={languages.length} color="primary" />
+          <StatCard icon="◈" label={ui.languages} value={languages.length} color="primary" />
           <StatCard icon="🔍" label={ui.searchLabel} value="✓" color="gold" />
         </div>
 

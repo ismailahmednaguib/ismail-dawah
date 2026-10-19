@@ -1,9 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { type Lang, type AllLang } from "@/lib/i18n";
-import { getDictionary } from "@/lib/i18n/dictionaries";
 import { LANGUAGES } from "@/lib/i18n/config";
 
 const CLIENT_LANGUAGES = LANGUAGES.filter((l) => l.enabled);
@@ -24,8 +23,6 @@ export default function LanguageSwitcher() {
       ? (saved as Lang)
       : "ar";
   });
-
-  const dictionary = getDictionary(uiLang as string);
 
   const switchLanguage = (code: string) => {
     const target = code as Lang;
@@ -137,8 +134,6 @@ export function LanguageSwitcherCompact() {
       ? (saved as Lang)
       : "ar";
   });
-
-  const dictionary = getDictionary(uiLang as string);
 
   const switchLanguage = (code: string) => {
     setUiLang(code as Lang);

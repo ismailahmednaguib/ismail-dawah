@@ -19,7 +19,7 @@ const ACTION_LABELS: Record<string, string> = {
   update: '✏️ تعديل',
   delete: '🗑️ حذف',
   publish: '📢 نشر',
-  approve: '✅ موافقة',
+  approve: '✓ موافقة',
   reject: '❌ رفض',
   update_roles: '👥 تعديل أدوار',
   update_status: '🔄 تغيير حالة',

@@ -73,7 +73,7 @@ export default function Newsletter({ lang }: NewsletterProps) {
             </h2>
           </div>
 
-          {/* ✅ كان "صلك" — النص الصحيح من translations.ts */}
+          {/* ✓ كان "صلك" — النص الصحيح من translations.ts */}
           <p className="leading-relaxed text-slate-500 dark:text-slate-400">
             {t(lang, "newsletter_desc")}
           </p>

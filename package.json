@@ -14,6 +14,7 @@
     "qa:secrets": "node scripts/check-secrets.mjs",
     "qa:theme": "node scripts/theme-qa.mjs",
     "qa:rls": "node scripts/audit-rls.mjs",
+    "qa:rls:strict": "node scripts/audit-rls.mjs --strict",
     "qa:citations": "node scripts/check-citations.mjs",
     "qa:matrix": "node scripts/content-matrix.mjs",
     "check:smoke": "node scripts/smoke-content.mjs",

@@ -380,7 +380,7 @@ export default function ContentEditClient({
               disabled={loading}
               className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
             >
-              ✅ نشر
+              ✓ نشر
             </button>
           )}
           {canEdit && content.status === 'published' && (
@@ -398,7 +398,7 @@ export default function ContentEditClient({
               disabled={loading}
               className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
             >
-              ✅ إعادة النشر
+              ✓ إعادة النشر
             </button>
           )}
         </div>

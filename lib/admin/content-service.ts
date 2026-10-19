@@ -317,7 +317,13 @@ export async function assertVerifiedReferenceForPublish(contentId: string, conte
   content_type?: ContentType;
   is_sensitive?: boolean | null;
 }) {
-  if (content.content_type !== 'fatwa' && !content.is_sensitive) return;
+  const requiresReference =
+    content.is_sensitive ||
+    content.content_type === 'fatwa' ||
+    content.content_type === 'hadith' ||
+    content.content_type === 'khutbah';
+
+  if (!requiresReference) return;
 
   const { data, error } = await getSupabaseAdmin()
     .from('content_references')
@@ -328,7 +334,7 @@ export async function assertVerifiedReferenceForPublish(contentId: string, conte
 
   if (error) throw new Error(error.message);
   if (!data?.length) {
-    throw new Error('لا يمكن نشر المحتوى الحساس قبل إضافة مرجع شرعي موثق واحد على الأقل.');
+    throw new Error('لا يمكن نشر هذا المحتوى قبل إضافة مرجع شرعي موثق واحد على الأقل.');
   }
 }
 

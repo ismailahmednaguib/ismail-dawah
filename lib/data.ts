@@ -487,14 +487,14 @@ export const DAWAH_FIELDS: DawahField[] = freezeAs([
     arabicTitle: "دعوة المسلمين الجدد",
     englishTitle: "New Muslims Dawah",
     description: "رعاية وتعليم المسلمين الجدد",
-    icon: "🌱",
+    icon: "✦",
   },
   {
     id: "non-arab",
     arabicTitle: "دعوة غير العرب",
     englishTitle: "Non-Arab Dawah",
     description: "ترجمة المحتوى ونشر الإسلام بلغات مختلفة",
-    icon: "🌍",
+    icon: "◈",
   },
   {
     id: "media",
@@ -605,7 +605,7 @@ export interface ProphetStory {
 }
 
 export const PROPHETS: ProphetStory[] = freezeAs([
-  { id: "adam", arabicName: "آدم", englishName: "Adam", title: "أبو البشر", icon: "🌍" },
+  { id: "adam", arabicName: "آدم", englishName: "Adam", title: "أبو البشر", icon: "◈" },
   { id: "nuh", arabicName: "نوح", englishName: "Noah", title: "صاحب السفينة", icon: "🚢" },
   { id: "ibrahim", arabicName: "إبراهيم", englishName: "Abraham", title: "خليل الرحمن", icon: "🔥" },
   { id: "musa", arabicName: "موسى", englishName: "Moses", title: "كليم الله", icon: "🌊" },

@@ -129,7 +129,7 @@ export const SITE_SHORT_DESCRIPTION: Record<string, string> = {
 };
 
 // ============================================================
-// 🌍 Locales
+// ◈ Locales
 // ============================================================
 
 export const DEFAULT_LOCALE: Lang = "ar";

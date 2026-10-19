@@ -21,7 +21,7 @@ export default async function TranslationsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-primary-950 dark:text-gold mb-2">
-          🌍 إدارة الترجمات
+          ◈ إدارة الترجمات
         </h1>
         <p className="text-sm text-stone-500 dark:text-gray-400">
           ترجم المحتوى إلى لغات متعددة وتتبع حالة كل ترجمة

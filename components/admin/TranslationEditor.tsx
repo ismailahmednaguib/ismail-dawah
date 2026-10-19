@@ -272,7 +272,7 @@ export default function TranslationEditor({
               disabled={saving || !translation.title}
               className="px-4 py-2 bg-primary-700 text-white rounded-lg text-sm font-medium hover:bg-primary-800 transition disabled:opacity-50"
             >
-              ✅ حفظ + اعتماد الترجمة
+              ✓ حفظ + اعتماد الترجمة
             </button>
           )}
         </div>

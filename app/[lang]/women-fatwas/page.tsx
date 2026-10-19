@@ -433,7 +433,7 @@ export default function WomenFatwasPage() {
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📜" label={ui.fatwasCount} value={fatwas.length} color="primary" />
           <StatCard icon="📂" label={ui.categoriesCount} value={categories.length} color="gold" />
-          <StatCard icon="🌍" label={ui.languages} value={languages.length} color="primary" />
+          <StatCard icon="◈" label={ui.languages} value={languages.length} color="primary" />
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 

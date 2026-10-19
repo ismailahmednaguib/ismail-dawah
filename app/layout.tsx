@@ -1,6 +1,5 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
-import { Cairo, Amiri, Scheherazade_New } from "next/font/google";
 import "./globals.css";
 import HtmlDir from "@/components/HtmlDir";
 import SkipLink from "@/components/SkipLink";
@@ -35,31 +34,6 @@ const SITE_SHORT_NAME = "إسماعيل أحمد نجيب";
 
 const SITE_DESCRIPTION_AR =
   "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد.";
-
-// ============================================================
-// Fonts
-// ============================================================
-
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  weight: ["300", "400", "600", "700", "900"],
-  variable: "--font-cairo-source",
-  display: "swap",
-});
-
-const amiri = Amiri({
-  subsets: ["arabic", "latin"],
-  weight: ["400", "700"],
-  variable: "--font-amiri-source",
-  display: "swap",
-});
-
-const scheherazade = Scheherazade_New({
-  subsets: ["arabic", "latin"],
-  weight: ["400", "700"],
-  variable: "--font-scheherazade-source",
-  display: "swap",
-});
 
 // ============================================================
 // Metadata
@@ -233,7 +207,6 @@ export default function RootLayout({
       lang="ar"
       dir="rtl"
       suppressHydrationWarning
-      className={`${cairo.variable} ${amiri.variable} ${scheherazade.variable}`}
     >
       <body
         className="min-h-screen flex flex-col antialiased"

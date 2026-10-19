@@ -399,7 +399,7 @@ export default function SetupAdminPage() {
     return (
       <Shell>
         <h1 className="mb-2 text-center text-3xl font-bold text-primary-800">
-          ✅ تم إنشاء الحساب
+          ✓ تم إنشاء الحساب
         </h1>
         <p className="mb-6 text-center text-sm text-gray-500">
           تم إنشاء حساب الأدمن بنجاح. يمكنك الآن تسجيل الدخول.

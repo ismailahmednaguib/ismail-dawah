@@ -51,7 +51,7 @@ const CATEGORIES: FatwaCategory[] = [
   { id: "family", ar: "الأسرة", en: "Family", icon: "👨‍👩‍👧‍👦" },
   { id: "transactions", ar: "المعاملات", en: "Transactions", icon: "🤝" },
   { id: "aqeedah", ar: "العقيدة", en: "Aqeedah", icon: "🧠" },
-  { id: "ethics", ar: "الأخلاق والآداب", en: "Ethics & Manners", icon: "🌿" },
+  { id: "ethics", ar: "الأخلاق والآداب", en: "Ethics & Manners", icon: "✦" },
 ];
 
 // ============================================================

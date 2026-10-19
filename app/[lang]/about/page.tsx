@@ -345,7 +345,7 @@ const VALUES: ValueItem[] = [
   },
   {
     id: "khidmah",
-    icon: "🌍",
+    icon: "◈",
     title: {
       ar: "الخدمة",
       en: "Service",
@@ -357,7 +357,7 @@ const VALUES: ValueItem[] = [
   },
   {
     id: "istimrariyyah",
-    icon: "🌱",
+    icon: "✦",
     title: {
       ar: "الاستمرار",
       en: "Continuity",
@@ -625,7 +625,7 @@ export default async function AboutPage({
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard number={String(sectionCount)} label={ui.statsSections} icon="📚" />
-          <StatCard number={String(languages.length)} label={ui.statsLanguages} icon="🌍" />
+          <StatCard number={String(languages.length)} label={ui.statsLanguages} icon="◈" />
           <StatCard number={String(toolCount)} label={ui.statsTools} icon="🛠️" />
           <StatCard number="✓" label={ui.statsFree} icon="✨" />
         </div>

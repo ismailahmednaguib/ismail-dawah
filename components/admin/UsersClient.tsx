@@ -112,7 +112,7 @@ export default function UsersClient({ session }: { session: AdminSession }) {
                 </div>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <span className="text-sm text-stone-600 dark:text-gray-300">
-                    {user.is_active ? '✅ نشط' : '🚫 موقوف'}
+                    {user.is_active ? '✓ نشط' : '🚫 موقوف'}
                   </span>
                   <input
                     type="checkbox"

@@ -59,6 +59,8 @@ const PRIVATE_TABLES = [
   'push_subscriptions',
   'bookmarks',
   'user_downloads',
+  'admin_sessions',
+  'sessions',
 ];
 
 /** جداول عامة بطبيعتها — يجب أن تبقى مقروءة للمفتاح العام. */
@@ -157,7 +159,7 @@ if (!leaking.length && !open.length && !publicBroken.length) {
 
 if (leaking.length) {
   console.log(`🚨 تسريب فعلي: ${leaking.map((row) => row.table).join(' · ')}`);
-  console.log('   الحل: نفّذ supabase/migrations/20261017_rls_hardening.sql في SQL Editor.');
+  console.log('   الحل: نفّذ supabase/migrations/20261017_rls_hardening.sql أو supabase/APPLY_MISSING_TO_PRODUCTION.sql في SQL Editor.');
 }
 if (open.length) {
   console.log(`⚠ جداول قابلة للقراءة (فارغة الآن): ${open.map((row) => row.table).join(' · ')}`);

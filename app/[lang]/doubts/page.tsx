@@ -237,7 +237,7 @@ const SECTIONS: DoubtSection[] = [
   },
   {
     id: "followup",
-    icon: "🌱",
+    icon: "✦",
     title: {
       ar: "المتابعة لا الخصومة",
       en: "Follow-up, Not Conflict",
@@ -438,7 +438,7 @@ export default async function DoubtsPage({
       name: isRTL ? doubt.question.ar : doubt.question.en,
       acceptedAnswer: {
         "@type": "Answer",
-        // ✅ الإصلاح: doubt.answer مصفوفة، نستخدم map لدمج الفقرات
+        // ✓ الإصلاح: doubt.answer مصفوفة، نستخدم map لدمج الفقرات
         text: doubt.answer.map((p) => (isRTL ? p.ar : p.en)).join(" "),
       },
     })),

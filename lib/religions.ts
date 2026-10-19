@@ -18,7 +18,7 @@ export type ReligionEntry = {
 export const RELIGION_ENTRIES: ReligionEntry[] = [
   {
     slug: 'christianity',
-    icon: '✝️',
+    icon: '✝',
     kind: 'religion',
     title: { ar: 'النصرانية', en: 'Christianity' },
     summary: {
@@ -32,7 +32,7 @@ export const RELIGION_ENTRIES: ReligionEntry[] = [
   },
   {
     slug: 'judaism',
-    icon: '✡️',
+    icon: '✡',
     kind: 'religion',
     title: { ar: 'اليهودية', en: 'Judaism' },
     summary: {
@@ -46,7 +46,7 @@ export const RELIGION_ENTRIES: ReligionEntry[] = [
   },
   {
     slug: 'hinduism',
-    icon: '🕉️',
+    icon: 'ॐ',
     kind: 'religion',
     title: { ar: 'الهندوسية', en: 'Hinduism' },
     summary: {
@@ -60,7 +60,7 @@ export const RELIGION_ENTRIES: ReligionEntry[] = [
   },
   {
     slug: 'buddhism',
-    icon: '☸️',
+    icon: '☸',
     kind: 'religion',
     title: { ar: 'البوذية', en: 'Buddhism' },
     summary: {
@@ -74,7 +74,7 @@ export const RELIGION_ENTRIES: ReligionEntry[] = [
   },
   {
     slug: 'atheism',
-    icon: '💡',
+    icon: '✦',
     kind: 'thought',
     title: { ar: 'الإلحاد واللاأدرية', en: 'Atheism & Agnosticism' },
     summary: {
@@ -96,7 +96,7 @@ export const RELIGION_RESOURCES: Array<{
 }> = [
   {
     slug: 'previous-books',
-    icon: '📚',
+    icon: '▣',
     title: { ar: 'الإسلام في الكتب السابقة', en: 'Islam in Earlier Scriptures' },
     summary: {
       ar: 'دراسة النصوص والبشارات المنسوبة إلى الكتب السابقة مع توثيق النص وسياقه ودرجة الاستدلال.',
@@ -105,7 +105,7 @@ export const RELIGION_RESOURCES: Array<{
   },
   {
     slug: 'questions',
-    icon: '❓',
+    icon: '?',
     title: { ar: 'أسئلة غير المسلمين الشائعة', en: 'Common Questions from Non-Muslims' },
     summary: {
       ar: 'إجابات موثقة وهادئة عن الأسئلة المتكررة حول المرأة والجهاد والحرية والعلم والعنف.',
@@ -114,7 +114,7 @@ export const RELIGION_RESOURCES: Array<{
   },
   {
     slug: 'stories',
-    icon: '🤝',
+    icon: '↔',
     title: { ar: 'قصص المهتدين', en: 'Stories of Converts' },
     summary: {
       ar: 'قصص تُنشر بعد موافقة أصحابها الصريحة، مع حماية الخصوصية وعدم عرض بيانات حساسة.',

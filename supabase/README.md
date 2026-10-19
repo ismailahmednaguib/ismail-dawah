@@ -13,7 +13,10 @@
    - لا توجد migration للمساعد المقيّد؛ حدّه محفوظ ضمن `site_settings` ويستخدم المصادر المنشورة فقط.
    - `20261017_security_and_review.sql`
    - `20261017_rls_hardening.sql` (إلزامي قبل الإنتاج)
+   - `20261018_public_content_read_repair.sql` (إلزامي إذا حجبت سياسات RLS القراءة العامة)
 3. راجع سياسات RLS من لوحة Supabase بعد التنفيذ.
+   ويمكن استخدام `supabase/APPLY_MISSING_TO_PRODUCTION.sql` كملف تشغيل واحد؛ فهو
+   يتضمن الآن تحصين الجداول الخاصة أيضًا. بعده شغّل `npm run qa:rls:strict`.
 4. ضع `SUPABASE_SERVICE_ROLE_KEY` ومفاتيح الجلسات في بيئة الخادم فقط، ولا تستخدمها في مكونات العميل.
 5. أنشئ bucket الرفع باسم `UPLOAD_BUCKET`، واترك `UPLOAD_AUTO_CREATE_BUCKET=false` في الإنتاج.
 6. يعتمد حفظ تقدم التعلم على معرّف جلسة المصادقة المخصصة الحالية، ويتم الوصول إلى جدول التقدم عبر API الخادم فقط.

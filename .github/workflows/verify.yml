@@ -114,9 +114,8 @@ jobs:
       - name: مصفوفة المحتوى (تقرير)
         run: npm run qa:matrix
 
-      - name: تدقيق صلاحيات الجداول (تقرير)
-        run: npm run qa:rls
-        continue-on-error: true
+      - name: تدقيق صلاحيات الجداول (إلزامي)
+        run: npm run qa:rls:strict
 
       - name: الزحف الكامل — لا روابط مكسورة
         run: npm run check:links

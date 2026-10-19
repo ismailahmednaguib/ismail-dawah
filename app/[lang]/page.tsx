@@ -129,7 +129,7 @@ const UI: Record<string, UiText> = {
     responsesSubtitle: "ردود على الشبهات وقضايا معاصرة بمنهج شرعي معتدل",
     dawahTitle: "الدعوة والتوعية",
     dawahSubtitle: "أدوات ومواد دعوية لنشر العلم الشرعي",
-    portalBadge: "🌍 لغير المسلمين",
+    portalBadge: "◈ لغير المسلمين",
     portalTitle: "تبحث عن الحقيقة؟ ابدأ من هنا",
     portalDesc:
       "تعريف مبسّط بالإسلام، وإجابات هادئة عن أكثر الأسئلة تكرارًا، وخطوات واضحة لمن يريد اعتناق الإسلام.",
@@ -188,7 +188,7 @@ const UI: Record<string, UiText> = {
     dawahTitle: "Dawah & Awareness",
     dawahSubtitle:
       "Tools and materials for spreading authentic Islamic knowledge",
-    portalBadge: "🌍 For Non-Muslims",
+    portalBadge: "◈ For Non-Muslims",
     portalTitle: "Seeking the truth? Start here",
     portalDesc:
       "A simple introduction to Islam, calm answers to the most-asked questions, and clear steps for those who wish to embrace Islam.",

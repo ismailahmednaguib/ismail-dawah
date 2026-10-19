@@ -201,7 +201,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
 
         setMessage({
           type: "success",
-          text: `✅ ${t.success} ${t.redirecting}`,
+          text: `✓ ${t.success} ${t.redirecting}`,
         });
 
         window.setTimeout(() => {

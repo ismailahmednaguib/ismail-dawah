@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
@@ -323,8 +323,8 @@ export default async function QiblaPage({
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="🎯" label={ui.statsAccurate} color="primary" />
-          <StatCard icon="⚡" label={ui.statsRealtime} color="gold" />
-          <StatCard icon="🌍" label={ui.statsGlobal} color="primary" />
+          <StatCard icon="◈" label={ui.statsRealtime} color="gold" />
+          <StatCard icon="◈" label={ui.statsGlobal} color="primary" />
           <StatCard icon="✨" label={ui.statsFree} color="gold" />
         </div>
 

@@ -664,7 +664,7 @@ export default async function FaqPage({
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="❓" label={ui.totalQuestions} value={FAQS.length} color="primary" />
           <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
-          <StatCard icon="🌍" label={ui.languages} value={languages.length} color="primary" />
+          <StatCard icon="◈" label={ui.languages} value={languages.length} color="primary" />
           <StatCard icon="🔄" label={ui.alwaysUpdated} value="✓" color="gold" />
         </div>
 

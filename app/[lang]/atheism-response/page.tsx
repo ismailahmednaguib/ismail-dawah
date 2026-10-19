@@ -175,7 +175,7 @@ const UI: Record<string, UILang> = {
 const SECTIONS: Section[] = [
   {
     id: "fitrah",
-    icon: "🌱",
+    icon: "✦",
     title: {
       ar: "الفطرة تعرف خالقها",
       en: "Fitrah Recognizes its Creator",

@@ -1202,12 +1202,12 @@ export async function sendContactConfirmationEmail(
 
   const content = isRTL
     ? `
-      <h2 style="color:#1e293b;margin-top:0;">تم استلام رسالتك ✅</h2>
+      <h2 style="color:#1e293b;margin-top:0;">تم استلام رسالتك ✓</h2>
       <p style="color:#475569;">شكرًا لك يا <strong>${safeName}</strong> على تواصلك معنا.</p>
       <p style="color:#475569;">سنقوم بالرد على رسالتك في أقرب وقت ممكن، عادةً خلال 24-48 ساعة.</p>
     `
     : `
-      <h2 style="color:#1e293b;margin-top:0;">Message Received ✅</h2>
+      <h2 style="color:#1e293b;margin-top:0;">Message Received ✓</h2>
       <p style="color:#475569;">Thank you, <strong>${safeName}</strong>, for contacting us.</p>
       <p style="color:#475569;">We will reply to your message as soon as possible, usually within 24-48 hours.</p>
     `;

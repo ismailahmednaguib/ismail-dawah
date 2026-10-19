@@ -111,7 +111,7 @@ const CATEGORIES: Category[] = [
   { id: "dawah", ar: "الدعوة", en: "Dawah", icon: "🤝", color: "from-primary-500 to-primary-600" },
   { id: "quran", ar: "القرآن", en: "Quran", icon: "📖", color: "from-primary-500 to-primary-600" },
   { id: "fiqh", ar: "الفقه", en: "Fiqh", icon: "⚖️", color: "from-primary-500 to-primary-600" },
-  { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "🌿", color: "from-primary-500 to-primary-600" },
+  { id: "akhlaq", ar: "الأخلاق", en: "Ethics", icon: "✦", color: "from-primary-500 to-primary-600" },
   { id: "stories", ar: "القصص", en: "Stories", icon: "📜", color: "from-gold-500 to-gold-600" },
   { id: "family", ar: "الأسرة", en: "Family", icon: "🏡", color: "from-gold-500 to-gold-600" },
 ];
