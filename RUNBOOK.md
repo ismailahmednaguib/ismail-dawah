@@ -32,11 +32,14 @@ npm run check:fields              # ٠ صفحة مفهوم فارغة
 npm run qa:content                # ٠ ملاحظة جودة (--json للتصحيح الآلي)
 npm run qa:secrets                # ٠ تسريب مفاتيح
 npm run qa:theme                  # ٠ لون هوية قديم
+npm audit --omit=dev              # ٠ ثغرة في حزم الإنتاج
 npm run qa:rls                    # ٠ جدول خاص مكشوف للزائر
 npm run check:links              # ٠ رابط مكسور
 ```
 
 > إن فشل `tsc` بخطأ في `.next/types` بعد حذف مسار: احذف `.next` وأعد البناء.
+> `npm audit` الكامل قد يعرض تحذيرات في أدوات التطوير (`eslint`/`fast-glob`) لا تُشحن للإنتاج؛ المرجع هو `npm audit --omit=dev`.
+> `overrides` في `package.json` تثبّت `postcss` و`postcss-selector-parser` على إصدارين مسدَّدين لثغرات البناء.
 > لا تُمرّر مخرجات السكربتات الطويلة عبر `Select-Object -First N` — فهي تُنهي العملية
 > قبل اكتمالها. اكتب المخرجات في ملف ثم اقرأه.
 
