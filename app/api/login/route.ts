@@ -131,10 +131,14 @@ function isRowActive(row: any): boolean {
 }
 
 function getTokenVersion(row: any): number | undefined {
-  const raw = row?.token_version ?? row?.auth_version ?? row?.password_version;
+  // ملاحظة: عمود token_version قد يكون NULL للحسابات القديمة.
+  // بدون القيمة الافتراضية 0 لا يحمل الرمز tv، فلا يُبطل bumpAuthVersion
+  // الجلسات بعد تغيير/استعادة كلمة المرور.
+  const raw =
+    row?.token_version ?? row?.auth_version ?? row?.password_version ?? 0;
   const num = Number(raw);
 
-  return Number.isFinite(num) ? num : undefined;
+  return Number.isFinite(num) ? num : 0;
 }
 
 function publicUser(row: any, role: Role): PublicUser {

@@ -157,7 +157,8 @@ export async function POST(req: NextRequest) {
   }
 
   // تجنّب بقاء ملح قديم مع صيغة salt:hash المركّبة.
-  if ("salt" in data) update.salt = null;
+  // عمود salt في المخطط الحالي NOT NULL، لذا نستخدم سلسلة فارغة لا null.
+  if ("salt" in data) update.salt = "";
 
   // إعادة التعيين تثبت ملكية البريد، فنُفعّله إن كان العمود موجودًا.
   if ("email_verified" in data) {

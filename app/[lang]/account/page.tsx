@@ -10,6 +10,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createAdminClient, getServerUser } from "@/lib/auth";
 import EmailVerificationBanner from "@/components/auth/EmailVerificationBanner";
+import ChangePasswordCard from "@/components/auth/ChangePasswordCard";
+import {
+  PASSWORD_CHANGE_SETTING_KEY,
+  normalizePasswordChangeConfig,
+} from "@/lib/password-change-config";
 
 export const dynamic = "force-dynamic";
 
@@ -256,6 +261,9 @@ export default async function AccountPage({
   const isRTL = l === "ar";
   const user = await getServerUser();
   const progressSummary = user ? await getProgressSummary(user.id) : null;
+  const passwordChangeEnabled = normalizePasswordChangeConfig(
+    (__pageSettings as Record<string, unknown>)[PASSWORD_CHANGE_SETTING_KEY]
+  ).enabled;
 
   let showVerificationBanner = false;
 
@@ -538,6 +546,10 @@ export default async function AccountPage({
               </div>
             </div>
           </section>
+        )}
+
+        {user && passwordChangeEnabled && (
+          <ChangePasswordCard lang={l} />
         )}
 
         </>)}

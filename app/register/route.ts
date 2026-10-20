@@ -24,6 +24,7 @@ import {
   normalizeEmailVerificationConfig,
 } from "@/lib/email-verification-config";
 import { createEmailVerificationToken } from "@/lib/email-verification-token";
+import { getErrorMessage, isMissingTableError } from "@/lib/supabase-errors";
 
 // ============================================================
 // Types
@@ -46,21 +47,6 @@ type PublicUser = {
 // ============================================================
 // Helpers
 // ============================================================
-
-function getErrorMessage(error: unknown): string {
-  return String((error as any)?.message || error || "");
-}
-
-function isMissingTableError(error: unknown): boolean {
-  const message = getErrorMessage(error);
-
-  return (
-    /does not exist/i.test(message) ||
-    /Could not find the table/i.test(message) ||
-    /relation/i.test(message) ||
-    /schema/i.test(message)
-  );
-}
 
 function isDuplicateError(error: unknown): boolean {
   const message = getErrorMessage(error);
@@ -337,7 +323,8 @@ export async function POST(req: NextRequest) {
       {
         email,
         name,
-        password: hashedPassword,
+        password_hash: hashedPassword,
+        salt: "",
         role: "user",
         is_active: true,
         created_at: createdAt,
@@ -345,7 +332,8 @@ export async function POST(req: NextRequest) {
       {
         email,
         name,
-        password_hash: hashedPassword,
+        password: hashedPassword,
+        salt: "",
         role: "user",
         is_active: true,
         created_at: createdAt,
