@@ -111,6 +111,9 @@ jobs:
       - name: المصادر الشرعية (تقرير)
         run: npm run qa:citations
 
+      - name: تغطية المراجعة العلمية للفتاوى (تقرير)
+        run: npm run qa:review
+
       - name: مصفوفة المحتوى (تقرير)
         run: npm run qa:matrix
 

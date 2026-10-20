@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, languages, type Lang } from "@/lib/i18n";
-import { SURAHS } from "@/lib/data";
 import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import ContentCard from "@/components/learn/ContentCard";
+import PrayerWidget from "@/components/PrayerWidget";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { getPublicCounts, getPublicList, type PublicItem } from "@/lib/learn/public";
@@ -67,8 +67,8 @@ type UiText = {
   cta2: string;
   statSections: string;
   statLanguages: string;
-  statSurahs: string;
-  statFree: string;
+  statLessons: string;
+  statFatwas: string;
   learnTitle: string;
   learnSubtitle: string;
   responsesTitle: string;
@@ -114,15 +114,15 @@ type UiText = {
 const UI: Record<string, UiText> = {
   ar: {
     badge: "✨ منصة دعوية شاملة",
-    title: "منصة إسماعيل أحمد نجيب",
+    title: "منصة إسماعيل أحمد نجيب الدعوية",
     subtitle:
       "منصة إسلامية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد.",
     cta1: "ابدأ رحلة العلم",
     cta2: "البث المباشر",
     statSections: "مادة منشورة",
     statLanguages: "لغات متاحة",
-    statSurahs: "سورة قرآنية",
-    statFree: "مفتوح الوصول",
+    statLessons: "درس منشور",
+    statFatwas: "فتوى منشورة",
     learnTitle: "تعلّم العلوم الشرعية",
     learnSubtitle: "ابدأ بأساسيات الدين وتدرّج في طلب العلم الشرعي",
     responsesTitle: "العلوم والردود",
@@ -160,7 +160,7 @@ const UI: Record<string, UiText> = {
     latestHadith: "من الأحاديث",
     latestDoubts: "من الشبهات والردود",
     latestKhutab: "من الخطب",
-    latestStories: "من قصص الأنبياء",
+    latestStories: "من السيرة والقصص",
     viewAll: "عرض الكل",
     readMore: "اقرأ المزيد",
     sectionsTitle: "أبواب الموقع",
@@ -170,15 +170,15 @@ const UI: Record<string, UiText> = {
   },
   en: {
     badge: "✨ Comprehensive Dawah Platform",
-    title: "Ismail Ahmed Naguib Platform",
+    title: "Ismail Ahmed Naguib Dawah Platform",
     subtitle:
       "A comprehensive Islamic platform that brings together the Holy Quran, adhkar, fatwas, prophets' stories, prayer times, Qibla direction, and dawah tools in one place.",
     cta1: "Start Learning",
     cta2: "Live Stream",
     statSections: "Published items",
     statLanguages: "Available languages",
-    statSurahs: "Quran Surahs",
-    statFree: "Open access",
+    statLessons: "Published lessons",
+    statFatwas: "Published fatwas",
     learnTitle: "Learn Islamic Sciences",
     learnSubtitle:
       "Start with the fundamentals and progress in seeking Islamic knowledge",
@@ -220,7 +220,7 @@ const UI: Record<string, UiText> = {
     latestHadith: "From the Hadith",
     latestDoubts: "Doubts & Responses",
     latestKhutab: "From the Khutbahs",
-    latestStories: "From the Prophets' Stories",
+    latestStories: "From Seerah & Stories",
     viewAll: "View all",
     readMore: "Read more",
     sectionsTitle: "Explore the Platform",
@@ -327,7 +327,7 @@ export default async function HomePage({
     (settings as Record<string, unknown>).navigation,
     NAV_TREE
   );
-  const primaryKeys = ["non-muslim", "tools", "sciences", "religions", "dawah-sciences"];
+  const primaryKeys = ["quran", "sciences", "fatwa", "tools", "responses", "non-muslim"];
   const topGroups = primaryKeys
     .map((key) => navTree.find((node) => node.key === key))
     .filter((node): node is NavNode => Boolean(node));
@@ -445,8 +445,8 @@ export default async function HomePage({
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
             <HeroStatCard value={String(Math.max(counts.total, 0))} label={ui.statSections} />
             <HeroStatCard value={String(languages.length)} label={ui.statLanguages} />
-            <HeroStatCard value={String(SURAHS.length)} label={ui.statSurahs} />
-            <HeroStatCard value="✓" label={ui.statFree} />
+            <HeroStatCard value={String(Math.max(counts.lesson ?? 0, 0))} label={ui.statLessons} />
+            <HeroStatCard value={String(Math.max(counts.fatwa ?? 0, 0))} label={ui.statFatwas} />
           </div>
         </div>
 
@@ -461,6 +461,8 @@ export default async function HomePage({
         </div>
       </section>
       )}
+
+      <PrayerWidget lang={l} />
 
       {/* ============ أبواب الموقع ============ */}
       {gate.visible('sections') && topGroups.length > 0 && (

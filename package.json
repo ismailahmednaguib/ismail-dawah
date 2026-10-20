@@ -20,6 +20,8 @@
     "import:hadith-refs": "node --experimental-strip-types scripts/import-hadith-references.ts",
     "fix:citations": "node --experimental-strip-types scripts/apply-citation-fixes.ts",
     "qa:matrix": "node scripts/content-matrix.mjs",
+    "qa:review": "node scripts/check-review-coverage.mjs",
+    "qa:review:strict": "node scripts/check-review-coverage.mjs --strict",
     "check:smoke": "node scripts/smoke-content.mjs",
     "check:fields": "node scripts/check-fields.mjs",
     "check:tax": "node scripts/tax-coverage.mjs",

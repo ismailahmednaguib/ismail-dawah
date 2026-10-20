@@ -169,11 +169,47 @@ export async function GET(req: Request) {
     total: totalCount.count ?? 0,
   };
 
+  // تغطية المراجعة العلمية للفتاوى المنشورة: المراجع المعتمد + المرجع الموثّق.
+  const { data: fatwaRows } = await supabase
+    .from('content')
+    .select('id, reviewer_id')
+    .eq('content_type', 'fatwa')
+    .eq('status', 'published')
+    .limit(2000);
+
+  const publishedFatwas = (fatwaRows ?? []) as Array<{ id: string; reviewer_id: string | null }>;
+  const fatwaIds = publishedFatwas.map((row) => row.id);
+  const { data: fatwaReferenceRows } = fatwaIds.length > 0
+    ? await supabase
+        .from('content_references')
+        .select('content_id, verified')
+        .in('content_id', fatwaIds)
+    : { data: [] as Array<{ content_id: string; verified: boolean }> };
+
+  const fatwaReferenceCounts = new Map<string, { total: number; verified: number }>();
+  for (const reference of fatwaReferenceRows ?? []) {
+    const current = fatwaReferenceCounts.get(reference.content_id) ?? { total: 0, verified: 0 };
+    current.total += 1;
+    if (reference.verified) current.verified += 1;
+    fatwaReferenceCounts.set(reference.content_id, current);
+  }
+
+  const fatwaReview = {
+    total: publishedFatwas.length,
+    reviewed: publishedFatwas.filter((row) => Boolean(row.reviewer_id)).length,
+    unreviewed: publishedFatwas.filter((row) => !row.reviewer_id).length,
+    withReferences: publishedFatwas.filter((row) => (fatwaReferenceCounts.get(row.id)?.total ?? 0) > 0).length,
+    withVerifiedReferences: publishedFatwas.filter(
+      (row) => (fatwaReferenceCounts.get(row.id)?.verified ?? 0) > 0
+    ).length,
+  };
+
   return NextResponse.json({
     ok: true,
     filter,
     counts,
     stats,
+    fatwaReview,
     citations,
     rows,
     canReview: can(session.roles, 'content.update'),

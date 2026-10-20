@@ -380,16 +380,25 @@ export async function approveContent(
 ): Promise<void> {
   const supabase = getSupabaseAdmin();
 
-  await supabase
+  const baseUpdate = {
+    status: 'published',
+    reviewer_id: reviewerId,
+    published_at: new Date().toISOString(),
+    updated_by: reviewerId,
+  };
+  let { error: updateError } = await supabase
     .from('content')
-    .update({
-      status: 'published',
-      reviewer_id: reviewerId,
-      reviewed_at: new Date().toISOString(),
-      published_at: new Date().toISOString(),
-      updated_by: reviewerId,
-    })
+    .update({ ...baseUpdate, reviewed_at: new Date().toISOString() })
     .eq('id', contentId);
+
+  // reviewed_at عمود اختياري أُضيف في migration لاحق؛ لا نُفشل الاعتماد إن لم يكن مُنفَّذًا.
+  if (updateError && /reviewed_at/i.test(updateError.message)) {
+    ({ error: updateError } = await supabase
+      .from('content')
+      .update(baseUpdate)
+      .eq('id', contentId));
+  }
+  if (updateError) throw new Error(`Failed to approve content: ${updateError.message}`);
 
   await supabase
     .from('review_queue')

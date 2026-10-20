@@ -46,6 +46,8 @@ export interface PublicItem {
   audience: string[];
   levels: string[];
   terms: PublicTerm[];
+  /** معرّف المراجع العلمي إن اعتمد المحتوى. */
+  reviewer_id: string | null;
   /** true عندما نعرض النص الأصلي لأن الترجمة المطلوبة غير متوفرة. */
   isFallback: boolean;
 }
@@ -91,6 +93,7 @@ const BASE_SELECT = (withTerms: boolean) => `
   views,
   sort_order,
   status,
+  reviewer_id,
   content_translations!inner ( slug, title, summary, body, lang, is_machine_translated )
   ${withTerms ? ',' + TERM_SELECT : ''}
 `;
@@ -166,6 +169,7 @@ function mapItem(row: any, isFallback: boolean): PublicItem {
     audience: row.audience ?? [],
     levels: row.levels ?? [],
     terms,
+    reviewer_id: row.reviewer_id ?? null,
     isFallback,
   };
 }
@@ -280,7 +284,7 @@ export async function getPublicBySlug(
         `
         id, lang, slug, title, summary, body, is_machine_translated,
         content:content_id (
-          id, content_type, audience, levels, published_at, views, status,
+          id, content_type, audience, levels, published_at, views, status, reviewer_id,
           ${TERM_SELECT}
         )
       `
@@ -319,6 +323,7 @@ export async function getPublicBySlug(
     audience: c.audience ?? [],
     levels: c.levels ?? [],
     terms: (c.content_terms ?? []).map((ct: any) => ct.taxonomies).filter(Boolean),
+    reviewer_id: c.reviewer_id ?? null,
     isFallback,
   };
 }

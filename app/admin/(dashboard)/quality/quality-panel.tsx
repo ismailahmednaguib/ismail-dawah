@@ -24,6 +24,13 @@ type ApiResponse = {
   filter?: string;
   counts?: { returned: number; missingBody: number; shortBody: number };
   stats?: { pending: number; machine: number; reviewed: number; total: number };
+  fatwaReview?: {
+    total: number;
+    reviewed: number;
+    unreviewed: number;
+    withReferences: number;
+    withVerifiedReferences: number;
+  };
   citations?: {
     id: string;
     contentId: string;
@@ -133,6 +140,51 @@ export default function QualityPanel() {
           </span>
         </div>
       </section>
+
+      {data.fatwaReview && (
+        <section className="card border-s-4 border-gold-500 p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-base font-bold">المراجعة العلمية للفتاوى</h2>
+              <p className="mt-1 max-w-2xl text-xs leading-relaxed opacity-70">
+                الثقة في الفتوى تبدأ من نسبتها إلى مراجع معتمد وإرفاق مصادرها. الأرقام التالية
+                للفتاوى المنشورة حاليًّا في قاعدة البيانات.
+              </p>
+            </div>
+            <Link href="/admin/content" className="btn-outline px-3 py-1.5 text-xs">
+              إدارة الفتاوى
+            </Link>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
+            <div className="rounded-lg bg-black/5 p-3 dark:bg-white/10">
+              <p className="text-xl font-bold">{data.fatwaReview.total}</p>
+              <p className="text-xs opacity-70">فتوى منشورة</p>
+            </div>
+            <div className="rounded-lg bg-black/5 p-3 dark:bg-white/10">
+              <p className="text-xl font-bold text-primary-700 dark:text-primary-300">
+                {data.fatwaReview.reviewed}
+              </p>
+              <p className="text-xs opacity-70">بمراجع علمي</p>
+            </div>
+            <div className="rounded-lg bg-black/5 p-3 dark:bg-white/10">
+              <p className="text-xl font-bold">{data.fatwaReview.withReferences}</p>
+              <p className="text-xs opacity-70">بمراجع مضافة</p>
+            </div>
+            <div className="rounded-lg bg-black/5 p-3 dark:bg-white/10">
+              <p className="text-xl font-bold">{data.fatwaReview.withVerifiedReferences}</p>
+              <p className="text-xs opacity-70">بمراجع معتمدة</p>
+            </div>
+          </div>
+
+          {data.fatwaReview.unreviewed > 0 && (
+            <p className="mt-3 rounded-lg border border-gold-500/30 bg-gold-500/10 px-3 py-2 text-xs leading-relaxed">
+              {data.fatwaReview.unreviewed} فتوى منشورة بلا مراجع معتمد. راجعها من محرّر المحتوى،
+              وثبّت المراجع في حقل «المراجع»، ثم اعتمدها من زر الاعتماد العلمي.
+            </p>
+          )}
+        </section>
+      )}
 
       {(data.citations?.length ?? 0) > 0 && (
         <section className="card p-5">

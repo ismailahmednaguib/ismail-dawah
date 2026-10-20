@@ -31,6 +31,7 @@ type Fatwa = {
   answer: string;
   tags: string[];
   source?: string;
+  reviewed?: boolean;
 };
 
 type SearchParams = {
@@ -97,6 +98,7 @@ function mapPublicFatwa(item: PublicItem): Fatwa {
     answer: (item.body ?? item.summary ?? "").trim(),
     tags: item.terms.map((term) => term.name).filter(Boolean),
     source: sourceTerm?.name?.trim() || undefined,
+    reviewed: Boolean(item.reviewer_id),
   };
 }
 
@@ -142,6 +144,7 @@ const UI: Record<string,
     answer: string;
     disclaimer: string;
     disclaimerText: string;
+    reviewedLabel: string;
     categoriesTitle: string;
     popularTitle: string;
     popularDesc: string;
@@ -184,6 +187,7 @@ const UI: Record<string,
     disclaimer: "تنبيه",
     disclaimerText:
       "هذه الفتاوى مختصرة للتوعية العامة، ولا تغني عن مراجعة أهل العلم المختصين في النوازل والمسائل الدقيقة.",
+    reviewedLabel: "مراجعة علمية",
     categoriesTitle: "تصنيفات الفتاوى",
     popularTitle: "فتاوى مختارة",
     popularDesc: "أكثر الأسئلة شيوعًا وإفادة",
@@ -225,6 +229,7 @@ const UI: Record<string,
     disclaimer: "Notice",
     disclaimerText:
       "These fatwas are brief for general awareness and do not replace consulting qualified scholars in detailed or unusual cases.",
+    reviewedLabel: "Scholarly review",
     categoriesTitle: "Fatwa Categories",
     popularTitle: "Selected Fatwas",
     popularDesc: "Most common and beneficial questions",
@@ -695,6 +700,11 @@ export default async function FatwaPage({
                           📚 {ui.source}: {fatwa.source}
                         </p>
                       )}
+                      {fatwa.reviewed && (
+                        <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-200">
+                          ✓ {ui.reviewedLabel}
+                        </p>
+                      )}
                       <div className="mt-3 flex flex-wrap gap-2">
                         {fatwa.tags.map((tag) => (
                           <span key={tag} className="badge-gold text-xs">#{tag}</span>
@@ -824,6 +834,12 @@ export default async function FatwaPage({
                     {fatwa.source && (
                       <p className="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
                         📚 {ui.source}: {fatwa.source}
+                      </p>
+                    )}
+
+                    {fatwa.reviewed && (
+                      <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-200">
+                        ✓ {ui.reviewedLabel}
                       </p>
                     )}
 

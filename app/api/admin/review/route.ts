@@ -101,16 +101,24 @@ export async function POST(req: NextRequest) {
 
     if (action === 'approve') {
       await assertVerifiedReferenceForPublish(content_id, content);
-      const { error: publishError } = await supabase
+      const baseUpdate = {
+        status: 'published',
+        reviewer_id: session.userId,
+        published_at: new Date().toISOString(),
+        updated_by: session.userId,
+      };
+      let { error: publishError } = await supabase
         .from('content')
-        .update({
-          status: 'published',
-          reviewer_id: session.userId,
-          reviewed_at: new Date().toISOString(),
-          published_at: new Date().toISOString(),
-          updated_by: session.userId,
-        })
+        .update({ ...baseUpdate, reviewed_at: new Date().toISOString() })
         .eq('id', content_id);
+
+      // عمود reviewed_at قد يكون غير مُنفَّذ بعد في قاعدة البيانات؛ لا نُعطّل الاعتماد بسببه.
+      if (publishError && /reviewed_at/i.test(publishError.message)) {
+        ({ error: publishError } = await supabase
+          .from('content')
+          .update(baseUpdate)
+          .eq('id', content_id));
+      }
 
       if (publishError) throw new Error(publishError.message);
 
@@ -141,15 +149,22 @@ export async function POST(req: NextRequest) {
 
       if (auditError) throw new Error(auditError.message);
     } else {
-      const { error: rejectError } = await supabase
+      const baseUpdate = {
+        status: 'draft',
+        reviewer_id: session.userId,
+        updated_by: session.userId,
+      };
+      let { error: rejectError } = await supabase
         .from('content')
-        .update({
-          status: 'draft',
-          reviewer_id: session.userId,
-          reviewed_at: null,
-          updated_by: session.userId,
-        })
+        .update({ ...baseUpdate, reviewed_at: null })
         .eq('id', content_id);
+
+      if (rejectError && /reviewed_at/i.test(rejectError.message)) {
+        ({ error: rejectError } = await supabase
+          .from('content')
+          .update(baseUpdate)
+          .eq('id', content_id));
+      }
 
       if (rejectError) throw new Error(rejectError.message);
 

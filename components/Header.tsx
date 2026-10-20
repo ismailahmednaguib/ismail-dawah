@@ -342,7 +342,7 @@ export default function Header({
   }, [navTree, isHiddenHref]);
 
   // العقد التي تظهر مباشرة في الشريط العلوي
-  const PRIMARY_KEYS = ["home", "sciences", "non-muslim", "responses", "tools", "fatwa"];
+  const PRIMARY_KEYS = ["quran", "sciences", "fatwa", "tools", "responses", "non-muslim"];
 
   const NAV = useMemo(
     () =>

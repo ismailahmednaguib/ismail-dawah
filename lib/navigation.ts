@@ -42,6 +42,12 @@ const n = (
 export const NAV_TREE: NavNode[] = [
   n("home", "الرئيسية", "Home", "🏠", ""),
 
+  n("quran", "القرآن الكريم", "The Holy Quran", "📖", "/quran", [
+    n("quran-mushaf", "المصحف والتلاوة", "Mushaf & Recitation", "📖", "/quran"),
+    n("quran-memorization-plan", "خطة حفظ القرآن", "Quran Memorization Plan", "💾", "/quran-memorization"),
+    n("quran-sciences-field", "علوم القرآن", "Quranic Sciences", "🌟", "/fields/quran-sciences", undefined, { taxonomy: "quran-sciences" }),
+  ], { desc: { ar: "المصحف الكامل مع التلاوة والتفسير وعلوم القرآن", en: "The full Quran with recitation, tafsir and Quranic sciences" } }),
+
   n("live", "البث المباشر", "Live Stream", "📡", "/live", undefined, { desc: { ar: "بث مباشر للدروس والمجالس العلمية", en: "Live lessons and study circles" } }),
 
   n("sciences", "علوم الدين", "Islamic Sciences", "📚", "/fields", [
@@ -178,7 +184,7 @@ export const NAV_TREE: NavNode[] = [
 
   n("about", "عن المنصة", "About", "ℹ️", "/about", [
     n("about-sheikh", "عن الشيخ", "About the Sheikh", "👤", "/about"),
-    n("certificates", "الشهادات العلمية", "Academic Credentials", "🎓", "/about"),
+    n("certificates", "الشهادات العلمية", "Academic Credentials", "🎓", "/about#certificates"),
     n("contact", "تواصل معنا", "Contact Us", "✉️", "/contact"),
     n("faq", "الأسئلة الشائعة", "FAQ", "❓", "/faq"),
     n("privacy-terms", "الخصوصية والشروط", "Privacy & Terms", "📄", "/privacy"),

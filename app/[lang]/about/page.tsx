@@ -570,6 +570,12 @@ export default async function AboutPage({
   );
   const sectionCount = Math.max(0, flattenNav(aboutNav).filter((node) => node.key !== "home").length);
   const toolCount = aboutNav.find((node) => node.key === "tools")?.children?.length ?? 0;
+  const settingText = (key: string) => {
+    const value = (__pageSettings as Record<string, unknown>)[key];
+    return typeof value === "string" ? value.trim() : "";
+  };
+  const cred1 = settingText("cred1");
+  const cred2 = settingText("cred2");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -801,6 +807,20 @@ export default async function AboutPage({
                   {ui.founderParagraph2}
                 </p>
               </div>
+              {(cred1 || cred2) && (
+                <div
+                  id="certificates"
+                  className="mt-5 scroll-mt-32 rounded-xl border border-gold-500/25 bg-gold-500/5 p-4"
+                >
+                  <p className="mb-2 text-sm font-bold text-gold-700 dark:text-gold-300">
+                    {isRTL ? "الشهادات العلمية" : "Academic credentials"}
+                  </p>
+                  <ul className="space-y-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                    {cred1 && <li>• {cred1}</li>}
+                    {cred2 && <li>• {cred2}</li>}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

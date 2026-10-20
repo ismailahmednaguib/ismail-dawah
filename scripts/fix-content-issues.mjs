@@ -100,6 +100,30 @@ const REPLACEMENTS = [
     to: 'سفر المرأة بدون محرمٍ حرامٌ في الإسلام',
     why: 'التباس بين «مَحرَم» و«مُحرَّم»',
   },
+  {
+    slug: 'fatwa-fiqh-حكم-ركوب-المرأة-السيارة-بدون-محرم-17',
+    lang: 'ar',
+    field: 'title',
+    from: 'حكم ركوب المرأة السيارة بدون محرم',
+    to: 'حكم سفر المرأة بدون محرم',
+    why: 'العنوان يتحدث عن الركوب والمتن عن السفر',
+  },
+  {
+    slug: 'fatwa-fiqh-حكم-ركوب-المرأة-السيارة-بدون-محرم-17',
+    lang: 'en',
+    field: 'title',
+    from: 'The ruling on a woman travelling by car without a mahram',
+    to: 'The ruling on a woman travelling without a mahram',
+    why: 'mirrors the Arabic title correction',
+  },
+  {
+    slug: 'story-seerah-عهد-أبو-بكر-الصديق-رضي-الله-عنه-20',
+    lang: 'ar',
+    field: 'title',
+    from: 'عهد أبو بكر الصديق رضي الله عنه',
+    to: 'عهد أبي بكر الصديق رضي الله عنه',
+    why: 'الصواب «أبي بكر» في هذا التركيب',
+  },
 
   // --- الدفعة الثانية: عناوين مكرّرة ومسافات زائدة (اكتشفها content-qa) ---
   {
