@@ -7,11 +7,11 @@ import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
-import ContentCard from "@/components/learn/ContentCard";
+import LatestTabs from "@/components/home/LatestTabs";
 import PrayerWidget from "@/components/PrayerWidget";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import { getPublicCounts, getPublicList, type PublicItem } from "@/lib/learn/public";
+import { getPublicCounts, getPublicList } from "@/lib/learn/public";
 import {
   NAV_TREE,
   applyNavigationConfig,
@@ -551,54 +551,53 @@ export default async function HomePage({
               </p>
             </div>
 
-            <LatestRow
-              title={ui.latestLessons}
-              href={`/${l}/learn?type=lesson`}
-              items={latestLessons}
+            <LatestTabs
               lang={l}
               viewAll={ui.viewAll}
-            />
-            <LatestRow
-              title={ui.latestFatwas}
-              href={`/${l}/fatwa`}
-              items={latestFatwas}
-              lang={l}
-              viewAll={ui.viewAll}
-            />
-            <LatestRow
-              title={ui.latestArticles}
-              href={`/${l}/articles`}
-              items={latestArticles}
-              lang={l}
-              viewAll={ui.viewAll}
-            />
-            <LatestRow
-              title={ui.latestHadith}
-              href={`/${l}/hadith`}
-              items={latestHadith}
-              lang={l}
-              viewAll={ui.viewAll}
-            />
-            <LatestRow
-              title={ui.latestDoubts}
-              href={`/${l}/doubts`}
-              items={latestDoubts}
-              lang={l}
-              viewAll={ui.viewAll}
-            />
-            <LatestRow
-              title={ui.latestKhutab}
-              href={`/${l}/khutab`}
-              items={latestKhutab}
-              lang={l}
-              viewAll={ui.viewAll}
-            />
-            <LatestRow
-              title={ui.latestStories}
-              href={`/${l}/prophets-stories`}
-              items={latestStories}
-              lang={l}
-              viewAll={ui.viewAll}
+              rows={[
+                {
+                  key: "lesson",
+                  title: ui.latestLessons,
+                  href: `/${l}/learn?type=lesson`,
+                  items: latestLessons,
+                },
+                {
+                  key: "fatwa",
+                  title: ui.latestFatwas,
+                  href: `/${l}/fatwa`,
+                  items: latestFatwas,
+                },
+                {
+                  key: "article",
+                  title: ui.latestArticles,
+                  href: `/${l}/articles`,
+                  items: latestArticles,
+                },
+                {
+                  key: "hadith",
+                  title: ui.latestHadith,
+                  href: `/${l}/hadith`,
+                  items: latestHadith,
+                },
+                {
+                  key: "response",
+                  title: ui.latestDoubts,
+                  href: `/${l}/doubts`,
+                  items: latestDoubts,
+                },
+                {
+                  key: "khutbah",
+                  title: ui.latestKhutab,
+                  href: `/${l}/khutab`,
+                  items: latestKhutab,
+                },
+                {
+                  key: "story",
+                  title: ui.latestStories,
+                  href: `/${l}/learn?type=story`,
+                  items: latestStories,
+                },
+              ]}
             />
           </div>
         </section>
@@ -809,62 +808,7 @@ function GatewayCard({
 }
 
 // ============================================================
-// LatestRow — صف محتوى حقيقي من قاعدة البيانات
+// نهاية مكوّنات الرئيسية
 // ============================================================
-
-function LatestRow({
-  title,
-  href,
-  items,
-  lang,
-  viewAll,
-}: {
-  title: string;
-  href: string;
-  items: PublicItem[];
-  lang: Lang;
-  viewAll: string;
-}) {
-  if (items.length === 0) return null;
-
-  const isRTL = lang === "ar";
-
-  return (
-    <div className="mb-12 last:mb-0">
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <h3
-          className="text-xl font-black text-slate-900 dark:text-white md:text-2xl"
-          style={{ fontFamily: "var(--font-amiri)" }}
-        >
-          {title}
-        </h3>
-        <Link
-          href={href}
-          className="shrink-0 text-sm font-bold text-primary-700 transition-colors hover:text-primary-500 dark:text-primary-300"
-        >
-          {viewAll}
-          <span aria-hidden="true" className="mx-1">
-            {isRTL ? "←" : "→"}
-          </span>
-        </Link>
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => (
-          <ContentCard
-            key={item.id}
-            lang={lang}
-            type={item.content_type}
-            slug={item.slug}
-            title={item.title}
-            summary={item.summary}
-            published_at={item.published_at}
-            isFallback={item.isFallback}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 
