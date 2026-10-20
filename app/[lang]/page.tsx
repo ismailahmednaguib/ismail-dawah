@@ -8,6 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import LatestTabs from "@/components/home/LatestTabs";
+import NavIcon from "@/components/NavIcon";
 import PrayerWidget from "@/components/PrayerWidget";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
@@ -760,7 +761,7 @@ function GatewayCard({
           aria-hidden="true"
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-3xl shadow-sm dark:bg-primary-900/40"
         >
-          {node.icon}
+          <NavIcon name={node.key} fallback={node.icon} />
         </span>
         <h3
           className="text-lg font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300"
