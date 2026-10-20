@@ -1,7 +1,7 @@
 // app/[lang]/rss.xml/route.ts
 // خلاصة RSS لأحدث المحتوى المنشور لكل لغة.
-import { createClient } from '@supabase/supabase-js';
 import { isValidLang } from '@/lib/i18n';
+import { getPublicReadClient } from '@/lib/supabase/public-read';
 import { contentUrl, encodeUrl } from '@/lib/url';
 
 export const runtime = 'nodejs';
@@ -29,12 +29,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ lang: s
     return new Response('Not found', { status: 404 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY?.trim() ||
-      process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  // قراءة خادمية موحّدة؛ الفلترة على `status='published'` أدناه قبل البناء.
+  const supabase = getPublicReadClient();
 
   const { data } = await supabase
     .from('content_translations')

@@ -1,7 +1,7 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import { getPublicReadClient } from '@/lib/supabase/public-read';
 import type { Madhhab } from '@/lib/types/content';
 
 const MADHHABS: Madhhab[] = [
@@ -64,10 +64,9 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  // قراءة خادمية بمفتاح الخدمة (أو anon كبديل): تُفرض `status='published'`
+  // في كل استعلام، فلا تصل مسودات إلى الجمهور.
+  const supabase = getPublicReadClient();
 
   const from = (page - 1) * perPage;
 

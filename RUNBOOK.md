@@ -199,7 +199,7 @@ npm run fix:citations -- --commit     # كتابة
   - صار `getTokenVersion` في `app/api/login/route.ts` يعيد `0` بدل `undefined` للقيم الفارغة.
   - الجلسات التي أُنشئت **قبل** هذا الإصلاح لا تحمل `tv` وتبقى صالحة حتى انتهاء مدتها (توافق رجعي مقصود)؛ الجلسات الجديدة تُبطَل فعليًا بعد تغيير كلمة المرور.
 - اختبار حي (مستخدم مؤقت ثم حُذف): تسجيل 200 → دخول 200 → تغيير كلمة المرور 200 → كلمة المرور القديمة 401 → الجديدة 200 → الجلسة القديمة باطلة.
-- **ما زال مطلوبًا يدويًّا**: `20261018_public_content_read_repair.sql` — `qa:rls` يظهر `content` و`content_translations` و`content_terms` محجوبة عن الزائر، ما يعطّل البحث و`sitemap.xml` و`rss.xml`.
+- **ما زال مطلوبًا يدويًّا**: `20261018_public_content_read_repair.sql` — `qa:rls` يظهر `content` و`content_translations` و`content_terms` محجوبة عن الزائر. خفّف الأثرَ مؤقتًا استخدامُ مفتاح الخدمة في مسارات البحث و`sitemap.xml` و`rss.xml` (قراءة خادمية بفلتر `status='published'`)، لكن سياسة القراءة العامة نفسها ما زالت مطلوبة.
 
 ## ٨) migrations معلّقة على الإنتاج
 
@@ -211,7 +211,7 @@ npm run fix:citations -- --commit     # كتابة
 | `20261017_security_and_review.sql` | جدول `rate_limits` + دالة ذرّية + عمود `reviewed_at` | حدّ المعدّل يعمل في الذاكرة فقط · تاريخ المراجعة لا يُسجَّل |
 | `20261016_dawah_journey.sql` | جدول اشتراكات رحلة البريد الاختيارية | نموذج الرحلة يتوقف بأمان حتى تُنفَّذ الهجرة |
 | `20261016_dawah_assignments.sql` | توزيع طلبات الحوار على فريق الدعوة | يظهر تنبيه migration في لوحة الأسئلة حتى تُنفَّذ |
-| `20261018_public_content_read_repair.sql` | 🚨 يعيد صلاحية قراءة `content` · `content_translations` · `content_references` للزائر | تعطّل البحث و`sitemap.xml` و`rss.xml`، وظهور «جداول عامة blocked» في `qa:rls` |
+| `20261018_public_content_read_repair.sql` | 🚨 يعيد قراءة `content` · `content_translations` · `content_references` للزائر، ويحذف السياسات القديمة التي تفحص `user_roles` (سبب خطأ `42501`) | تبقى الجداول العامة محجوبة عن `anon` في `qa:rls`، وتظل القراءة الخادمية وحدها تعمل |
 | `20261020_email_verification.sql` | أعمدة تفعيل البريد في `users` + فهرس الرمز | لا يُرسل رابط تفعيل، ويبقى كل حساب مفعّلًا تلقائيًا |
 | `20261021_password_reset.sql` | أعمدة رمز استعادة كلمة المرور + فهرس الرمز | زر «نسيت كلمة المرور؟» يرد عامًا دون إرسال أي بريد |
 
@@ -219,7 +219,7 @@ npm run fix:citations -- --commit     # كتابة
 
 واجهة المحتوى العامة `/api/public/content` مغلقة افتراضيًا وتُفعّل من `/admin/settings`. حدّها المعدّل يُضبط من `/admin/security` تحت «واجهة المحتوى العامة».
 
-رحلة البريد لا تُفعّل إلا من `/admin/settings` بعد ضبط `CRON_SECRET` و`RESEND_API_KEY` و`EMAIL_FROM`، ويستدعي Vercel المسار `/api/cron/dawah-journey` مرة يوميًا.
+رحلة البريد لا تُفعّل إلا من `/admin/settings` بعد ضبط `CRON_SECRET` ومزوّد بريد (SMTP أو `RESEND_API_KEY` و`EMAIL_FROM`)، ويستدعي Vercel المسار `/api/cron/dawah-journey` مرة يوميًا.
 
 بعد التنفيذ: `npm run qa:rls` (يجب ٠ مكشوف) وأعد تحميل `/admin/security`.
 

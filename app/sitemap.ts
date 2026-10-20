@@ -1,6 +1,6 @@
 // app/sitemap.ts
 import { MetadataRoute } from 'next';
-import { createClient } from '@supabase/supabase-js';
+import { getPublicReadClient } from '@/lib/supabase/public-read';
 import { NAV_TREE, flattenNav, navHref } from '@/lib/navigation';
 import { encodeUrl } from '@/lib/url';
 import { RELIGION_ENTRIES, RELIGION_RESOURCES } from '@/lib/religions';
@@ -9,10 +9,9 @@ const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib
 
 export const dynamic = 'force-dynamic';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  // خريطة الموقع عامة، والقراءة خادمية. نُفضّل مفتاح الخدمة لتفادي منع anon
+  // في سياسات RLS الحالية، مع بقاء الفلتر `status='published'` هو الضامن.
+  const supabase = getPublicReadClient();
 
   // الصفحات الثابتة — تُشتق من هيكل التنقّل (lib/navigation) مع أولويات حسب العمق.
   const staticPages: MetadataRoute.Sitemap = [];

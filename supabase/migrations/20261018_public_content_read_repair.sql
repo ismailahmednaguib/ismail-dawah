@@ -10,6 +10,38 @@ grant select on table
   public.content_references
 to anon, authenticated;
 
+-- بعض السياسات القديمة على جداول المحتوى تفحص user_roles مباشرةً، فيرفض
+-- Postgres طلب anon بخطأ 42501 حتى مع وجود سياسة قراءة عامة، لأنه يقيّم
+-- كل السياسات. نحذف هذه السياسات وحدها؛ قراءة الإدارة تستخدم مفتاح الخدمة
+-- وتتجاوز RLS أصلًا، فلا حاجة لسياسة إدارية على هذه الجداول.
+do $$
+declare
+  p record;
+begin
+  for p in
+    select schemaname, tablename, policyname
+    from pg_policies
+    where schemaname = 'public'
+      and tablename in (
+        'content',
+        'content_translations',
+        'taxonomies',
+        'content_terms',
+        'content_references'
+      )
+      and (
+        coalesce(qual, '') ilike '%user_roles%'
+        or coalesce(with_check, '') ilike '%user_roles%'
+      )
+  loop
+    execute format(
+      'drop policy if exists %I on %I.%I',
+      p.policyname, p.schemaname, p.tablename
+    );
+    raise notice 'حُذفت سياسة قديمة تعتمد على user_roles: %.%', p.tablename, p.policyname;
+  end loop;
+end $$;
+
 alter table public.content enable row level security;
 drop policy if exists "public read published" on public.content;
 create policy "public read published"
