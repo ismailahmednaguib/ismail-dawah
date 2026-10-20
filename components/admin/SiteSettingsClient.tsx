@@ -6,6 +6,7 @@ import { DEFAULT_ASSISTANT_CONFIG } from '@/lib/assistant-core';
 import { DEFAULT_EMAIL_VERIFICATION_CONFIG } from '@/lib/email-verification-config';
 import { DEFAULT_PASSWORD_RESET_CONFIG } from '@/lib/password-reset-config';
 import { DEFAULT_PASSWORD_CHANGE_CONFIG } from '@/lib/password-change-config';
+import EmailTestCard from '@/components/admin/EmailTestCard';
 
 type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
@@ -406,7 +407,7 @@ export default function SiteSettingsClient() {
         </p>
       </Section>
 
-      <Section title="تفعيل البريد الإلكتروني" description="عند التفعيل يُرسل رابط تأكيد للحسابات الجديدة. الحسابات الحالية تبقى مفعّلة، ولا يُمنع أحد من الدخول. يتطلب ضبط RESEND_API_KEY و EMAIL_FROM في بيئة الخادم.">
+      <Section title="تفعيل البريد الإلكتروني" description="عند التفعيل يُرسل رابط تأكيد للحسابات الجديدة. الحسابات الحالية تبقى مفعّلة، ولا يُمنع أحد من الدخول. يتطلب ضبط SMTP_HOST و SMTP_USER و SMTP_PASS، أو RESEND_API_KEY و EMAIL_FROM في بيئة الخادم.">
         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/60 p-4">
           <input
             type="checkbox"
@@ -452,6 +453,8 @@ export default function SiteSettingsClient() {
           </span>
         </label>
       </Section>
+
+      <EmailTestCard />
 
       <Section title="رحلة غير المسلم البريدية" description="فعّل رحلة اختيارية من سبعة أيام وعدّل رسائلها. لن تُرسل أي رسالة ما لم تفعّلها وتضبط مزود البريد في بيئة الخادم.">
         <div className="space-y-5">
