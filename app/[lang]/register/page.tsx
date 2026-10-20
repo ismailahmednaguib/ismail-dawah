@@ -77,7 +77,7 @@ const UI: Record<string, UILang> = {
     email: "البريد الإلكتروني",
     emailPlaceholder: "example@email.com",
     password: "كلمة المرور",
-    passwordPlaceholder: "6 أحرف على الأقل",
+    passwordPlaceholder: "8 أحرف على الأقل",
     confirmPassword: "تأكيد كلمة المرور",
     registerButton: "إنشاء حساب",
     loading: "جاري التسجيل...",
@@ -128,7 +128,7 @@ const UI: Record<string, UILang> = {
     email: "Email",
     emailPlaceholder: "example@email.com",
     password: "Password",
-    passwordPlaceholder: "At least 6 characters",
+    passwordPlaceholder: "At least 8 characters",
     confirmPassword: "Confirm Password",
     registerButton: "Create Account",
     loading: "Registering...",
@@ -237,24 +237,36 @@ export default function RegisterPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setMsg({ type: "error", text: "❌ " + (isRTL ? "كلمة المرور قصيرة جداً" : "Password is too short") });
+    if (password.length < 8) {
+      setMsg({ type: "error", text: "❌ " + (isRTL ? "كلمة المرور قصيرة جداً (8 أحرف على الأقل)" : "Password is too short (at least 8 characters)") });
       return;
     }
 
     setLoading(true);
     try {
-      const r = await fetch("/api/auth/register", {
+      const r = await fetch("/api/register", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, lang }),
       });
       const j = await r.json();
       if (j.ok) {
-        setMsg({ type: "success", text: "✓ " + ui.successMessage });
-        setTimeout(() => router.push(`/${lang}/account`), 1500);
+        const successText = isRTL
+          ? j.verificationSent
+            ? "تم إنشاء الحساب. أرسلنا رابط تفعيل إلى بريدك الإلكتروني."
+            : "تم إنشاء الحساب بنجاح! جاري التحويل..."
+          : j.verificationSent
+            ? "Account created. We sent a verification link to your email."
+            : "Account created successfully! Redirecting...";
+
+        setMsg({ type: "success", text: "✓ " + successText });
+        const target = typeof j.redirect === "string" && j.redirect.startsWith("/")
+          ? j.redirect
+          : `/${lang}/account`;
+        setTimeout(() => router.push(target), 1800);
       } else {
-        setMsg({ type: "error", text: "❌ " + (j.error || ui.errorMessage) });
+        setMsg({ type: "error", text: "❌ " + (j.message || j.error || ui.errorMessage) });
       }
     } catch {
       setMsg({ type: "error", text: "❌ " + ui.connectionError });
@@ -385,7 +397,7 @@ export default function RegisterPage() {
                       placeholder={ui.passwordPlaceholder}
                       className="input-islamic !pe-12"
                       dir="ltr"
-                      minLength={6}
+                      minLength={8}
                       autoComplete="new-password"
                     />
                     <button
@@ -445,7 +457,7 @@ export default function RegisterPage() {
                     placeholder={ui.passwordPlaceholder}
                     className="input-islamic"
                     dir="ltr"
-                    minLength={6}
+                    minLength={8}
                     autoComplete="new-password"
                   />
                   {confirmPassword && password !== confirmPassword && (
