@@ -153,6 +153,22 @@ npm run fix:citations -- --commit     # كتابة
 5. `EMAIL_FROM` يقبل `no-reply@mail.example.com` أو `منصة إسماعيل أحمد نجيب <no-reply@mail.example.com>`. **يجب** أن يكون النطاق موثّقًا في Resend؛ لا تستخدم `@...vercel.app`.
 6. أضف `RESEND_API_KEY` و`EMAIL_FROM` في بيئة الخادم، ثم أعد التشغيل/النشر. تغيير متغيرات Vercel لا يسري على النشر الحالي قبل إعادة النشر.
 
+**البديل بلا دومين — SMTP (Gmail):**
+1. فعّل **التحقق بخطوتين** في حساب Google.
+2. Google Account → Security → **App passwords** → أنشئ كلمة مرور تطبيق (١٦ حرفًا).
+3. أضف في البيئة:
+   ```env
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_SECURE=true
+   SMTP_USER=you@gmail.com
+   SMTP_PASS=xxxx xxxx xxxx xxxx
+   ```
+4. `EMAIL_FROM` اختياري مع SMTP؛ إن لم يُضبط يُستخدم `SMTP_USER` كعنوان المرسل (مع اسم المنصة).
+5. Vercel يسمح بالمنفذين **465** و**587** فقط؛ المنفذ 25 محجوب.
+6. حدود Gmail المجانية حوالي ٥٠٠ مستلم/يوم. للإرسال الأكبر انتقل إلى Resend أو Brevo/SES لاحقًا.
+7. عند وجود SMTP مضبوط يُقدَّم على Resend تلقائيًا؛ لإيقافه احذف `SMTP_HOST` أو `SMTP_PASS`.
+
 ## ٧.٣) استعادة كلمة المرور
 
 - رابط «نسيت كلمة المرور؟» في صفحة الدخول يفتح `/{lang}/forgot-password`.

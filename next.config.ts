@@ -40,6 +40,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  serverExternalPackages: ["nodemailer"],
   // أخطاء TypeScript أو ESLint تُفشل البناء: لا تُنشر نسخة معطوبة صامتة.
   eslint: {
     ignoreDuringBuilds: false,

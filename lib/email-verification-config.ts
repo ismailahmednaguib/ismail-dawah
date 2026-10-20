@@ -50,7 +50,18 @@ export function emailProviderConfigured(env: unknown): boolean {
     String(source.EMAIL_FROM ?? '').trim() ||
     String(source.FROM_EMAIL ?? '').trim();
 
-  return Boolean(String(source.RESEND_API_KEY ?? '').trim() && from);
+  const resendConfigured = Boolean(
+    String(source.RESEND_API_KEY ?? '').trim() && from
+  );
+
+  // SMTP بديل بلا دومين (مثل Gmail App Password).
+  const smtpConfigured = Boolean(
+    String(source.SMTP_HOST ?? '').trim() &&
+      String(source.SMTP_USER ?? '').trim() &&
+      String(source.SMTP_PASS ?? '').trim()
+  );
+
+  return resendConfigured || smtpConfigured;
 }
 
 /** شكل الرمز المتوقع: base64url بطول ٢٠–٢٠٠ حرفًا. */

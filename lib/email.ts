@@ -5,6 +5,7 @@ import "server-only";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { SITE_URL } from "./site";
 
 // ============================================================
@@ -63,6 +64,7 @@ const MAX_FROM_NAME_LENGTH = 80;
 const MAX_HEADER_VALUE_LENGTH = 500;
 
 const RESEND_TIMEOUT_MS = 10_000;
+const SMTP_TIMEOUT_MS = 15_000;
 const DB_TIMEOUT_MS = 5_000;
 const LOG_TIMEOUT_MS = 3_000;
 
@@ -347,7 +349,8 @@ function getFromIdentity(): { email: string; name: string } {
 
   const parsed =
     parseFromIdentity(process.env.EMAIL_FROM) ||
-    parseFromIdentity(process.env.FROM_EMAIL);
+    parseFromIdentity(process.env.FROM_EMAIL) ||
+    (getSmtpConfig() ? parseFromIdentity(process.env.SMTP_USER) : null);
 
   if (parsed) {
     return {
@@ -454,6 +457,37 @@ function getResendClient(): Resend | null {
   }
 
   return resendClient;
+}
+
+type SmtpConfig = {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass: string;
+};
+
+/**
+ * SMTP بديل لا يحتاج دومينًا موثّقًا في Resend (مثل Gmail App Password).
+ * Vercel يسمح بالمنفذين 465 و587 فقط؛ المنفذ 25 محجوب.
+ */
+function getSmtpConfig(): SmtpConfig | null {
+  const host = process.env.SMTP_HOST?.trim();
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS?.trim();
+
+  if (!host || !user || !pass) {
+    return null;
+  }
+
+  const portRaw = Number(process.env.SMTP_PORT?.trim() || 587);
+  const port = Number.isFinite(portRaw) && portRaw > 0 ? portRaw : 587;
+  const secureRaw = process.env.SMTP_SECURE?.trim().toLowerCase();
+  const secure = secureRaw
+    ? /^(1|true|yes|on)$/.test(secureRaw)
+    : port === 465;
+
+  return { host, port, secure, user, pass };
 }
 
 // ============================================================
@@ -605,11 +639,14 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
     };
   }
 
-  const resend = getResendClient();
+  const smtp = getSmtpConfig();
+  const resend = smtp ? null : getResendClient();
 
-  if (!resend) {
+  if (!smtp && !resend) {
     if (isProduction()) {
-      console.error("[Email] RESEND_API_KEY is not configured in production.");
+      console.error(
+        "[Email] No provider configured: set RESEND_API_KEY + EMAIL_FROM, or SMTP_HOST/SMTP_USER/SMTP_PASS."
+      );
 
       await logEmail(options, "failed", "email_provider_not_configured");
 
@@ -643,19 +680,119 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
 
     const fromName = getFromName();
     const fromEmail = getFromEmail();
+    const from = `${fromName} <${fromEmail}>`;
+    const text = options.text
+      ? sanitizeControlChars(options.text, true)
+      : htmlToText(html);
+    const replyTo =
+      options.replyTo && isValidEmail(options.replyTo)
+        ? normalizeEmail(options.replyTo)
+        : undefined;
+
+    const headers: Record<string, string> = {};
+
+    if (options.headers && typeof options.headers === "object") {
+      for (const [key, value] of Object.entries(options.headers)) {
+        const headerName = String(key)
+          .replace(/[^\x21-\x7E]/g, "")
+          .replace(/[:\s]/g, "")
+          .trim();
+
+        if (!headerName) {
+          continue;
+        }
+
+        // منع تجاوز رؤوس حساسة
+        if (/^(content-type|from|to|subject)$/i.test(headerName)) {
+          continue;
+        }
+
+        const headerValue = sanitizeHeaderValue(value);
+
+        if (!headerValue) {
+          continue;
+        }
+
+        headers[headerName] = headerValue;
+      }
+    }
+
+    if (unsubscribeUrl) {
+      headers["List-Unsubscribe"] = `<${unsubscribeUrl}>`;
+      headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
+    }
+
+    // ---- SMTP (Gmail أو أي مزوّد) ----
+    if (smtp) {
+      const transport = nodemailer.createTransport({
+        host: smtp.host,
+        port: smtp.port,
+        secure: smtp.secure,
+        auth: { user: smtp.user, pass: smtp.pass },
+        connectionTimeout: SMTP_TIMEOUT_MS,
+        greetingTimeout: SMTP_TIMEOUT_MS,
+        socketTimeout: SMTP_TIMEOUT_MS,
+      });
+
+      const info = await withTimeout(
+        transport.sendMail({
+          from,
+          to: validRecipients,
+          cc: validCc.length > 0 ? validCc : undefined,
+          bcc: validBcc.length > 0 ? validBcc : undefined,
+          replyTo,
+          subject,
+          html,
+          text,
+          headers: Object.keys(headers).length > 0 ? headers : undefined,
+        }),
+        SMTP_TIMEOUT_MS,
+        "smtp_send"
+      );
+
+      const accepted = Array.isArray(info.accepted)
+        ? info.accepted.length
+        : null;
+      const rejected = Array.isArray(info.rejected)
+        ? info.rejected.length
+        : 0;
+
+      if (accepted === 0 && rejected > 0) {
+        throw new Error("smtp_all_recipients_rejected");
+      }
+
+      await logEmail(
+        { ...options, to: validRecipients },
+        "sent",
+        undefined,
+        info.messageId
+      );
+
+      return {
+        ok: true,
+        success: true,
+        id: info.messageId,
+      };
+    }
+
+    if (!resend) {
+      return {
+        ok: false,
+        success: false,
+        error: "email_provider_not_configured",
+      };
+    }
 
     const payload: any = {
-      from: `${fromName} <${fromEmail}>`,
+      from,
       to: validRecipients.length === 1 ? validRecipients[0] : validRecipients,
       subject,
       html,
-      text: options.text
-        ? sanitizeControlChars(options.text, true)
-        : htmlToText(html),
+      text,
     };
 
-    if (options.replyTo && isValidEmail(options.replyTo)) {
-      payload.replyTo = normalizeEmail(options.replyTo);
+    if (replyTo) {
+      payload.replyTo = replyTo;
     }
 
     if (validCc.length > 0) {
@@ -680,39 +817,6 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
         }))
         .filter((tag) => tag.name)
         .slice(0, 10);
-    }
-
-    const headers: Record<string, string> = {};
-
-    if (options.headers && typeof options.headers === "object") {
-      for (const [key, value] of Object.entries(options.headers)) {
-        const headerName = String(key)
-          .replace(/[^\x21-\x7E]/g, "")
-          .replace(/[:\s]/g, "")
-          .trim();
-
-        if (!headerName) {
-          continue;
-        }
-
-        // منع تجاوز رؤوس حساسة قد تتحكم بها Resend
-        if (/^(content-type|from|to|subject)$/i.test(headerName)) {
-          continue;
-        }
-
-        const headerValue = sanitizeHeaderValue(value);
-
-        if (!headerValue) {
-          continue;
-        }
-
-        headers[headerName] = headerValue;
-      }
-    }
-
-    if (unsubscribeUrl) {
-      headers["List-Unsubscribe"] = `<${unsubscribeUrl}>`;
-      headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click";
     }
 
     if (Object.keys(headers).length > 0) {

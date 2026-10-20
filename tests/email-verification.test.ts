@@ -50,6 +50,25 @@ test('emailProviderConfigured: يتطلب المفتاح والمرسل معًا
   );
 });
 
+test('emailProviderConfigured: SMTP بلا دومين', () => {
+  assert.equal(
+    emailProviderConfigured({
+      SMTP_HOST: 'smtp.gmail.com',
+      SMTP_USER: 'a@gmail.com',
+      SMTP_PASS: 'app-password',
+    }),
+    true
+  );
+  assert.equal(
+    emailProviderConfigured({ SMTP_HOST: 'smtp.gmail.com', SMTP_USER: 'a@gmail.com' }),
+    false
+  );
+  assert.equal(
+    emailProviderConfigured({ SMTP_HOST: '', SMTP_USER: 'a@gmail.com', SMTP_PASS: 'x' }),
+    false
+  );
+});
+
 test('buildEmailVerificationUrl: يبني رابطًا آمنًا ويجرّد الشرطة الأخيرة', () => {
   assert.equal(
     buildEmailVerificationUrl('https://example.com/', 'ar', 'abc-_123'),
