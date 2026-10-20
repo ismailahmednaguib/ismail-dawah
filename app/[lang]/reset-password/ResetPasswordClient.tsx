@@ -202,7 +202,7 @@ export default function ResetPasswordClient({
   if (state === "success") {
     return (
       <div className="card overflow-hidden p-6 md:p-8">
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-800 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-200">
+        <div className="rounded-2xl border border-primary-200 bg-primary-50 p-5 text-primary-800 dark:border-primary-800/40 dark:bg-primary-950/20 dark:text-primary-200">
           <div className="flex items-start gap-3">
             <span className="text-2xl leading-none" aria-hidden="true">
               ✅

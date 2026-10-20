@@ -127,7 +127,7 @@ export default function EmailVerificationBanner({
               <p
                 className={`mt-2 text-sm font-bold ${
                   state === "sent"
-                    ? "text-emerald-700 dark:text-emerald-300"
+                    ? "text-primary-700 dark:text-primary-300"
                     : "text-red-700 dark:text-red-300"
                 }`}
               >

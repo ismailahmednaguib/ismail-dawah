@@ -142,12 +142,12 @@ export default function EmailTestCard() {
       ? {
           label: "SMTP",
           className:
-            "border-emerald-200 bg-emerald-50 text-emerald-700",
+            "border-primary-200 bg-primary-50 text-primary-700",
         }
       : status?.kind === "resend"
         ? {
             label: "Resend",
-            className: "border-sky-200 bg-sky-50 text-sky-700",
+            className: "border-gold-200 bg-gold-50 text-gold-700",
           }
         : {
             label: "غير مضبوط",
@@ -221,7 +221,7 @@ export default function EmailTestCard() {
           role={feedback.type === "error" ? "alert" : "status"}
           className={`mt-3 rounded-lg border p-3 text-xs font-bold leading-6 ${
             feedback.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              ? "border-primary-200 bg-primary-50 text-primary-700"
               : "border-red-200 bg-red-50 text-red-700"
           }`}
         >

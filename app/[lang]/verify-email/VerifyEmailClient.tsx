@@ -136,13 +136,13 @@ export default function VerifyEmailClient({
     success: {
       title: copy.successTitle,
       body: copy.successBody,
-      tone: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-200",
+      tone: "border-primary-200 bg-primary-50 text-primary-800 dark:border-primary-800/40 dark:bg-primary-950/20 dark:text-primary-200",
       icon: "✅",
     },
     already: {
       title: copy.alreadyTitle,
       body: copy.alreadyBody,
-      tone: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-200",
+      tone: "border-primary-200 bg-primary-50 text-primary-800 dark:border-primary-800/40 dark:bg-primary-950/20 dark:text-primary-200",
       icon: "✅",
     },
     missing: {
