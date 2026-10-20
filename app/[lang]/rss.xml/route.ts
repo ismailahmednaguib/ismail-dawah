@@ -29,21 +29,37 @@ export async function GET(_req: Request, { params }: { params: Promise<{ lang: s
     return new Response('Not found', { status: 404 });
   }
 
-  // قراءة خادمية موحّدة؛ الفلترة على `status='published'` أدناه قبل البناء.
+  // قراءة خادمية موحّدة، مرتّبة على `published_at` مع فلتر النشر.
   const supabase = getPublicReadClient();
 
-  const { data } = await supabase
-    .from('content_translations')
-    .select('slug, title, summary, lang, content:content_id(content_type, published_at, status)')
-    .eq('lang', lang)
-    .limit(300);
+  type Translation = {
+    slug: string;
+    title: string;
+    summary: string | null;
+    lang: string;
+  };
+  type ContentRow = {
+    content_type: string;
+    published_at: string | null;
+    content_translations: Translation[];
+  };
 
-  const items = ((data ?? []) as any[])
-    .filter((row) => row.content?.status === 'published' && row.slug && row.title)
-    .sort((a, b) => {
-      const da = a.content?.published_at ? Date.parse(a.content.published_at) : 0;
-      const db = b.content?.published_at ? Date.parse(b.content.published_at) : 0;
-      return db - da;
+  const { data } = await supabase
+    .from('content')
+    .select(
+      'content_type, published_at, content_translations!inner(slug, title, summary, lang)'
+    )
+    .eq('status', 'published')
+    .eq('content_translations.lang', lang)
+    .order('published_at', { ascending: false, nullsFirst: false })
+    .limit(30);
+
+  const items = ((data ?? []) as ContentRow[])
+    .flatMap((row) => {
+      const translation = (row.content_translations ?? []).find(
+        (item) => item.lang === lang && item.slug && item.title
+      );
+      return translation ? [{ ...translation, content: row }] : [];
     })
     .slice(0, 30);
 
