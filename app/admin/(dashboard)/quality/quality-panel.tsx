@@ -31,6 +31,13 @@ type ApiResponse = {
     withReferences: number;
     withVerifiedReferences: number;
   };
+  unreviewedFatwas?: {
+    id: string;
+    title: string;
+    slug: string;
+    references: number;
+    verifiedReferences: number;
+  }[];
   citations?: {
     id: string;
     contentId: string;
@@ -56,6 +63,7 @@ export default function QualityPanel() {
   const [filter, setFilter] = useState("pending");
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [busyFatwa, setBusyFatwa] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [data, setData] = useState<ApiResponse>({});
@@ -97,6 +105,32 @@ export default function QualityPanel() {
       setError(err instanceof Error ? err.message : "خطأ غير متوقع");
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function approveFatwa(id: string) {
+    const confirmed = window.confirm(
+      "هل راجعت الفتوى ومصادرها علميًّا، وتريد تسجيل اعتمادك باسمك؟"
+    );
+    if (!confirmed) return;
+
+    setBusyFatwa(id);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/quality", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, action: "approve-fatwa" }),
+      });
+      const json: ApiResponse = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error || "تعذّر الاعتماد العلمي");
+      setMessage("تم تسجيل الاعتماد العلمي للفتوى.");
+      await load(filter);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "خطأ غير متوقع");
+    } finally {
+      setBusyFatwa(null);
     }
   }
 
@@ -151,7 +185,7 @@ export default function QualityPanel() {
                 للفتاوى المنشورة حاليًّا في قاعدة البيانات.
               </p>
             </div>
-            <Link href="/admin/content" className="btn-outline px-3 py-1.5 text-xs">
+            <Link href="/admin/content?type=fatwa" className="btn-outline px-3 py-1.5 text-xs">
               إدارة الفتاوى
             </Link>
           </div>
@@ -182,6 +216,60 @@ export default function QualityPanel() {
               {data.fatwaReview.unreviewed} فتوى منشورة بلا مراجع معتمد. راجعها من محرّر المحتوى،
               وثبّت المراجع في حقل «المراجع»، ثم اعتمدها من زر الاعتماد العلمي.
             </p>
+          )}
+
+          {(data.unreviewedFatwas?.length ?? 0) > 0 && (
+            <div className="mt-4">
+              <h3 className="text-sm font-bold">فتاوى تنتظر الاعتماد العلمي</h3>
+              <ul className="mt-2 divide-y divide-black/5 dark:divide-white/10">
+                {data.unreviewedFatwas?.map((fatwa) => (
+                  <li
+                    key={fatwa.id}
+                    className="flex flex-wrap items-center justify-between gap-2 py-2"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <Link
+                        href={`/admin/content/${fatwa.id}`}
+                        className="block truncate text-sm font-semibold underline-offset-4 hover:underline"
+                      >
+                        {fatwa.title}
+                      </Link>
+                      <p className="text-xs opacity-60">
+                        {fatwa.verifiedReferences > 0
+                          ? `${fatwa.verifiedReferences} مرجع معتمد`
+                          : fatwa.references > 0
+                            ? `${fatwa.references} مرجع بلا اعتماد`
+                            : "لا مراجع بعد"}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <Link
+                        href={`/admin/content/${fatwa.id}`}
+                        className="btn-outline px-2.5 py-1 text-xs"
+                      >
+                        تحرير
+                      </Link>
+                      {!data.canReview ? (
+                        <span className="text-xs opacity-60">
+                          {fatwa.verifiedReferences > 0 ? "جاهزة للاعتماد" : "تحتاج مرجعًا معتمدًا"}
+                        </span>
+                      ) : fatwa.verifiedReferences > 0 ? (
+                        <button
+                          type="button"
+                          onClick={() => void approveFatwa(fatwa.id)}
+                          disabled={busyFatwa === fatwa.id}
+                          className="btn-primary px-2.5 py-1 text-xs disabled:cursor-wait disabled:opacity-60"
+                        >
+                          {busyFatwa === fatwa.id ? "…" : "اعتماد علمي"}
+                        </button>
+                      ) : (
+                        <span className="text-xs opacity-60">أضف مرجعًا معتمدًا أولًا</span>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </section>
       )}

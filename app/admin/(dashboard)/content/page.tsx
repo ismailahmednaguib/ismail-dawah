@@ -6,10 +6,16 @@ import { can } from '@/lib/admin/permissions';
 
 export const metadata = { title: 'المحتوى | لوحة التحكم' };
 
-export default async function ContentPage() {
+export default async function ContentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ type?: string }>;
+}) {
   const session = await getAdminSession();
   if (!session) redirect('/ar/login');
   if (!can(session.roles, 'content.read')) redirect('/admin');
+
+  const { type } = await searchParams;
 
   return (
     <div>
@@ -22,7 +28,7 @@ export default async function ContentPage() {
           + محتوى جديد
         </Link>
       </div>
-      <ContentListClient />
+      <ContentListClient initialType={typeof type === 'string' ? type : ''} />
     </div>
   );
 }

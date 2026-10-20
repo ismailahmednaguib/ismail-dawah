@@ -35,13 +35,13 @@ interface ListItem {
   views: number;
 }
 
-export default function ContentListClient() {
+export default function ContentListClient({ initialType = '' }: { initialType?: string }) {
   const [items, setItems] = useState<ListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState(initialType);
 
   const load = useCallback(async () => {
     setLoading(true);
