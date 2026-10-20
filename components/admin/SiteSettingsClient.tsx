@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { DEFAULT_DAWAH_JOURNEY_CONFIG } from '@/lib/dawah-journey';
 import { DEFAULT_ASSISTANT_CONFIG } from '@/lib/assistant-core';
 import { DEFAULT_EMAIL_VERIFICATION_CONFIG } from '@/lib/email-verification-config';
+import { DEFAULT_PASSWORD_RESET_CONFIG } from '@/lib/password-reset-config';
 
 type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
@@ -44,6 +45,7 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   showPrayerBar: false,
   playStoreUrl: '',
   emailVerification: DEFAULT_EMAIL_VERIFICATION_CONFIG,
+  passwordReset: DEFAULT_PASSWORD_RESET_CONFIG,
   publicApiEnabled: false,
   dawahJourney: DEFAULT_DAWAH_JOURNEY_CONFIG,
   assistant: DEFAULT_ASSISTANT_CONFIG,
@@ -414,6 +416,21 @@ export default function SiteSettingsClient() {
             <span className="block text-sm font-black text-primary-950">إرسال رابط التفعيل للحسابات الجديدة</span>
             <span className="mt-1 block text-xs leading-6 text-stone-500">
               إن لم يكن مزوّد البريد مضبوطًا، يبقى الحساب مفعّلًا تلقائيًا ولا يُقفل. يمكن للمستخدم إعادة إرسال الرابط من صفحة حسابه.
+            </span>
+          </span>
+        </label>
+
+        <label className="mt-3 flex cursor-pointer items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/60 p-4">
+          <input
+            type="checkbox"
+            checked={Boolean(settings.passwordReset?.enabled ?? DEFAULT_PASSWORD_RESET_CONFIG.enabled)}
+            onChange={(event) => setValue('passwordReset', { enabled: event.target.checked })}
+            className="mt-1 h-4 w-4 accent-primary-700"
+          />
+          <span>
+            <span className="block text-sm font-black text-primary-950">السماح باستعادة كلمة المرور عبر البريد</span>
+            <span className="mt-1 block text-xs leading-6 text-stone-500">
+              يظهر رابط «نسيت كلمة المرور؟» في صفحة الدخول، ويُرسل رابط صالح ساعة واحدة. تعطيله لا يحذف كلمات المرور ولا يمنع الدخول الحالي.
             </span>
           </span>
         </label>

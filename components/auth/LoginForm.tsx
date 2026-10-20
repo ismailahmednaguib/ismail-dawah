@@ -385,7 +385,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
               </label>
 
               <Link
-                href={`/${lang}/contact`}
+                href={`/${lang}/forgot-password`}
                 className="text-sm font-bold text-primary-700 hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200"
               >
                 {t.forgotPassword}

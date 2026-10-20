@@ -88,6 +88,7 @@ function settingsToRows(settings: Record<string, unknown>) {
     'assistant',
     'playStoreUrl',
     'emailVerification',
+    'passwordReset',
   ]);
 
   for (const [rawKey, value] of Object.entries(settings)) {
