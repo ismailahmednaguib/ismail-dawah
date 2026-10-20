@@ -46,10 +46,11 @@ export function emailProviderConfigured(env: unknown): boolean {
   const source =
     env && typeof env === 'object' ? (env as Record<string, unknown>) : {};
 
-  return Boolean(
-    String(source.RESEND_API_KEY ?? '').trim() &&
-      String(source.EMAIL_FROM ?? '').trim()
-  );
+  const from =
+    String(source.EMAIL_FROM ?? '').trim() ||
+    String(source.FROM_EMAIL ?? '').trim();
+
+  return Boolean(String(source.RESEND_API_KEY ?? '').trim() && from);
 }
 
 /** شكل الرمز المتوقع: base64url بطول ٢٠–٢٠٠ حرفًا. */

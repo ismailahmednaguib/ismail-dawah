@@ -145,6 +145,14 @@ npm run fix:citations -- --commit     # كتابة
 - صفحة النتيجة: `/ar/verify-email?token=...` أو `/en/verify-email?token=...`.
 - إن فشل إرسال البريد، يُعاد الحساب إلى «مفعّل» تلقائيًا حتى لا يتعطّل التسجيل بسبب عطل مؤقت لدى مزوّد البريد.
 
+**إعداد Resend (مرة واحدة):**
+1. حساب على `resend.com` → **Domains** → **Add Domain**. يُفضّل نطاق فرعي مخصّص للبريد مثل `mail.example.com` أو `send.example.com`.
+2. انسخ سجلات DNS التي يعرضها Resend (DKIM/SPF: TXT و MX أو CNAME) إلى مزوّد النطاق (Cloudflare/Namecheap). لا تفعّل Proxy على سجلات CNAME.
+3. انتظر التحقق (غالبًا ١٥ دقيقة، وقد يصل إلى ٧٢ ساعة).
+4. **API Keys** → **Create API Key** بصلاحية **Sending access** → انسخ المفتاح `re_...` (يُعرض مرة واحدة).
+5. `EMAIL_FROM` يقبل `no-reply@mail.example.com` أو `منصة إسماعيل أحمد نجيب <no-reply@mail.example.com>`. **يجب** أن يكون النطاق موثّقًا في Resend؛ لا تستخدم `@...vercel.app`.
+6. أضف `RESEND_API_KEY` و`EMAIL_FROM` في بيئة الخادم، ثم أعد التشغيل/النشر. تغيير متغيرات Vercel لا يسري على النشر الحالي قبل إعادة النشر.
+
 ## ٧.٣) استعادة كلمة المرور
 
 - رابط «نسيت كلمة المرور؟» في صفحة الدخول يفتح `/{lang}/forgot-password`.

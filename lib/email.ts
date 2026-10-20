@@ -315,11 +315,45 @@ function withTimeout<T>(
 // Env helpers
 // ============================================================
 
-function getFromEmail(): string {
-  const env = process.env.FROM_EMAIL?.trim();
+/**
+ * يقبل `no-reply@domain.com` أو `الاسم <no-reply@domain.com>`.
+ * EMAIL_FROM هو الاسم الموثّق في `.env.example` وفحص المزوّد،
+ * وFROM_EMAIL يبقى مدعومًا للتوافق الرجعي.
+ */
+function parseFromIdentity(
+  value: unknown
+): { email: string; name: string } | null {
+  const raw = typeof value === "string" ? value.trim() : "";
+  if (!raw) return null;
 
-  if (env && isValidEmail(env)) {
-    return normalizeEmail(env);
+  const withName = raw.match(/^(.*?)\s*<([^<>]+)>\s*$/);
+  const email = normalizeEmail(withName ? withName[2] : raw);
+
+  if (!isValidEmail(email)) {
+    return null;
+  }
+
+  return {
+    email,
+    name: sanitizeDisplayName(
+      withName ? withName[1].replace(/^["']|["']$/g, "").trim() : ""
+    ),
+  };
+}
+
+function getFromIdentity(): { email: string; name: string } {
+  const fallbackName =
+    sanitizeDisplayName(process.env.FROM_NAME?.trim()) || "إسماعيل أحمد نجيب";
+
+  const parsed =
+    parseFromIdentity(process.env.EMAIL_FROM) ||
+    parseFromIdentity(process.env.FROM_EMAIL);
+
+  if (parsed) {
+    return {
+      email: parsed.email,
+      name: parsed.name || fallbackName,
+    };
   }
 
   try {
@@ -327,19 +361,24 @@ function getFromEmail(): string {
     const generated = `no-reply@${hostname}`;
 
     if (isValidEmail(generated)) {
-      return generated;
+      return { email: generated, name: fallbackName };
     }
   } catch {
     // ignore
   }
 
-  return "no-reply@ismailahmednaguib.vercel.app";
+  return {
+    email: "no-reply@ismailahmednaguib.vercel.app",
+    name: fallbackName,
+  };
+}
+
+function getFromEmail(): string {
+  return getFromIdentity().email;
 }
 
 function getFromName(): string {
-  return (
-    sanitizeDisplayName(process.env.FROM_NAME?.trim()) || "إسماعيل أحمد نجيب"
-  );
+  return getFromIdentity().name;
 }
 
 function getAdminEmail(): string | null {

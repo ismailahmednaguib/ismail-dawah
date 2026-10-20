@@ -43,6 +43,11 @@ test('emailProviderConfigured: يتطلب المفتاح والمرسل معًا
     emailProviderConfigured({ RESEND_API_KEY: ' k ', EMAIL_FROM: ' a@b.c ' }),
     true
   );
+  // FROM_EMAIL اسم قديم مدعوم للتوافق الرجعي.
+  assert.equal(
+    emailProviderConfigured({ RESEND_API_KEY: 'k', FROM_EMAIL: 'a@b.c' }),
+    true
+  );
 });
 
 test('buildEmailVerificationUrl: يبني رابطًا آمنًا ويجرّد الشرطة الأخيرة', () => {
