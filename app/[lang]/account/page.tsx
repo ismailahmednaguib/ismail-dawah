@@ -9,6 +9,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createAdminClient, getServerUser } from "@/lib/auth";
+import EmailVerificationBanner from "@/components/auth/EmailVerificationBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -256,6 +257,26 @@ export default async function AccountPage({
   const user = await getServerUser();
   const progressSummary = user ? await getProgressSummary(user.id) : null;
 
+  let showVerificationBanner = false;
+
+  if (user && user.role === "user") {
+    try {
+      const admin = createAdminClient();
+      const queryId = /^\d+$/.test(user.id) ? Number(user.id) : user.id;
+      const { data } = await admin
+        .from("users")
+        .select("email_verified")
+        .eq("id", queryId)
+        .maybeSingle();
+
+      // عمود غير موجود (ترحيل لم يُنفّذ) => الحساب قديم ويُعامَل مفعّلًا.
+      showVerificationBanner =
+        (data as { email_verified?: boolean } | null)?.email_verified === false;
+    } catch {
+      showVerificationBanner = false;
+    }
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -306,6 +327,10 @@ export default async function AccountPage({
       />
 
       <section className="container-page py-10 md:py-14">
+        {showVerificationBanner && user && (
+          <EmailVerificationBanner lang={l} email={user.email} />
+        )}
+
         {/* ===== ترويسة ===== */}
         {gate.visible('k0') && (<>
         <div className="card relative mb-10 overflow-hidden p-8 md:p-12">

@@ -13,6 +13,17 @@ import {
   type Role,
 } from "@/lib/auth";
 import { isAllowedMutationOrigin } from "@/lib/security/origin";
+import { getSiteSettings } from "@/lib/content";
+import { sendVerificationEmail } from "@/lib/email";
+import { SITE_URL } from "@/lib/site";
+import {
+  EMAIL_VERIFICATION_SETTING_KEY,
+  EMAIL_VERIFICATION_TTL_MS,
+  buildEmailVerificationUrl,
+  emailProviderConfigured,
+  normalizeEmailVerificationConfig,
+} from "@/lib/email-verification-config";
+import { createEmailVerificationToken } from "@/lib/email-verification-token";
 
 // ============================================================
 // Types
@@ -496,6 +507,70 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // --------------------------------------------------------
+    // تفعيل البريد — قابل للتحكم من لوحة التحكم.
+    // لا نُقفل الحساب إذا لم يُنفَّذ الترحيل أو تعطّل مزوّد البريد.
+    // --------------------------------------------------------
+
+    let verificationSent = false;
+
+    if (inserted?.id) {
+      try {
+        const config = normalizeEmailVerificationConfig(
+          (await getSiteSettings())[EMAIL_VERIFICATION_SETTING_KEY]
+        );
+
+        if (config.enabled && emailProviderConfigured(process.env)) {
+          const { token, hash } = createEmailVerificationToken();
+          const now = new Date();
+          const expiresAt = new Date(now.getTime() + EMAIL_VERIFICATION_TTL_MS);
+
+          const { error: verificationError } = await client
+            .from("users")
+            .update({
+              email_verified: false,
+              email_verified_at: null,
+              email_verification_token_hash: hash,
+              email_verification_expires_at: expiresAt.toISOString(),
+              email_verification_sent_at: now.toISOString(),
+            })
+            .eq("id", inserted.id);
+
+          if (verificationError) {
+            // الترحيل غير منفّذ بعد: نُبقي الحساب مفعّلًا بدل إقفاله.
+            console.warn(
+              "[Register] email verification columns missing; account kept verified.",
+              verificationError
+            );
+          } else {
+            const sent = await sendVerificationEmail(
+              email,
+              buildEmailVerificationUrl(SITE_URL, lang, token),
+              lang
+            );
+
+            if (sent.ok) {
+              verificationSent = true;
+            } else {
+              console.error("[Register] verification email failed:", sent.error);
+
+              // عطل مؤقت في مزوّد البريد لا يجب أن يمنع الدخول.
+              await client
+                .from("users")
+                .update({
+                  email_verified: true,
+                  email_verification_token_hash: null,
+                  email_verification_expires_at: null,
+                })
+                .eq("id", inserted.id);
+            }
+          }
+        }
+      } catch (error) {
+        console.warn("[Register] verification setup skipped:", error);
+      }
+    }
+
     const role: Role = "user";
 
     const res = NextResponse.json({
@@ -512,9 +587,12 @@ export async function POST(req: NextRequest) {
             name,
             role,
           },
-      message: inserted?.id
-        ? "تم إنشاء الحساب وتسجيل الدخول."
-        : "تم إنشاء الحساب. يرجى تسجيل الدخول.",
+      verificationSent,
+      message: verificationSent
+        ? "تم إنشاء الحساب. أرسلنا رابط تفعيل إلى بريدك الإلكتروني."
+        : inserted?.id
+          ? "تم إنشاء الحساب وتسجيل الدخول."
+          : "تم إنشاء الحساب. يرجى تسجيل الدخول.",
     });
 
     if (inserted?.id) {
@@ -532,6 +610,7 @@ export async function POST(req: NextRequest) {
               role,
               redirect: `/${lang}/login`,
               user: publicUser(inserted, role),
+              verificationSent,
               message:
                 "تم إنشاء الحساب، لكن تعذر تسجيل الدخول تلقائيًا. سجّل دخولك يدويًا.",
             },

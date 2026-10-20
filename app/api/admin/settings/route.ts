@@ -87,6 +87,7 @@ function settingsToRows(settings: Record<string, unknown>) {
     'dawahJourney',
     'assistant',
     'playStoreUrl',
+    'emailVerification',
   ]);
 
   for (const [rawKey, value] of Object.entries(settings)) {

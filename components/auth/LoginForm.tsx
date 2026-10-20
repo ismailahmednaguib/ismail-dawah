@@ -201,7 +201,13 @@ export default function LoginForm({ lang }: { lang: Lang }) {
 
         setMessage({
           type: "success",
-          text: `✓ ${t.success} ${t.redirecting}`,
+          text: data.verificationSent
+            ? `✓ ${
+                lang === "ar"
+                  ? "تم إنشاء الحساب. أرسلنا رابط تفعيل إلى بريدك الإلكتروني."
+                  : "Account created. We sent a verification link to your email."
+              }`
+            : `✓ ${t.success} ${t.redirecting}`,
         });
 
         window.setTimeout(() => {
