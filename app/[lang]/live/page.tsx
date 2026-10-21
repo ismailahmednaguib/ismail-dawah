@@ -303,31 +303,31 @@ export default async function LivePage({
   let settings: LiveSettings = FALLBACK_SETTINGS;
   let schedule: ScheduleItem[] = FALLBACK_SCHEDULE;
 
+  const siteSettings = __pageSettings as Record<string, unknown>;
+  settings = {
+    liveUrl: settingText(siteSettings.liveUrl, L) || FALLBACK_SETTINGS.liveUrl,
+    liveTitle: {
+      ar: settingText(siteSettings.liveTitle, "ar") || FALLBACK_SETTINGS.liveTitle.ar,
+      en: settingText(siteSettings.liveTitle, "en") || FALLBACK_SETTINGS.liveTitle.en,
+    },
+    meetingDay: {
+      ar: settingText(siteSettings.meetingDay, "ar") || FALLBACK_SETTINGS.meetingDay.ar,
+      en: settingText(siteSettings.meetingDay, "en") || FALLBACK_SETTINGS.meetingDay.en,
+    },
+    meetingTime: {
+      ar: settingText(siteSettings.meetingTime, "ar") || FALLBACK_SETTINGS.meetingTime.ar,
+      en: settingText(siteSettings.meetingTime, "en") || FALLBACK_SETTINGS.meetingTime.en,
+    },
+    meetingPlace: {
+      ar: settingText(siteSettings.meetingPlace, "ar") || FALLBACK_SETTINGS.meetingPlace.ar,
+      en: settingText(siteSettings.meetingPlace, "en") || FALLBACK_SETTINGS.meetingPlace.en,
+    },
+    meetingLink: settingText(siteSettings.meetingLink, L) || FALLBACK_SETTINGS.meetingLink,
+  };
+
   try {
     const { getContent } = await import("@/lib/content");
     const c = await getContent();
-    const s = __pageSettings as Record<string, unknown>;
-
-    settings = {
-      liveUrl: settingText(s.liveUrl, L) || FALLBACK_SETTINGS.liveUrl,
-      liveTitle: {
-        ar: settingText(s.liveTitle, "ar") || FALLBACK_SETTINGS.liveTitle.ar,
-        en: settingText(s.liveTitle, "en") || FALLBACK_SETTINGS.liveTitle.en,
-      },
-      meetingDay: {
-        ar: settingText(s.meetingDay, "ar") || FALLBACK_SETTINGS.meetingDay.ar,
-        en: settingText(s.meetingDay, "en") || FALLBACK_SETTINGS.meetingDay.en,
-      },
-      meetingTime: {
-        ar: settingText(s.meetingTime, "ar") || FALLBACK_SETTINGS.meetingTime.ar,
-        en: settingText(s.meetingTime, "en") || FALLBACK_SETTINGS.meetingTime.en,
-      },
-      meetingPlace: {
-        ar: settingText(s.meetingPlace, "ar") || FALLBACK_SETTINGS.meetingPlace.ar,
-        en: settingText(s.meetingPlace, "en") || FALLBACK_SETTINGS.meetingPlace.en,
-      },
-      meetingLink: settingText(s.meetingLink, L) || FALLBACK_SETTINGS.meetingLink,
-    };
 
     if (c?.schedule && Array.isArray(c.schedule) && c.schedule.length > 0) {
       schedule = c.schedule.map((s: any) => ({
