@@ -141,9 +141,9 @@ export default function TopBar({
                 </nav>
               )}
 
-              <h1 className="truncate text-base font-bold text-slate-900 sm:text-lg dark:text-white">
+              <p className="truncate text-base font-bold text-slate-900 sm:text-lg dark:text-white">
                 {title}
-              </h1>
+              </p>
 
               {subtitle && (
                 <p className="hidden max-w-xl truncate text-xs text-slate-500 sm:block dark:text-slate-400">

@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useId,
   useState,
   type FormEvent,
 } from 'react';
@@ -86,6 +87,7 @@ function FilterSelect({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const selectId = useId();
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -98,10 +100,14 @@ function FilterSelect({
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+      <label
+        htmlFor={selectId}
+        className="text-xs font-semibold text-slate-500 dark:text-slate-400"
+      >
         {label}
       </label>
       <select
+        id={selectId}
         value={current}
         onChange={(event) => handleChange(event.target.value)}
         className="input-islamic py-2 text-sm"
