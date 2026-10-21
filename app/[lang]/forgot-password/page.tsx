@@ -41,6 +41,7 @@ export default async function ForgotPasswordPage({
 
       <TopBar
         title={isRTL ? "استعادة كلمة المرور" : "Password recovery"}
+        titleAs="h1"
         subtitle={
           isRTL
             ? "سنرسل لك رابطًا آمنًا لإعادة التعيين"

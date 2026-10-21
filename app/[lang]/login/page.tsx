@@ -102,6 +102,7 @@ export default async function LoginPage({
 
       <TopBar
         title={ui.title}
+        titleAs="h1"
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}

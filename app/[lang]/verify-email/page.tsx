@@ -51,6 +51,7 @@ export default async function VerifyEmailPage({
 
       <TopBar
         title={isRTL ? "تفعيل البريد" : "Email verification"}
+        titleAs="h1"
         subtitle={
           isRTL
             ? "خطوة واحدة لتفعيل حسابك"

@@ -24,6 +24,8 @@ interface TopBarProps {
   actions?: React.ReactNode;
   sticky?: boolean;
   className?: string;
+  /** الصفحات التي لا تحتوي عنوانًا داخليًا تستخدم هذا الشريط كعنوانها الرئيسي. */
+  titleAs?: "h1" | "p";
 }
 
 export default function TopBar({
@@ -38,6 +40,7 @@ export default function TopBar({
   actions,
   sticky = true,
   className = "",
+  titleAs = "p",
 }: TopBarProps) {
   const pathname = usePathname();
   const lang = pathname.split("/")[1] === "en" ? "en" : "ar";
@@ -46,6 +49,7 @@ export default function TopBar({
   const [copied, setCopied] = useState(false);
 
   const resolvedBackHref = backHref || `/${lang}`;
+  const TitleTag = titleAs;
 
   const bookmarkItem = {
     id: pathname,
@@ -141,9 +145,9 @@ export default function TopBar({
                 </nav>
               )}
 
-              <p className="truncate text-base font-bold text-slate-900 sm:text-lg dark:text-white">
+              <TitleTag className="truncate text-base font-bold text-slate-900 sm:text-lg dark:text-white">
                 {title}
-              </p>
+              </TitleTag>
 
               {subtitle && (
                 <p className="hidden max-w-xl truncate text-xs text-slate-500 sm:block dark:text-slate-400">

@@ -51,6 +51,7 @@ export default async function ResetPasswordPage({
 
       <TopBar
         title={isRTL ? "إعادة تعيين كلمة المرور" : "Reset password"}
+        titleAs="h1"
         subtitle={
           isRTL ? "اختر كلمة مرور جديدة قوية" : "Choose a new strong password"
         }
