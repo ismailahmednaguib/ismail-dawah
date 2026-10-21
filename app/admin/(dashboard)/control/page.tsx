@@ -265,6 +265,16 @@ const FIELDS: FieldDef[] = [
   { key: 'showPrayerBar', label: 'إظهار شريط مواقيت الصلاة', type: 'boolean' },
 ];
 
+function boolValue(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    if (typeof record.ar === 'boolean') return record.ar;
+    if (typeof record.en === 'boolean') return record.en;
+  }
+  return false;
+}
+
 function SettingsTab() {
   const [settings, setSettings] = useState<Record<string, any>>({});
   const [saving, setSaving] = useState(false);
@@ -351,11 +361,11 @@ function SettingsTab() {
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={!!val}
+                    checked={boolValue(val)}
                     onChange={(e) => setField(f.key, e.target.checked)}
                     className="rounded text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-stone-600">{val ? 'مفعل' : 'غير مفعل'}</span>
+                  <span className="text-sm text-stone-600">{boolValue(val) ? 'مفعل' : 'غير مفعل'}</span>
                 </div>
               ) : (
                 <input

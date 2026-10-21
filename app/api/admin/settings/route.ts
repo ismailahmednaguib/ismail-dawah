@@ -4,6 +4,7 @@ import { can } from '@/lib/admin/permissions';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { invalidateContentCache } from '@/lib/content';
 import { PAGES } from '@/lib/page-sections';
+import { NON_LOCALIZED_SETTING_KEYS, isNonLocalizedSetting } from '@/lib/settings-keys';
 import { revalidatePath } from 'next/cache';
 
 export const runtime = 'nodejs';
@@ -50,8 +51,13 @@ function sanitizeSettings(value: unknown, depth = 0): unknown {
 
 function settingsRowsToRecord(rows: SettingsRow[]): Record<string, unknown> {
   const settings: Record<string, unknown> = {};
+  // صفوف "all" غير مرتبطة بلغة؛ نطبّقها أخيرًا حتى تتغلب على أي صف قديم
+  // مخزّن بالعربية أو الإنجليزية (مثل القيم المنطقية قبل ترحيلها).
+  const ordered = [...rows].sort(
+    (a, b) => (a.lang === 'all' ? 1 : 0) - (b.lang === 'all' ? 1 : 0)
+  );
 
-  for (const row of rows) {
+  for (const row of ordered) {
     if (typeof row.key !== 'string' || !row.key.trim()) continue;
 
     const key =
@@ -65,7 +71,7 @@ function settingsRowsToRecord(rows: SettingsRow[]): Record<string, unknown> {
         ? row.value.value
         : row.value;
 
-    if (row.lang === 'ar' || row.lang === 'en') {
+    if ((row.lang === 'ar' || row.lang === 'en') && !isNonLocalizedSetting(key)) {
       const current = isRecord(settings[key]) ? settings[key] : {};
       settings[key] = { ...current, [row.lang]: value };
     } else {
@@ -79,18 +85,7 @@ function settingsRowsToRecord(rows: SettingsRow[]): Record<string, unknown> {
 function settingsToRows(settings: Record<string, unknown>) {
   const rows: Array<Record<string, unknown>> = [];
   // مفاتيح غير مرتبطة بلغة (تُخزَّن مرة واحدة لا لكل لغة).
-  const nonLocalized = new Set([
-    'pageSections',
-    'sectionTitles',
-    'hiddenPages',
-    'navigation',
-    'dawahJourney',
-    'assistant',
-    'playStoreUrl',
-    'emailVerification',
-    'passwordReset',
-    'passwordChange',
-  ]);
+  const nonLocalized = NON_LOCALIZED_SETTING_KEYS;
 
   for (const [rawKey, value] of Object.entries(settings)) {
     const key = rawKey === 'siteName'

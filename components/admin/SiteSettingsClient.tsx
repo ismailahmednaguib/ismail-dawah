@@ -64,6 +64,16 @@ function text(value: unknown): string {
   return '';
 }
 
+function flag(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    if (typeof record.ar === 'boolean') return record.ar;
+    if (typeof record.en === 'boolean') return record.en;
+  }
+  return false;
+}
+
 function listText(value: unknown): string {
   return Array.isArray(value) ? value.filter(Boolean).join('\n') : text(value);
 }
@@ -527,7 +537,7 @@ export default function SiteSettingsClient() {
 
       <Section title="الواجهات العامة" description="واجهات قراءة عامة اختيارية للمطورين: عناوين وملخصات المحتوى المنشور ومواقيت الصلاة، دون بيانات خاصة.">
         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
-          <input type="checkbox" checked={Boolean(settings.publicApiEnabled)} onChange={(event) => setValue('publicApiEnabled', event.target.checked)} className="mt-1 h-4 w-4 accent-primary-700" />
+          <input type="checkbox" checked={flag(settings.publicApiEnabled)} onChange={(event) => setValue('publicApiEnabled', event.target.checked)} className="mt-1 h-4 w-4 accent-primary-700" />
           <span>
               <span className="block text-sm font-black text-primary-950">تفعيل الواجهات العامة</span>
               <span className="mt-1 block text-xs leading-6 text-stone-500">يشمل `/api/public/content` و`/api/public/prayer-times`، مع حدّ معدل قابل للتعديل من مركز الأمان.</span>
@@ -570,7 +580,7 @@ export default function SiteSettingsClient() {
         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
           <input
             type="checkbox"
-            checked={Boolean(settings.showPrayerBar)}
+            checked={flag(settings.showPrayerBar)}
             onChange={(event) => setValue('showPrayerBar', event.target.checked)}
             className="mt-1 h-4 w-4 accent-primary-700"
           />

@@ -1,0 +1,25 @@
+/**
+ * مفاتيح الإعدادات التي لا تُخزَّن لكل لغة.
+ *
+ * بعض هذه القيم كائنات مركّبة (مثل pageSections) وبعضها منطقي (مثل
+ * publicApiEnabled). يجب ألا تُلفّ في { ar, en } وإلا صارت القيمة المنطقية
+ * كائنًا truthy في الواجهة، فيظهر الخيار مفعّلًا دائمًا.
+ */
+export const NON_LOCALIZED_SETTING_KEYS = new Set([
+  'pageSections',
+  'sectionTitles',
+  'hiddenPages',
+  'navigation',
+  'dawahJourney',
+  'assistant',
+  'playStoreUrl',
+  'emailVerification',
+  'passwordReset',
+  'passwordChange',
+  'showPrayerBar',
+  'publicApiEnabled',
+]);
+
+export function isNonLocalizedSetting(key: string): boolean {
+  return NON_LOCALIZED_SETTING_KEYS.has(key);
+}

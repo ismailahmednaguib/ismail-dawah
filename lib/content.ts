@@ -3,6 +3,7 @@
 import "server-only";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { isNonLocalizedSetting } from "@/lib/settings-keys";
 
 // ============================================================
 // Types
@@ -624,8 +625,11 @@ async function fetchStructuredSiteSettings(): Promise<Record<string, any>> {
     if (error || !Array.isArray(data)) return {};
 
     const settings: Record<string, any> = {};
+    const ordered = [...(data as Array<{ key?: unknown; lang?: unknown; value?: unknown }>)].sort(
+      (a, b) => (a.lang === 'all' ? 1 : 0) - (b.lang === 'all' ? 1 : 0)
+    );
 
-    for (const row of data as Array<{ key?: unknown; lang?: unknown; value?: unknown }>) {
+    for (const row of ordered) {
       if (typeof row.key !== 'string' || !row.key.trim()) continue;
 
       const key =
@@ -639,7 +643,7 @@ async function fetchStructuredSiteSettings(): Promise<Record<string, any>> {
           ? row.value.value
           : row.value;
 
-      if (row.lang === 'ar' || row.lang === 'en') {
+      if ((row.lang === 'ar' || row.lang === 'en') && !isNonLocalizedSetting(key)) {
         const current = isPlainObject(settings[key]) ? settings[key] : {};
         settings[key] = { ...current, [row.lang]: value };
       } else {
