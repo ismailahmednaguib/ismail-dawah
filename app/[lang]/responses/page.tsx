@@ -166,7 +166,7 @@ export async function generateMetadata({
   const c = COPY[L] ?? COPY.en;
 
   return {
-    title: `${c.title} | ${L === "ar" ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib"}`,
+    title: c.title,
     description: c.intro,
     alternates: {
       canonical: `/${L}/responses`,

@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const current = isValidLang(lang) ? (lang as Lang) : 'ar';
   const copy = COPY[current];
   return {
-    title: `${copy.title} | منصة إسماعيل أحمد نجيب`,
+    title: copy.title,
     description: copy.subtitle,
     alternates: { canonical: `/${current}/religions` },
   };

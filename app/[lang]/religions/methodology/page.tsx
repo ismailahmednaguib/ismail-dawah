@@ -33,7 +33,7 @@ const COPY = {
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   const current = isValidLang(lang) ? (lang as Lang) : 'ar';
-  return { title: `${COPY[current].title} | منصة إسماعيل أحمد نجيب`, description: COPY[current].subtitle };
+  return { title: COPY[current].title, description: COPY[current].subtitle };
 }
 
 export default async function ReligionsMethodologyPage({ params }: { params: Promise<{ lang: string }> }) {

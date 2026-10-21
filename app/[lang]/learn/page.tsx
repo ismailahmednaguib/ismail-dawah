@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const copy = COPY[currentLang];
 
   return {
-    title: `${copy.title} | منصة إسماعيل أحمد نجيب`,
+    title: copy.title,
     description: copy.subtitle,
   };
 }

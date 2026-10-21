@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : `${siteUrl}/icon-512.png`;
 
   return {
-    title: `${title} | منصة إسماعيل أحمد نجيب`,
+    title,
     description,
     alternates: {
       canonical: `${siteUrl}${path}`,
@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [{ url: ogImage, alt: title }],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: imageUrl ? 'summary_large_image' : 'summary',
       title,
       description,
       images: [ogImage],

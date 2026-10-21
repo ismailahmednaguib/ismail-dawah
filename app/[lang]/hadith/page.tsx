@@ -11,7 +11,7 @@ import { PageHero } from '@/components/ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'الحديث الشريف | منصة إسماعيل أحمد نجيب',
+  title: 'الحديث الشريف',
   description: 'تصفح محتوى الحديث الشريف الموثق في منصة إسماعيل أحمد نجيب.',
 };
 

@@ -137,7 +137,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const isEnglish = lang === "en";
 
   return {
-    title: isEnglish ? "Dawah to Non-Muslims | Ismail Ahmed Naguib" : "بوابة غير المسلمين | إسماعيل أحمد نجيب",
+    title: isEnglish ? "Dawah to Non-Muslims" : "بوابة غير المسلمين",
     description: isEnglish
       ? "A clear introduction to Islam, answers to common questions, and a respectful path for learning."
       : "تعريف واضح بالإسلام، وإجابات عن الأسئلة الشائعة، ومسار محترم للتعلم.",

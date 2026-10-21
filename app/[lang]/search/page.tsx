@@ -35,7 +35,7 @@ export async function generateMetadata({
 
   const copy = COPY[lang];
   return {
-    title: `${copy.title} | منصة إسماعيل أحمد نجيب`,
+    title: copy.title,
     description: copy.meta,
   };
 }
