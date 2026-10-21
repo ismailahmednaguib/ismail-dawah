@@ -72,8 +72,8 @@ type UILang = {
 const LAST_UPDATED_ISO = "2026-10-09";
 
 const PLATFORM_NAME: Localized = {
-  ar: "منصة إسماعيل أحمد نجيب",
-  en: "Ismail Ahmed Naguib Platform",
+  ar: "منصة اكتشف الإسلام",
+  en: "Discover Islam",
 };
 
 // ============================================================
@@ -83,15 +83,15 @@ const PLATFORM_NAME: Localized = {
 const UI: Record<string, UILang> = {
   ar: {
     title: "الشروط والأحكام",
-    subtitle: "قواعد استخدام منصة إسماعيل أحمد نجيب الدعوية",
+    subtitle: "قواعد استخدام منصة اكتشف الإسلام",
     home: "الرئيسية",
     description:
-      "صفحة الشروط والأحكام لمنصة إسماعيل أحمد نجيب الدعوية. توضح هذه الصفحة قواعد استخدام المنصة، وحقوق المحتوى، والتنبيهات الشرعية، والمسؤوليات، وسياسة التغييرات.",
+      "صفحة الشروط والأحكام لمنصة اكتشف الإسلام. توضح هذه الصفحة قواعد استخدام المنصة، وحقوق المحتوى، والتنبيهات الشرعية، والمسؤوليات، وسياسة التغييرات.",
     quickNav: "تنقل سريع",
     lastUpdated: "آخر تحديث",
     introTitle: "مقدمة",
     introText:
-      "تنظم هذه الشروط استخدام منصة إسماعيل أحمد نجيب الدعوية. الهدف هو حماية المستخدم، والحفاظ على جودة المحتوى، وضمان استخدام المنصة في إطار نافع ومنضبط.",
+      "تنظم هذه الشروط استخدام منصة اكتشف الإسلام. الهدف هو حماية المستخدم، والحفاظ على جودة المحتوى، وضمان استخدام المنصة في إطار نافع ومنضبط.",
     sectionsTitle: "بنود الشروط",
     relatedTitle: "روابط ذات صلة",
     relatedDesc: "صفحات تساعدك على فهم المنصة وطريقة التواصل معنا.",
@@ -117,15 +117,15 @@ const UI: Record<string, UILang> = {
   },
   en: {
     title: "Terms and Conditions",
-    subtitle: "Rules for using the Ismail Ahmed Naguib Dawah Platform",
+    subtitle: "Rules for using the Discover Islam",
     home: "Home",
     description:
-      "Terms and conditions page for the Ismail Ahmed Naguib Dawah Platform. It explains usage rules, content rights, religious notices, responsibilities, and change policy.",
+      "Terms and conditions page for the Discover Islam. It explains usage rules, content rights, religious notices, responsibilities, and change policy.",
     quickNav: "Quick navigation",
     lastUpdated: "Last updated",
     introTitle: "Introduction",
     introText:
-      "These terms govern the use of the Ismail Ahmed Naguib Dawah Platform. The goal is to protect users, maintain content quality, and ensure the platform is used in a beneficial and disciplined manner.",
+      "These terms govern the use of the Discover Islam. The goal is to protect users, maintain content quality, and ensure the platform is used in a beneficial and disciplined manner.",
     sectionsTitle: "Terms Sections",
     relatedTitle: "Related links",
     relatedDesc: "Pages that help you understand the platform and contact us.",

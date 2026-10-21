@@ -411,7 +411,7 @@ export default function BookmarksPage() {
     url: `/${lang}/bookmarks`,
     isPartOf: {
       "@type": "WebSite",
-      name: isRTL ? "منصة إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib Platform",
+      name: isRTL ? "منصة اكتشف الإسلام" : "Discover Islam",
       url: `/${lang}`,
     },
   };

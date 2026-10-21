@@ -97,10 +97,10 @@ const REQUIREMENTS = "Android 8.0+";
 const UI: Record<string, UILang> = {
   ar: {
     title: "تحميل التطبيق",
-    subtitle: "حمّل نسخة أندرويد من منصة إسماعيل أحمد نجيب",
+    subtitle: "حمّل نسخة أندرويد من منصة اكتشف الإسلام",
     home: "الرئيسية",
     description:
-      "صفحة تحميل تطبيق منصة إسماعيل أحمد نجيب الدعوية لأجهزة أندرويد. التطبيق يفتح المنصة كتطبيق مستقل على هاتفك.",
+      "صفحة تحميل تطبيق منصة اكتشف الإسلام لأجهزة أندرويد. التطبيق يفتح المنصة كتطبيق مستقل على هاتفك.",
     androidApp: "تطبيق أندرويد",
     betaNotice: "نسخة تجريبية",
     fileName: "اسم الملف",
@@ -164,10 +164,10 @@ const UI: Record<string, UILang> = {
   en: {
     title: "Download App",
     subtitle:
-      "Download the Android app for Ismail Ahmed Naguib Platform",
+      "Download the Android app for Discover Islam",
     home: "Home",
     description:
-      "Download page for the Ismail Ahmed Naguib Dawah Platform Android app. The app opens the platform as a standalone application on your phone.",
+      "Download page for the Discover Islam Android app. The app opens the platform as a standalone application on your phone.",
     androidApp: "Android App",
     betaNotice: "Beta Version",
     fileName: "File name",
@@ -329,8 +329,8 @@ export default async function DownloadPage({
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: isRTL
-      ? "منصة إسماعيل أحمد نجيب"
-      : "Ismail Ahmed Naguib Platform",
+      ? "اكتشف الإسلام – Discover Islam"
+      : "Discover Islam",
     applicationCategory: "EducationalApplication",
     applicationSubCategory: "Islamic",
     operatingSystem: "Android 8.0+",

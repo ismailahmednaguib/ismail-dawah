@@ -9,8 +9,8 @@ export async function generateMetadata({
   const isAr = lang !== "en";
   const title = isAr ? "الخطب والمحاضرات" : "Khutbahs & Lectures";
   const description = isAr
-    ? "خطب الجمعة والمحاضرات الدعوية والعلمية لمنصة إسماعيل أحمد نجيب."
-    : "Friday sermons and scholarly Dawah lectures from Ismail Ahmed Naguib's platform.";
+    ? "خطب الجمعة والمحاضرات الدعوية والعلمية من منصة اكتشف الإسلام."
+    : "Friday sermons and scholarly Dawah lectures from the Discover Islam platform.";
 
   return {
     title,

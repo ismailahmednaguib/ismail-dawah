@@ -131,7 +131,7 @@ type UiText = {
 const UI: Record<string, UiText> = {
   ar: {
     badge: "✨ منصة دعوية شاملة",
-    title: "منصة إسماعيل أحمد نجيب الدعوية",
+    title: "منصة اكتشف الإسلام",
     subtitle:
       "منصة إسلامية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد.",
     cta1: "ابدأ رحلة العلم",
@@ -156,14 +156,14 @@ const UI: Record<string, UiText> = {
     downloadBadge: "📱 تطبيق أندرويد",
     downloadTitle: "حمّل التطبيق الآن",
     downloadDesc:
-      "افتح منصة إسماعيل أحمد نجيب كتطبيق مستقل على هاتفك الأندرويد بدون الحاجة لفتح المتصفح.",
+      "افتح منصة اكتشف الإسلام كتطبيق مستقل على هاتفك الأندرويد بدون الحاجة لفتح المتصفح.",
     downloadBtn: "تحميل APK مباشرة",
     downloadPage: "صفحة التحميل",
     ctaTitle: "ابدأ رحلتك الإيمانية اليوم",
     ctaDesc: "أنشئ حسابك المجاني وتابع وردك وأذكارك وتعلّمك في مكان واحد.",
     ctaRegister: "إنشاء حساب مجاني",
     ctaAbout: "تعرّف علينا",
-    metaTitle: "منصة إسماعيل أحمد نجيب الدعوية",
+    metaTitle: "منصة اكتشف الإسلام",
     metaDesc:
       "منصة إسلامية شاملة للقرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، وأدوات الدعوة. بالعربية والإنجليزية.",
     pathsTitle: "اختر مسارك",
@@ -187,7 +187,7 @@ const UI: Record<string, UiText> = {
   },
   en: {
     badge: "✨ Comprehensive Dawah Platform",
-    title: "Ismail Ahmed Naguib Dawah Platform",
+    title: "Discover Islam",
     subtitle:
       "A comprehensive Islamic platform that brings together the Holy Quran, adhkar, fatwas, prophets' stories, prayer times, Qibla direction, and dawah tools in one place.",
     cta1: "Start Learning",
@@ -215,7 +215,7 @@ const UI: Record<string, UiText> = {
     downloadBadge: "📱 Android App",
     downloadTitle: "Download the App Now",
     downloadDesc:
-      "Open the Ismail Ahmed Naguib platform as a standalone app on your Android phone without needing a browser.",
+      "Open the Discover Islam platform as a standalone app on your Android phone without needing a browser.",
     downloadBtn: "Download APK Direct",
     downloadPage: "Download Page",
     ctaTitle: "Start Your Faith Journey Today",
@@ -223,7 +223,7 @@ const UI: Record<string, UiText> = {
       "Create your free account and keep your wird, adhkar and learning in one place.",
     ctaRegister: "Create Free Account",
     ctaAbout: "About Us",
-    metaTitle: "Ismail Ahmed Naguib Dawah Platform",
+    metaTitle: "Discover Islam",
     metaDesc:
       "A comprehensive Islamic platform for Quran, adhkar, fatwas, prayer times, Qibla, and dawah tools. In Arabic and English.",
     pathsTitle: "Choose your path",

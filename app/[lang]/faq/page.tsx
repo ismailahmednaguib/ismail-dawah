@@ -58,8 +58,8 @@ const FAQS: FaqItem[] = [
     id: "what-is-platform",
     categoryId: "general",
     question: {
-      ar: "ما هي منصة إسماعيل أحمد نجيب؟",
-      en: "What is the Ismail Ahmed Naguib platform?",
+      ar: "ما هي منصة اكتشف الإسلام؟",
+      en: "What is the Discover Islam platform?",
     },
     answer: {
       ar: "منصة إسلامية دعوية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، والمسبحة، وخطة حفظ القرآن، وأدوات الدعوة في مكان واحد، بلغتين (العربية والإنجليزية)، وبتصميم متجاوب يعمل على الموبايل والتابلت والكمبيوتر.",
@@ -400,7 +400,7 @@ const UI: Record<string,
     subtitle: "إجابات مختصرة عن أكثر ما يسأل عنه الزوار",
     home: "الرئيسية",
     description:
-      "صفحة الأسئلة الشائعة لمنصة إسماعيل أحمد نجيب الدعوية. تجد هنا إجابات عن المنصة، الحساب، المحتوى، التقنية، الخصوصية، والتعاون الدعوي.",
+      "صفحة الأسئلة الشائعة لمنصة اكتشف الإسلام. تجد هنا إجابات عن المنصة، الحساب، المحتوى، التقنية، الخصوصية، والتعاون الدعوي.",
     searchPlaceholder: "ابحث في الأسئلة والإجابات...",
     search: "بحث",
     clearSearch: "مسح البحث",
@@ -437,7 +437,7 @@ const UI: Record<string,
     subtitle: "Concise answers to the most common visitor questions",
     home: "Home",
     description:
-      "FAQ page for the Ismail Ahmed Naguib Dawah Platform. Find answers about the platform, account, content, technical topics, privacy, and dawah collaboration.",
+      "FAQ page for the Discover Islam. Find answers about the platform, account, content, technical topics, privacy, and dawah collaboration.",
     searchPlaceholder: "Search questions and answers...",
     search: "Search",
     clearSearch: "Clear search",

@@ -53,8 +53,8 @@ type ManifestText = {
 
 const MANIFEST_TEXT: Record<ManifestLang, ManifestText> = {
   ar: {
-    name: "منصة إسماعيل أحمد نجيب الدعوية",
-    short_name: "إسماعيل نجيب",
+    name: "اكتشف الإسلام – Discover Islam",
+    short_name: "اكتشف الإسلام",
     description:
       "منصة إسلامية دعوية شاملة: القرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، المسبحة، خطة الحفظ، الزكاة، الحج، الدعوة، والمقالات.",
     shortcuts: [
@@ -116,8 +116,8 @@ const MANIFEST_TEXT: Record<ManifestLang, ManifestText> = {
   },
 
   en: {
-    name: "Ismail Ahmed Naguib Dawah Platform",
-    short_name: "Ismail Naguib",
+    name: "Discover Islam",
+    short_name: "Discover Islam",
     description:
       "A comprehensive Islamic dawah platform: Quran, adhkar, fatwas, prayer times, qibla, tasbih, memorization plan, zakat, Hajj guide, dawah tools, and articles.",
     shortcuts: [

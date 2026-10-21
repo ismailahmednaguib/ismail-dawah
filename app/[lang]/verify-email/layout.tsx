@@ -14,8 +14,8 @@ export async function generateMetadata({
   return {
     title: isAr ? "تفعيل البريد الإلكتروني" : "Verify your email",
     description: isAr
-      ? "أكّد بريدك الإلكتروني لتفعيل حسابك في منصة إسماعيل أحمد نجيب الدعوية."
-      : "Confirm your email address to activate your Ismail Ahmed Naguib Dawah Platform account.",
+      ? "أكّد بريدك الإلكتروني لتفعيل حسابك في منصة اكتشف الإسلام."
+      : "Confirm your email address to activate your Discover Islam account.",
     robots: { index: false, follow: false },
   };
 }

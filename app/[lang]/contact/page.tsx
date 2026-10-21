@@ -7,7 +7,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { handleContactForm } from "@/lib/email";
-import { CONTACT_INFO, SITE_NAME, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
+import { CONTACT_INFO, SITE_NAME, SITE_NAME_EN, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
@@ -28,8 +28,8 @@ type SearchParams = {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const DEFAULT_SUBJECT: Record<string, string> = {
-  ar: "رسالة من منصة إسماعيل أحمد نجيب",
-  en: "Message from Ismail Ahmed Naguib Platform",
+  ar: "رسالة من منصة اكتشف الإسلام",
+  en: "Message from Discover Islam",
 };
 
 const UI: Record<string,
@@ -88,7 +88,7 @@ const UI: Record<string,
     subtitle: "نسعد برسائلكم واستفساراتكم",
     home: "الرئيسية",
     description:
-      "صفحة تواصل معنا لمنصة إسماعيل أحمد نجيب الدعوية. أرسل سؤالك، اقتراحك، أو ملاحظتك وسنرد عليك إن شاء الله.",
+      "صفحة تواصل معنا لمنصة اكتشف الإسلام. أرسل سؤالك، اقتراحك، أو ملاحظتك وسنرد عليك إن شاء الله.",
     formTitle: "نموذج التواصل",
     formSubtitle: "اكتب رسالتك وسنرد عليك إن شاء الله في أقرب وقت.",
     name: "الاسم",
@@ -138,7 +138,7 @@ const UI: Record<string,
     subtitle: "We welcome your messages and inquiries",
     home: "Home",
     description:
-      "Contact page for the Ismail Ahmed Naguib Dawah Platform. Send your question, suggestion, or feedback and we will reply, in sha Allah.",
+      "Contact page for the Discover Islam. Send your question, suggestion, or feedback and we will reply, in sha Allah.",
     formTitle: "Contact Form",
     formSubtitle: "Write your message and we will reply as soon as possible.",
     name: "Name",
@@ -390,7 +390,7 @@ export default async function ContactPage({
       },
       {
         "@type": "Organization",
-        name: isRTL ? SITE_NAME : "Ismail Ahmed Naguib Platform",
+        name: isRTL ? SITE_NAME : SITE_NAME_EN,
         url: `/${l}`,
         contactPoint: {
           "@type": "ContactPoint",
@@ -436,7 +436,7 @@ export default async function ContactPage({
       {gate.visible('k1') && (
         <PageHero
           icon="✉️"
-          badge={isRTL ? SITE_NAME : "Ismail Ahmed Naguib"}
+          badge={isRTL ? SITE_NAME : SITE_NAME_EN}
           title={ui.title}
           subtitle={ui.description}
           crumbs={[

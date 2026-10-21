@@ -21,16 +21,16 @@ const PAGE_UI: Record<string,
 > = {
   ar: {
     title: "تسجيل الدخول",
-    subtitle: "ادخل إلى حسابك في منصة إسماعيل أحمد نجيب الدعوية",
+    subtitle: "ادخل إلى حسابك في منصة اكتشف الإسلام",
     description:
-      "صفحة تسجيل الدخول الموحدة للمستخدمين والأدمن في منصة إسماعيل أحمد نجيب الدعوية.",
+      "صفحة تسجيل الدخول الموحدة للمستخدمين والأدمن في منصة اكتشف الإسلام.",
     home: "الرئيسية",
   },
   en: {
     title: "Sign In",
-    subtitle: "Sign in to your Ismail Ahmed Naguib Platform account",
+    subtitle: "Sign in to your Discover Islam account",
     description:
-      "Unified sign-in page for users and admins on the Ismail Ahmed Naguib Dawah Platform.",
+      "Unified sign-in page for users and admins on the Discover Islam.",
     home: "Home",
   },
 };

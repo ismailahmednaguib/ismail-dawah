@@ -101,7 +101,7 @@ const UI: Record<string, UILang> = {
     subtitle: "كيف نتعامل مع بياناتك عند استخدام المنصة",
     home: "الرئيسية",
     description:
-      "صفحة سياسة الخصوصية لمنصة إسماعيل أحمد نجيب الدعوية. توضح هذه الصفحة البيانات التي قد تُجمع، وكيفية استخدامها، والحفظ المحلي، والخدمات الخارجية، وحقوق المستخدم.",
+      "صفحة سياسة الخصوصية لمنصة اكتشف الإسلام. توضح هذه الصفحة البيانات التي قد تُجمع، وكيفية استخدامها، والحفظ المحلي، والخدمات الخارجية، وحقوق المستخدم.",
     quickNav: "تنقل سريع",
     lastUpdated: "آخر تحديث",
     introTitle: "مقدمة",
@@ -154,7 +154,7 @@ const UI: Record<string, UILang> = {
     subtitle: "How we handle your data when using the platform",
     home: "Home",
     description:
-      "Privacy policy page for the Ismail Ahmed Naguib Dawah Platform. It explains what data may be collected, how it is used, local storage, external services, and user rights.",
+      "Privacy policy page for the Discover Islam. It explains what data may be collected, how it is used, local storage, external services, and user rights.",
     quickNav: "Quick navigation",
     lastUpdated: "Last updated",
     introTitle: "Introduction",

@@ -7,7 +7,7 @@ test('بيان التثبيت: العربية RTL واسم عربي', () => {
   const manifest = buildManifest('ar');
   assert.equal(manifest.lang, 'ar');
   assert.equal(manifest.dir, 'rtl');
-  assert.equal(manifest.name, 'منصة إسماعيل أحمد نجيب الدعوية');
+  assert.equal(manifest.name, 'اكتشف الإسلام – Discover Islam');
   assert.equal(manifest.start_url, '/');
 });
 
@@ -15,7 +15,7 @@ test('بيان التثبيت: الإنجليزية LTR واسم إنجليزي'
   const manifest = buildManifest('en');
   assert.equal(manifest.lang, 'en');
   assert.equal(manifest.dir, 'ltr');
-  assert.equal(manifest.name, 'Ismail Ahmed Naguib Dawah Platform');
+  assert.equal(manifest.name, 'Discover Islam');
   assert.equal(manifest.start_url, '/');
 });
 

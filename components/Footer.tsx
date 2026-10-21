@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t, type Lang } from "@/lib/i18n";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 import {
   NAV_TREE,
@@ -67,8 +68,8 @@ export default function Footer({
     ownerText.length > 0 && (isRTL || !ownerIsArabic)
       ? ownerText
       : isRTL
-      ? "إسماعيل أحمد نجيب"
-      : "Ismail Ahmed Naguib";
+      ? SITE_NAME
+      : SITE_NAME_EN;
 
   useEffect(() => {
     let cancelled = false;

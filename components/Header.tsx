@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
+import { SITE_NAME, SITE_NAME_EN, SITE_TAGLINE } from "@/lib/site";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 import {
   NAV_TREE,
@@ -144,13 +145,13 @@ export default function Header({
 
   const brandName = getText(
     effectiveSettings?.ownerName,
-    isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib",
+    isRTL ? SITE_NAME : SITE_NAME_EN,
     lang
   );
 
   const brandTagline = getText(
     effectiveSettings?.motto,
-    isRTL ? "منصة دعوية شاملة" : "Complete Dawah Platform",
+    SITE_TAGLINE[lang] ?? SITE_TAGLINE.ar,
     lang
   );
 

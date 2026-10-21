@@ -15,8 +15,8 @@ export async function generateMetadata({
   return {
     title: isAr ? "نسيت كلمة المرور" : "Forgot password",
     description: isAr
-      ? "اطلب رابطًا آمنًا لاستعادة كلمة مرور حسابك في منصة إسماعيل أحمد نجيب الدعوية."
-      : "Request a secure password reset link for your Ismail Ahmed Naguib Dawah Platform account.",
+      ? "اطلب رابطًا آمنًا لاستعادة كلمة مرور حسابك في منصة اكتشف الإسلام."
+      : "Request a secure password reset link for your Discover Islam account.",
     robots: { index: false, follow: false },
   };
 }

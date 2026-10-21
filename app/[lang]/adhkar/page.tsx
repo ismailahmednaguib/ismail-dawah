@@ -153,7 +153,7 @@ export default async function AdhkarPage({
     url: `/${l}/adhkar`,
     isPartOf: {
       "@type": "WebSite",
-      name: isRTL ? "منصة إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib Platform",
+      name: isRTL ? "منصة اكتشف الإسلام" : "Discover Islam",
       url: `/${l}`,
     },
     about: {

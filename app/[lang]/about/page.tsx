@@ -86,8 +86,8 @@ type UILang = {
 // ============================================================
 
 const PLATFORM_NAME: Localized = {
-  ar: "منصة إسماعيل أحمد نجيب",
-  en: "Ismail Ahmed Naguib Platform",
+  ar: "منصة اكتشف الإسلام",
+  en: "Discover Islam",
 };
 
 // ============================================================
@@ -97,14 +97,14 @@ const PLATFORM_NAME: Localized = {
 const UI: Record<string, UILang> = {
   ar: {
     title: "من نحن",
-    subtitle: "تعرّف على منصة إسماعيل أحمد نجيب الدعوية",
+    subtitle: "تعرّف على منصة اكتشف الإسلام",
     home: "الرئيسية",
     description:
       "صفحة من نحن لمنصة إسلامية دعوية تقدم القرآن والأذكار والفتاوى والقصص ومواقيت الصلاة والقبلة والمسبحة وخطط الحفظ وأدوات الدعوة، بلغتين وتصميم متجاوب.",
     quickNav: "تنقل سريع",
     aboutTitle: "عن المنصة",
     aboutParagraph1:
-      "منصة إسماعيل أحمد نجيب مشروع دعوي تعليمي يهدف إلى جمع المحتوى الإسلامي النافع في مكان واحد، بأسلوب مبسط ومحترم لعقل المستخدم، ويخدم العربي والإنجليزي على حد سواء.",
+      "منصة اكتشف الإسلام مشروع دعوي تعليمي يهدف إلى جمع المحتوى الإسلامي النافع في مكان واحد، بأسلوب مبسط ومحترم لعقل المستخدم، ويخدم العربي والإنجليزي على حد سواء.",
     aboutParagraph2:
       "نؤمن أن الدعوة تحتاج إلى علم صادق، وأسلوب حسن، وأداة مريحة، وواجهة نظيفة، ومحتوى قابل للفهم والتطبيق، لا مجرد نصوص مبعثرة أو خطب طويلة.",
     missionTitle: "رسالتنا",
@@ -145,14 +145,14 @@ const UI: Record<string, UILang> = {
   },
   en: {
     title: "About Us",
-    subtitle: "Learn about the Ismail Ahmed Naguib Dawah Platform",
+    subtitle: "Learn about the Discover Islam",
     home: "Home",
     description:
       "About page for an Islamic dawah platform offering Quran, adhkar, fatwas, prophets stories, prayer times, qibla, tasbih, memorization plans, and dawah tools, bilingual and responsive.",
     quickNav: "Quick navigation",
     aboutTitle: "About the Platform",
     aboutParagraph1:
-      "The Ismail Ahmed Naguib Platform is an educational dawah project that aims to gather beneficial Islamic content in one place, with a simple style that respects the user's mind and serves Arabic and English readers alike.",
+      "The Discover Islam is an educational dawah project that aims to gather beneficial Islamic content in one place, with a simple style that respects the user's mind and serves Arabic and English readers alike.",
     aboutParagraph2:
       "We believe dawah needs sincere knowledge, good manner, a comfortable tool, a clean interface, and content that can be understood and applied, not scattered texts or long sermons only.",
     missionTitle: "Our Mission",

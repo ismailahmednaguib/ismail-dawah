@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'الحديث الشريف',
-  description: 'تصفح محتوى الحديث الشريف الموثق في منصة إسماعيل أحمد نجيب.',
+  description: 'تصفح محتوى الحديث الشريف الموثق في منصة اكتشف الإسلام.',
 };
 
 const COPY: Record<string, any> = {

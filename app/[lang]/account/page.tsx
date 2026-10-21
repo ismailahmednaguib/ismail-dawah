@@ -82,7 +82,7 @@ const UI: Record<string, AccountUI> = {
     subtitle: "تسجيل الدخول وإنشاء الحساب ومتابعة التقدم",
     home: "الرئيسية",
     description:
-      "صفحة الحساب في منصة إسماعيل أحمد نجيب الدعوية. يمكنك تسجيل الدخول أو إنشاء حساب جديد لحفظ المفضلة ومتابعة التقدم.",
+      "صفحة الحساب في منصة اكتشف الإسلام. يمكنك تسجيل الدخول أو إنشاء حساب جديد لحفظ المفضلة ومتابعة التقدم.",
     login: "تسجيل الدخول",
     loginDesc: "ادخل إلى حسابك إذا كان لديك حساب مسبقًا.",
     loginAction: "فتح صفحة الدخول",
@@ -132,7 +132,7 @@ const UI: Record<string, AccountUI> = {
     subtitle: "Sign in, register, and track progress",
     home: "Home",
     description:
-      "Account page for the Ismail Ahmed Naguib Dawah Platform. You can sign in or create a new account to save bookmarks and track progress.",
+      "Account page for the Discover Islam. You can sign in or create a new account to save bookmarks and track progress.",
     login: "Sign In",
     loginDesc: "Enter your account if you already have one.",
     loginAction: "Open sign in",

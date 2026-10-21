@@ -1,6 +1,6 @@
 // lib/translations.ts
 // ============================================================================
-// نظام الترجمات الرسمي لمنصة إسماعيل أحمد نجيب
+// نظام الترجمات الرسمي لمنصة اكتشف الإسلام
 // يدعم: عربي / إنجليزي
 // ============================================================================
 // ملاحظات مهمة:
@@ -145,8 +145,8 @@ const arTranslations = {
   download_now: "تحميل الآن",
   install_app: "تثبيت التطبيق",
   open_app: "فتح التطبيق",
-  app_name: "منصة إسماعيل أحمد نجيب",
-  app_short_name: "إسماعيل نجيب",
+  app_name: "اكتشف الإسلام – Discover Islam",
+  app_short_name: "اكتشف الإسلام",
 
   // 📬 النشرة البريدية
   newsletter: "النشرة البريدية",
@@ -279,7 +279,7 @@ const arTranslations = {
   footer_tools: "الأدوات",
   footer_contact: "تواصل معنا",
   footer_copyright: "جميع الحقوق محفوظة",
-  footer_platform: "منصة إسماعيل أحمد نجيب الدعوية",
+  footer_platform: "منصة اكتشف الإسلام",
 
   // ⚠️ رسائل الخطأ
   page_not_found: "الصفحة غير موجودة",
@@ -527,8 +527,8 @@ const enTranslations: TranslationDictionary = {
   download_now: "Download Now",
   install_app: "Install App",
   open_app: "Open App",
-  app_name: "Ismail Ahmed Naguib Platform",
-  app_short_name: "Ismail Naguib",
+  app_name: "Discover Islam",
+  app_short_name: "Discover Islam",
 
   // 📬 Newsletter
   newsletter: "Newsletter",
@@ -661,7 +661,7 @@ const enTranslations: TranslationDictionary = {
   footer_tools: "Tools",
   footer_contact: "Contact Us",
   footer_copyright: "All rights reserved",
-  footer_platform: "Ismail Ahmed Naguib Dawah Platform",
+  footer_platform: "Discover Islam",
 
   // ⚠️ Error Messages
   page_not_found: "Page Not Found",

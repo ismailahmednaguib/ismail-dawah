@@ -12,17 +12,17 @@ type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
 
 const DEFAULT_SETTINGS: SettingsRecord = {
-  ownerName: 'إسماعيل أحمد نجيب',
-  shortName: 'إسماعيل',
+  ownerName: 'اكتشف الإسلام – Discover Islam',
+  shortName: 'اكتشف الإسلام',
   jobTitle: '',
   motto: 'منصة دعوية شاملة',
   homeKicker: '',
   homeHeroText: '',
-  homeTitle: { ar: 'منصة إسماعيل أحمد نجيب', en: 'Ismail Ahmed Naguib Platform' },
+  homeTitle: { ar: 'اكتشف الإسلام – Discover Islam', en: 'Discover Islam' },
   homeSubtitle: { ar: '', en: '' },
   homeCta1: { ar: 'ابدأ رحلة العلم', en: 'Start Learning' },
   homeCta2: { ar: 'البث المباشر', en: 'Live Stream' },
-  metaTitle: { ar: '', en: '' },
+  metaTitle: { ar: 'اكتشف الإسلام – Discover Islam', en: 'Discover Islam' },
   metaDescription: { ar: '', en: '' },
   bio: [],
   interests: [],

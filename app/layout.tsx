@@ -6,6 +6,7 @@ import HtmlDir from "@/components/HtmlDir";
 import SkipLink from "@/components/SkipLink";
 import SWRegister from "@/components/SWRegister";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import { SITE_NAME as BRAND_NAME, SITE_AUTHOR } from "@/lib/site";
 
 // ============================================================
 // Site constants
@@ -30,8 +31,8 @@ function normalizeSiteUrl(raw: string | undefined | null): string {
 
 const SITE_URL = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
-const SITE_NAME = "إسماعيل أحمد نجيب | منصة دعوية شاملة";
-const SITE_SHORT_NAME = "إسماعيل أحمد نجيب";
+const SITE_NAME = BRAND_NAME;
+const SITE_SHORT_NAME = SITE_AUTHOR;
 
 const SITE_DESCRIPTION_AR =
   "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد.";
@@ -45,12 +46,12 @@ export const metadata: Metadata = {
 
   title: {
     default: SITE_NAME,
-    template: `%s | ${SITE_SHORT_NAME}`,
+    template: `%s | ${SITE_NAME}`,
   },
 
   description: SITE_DESCRIPTION_AR,
 
-  applicationName: SITE_SHORT_NAME,
+  applicationName: SITE_NAME,
 
   keywords: [
     "إسلام",
@@ -88,7 +89,7 @@ export const metadata: Metadata = {
   ],
 
   creator: SITE_SHORT_NAME,
-  publisher: SITE_SHORT_NAME,
+  publisher: SITE_NAME,
 
   category: "education",
 

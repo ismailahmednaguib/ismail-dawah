@@ -14,8 +14,8 @@ export async function generateMetadata({
   return {
     title: isAr ? "إعادة تعيين كلمة المرور" : "Reset password",
     description: isAr
-      ? "اختر كلمة مرور جديدة لحسابك في منصة إسماعيل أحمد نجيب الدعوية."
-      : "Choose a new password for your Ismail Ahmed Naguib Dawah Platform account.",
+      ? "اختر كلمة مرور جديدة لحسابك في منصة اكتشف الإسلام."
+      : "Choose a new password for your Discover Islam account.",
     robots: { index: false, follow: false },
   };
 }

@@ -66,7 +66,7 @@ const UI: Record<string, PageUI> = {
     subtitle: "نظّم وردك اليومي من الحفظ والمراجعة وتتبع تقدمك",
     home: "الرئيسية",
     description:
-      "أداة خطة حفظ القرآن من منصة إسماعيل أحمد نجيب. اختر السورة، حدد هدفك اليومي، وتتبع تقدمك في الحفظ والمراجعة مع نظام Streak للتحفيز.",
+      "أداة خطة حفظ القرآن من منصة اكتشف الإسلام. اختر السورة، حدد هدفك اليومي، وتتبع تقدمك في الحفظ والمراجعة مع نظام Streak للتحفيز.",
     verse: "﴿ وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ فَهَلْ مِن مُّدَّكِرٍ ﴾",
     verseSource: "سورة القمر — الآية 17",
     hadith: "اقْرَءُوا الْقُرْآنَ فَإِنَّهُ يَأْتِي يَوْمَ الْقِيَامَةِ شَفِيعًا لِأَصْحَابِهِ",
@@ -111,7 +111,7 @@ const UI: Record<string, PageUI> = {
     subtitle: "Organize your daily portion of memorization and revision, and track your progress",
     home: "Home",
     description:
-      "Quran memorization plan tool from the Ismail Ahmed Naguib Platform. Choose a surah, set your daily goal, and track your memorization and review progress with a motivational streak system.",
+      "Quran memorization plan tool from the Discover Islam. Choose a surah, set your daily goal, and track your memorization and review progress with a motivational streak system.",
     verse: "\"And We have certainly made the Qur'an easy for remembrance, so is there any who will remember?\"",
     verseSource: "Surah Al-Qamar — Verse 17",
     hadith: "Recite the Quran, for it will come on the Day of Resurrection as an intercessor for its companions.",

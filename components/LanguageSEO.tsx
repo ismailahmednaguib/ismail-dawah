@@ -1,5 +1,6 @@
 // components/LanguageSEO.tsx
 import { getAlternateLanguages } from '@/lib/i18n/helpers';
+import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
 
 interface LanguageSEOProps {
   path: string;
@@ -37,7 +38,7 @@ export default function LanguageSEO({
       {ogImage && <meta property="og:image" content={ogImage} />}
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="منصة إسماعيل أحمد نجيب الدعوية" />
+      <meta property="og:site_name" content={lang === 'ar' ? SITE_NAME : SITE_NAME_EN} />
       <meta property="og:locale" content={lang === 'ar' ? 'ar_EG' : `${lang}_${lang.toUpperCase()}`} />
 
       {/* Twitter */}

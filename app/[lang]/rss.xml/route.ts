@@ -10,8 +10,8 @@ export const revalidate = 3600;
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
 
 const FEED_TITLES: Record<string, { title: string; desc: string }> = {
-  ar: { title: 'منصة إسماعيل أحمد نجيب — أحدث المحتوى', desc: 'دروس ومقالات وفتاوى وخطب وحديث شريف' },
-  en: { title: 'Ismail Ahmed Naguib Platform — Latest', desc: 'Lessons, articles, fatwas, sermons and hadith' },
+  ar: { title: 'منصة اكتشف الإسلام — أحدث المحتوى', desc: 'دروس ومقالات وفتاوى وخطب وحديث شريف' },
+  en: { title: 'Discover Islam — Latest', desc: 'Lessons, articles, fatwas, sermons and hadith' },
 };
 
 function esc(value: unknown): string {

@@ -78,7 +78,7 @@ const UI: Record<string, UILang> = {
     subtitle: "تصفح السور الكريمة والبحث والفلترة",
     home: "الرئيسية",
     description:
-      "صفحة القرآن الكريم في منصة إسماعيل أحمد نجيب الدعوية. تصفح 114 سورة، اقرأ واستمع بأصوات أفضل القراء، مع البحث والفلترة بين المكية والمدنية.",
+      "صفحة القرآن الكريم في منصة اكتشف الإسلام. تصفح 114 سورة، اقرأ واستمع بأصوات أفضل القراء، مع البحث والفلترة بين المكية والمدنية.",
     searchPlaceholder: "ابحث باسم السورة أو رقمها...",
     search: "بحث",
     all: "الكل",
@@ -128,7 +128,7 @@ const UI: Record<string, UILang> = {
     subtitle: "Browse, search, and filter Quran surahs",
     home: "Home",
     description:
-      "Quran page on the Ismail Ahmed Naguib Dawah Platform. Browse 114 surahs, read and listen with the best reciters, with search and filtering between Meccan and Medinan.",
+      "Quran page on the Discover Islam. Browse 114 surahs, read and listen with the best reciters, with search and filtering between Meccan and Medinan.",
     searchPlaceholder: "Search by surah name or number...",
     search: "Search",
     all: "All",

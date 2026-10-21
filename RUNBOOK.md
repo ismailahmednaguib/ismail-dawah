@@ -233,6 +233,20 @@ npm run fix:citations -- --commit     # كتابة
 - **بيانات SEO للصفحات الديناميكية**: `generateMetadata` لـ`forgot-password` · `reset-password` · `verify-email` في `layout.tsx` لا في الصفحة؛ الصفحة الديناميكية تبثّ بياناتها داخل `<body>` فلا يقرأها الزاحف. رمز الاستعادة/التحقق يُقرأ في العميل عبر `useSearchParams` داخل `Suspense`.
 - **اختبار نوع**: `tests/manifest.test.ts` يغطّي `buildManifest` (اللغة/الاتجاه/الاسم/الاختصارات/الأيقونات). شغّله مع `npm run test:unit`.
 
+## ٧.٨) توحيد اسم العلامة (2026-10-21)
+
+- **الاسم المعتمد**: «اكتشف الإسلام – Discover Islam» (عربي) و«Discover Islam» (إنجليزي). المصدر الواحد هو إعداد `ownerName` في `site_settings`، ويقرأه الهيدر والميتا و`JSON-LD` وPWA.
+- **`app/[lang]/layout.tsx`** يقرأ `ownerName` (اسم الموقع في العناوين و`og:site_name` و`JSON-LD`) و`siteDescription` (الوصف) من اللوحة، مع `SITE_NAME`/`SITE_NAME_EN` في `lib/site.ts` كاحتياطي. القراءة مُخزّنة بـ`cache()` لتُدعى مرة واحدة في الطلب.
+- **اسم الشخص منفصل عن العلامة**: `SITE_AUTHOR`/`SITE_AUTHOR_EN` للكتابة/المؤلف/المؤسس فقط، و`SITE_NAME` للعلامة. لا تُعد اسم العلامة إلى اسم الشخص.
+- **PWA**: `lib/manifest.ts` يسمّي البيان بالعلامة الجديدة، والفوتر/الترجمات/الأخطاء (`not-found`) تستخدم العلامة. القيم القديمة `منصة إسماعيل أحمد نجيب الدعوية` و`Ismail Ahmed Naguib Platform` أُزيلت من الكود.
+- **قيم `site_settings` المطبّقة على الإنتاج** (صفوف `key`/`lang` بصيغة `{ value }`):
+  - `ownerName[ar]` = «اكتشف الإسلام – Discover Islam»، `ownerName[en]` = «Discover Islam»
+  - `shortName[ar]` = «اكتشف الإسلام»، `shortName[en]` = «Discover Islam»
+  - `homeTitle[ar]`/`homeTitle[en]` و`metaTitle[ar]`/`metaTitle[en]` بنفس القيم
+  - `metaDescription[ar]`/`metaDescription[en]` وصفان مختصران
+- **قابلية التحكم**: كل القيم أعلاه تُحرَّر من `/admin/control` (أُضيفت حقول `homeKicker` · `homeHeroText` · `metaTitle` · `metaDescription`). تعديلها من اللوحة يُبطِل الصفحات فورًا.
+- **التذييل والبريد**: `FROM_NAME` في البريد ما زال احتياطيه اسم الشخص؛ اضبطه من متغيّرات البيئة إن أردت العلامة.
+
 ## ٨) migrations معلّقة على الإنتاج
 
 هذه ملفات تُنفَّذ **يدويًّا** في SQL Editor بلوحة Supabase (لا يوجد مسار آلي لها):

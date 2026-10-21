@@ -104,7 +104,7 @@ const ar: Dictionary = {
     results: 'نتيجة',
   },
   footer: {
-    rights: 'جميع الحقوق محفوظة © منصة إسماعيل أحمد نجيب',
+    rights: 'جميع الحقوق محفوظة © منصة اكتشف الإسلام',
     aboutUs: 'من نحن',
     contactUs: 'اتصل بنا',
     privacy: 'سياسة الخصوصية',
@@ -160,7 +160,7 @@ const en: Dictionary = {
     results: 'results',
   },
   footer: {
-    rights: 'All rights reserved © Ismail Ahmed Naguib Platform',
+    rights: 'All rights reserved © Discover Islam',
     aboutUs: 'About Us',
     contactUs: 'Contact Us',
     privacy: 'Privacy Policy',
@@ -216,7 +216,7 @@ const fr: Dictionary = {
     results: 'résultats',
   },
   footer: {
-    rights: 'Tous droits réservés © Plateforme Ismail Ahmed Naguib',
+    rights: 'Tous droits réservés © Discover Islam',
     aboutUs: 'À propos',
     contactUs: 'Nous contacter',
     privacy: 'Politique de confidentialité',
@@ -272,7 +272,7 @@ const ur: Dictionary = {
     results: 'نتائج',
   },
   footer: {
-    rights: 'جملہ حقوق محفوظ © إسماعيل أحمد نجیب پلیٹ فارم',
+    rights: 'جملہ حقوق محفوظ © Discover Islam',
     aboutUs: 'ہمارے بارے میں',
     contactUs: 'ہم سے رابطہ کریں',
     privacy: 'व्यवसाय/خصوصیता پالیسی',
@@ -328,7 +328,7 @@ const id: Dictionary = {
     results: 'hasil',
   },
   footer: {
-    rights: 'Hak cipta dilindungi undang-undang © Platform Ismail Ahmed Naguib',
+    rights: 'Hak cipta dilindungi undang-undang © Discover Islam',
     aboutUs: 'Tentang Kami',
     contactUs: 'Hubungi Kami',
     privacy: 'Kebijakan Privasi',
@@ -384,7 +384,7 @@ const tr: Dictionary = {
     results: 'sonuç',
   },
   footer: {
-    rights: 'Tüm hakları saklı © Ismail Ahmed Naguib Platformu',
+    rights: 'Tüm hakları saklı © Discover Islam',
     aboutUs: 'Hakkımızda',
     contactUs: 'Bizimle İletişime Geçin',
     privacy: 'Gizlilik Politikası',
@@ -440,7 +440,7 @@ const es: Dictionary = {
     results: 'resultados',
   },
   footer: {
-    rights: 'Todos los derechos reservados © Plataforma Ismail Ahmed Naguib',
+    rights: 'Todos los derechos reservados © Discover Islam',
     aboutUs: 'Acerca de',
     contactUs: 'Contáctenos',
     privacy: 'Política de privacidad',
@@ -496,7 +496,7 @@ const de: Dictionary = {
     results: 'Ergebnisse',
   },
   footer: {
-    rights: 'Alle Rechte vorbehalten © Plattform Ismail Ahmed Naguib',
+    rights: 'Alle Rechte vorbehalten © Discover Islam',
     aboutUs: 'Über uns',
     contactUs: 'Kontakt',
     privacy: 'Datenschutzrichtlinie',

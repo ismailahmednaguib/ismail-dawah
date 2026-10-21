@@ -130,7 +130,7 @@ const UI: Record<string, UILang> = {
     subtitle: "مقالات دعوية وتربوية وشرعية مختارة",
     home: "الرئيسية",
     description:
-      "قسم المقالات في منصة إسماعيل أحمد نجيب الدعوية. مقالات مختصرة في الدعوة والقرآن والفقه والأخلاق والقصص وتربية الأسرة.",
+      "قسم المقالات في منصة اكتشف الإسلام. مقالات مختصرة في الدعوة والقرآن والفقه والأخلاق والقصص وتربية الأسرة.",
     searchPlaceholder: "ابحث في المقالات...",
     search: "بحث",
     clearFilters: "مسح الفلاتر",
@@ -170,7 +170,7 @@ const UI: Record<string, UILang> = {
     subtitle: "Selected dawah, educational, and Islamic articles",
     home: "Home",
     description:
-      "Articles section of the Ismail Ahmed Naguib Dawah Platform. Concise articles on dawah, Quran, fiqh, ethics, stories, and family upbringing.",
+      "Articles section of the Discover Islam. Concise articles on dawah, Quran, fiqh, ethics, stories, and family upbringing.",
     searchPlaceholder: "Search articles...",
     search: "Search",
     clearFilters: "Clear filters",

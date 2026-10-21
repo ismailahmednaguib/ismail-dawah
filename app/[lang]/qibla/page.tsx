@@ -50,7 +50,7 @@ const UI: Record<string, PageUI> = {
     subtitle: "بوصلة دقيقة لتحديد اتجاه الكعبة المشرفة",
     home: "الرئيسية",
     description:
-      "أداة بوصلة القبلة لمنصة إسماعيل أحمد نجيب. تحدد اتجاه الكعبة المشرفة بدقة من موقعك الحالي باستخدام حسابات الدائرة الكبرى، مع دعم الإدخال اليدوي والإشعارات.",
+      "أداة بوصلة القبلة لمنصة اكتشف الإسلام. تحدد اتجاه الكعبة المشرفة بدقة من موقعك الحالي باستخدام حسابات الدائرة الكبرى، مع دعم الإدخال اليدوي والإشعارات.",
     verse: "﴿ فَوَلِّ وَجْهَكَ شَطْرَ الْمَسْجِدِ الْحَرَامِ ﴾",
     verseSource: "سورة البقرة — الآية 144",
     hadith: "مَا بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ قِبْلَةٌ",
@@ -81,7 +81,7 @@ const UI: Record<string, PageUI> = {
     subtitle: "Accurate compass to locate the Holy Kaaba",
     home: "Home",
     description:
-      "Qibla compass tool of the Ismail Ahmed Naguib Platform. Accurately determines the direction to the Holy Kaaba from your current location using Great Circle calculations, with manual input support and device compass integration.",
+      "Qibla compass tool of the Discover Islam. Accurately determines the direction to the Holy Kaaba from your current location using Great Circle calculations, with manual input support and device compass integration.",
     verse: "\"So turn your face toward al-Masjid al-Haram.\"",
     verseSource: "Surah Al-Baqarah — Verse 144",
     hadith: "Whatever is between the east and the west is Qiblah.",

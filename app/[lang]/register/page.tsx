@@ -68,10 +68,10 @@ type UILang = {
 const UI: Record<string, UILang> = {
   ar: {
     title: "إنشاء حساب جديد",
-    subtitle: "انضم إلى مجتمع منصة إسماعيل أحمد نجيب الدعوية",
+    subtitle: "انضم إلى مجتمع منصة اكتشف الإسلام",
     home: "الرئيسية",
     description:
-      "أنشئ حساباً مجانياً في منصة إسماعيل أحمد نجيب لسؤال الشيخ مباشرة، تتبع تقدمك في الحفظ والأذكار، وحفظ صفحاتك المفضلة.",
+      "أنشئ حساباً مجانياً في منصة اكتشف الإسلام لسؤال الشيخ مباشرة، تتبع تقدمك في الحفظ والأذكار، وحفظ صفحاتك المفضلة.",
     name: "الاسم",
     namePlaceholder: "اسمك الكريم",
     email: "البريد الإلكتروني",
@@ -119,10 +119,10 @@ const UI: Record<string, UILang> = {
   },
   en: {
     title: "Create New Account",
-    subtitle: "Join the Ismail Ahmed Naguib Dawah Platform community",
+    subtitle: "Join the Discover Islam community",
     home: "Home",
     description:
-      "Create a free account on the Ismail Ahmed Naguib Platform to ask the Sheikh directly, track your memorization progress, and save your favorite pages.",
+      "Create a free account on the Discover Islam to ask the Sheikh directly, track your memorization progress, and save your favorite pages.",
     name: "Name",
     namePlaceholder: "Your name",
     email: "Email",

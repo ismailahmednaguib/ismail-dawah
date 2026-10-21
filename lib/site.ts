@@ -92,8 +92,16 @@ export function getSiteUrl(): string {
 // 🏷️ Names & Branding
 // ============================================================
 
-export const SITE_NAME = "إسماعيل أحمد نجيب";
-export const SITE_NAME_EN = "Ismail Ahmed Naguib";
+/**
+ * الاسم الرسمي للعلامة التجارية (المصدر الواحد للاسم).
+ * يقرأ الهيدر والميتا وPWA من إعداد `ownerName` في اللوحة، وهذا هو الاحتياطي.
+ */
+export const SITE_NAME = "اكتشف الإسلام – Discover Islam";
+export const SITE_NAME_EN = "Discover Islam";
+
+/** اسم الشخص صاحب المنصة — يُستخدم في حقول المؤلف والناشر فقط. */
+export const SITE_AUTHOR = "إسماعيل أحمد نجيب";
+export const SITE_AUTHOR_EN = "Ismail Ahmed Naguib";
 
 export const SITE_TAGLINE: Record<string, string> = {
   ar: "منصة دعوية شاملة",
@@ -102,7 +110,7 @@ export const SITE_TAGLINE: Record<string, string> = {
 
 /**
  * الاسم الكامل للعلامة التجارية:
- * إسماعيل أحمد نجيب | منصة دعوية شاملة
+ * اكتشف الإسلام – Discover Islam | منصة دعوية شاملة
  */
 export const SITE_BRAND: Record<string, string> = {
   ar: `${SITE_NAME} | ${SITE_TAGLINE.ar}`,
@@ -206,7 +214,7 @@ export const SEO = {
     "Islamic Platform",
   ],
 
-  author: SITE_NAME,
+  author: SITE_AUTHOR,
 
   twitterHandle: "@ismailnaguib",
 
@@ -286,8 +294,8 @@ export const CONTACT_INFO = {
 // ============================================================
 
 export const PWA_CONFIG = {
-  name: SITE_BRAND.ar,
-  shortName: "إسماعيل",
+  name: SITE_NAME,
+  shortName: "اكتشف الإسلام",
   description: SITE_DESCRIPTION.ar,
 
   /**
@@ -632,6 +640,8 @@ const site = {
   SITE_URL,
   SITE_NAME,
   SITE_NAME_EN,
+  SITE_AUTHOR,
+  SITE_AUTHOR_EN,
   SITE_BRAND,
   SITE_NAME_TRANSLATED,
   SITE_TAGLINE,

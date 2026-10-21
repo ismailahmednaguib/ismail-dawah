@@ -1,7 +1,50 @@
 // app/[lang]/layout.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { isValidLang, type Lang } from "@/lib/i18n";
+import { getSiteSettings } from "@/lib/content";
+import { SITE_NAME, SITE_NAME_EN, SITE_AUTHOR, SITE_AUTHOR_EN } from "@/lib/site";
+
+// نُخفّف قراءة الإعدادات: تُقرأ مرة واحدة لكل طلب وتُستخدم في generateMetadata
+// وفي عرض JSON-LD معًا.
+const getCachedSettings = cache(getSiteSettings);
+
+/**
+ * يقرأ إعدادًا نصيًّا مترجمًا من اللوحة مع احتياطي ثابت.
+ * كائن `{ ar, en }` له الأولوية، ولا نُسرّب نصًّا عربيًّا إلى الواجهة الإنجليزية.
+ */
+function pickSetting(
+  settings: Record<string, any>,
+  key: string,
+  lang: Lang,
+  fallback: string
+): string {
+  const value = settings?.[key];
+
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const localized = (value as Record<string, unknown>)[lang];
+    if (typeof localized === "string" && localized.trim()) return localized.trim();
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    const text = value.trim();
+    if (lang === "en" && /[\u0600-\u06FF]/.test(text)) return fallback;
+    return text;
+  }
+
+  return fallback;
+}
+
+const DEFAULT_NAMES: Record<Lang, string> = {
+  ar: SITE_NAME,
+  en: SITE_NAME_EN,
+};
+
+const DEFAULT_DESCRIPTIONS: Record<Lang, string> = {
+  ar: "منصة دعوية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد، بلغتين وتصميم متجاوب.",
+  en: "A comprehensive dawah platform bringing together the Holy Quran, adhkar, fatwas, prophets' stories, prayer times, Qibla direction, and dawah tools in one place, bilingual and responsive.",
+};
 
 // ============================================================
 // Metadata ديناميكية شاملة
@@ -21,13 +64,15 @@ export async function generateMetadata({
   const l = lang as Lang;
   const isRTL = l === "ar";
 
-  const siteName = isRTL
-    ? "منصة إسماعيل أحمد نجيب الدعوية"
-    : "Ismail Ahmed Naguib Dawah Platform";
+  const settings = await getCachedSettings();
 
-  const description = isRTL
-    ? "منصة دعوية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد، بلغتين وتصميم متجاوب."
-    : "A comprehensive dawah platform bringing together the Holy Quran, adhkar, fatwas, prophets' stories, prayer times, Qibla direction, and dawah tools in one place, bilingual and responsive.";
+  const siteName = pickSetting(settings, "ownerName", l, DEFAULT_NAMES[l]);
+  const description = pickSetting(
+    settings,
+    "siteDescription",
+    l,
+    DEFAULT_DESCRIPTIONS[l]
+  );
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app";
 
@@ -42,11 +87,11 @@ export async function generateMetadata({
     applicationName: siteName,
     authors: [
       {
-        name: isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib",
+        name: isRTL ? SITE_AUTHOR : SITE_AUTHOR_EN,
         url: baseUrl,
       },
     ],
-    creator: isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib",
+    creator: isRTL ? SITE_AUTHOR : SITE_AUTHOR_EN,
     publisher: siteName,
     formatDetection: {
       email: false,
@@ -158,18 +203,17 @@ export default async function LangLayout({
 
   const l = lang as Lang;
   const isRTL = l === "ar";
-  const siteName = isRTL
-    ? "منصة إسماعيل أحمد نجيب الدعوية"
-    : "Ismail Ahmed Naguib Dawah Platform";
+
+  const settings = await getCachedSettings();
+  const siteName = pickSetting(settings, "ownerName", l, DEFAULT_NAMES[l]);
+  const otherName = DEFAULT_NAMES[isRTL ? "en" : "ar"];
 
   // JSON-LD للمنظمة ككل
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: siteName,
-    alternateName: isRTL
-      ? "Ismail Ahmed Naguib Dawah Platform"
-      : "منصة إسماعيل أحمد نجيب الدعوية",
+    alternateName: otherName,
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app",
     logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/icon-512.png`,
     description: isRTL
@@ -177,7 +221,7 @@ export default async function LangLayout({
       : "A comprehensive dawah platform for spreading Islamic knowledge and content in two languages.",
     founder: {
       "@type": "Person",
-      name: isRTL ? "إسماعيل أحمد نجيب" : "Ismail Ahmed Naguib",
+      name: isRTL ? SITE_AUTHOR : SITE_AUTHOR_EN,
     },
     knowsLanguage: ["ar", "en"],
     sameAs: [],

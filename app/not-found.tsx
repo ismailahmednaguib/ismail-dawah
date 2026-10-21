@@ -24,7 +24,7 @@ type NotFoundCopy = {
 
 const COPY: Record<string, NotFoundCopy> = {
   ar: {
-    documentTitle: "الصفحة غير موجودة | إسماعيل أحمد نجيب",
+    documentTitle: "الصفحة غير موجودة | اكتشف الإسلام – Discover Islam",
     title: "الصفحة غير موجودة",
     subtitle: "ربما تم نقل الصفحة أو حذفها أو تغيير رابطها.",
     verse: "﴿ فَإِذَا عَزَمْتَ فَتَوَكَّلْ عَلَى اللَّهِ ﴾",
@@ -33,12 +33,12 @@ const COPY: Record<string, NotFoundCopy> = {
     home: "الصفحة الرئيسية",
     searchIcon: "🔍",
     search: "البحث في الموقع",
-    footer: "منصة إسماعيل أحمد نجيب الدعوية",
+    footer: "منصة اكتشف الإسلام",
     homeHref: "/ar",
     searchHref: "/ar/search",
   },
   en: {
-    documentTitle: "Page Not Found | Ismail Ahmed Naguib",
+    documentTitle: "Page Not Found | Discover Islam",
     title: "Page Not Found",
     subtitle: "This page may have been moved, deleted, or renamed.",
     verse: "﴿ فَإِذَا عَزَمْتَ فَتَوَكَّلْ عَلَى اللَّهِ ﴾",
@@ -48,7 +48,7 @@ const COPY: Record<string, NotFoundCopy> = {
     home: "Home",
     searchIcon: "🔍",
     search: "Search",
-    footer: "Ismail Ahmed Naguib Dawah Platform",
+    footer: "Discover Islam",
     homeHref: "/en",
     searchHref: "/en/search",
   },
