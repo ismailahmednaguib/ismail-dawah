@@ -1,5 +1,6 @@
 // app/[lang]/about/page.tsx
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, languages, type Lang } from "@/lib/i18n";
@@ -584,6 +585,7 @@ export default async function AboutPage({
   };
   const cred1 = settingText("cred1");
   const cred2 = settingText("cred2");
+  const portraitSrc = settingText("portraitSrc");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -791,9 +793,19 @@ export default async function AboutPage({
         {gate.visible('k5') && (<>
         <div id="founder" className="card mb-8 scroll-mt-32 p-6 md:p-8">
           <div className="flex flex-col gap-6 md:flex-row md:items-start">
-            <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-3xl text-white shadow-lg shadow-primary-500/25">
-              👤
-            </span>
+            {portraitSrc ? (
+              <Image
+                src={portraitSrc}
+                alt={ui.founderName}
+                width={112}
+                height={112}
+                className="h-24 w-24 shrink-0 rounded-3xl object-cover shadow-lg shadow-primary-500/25 md:h-28 md:w-28"
+              />
+            ) : (
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-3xl text-white shadow-lg shadow-primary-500/25">
+                👤
+              </span>
+            )}
             <div className="min-w-0 flex-1">
               <p className="mb-1 text-sm font-bold text-primary-600 dark:text-primary-400">
                 {ui.founderTitle}
