@@ -278,7 +278,7 @@ export default function SiteSettingsClient() {
 
   const brandName = text(settings.ownerName).trim();
   const metaTitleAr = text(settings.metaTitle?.ar).trim();
-  const brandMismatch = Boolean(brandName && metaTitleAr && brandName !== metaTitleAr);
+  const brandMismatch = Boolean(brandName && (!metaTitleAr || brandName !== metaTitleAr));
 
   return (
     <div className="space-y-6 pb-8">
@@ -324,8 +324,18 @@ export default function SiteSettingsClient() {
         </div>
         {brandMismatch ? (
           <p className="mt-4 rounded-xl border border-gold-500/40 bg-gold-500/10 p-3 text-sm leading-7 text-primary-950">
-            اسم المنصة في الهيدر («{brandName}») يختلف عن عنوان SEO العربي («{metaTitleAr}»).
-            وحّدهما لتظهر الهوية نفسها في الهيدر ومحركات البحث.
+            {metaTitleAr ? (
+              <>
+                اسم المنصة في الهيدر («{brandName}») يختلف عن عنوان SEO العربي
+                («{metaTitleAr}»). وحّدهما لتظهر الهوية نفسها في الهيدر ومحركات البحث.
+              </>
+            ) : (
+              <>
+                لم تحدد عنوان SEO عربيًّا؛ سيستخدم الموقع العنوان الافتراضي، وقد يختلف عن
+                اسم الهيدر («{brandName}»). أضف عنوان SEO موحّدًا من قسم «تحسين الظهور
+                والمشاركة».
+              </>
+            )}
           </p>
         ) : null}
       </Section>
