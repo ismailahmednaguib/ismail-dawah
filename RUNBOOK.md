@@ -211,12 +211,15 @@ npm run fix:citations -- --commit     # كتابة
 
 - **صفحة البث** `/{lang}/live` تقرأ `liveUrl` · `liveTitle` · `meetingDay` · `meetingTime` · `meetingPlace` · `meetingLink` من `getSiteSettings`، لا من `getContent().settings` القديمة. تعديلها من `/admin/settings` أو `/admin/control` يظهر بعد إعادة التحقق.
 - **صفحة التواصل** `/{lang}/contact` تقرأ `email` · `wa` · `address` وروابط فيسبوك/يوتيوب/تيليجرام/إكس/إنستغرام من اللوحة، مع الرجوع إلى `CONTACT_INFO`/`SOCIAL_LINKS` عند غيابها. رقم الواتساب يُستخدم للاتصال أيضًا، وتُخفى بطاقة الهاتف إن طابقته.
+- **تذييل الموقع** يقرأ روابط التواصل الاجتماعي من الإعدادات نفسها، ويفهم القيمة سواء كانت نصًّا أو كائنًا مترجمًا `{ ar, en }`؛ لا تعتمد على `typeof value === "string"` وحدها.
+- **`playStoreUrl`** صار من الإعدادات غير المترجمة، فيصل إلى `resolvePlayStoreUrl` كنص ويُعرض في صفحة التنزيل بدل أن يُتجاهل ككائن.
 - **صفحة «من نحن»** تعرض `cred1` · `cred2` · `portraitSrc` · `jobTitle` من الإعدادات. الحقول الثلاثة الأولى صارت قابلة للتحرير بالعربية والإنجليزية من `/admin/control`، ولا يفقد التعديل العربي النسخة الإنجليزية.
 - **القيم المنطقية**: `publicApiEnabled` و`showPrayerBar` مُدرجتان في `lib/settings-keys.ts` وتُخزَّنان بلا لغة. لا تعِد `Boolean(settings.flag)` لأن الكائن القديم `{ar:false}` يظهر truthy؛ استخدم `flag()` أو `boolValue()`.
 - **`showPrayerBar`** يتحكم الآن في كارت مواقيت الصلاة بالرئيسية. الافتراضي إظهاره.
 - **الترطيب (Hydration)**: لا تستخدم `toLocaleDateString` في مكوّن يُرسم على الخادم والعميل معًا. استخدم `formatPublishDate` من `lib/date-format.ts` (UTC وأسماء أشهر ثابتة). `<noscript>` يكون في صفحة خادمية لا داخل مكوّن عميل.
 - **SEO**: لا تُكتب `| اسم المنصة` يدويًّا في `title` داخل `app/[lang]`؛ قالب `layout` يضيفه. صفحات المواد تضيف صورتها من أول وسيط `image` أو `/icon-512.png`، مع `hreflang` للترجمات فقط.
 - **PWA**: `app/manifest.ts` هو المصدر الوحيد لـ`/manifest.webmanifest`؛ لا تُعِد إنشاء ملف في `public/`. `start_url="/"` ليختار middleware لغة المتصفح.
+- **قياس الأداء الأولي**: Trace على `/ar` الإنتاجي أظهر ٠ مهام طويلة (>٥٠ms)، وCLS = ٠، وFCP/LCP ≈ ١٫٥–٢٫٠ث، وTTFB ≈ ١٫٣–١٫٧ث من بيئة بعيدة. هذا ليس بديلًا عن Lighthouse؛ يتبقّى قياس LCP/INP على أجهزة وأصدقاء شبكة أبطأ.
 
 ## ٨) migrations معلّقة على الإنتاج
 
