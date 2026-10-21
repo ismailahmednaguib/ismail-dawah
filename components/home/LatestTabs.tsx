@@ -100,44 +100,58 @@ export default function LatestTabs({
         })}
       </div>
 
-      <div
-        role="tabpanel"
-        id={`latest-panel-${current.key}`}
-        aria-labelledby={`latest-tab-${current.key}`}
-      >
-        <div className="mb-5 flex items-center justify-between gap-3">
-          <h3
-            className="text-xl font-black text-slate-900 dark:text-white md:text-2xl"
-            style={{ fontFamily: "var(--font-amiri)" }}
-          >
-            {current.title}
-          </h3>
-          <Link
-            href={current.href}
-            className="shrink-0 text-sm font-bold text-primary-700 transition-colors hover:text-primary-500 dark:text-primary-300"
-          >
-            {viewAll}
-            <span aria-hidden="true" className="mx-1">
-              {isRTL ? "←" : "→"}
-            </span>
-          </Link>
-        </div>
+      {/* نُبقي كل اللوحات في HTML للفهرسة، ونخفي غير النشط بصريًّا فقط. */}
+      <noscript>
+        <style>{`[data-latest-panel][hidden]{display:block!important}`}</style>
+      </noscript>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {current.items.map((item) => (
-            <ContentCard
-              key={item.id}
-              lang={lang}
-              type={item.content_type}
-              slug={item.slug}
-              title={item.title}
-              summary={item.summary}
-              published_at={item.published_at}
-              isFallback={item.isFallback}
-            />
-          ))}
-        </div>
-      </div>
+      {available.map((row) => {
+        const selected = row.key === current.key;
+
+        return (
+          <div
+            key={row.key}
+            role="tabpanel"
+            id={`latest-panel-${row.key}`}
+            aria-labelledby={`latest-tab-${row.key}`}
+            data-latest-panel="true"
+            hidden={!selected}
+          >
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <h3
+                className="text-xl font-black text-slate-900 dark:text-white md:text-2xl"
+                style={{ fontFamily: "var(--font-amiri)" }}
+              >
+                {row.title}
+              </h3>
+              <Link
+                href={row.href}
+                className="shrink-0 text-sm font-bold text-primary-700 transition-colors hover:text-primary-500 dark:text-primary-300"
+              >
+                {viewAll}
+                <span aria-hidden="true" className="mx-1">
+                  {isRTL ? "←" : "→"}
+                </span>
+              </Link>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {row.items.map((item) => (
+                <ContentCard
+                  key={item.id}
+                  lang={lang}
+                  type={item.content_type}
+                  slug={item.slug}
+                  title={item.title}
+                  summary={item.summary}
+                  published_at={item.published_at}
+                  isFallback={item.isFallback}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
