@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { formatPublishDate } from '@/lib/date-format';
+
 type ContentTypeConfig = {
   icon: string;
   ar: string;
@@ -52,9 +54,7 @@ export default function ContentCard({
   };
   const isArabic = lang === 'ar';
   const href = `/${lang}/learn/${type}/${slug}`;
-  const date = published_at
-    ? new Date(published_at).toLocaleDateString(isArabic ? 'ar-EG' : 'en-US')
-    : '';
+  const date = published_at ? formatPublishDate(published_at, isArabic) : '';
 
   return (
     <Link
@@ -71,7 +71,10 @@ export default function ContentCard({
             {isArabic ? config.ar : config.en}
           </span>
           {date && (
-            <time className="text-xs text-slate-500 dark:text-slate-400">
+            <time
+              dateTime={published_at ?? undefined}
+              className="text-xs text-slate-500 dark:text-slate-400"
+            >
               {date}
             </time>
           )}
