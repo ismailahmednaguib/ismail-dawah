@@ -213,12 +213,12 @@ export default async function manifest(
   const text = MANIFEST_TEXT[lang];
 
   return {
-    id: `${SITE_URL}/${lang}`,
+    id: `${SITE_URL}/`,
     name: text.name,
     short_name: text.short_name,
     description: text.description,
 
-    start_url: `/${lang}`,
+    start_url: "/",
     scope: "/",
 
     display: "standalone",
