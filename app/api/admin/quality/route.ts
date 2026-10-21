@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import { revalidatePublicContent } from '@/lib/revalidate-public';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -347,9 +348,7 @@ export async function POST(req: Request) {
     const translations = Array.isArray(content.content_translations)
       ? (content.content_translations as Array<{ lang?: string; slug?: string }>)
       : [];
-    for (const lang of ['ar', 'en']) {
-      revalidatePath(`/${lang}/fatwa`);
-    }
+    revalidatePublicContent();
     for (const translation of translations) {
       if (translation.lang && translation.slug) {
         revalidatePath(`/${translation.lang}/learn/fatwa/${translation.slug}`);
