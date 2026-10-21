@@ -217,6 +217,7 @@ npm run fix:citations -- --commit     # كتابة
 - **القيم المنطقية**: `publicApiEnabled` و`showPrayerBar` مُدرجتان في `lib/settings-keys.ts` وتُخزَّنان بلا لغة. لا تعِد `Boolean(settings.flag)` لأن الكائن القديم `{ar:false}` يظهر truthy؛ استخدم `flag()` أو `boolValue()`.
 - **`showPrayerBar`** يتحكم الآن في كارت مواقيت الصلاة بالرئيسية. الافتراضي إظهاره.
 - **الترطيب (Hydration)**: لا تستخدم `toLocaleDateString` في مكوّن يُرسم على الخادم والعميل معًا. استخدم `formatPublishDate` من `lib/date-format.ts` (UTC وأسماء أشهر ثابتة). `<noscript>` يكون في صفحة خادمية لا داخل مكوّن عميل.
+- **العنوان الرئيسي (h1)**: `TopBar` يعرض عنوانه `<p>` افتراضيًا لأن معظم الصفحات تعرض `h1` في المحتوى. لا تستخدم `titleAs="h1"` إلا في صفحة بلا عنوان داخلي (مثل الدخول والاستعادة). فلاتر المكتبة مرتبطة بتسمياتها عبر `htmlFor`/`id`؛ لا تترك `<select>` بلا تسمية.
 - **SEO**: لا تُكتب `| اسم المنصة` يدويًّا في `title` داخل `app/[lang]`؛ قالب `layout` يضيفه. صفحات المواد تضيف صورتها من أول وسيط `image` أو `/icon-512.png`، مع `hreflang` للترجمات فقط.
 - **PWA**: `app/manifest.ts` هو المصدر الوحيد لـ`/manifest.webmanifest`؛ لا تُعِد إنشاء ملف في `public/`. `start_url="/"` ليختار middleware لغة المتصفح.
 - **قياس الأداء الأولي**: Trace على `/ar` الإنتاجي أظهر ٠ مهام طويلة (>٥٠ms)، وCLS = ٠، وFCP/LCP ≈ ١٫٥–٢٫٠ث، وTTFB ≈ ١٫٣–١٫٧ث من بيئة بعيدة. هذا ليس بديلًا عن Lighthouse؛ يتبقّى قياس LCP/INP على أجهزة وأصدقاء شبكة أبطأ.
