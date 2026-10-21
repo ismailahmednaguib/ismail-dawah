@@ -51,19 +51,53 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!content) return { title: 'غير موجود' };
 
+  const siteUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://ismailahmednaguib.vercel.app'
+  ).replace(/\/+$/, '');
+  const encodedType = encodeURIComponent(type);
+  const encodedSlug = encodeURIComponent(slug);
+  const path = `/${lang}/learn/${encodedType}/${encodedSlug}`;
+  const title = content.translation.title;
+  const description = content.translation.summary?.slice(0, 160) ?? '';
+  const media = (content.media ?? []) as MediaSummary[];
+  const imageUrl = media.find((item) => item.type === 'image' && item.url)?.url;
+  const ogImage = imageUrl
+    ? /^https?:\/\//i.test(imageUrl)
+      ? imageUrl
+      : `${siteUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
+    : `${siteUrl}/icon-512.png`;
+
   return {
-    title: `${content.translation.title} | منصة إسماعيل أحمد نجيب`,
-    description: content.translation.summary?.slice(0, 160) ?? '',
+    title: `${title} | منصة إسماعيل أحمد نجيب`,
+    description,
     alternates: {
-      canonical: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
+      canonical: `${siteUrl}${path}`,
+      ...(content.isTranslated === false
+        ? {}
+        : {
+            languages: {
+              ar: `${siteUrl}/ar/learn/${encodedType}/${encodedSlug}`,
+              en: `${siteUrl}/en/learn/${encodedType}/${encodedSlug}`,
+              "x-default": `${siteUrl}/ar/learn/${encodedType}/${encodedSlug}`,
+            },
+          }),
     },
     // لا نُفهرس الصفحات التي تعرض المحتوى بلغته الأصلية (تفاديًا لتكرار المحتوى).
     ...(content.isTranslated === false ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
-      title: content.translation.title,
-      description: content.translation.summary ?? '',
+      title,
+      description,
       type: 'article',
-      url: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
+      url: `${siteUrl}${path}`,
+      siteName: 'منصة إسماعيل أحمد نجيب',
+      locale: lang === 'ar' ? 'ar_EG' : 'en_US',
+      images: [{ url: ogImage, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImage],
     },
   };
 }
