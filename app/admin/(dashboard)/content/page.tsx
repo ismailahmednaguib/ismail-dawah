@@ -16,6 +16,7 @@ export default async function ContentPage({
   if (!can(session.roles, 'content.read')) redirect('/admin');
 
   const { type } = await searchParams;
+  const initialType = typeof type === 'string' ? type : '';
 
   return (
     <div>
@@ -28,7 +29,7 @@ export default async function ContentPage({
           + محتوى جديد
         </Link>
       </div>
-      <ContentListClient initialType={typeof type === 'string' ? type : ''} />
+      <ContentListClient key={initialType || 'all'} initialType={initialType} />
     </div>
   );
 }
