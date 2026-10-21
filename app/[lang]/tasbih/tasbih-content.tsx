@@ -272,7 +272,7 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
               type="button"
               onClick={increment}
               disabled={!hydrated}
-              aria-label={ui.tapToCount}
+              aria-describedby="tasbih-hint"
               className="relative flex h-64 w-64 cursor-pointer select-none items-center justify-center rounded-full border-8 border-white bg-gradient-to-br from-primary-50 via-white to-gold-50 text-primary-950 shadow-islamic transition-all duration-200 hover:scale-[1.02] active:scale-95 disabled:cursor-wait dark:border-night-800 dark:from-night-800 dark:via-night-900 dark:to-night-950 dark:text-white"
             >
               <svg
@@ -338,7 +338,7 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
               </span>
             </button>
 
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+            <p id="tasbih-hint" className="text-sm font-semibold text-slate-500 dark:text-slate-400">
               {ui.tapToCount}
             </p>
           </div>
@@ -346,7 +346,7 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
           {/* تفاصيل الذكر */}
           <div className="w-full max-w-xl lg:flex-1">
             <div className="mb-6">
-              <p className="mb-2 text-sm font-bold text-primary-600 dark:text-primary-400">
+              <p className="mb-2 text-sm font-bold text-primary-700 dark:text-primary-400">
                 {ui.current}
               </p>
 
@@ -373,7 +373,7 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
             <div className="mb-6">
               <div className="mb-2 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
                 <span>{ui.progress}</span>
-                <span className="text-primary-600 dark:text-primary-400">
+                <span className="text-primary-700 dark:text-primary-400">
                   {formatNumber(percent, lang)}%
                 </span>
               </div>
@@ -415,7 +415,7 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
                 type="button"
                 onClick={resetToday}
                 disabled={!hydrated || totalToday === 0}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border-2 border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-600 transition-all hover:bg-red-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border-2 border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-700 transition-all hover:bg-red-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
               >
                 <svg
                   width="18"
@@ -446,7 +446,7 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
           <p className="mb-2 text-sm font-bold text-slate-500 dark:text-slate-400">
             {ui.today}
           </p>
-          <p className="text-4xl font-black text-primary-600 dark:text-primary-400">
+          <p className="text-4xl font-black text-primary-700 dark:text-primary-400">
             {hydrated ? formatNumber(totalToday, lang) : "—"}
           </p>
         </div>

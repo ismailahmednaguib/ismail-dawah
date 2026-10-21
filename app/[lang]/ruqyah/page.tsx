@@ -627,7 +627,7 @@ export default async function RuqyahPage({
               >
                 «{ui.hadith}»
               </p>
-              <p className="text-xs text-primary-600 dark:text-primary-400">
+              <p className="text-xs text-primary-700 dark:text-primary-400">
                 📜 {ui.hadithSource}
               </p>
             </div>
@@ -713,7 +713,7 @@ export default async function RuqyahPage({
               <span className="badge-gold">&quot;{q}&quot;</span>
               <Link
                 href={`/${l}/ruqyah`}
-                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 6L6 18" />
@@ -730,7 +730,7 @@ export default async function RuqyahPage({
         {gate.visible('k4') && (<>
         <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
           {ui.results}:{" "}
-          <span className="text-primary-600 dark:text-primary-400">
+          <span className="text-primary-700 dark:text-primary-400">
             {formatNumber(filteredItems, l)}
           </span>{" "}
           {ui.of}{" "}

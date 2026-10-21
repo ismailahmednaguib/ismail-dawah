@@ -40,10 +40,10 @@ export function IconCard({
   className = "",
 }: IconCardProps) {
   const colorClasses = {
-    teal: "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400",
+    teal: "bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400",
     gold: "bg-gold-100 dark:bg-gold-700/20 text-gold-600 dark:text-gold-400",
-    emerald: "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400",
-    purple: "bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400",
+    emerald: "bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400",
+    purple: "bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400",
   };
 
   const content = (
@@ -53,7 +53,7 @@ export function IconCard({
       >
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
         {title}
       </h3>
       {description && (
@@ -96,7 +96,7 @@ export function ListCard({ title, items, color = "teal", className = "" }: ListC
             {item.href ? (
               <Link
                 href={item.href}
-                className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors group"
+                className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 hover:text-primary-700 dark:hover:text-primary-300 transition-colors group"
               >
                 {item.icon && <span>{item.icon}</span>}
                 <span className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform">
@@ -154,14 +154,14 @@ export function FeatureCard({
           <span className="badge badge-gold text-xs">{badge}</span>
         )}
       </div>
-      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+      <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
         {title}
       </h3>
       <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed flex-1">
         {description}
       </p>
       {href && (
-        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary-600 dark:text-primary-300">
+        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary-700 dark:text-primary-300">
           <span>اعرف المزيد</span>
           <svg
             className="w-4 h-4 transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1 rtl:rotate-180"
@@ -198,7 +198,7 @@ export function StatCard({ value, label, icon, color = "teal", className = "" }:
       {icon && <div className="text-3xl mb-2">{icon}</div>}
       <div
         className={`text-3xl font-black mb-1 ${
-          color === "teal" ? "text-primary-600 dark:text-primary-400" : "text-gold-600 dark:text-gold-400"
+          color === "teal" ? "text-primary-700 dark:text-primary-400" : "text-gold-600 dark:text-gold-400"
         }`}
       >
         {value}
@@ -244,7 +244,7 @@ export function ImageCard({
         )}
       </div>
       <div className="p-5">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+        <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
           {title}
         </h3>
         {description && (
@@ -285,7 +285,7 @@ export function QuoteCard({ quote, source, className = "" }: QuoteCardProps) {
         {quote}
       </blockquote>
       {source && (
-        <cite className="text-sm text-primary-600 dark:text-primary-400 font-semibold not-italic">
+        <cite className="text-sm text-primary-700 dark:text-primary-400 font-semibold not-italic">
           — {source}
         </cite>
       )}

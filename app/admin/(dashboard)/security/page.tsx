@@ -163,7 +163,7 @@ export default async function SecurityPage() {
                   <td className="p-3 font-mono text-xs" dir="ltr">{row.key}</td>
                   <td className="p-3 font-mono text-xs opacity-70" dir="ltr">{row.value}</td>
                   <td className="p-3">{row.why}</td>
-                  <td className="p-3 text-primary-600 dark:text-primary-400">✔ مفعَّل</td>
+                  <td className="p-3 text-primary-700 dark:text-primary-400">✔ مفعَّل</td>
                 </tr>
               ))}
             </tbody>
@@ -217,7 +217,7 @@ export default async function SecurityPage() {
               <span
                 className={
                   row.state === 'leaking'
-                    ? 'text-xs font-bold text-red-600 dark:text-red-400'
+                    ? 'text-xs font-bold text-red-700 dark:text-red-400'
                     : row.state === 'open'
                       ? 'text-xs text-amber-600 dark:text-amber-400'
                       : 'text-xs opacity-70'

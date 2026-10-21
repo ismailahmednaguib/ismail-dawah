@@ -505,7 +505,7 @@ export default function WomenFatwasPage() {
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="mt-3 inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300"
+              className="mt-3 inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300"
             >
               ✕ {ui.clearSearch}
             </button>
@@ -725,7 +725,7 @@ export default function WomenFatwasPage() {
                             «{f.hadith}»
                           </p>
                           {f.hadithSource && (
-                            <p className="mt-1 text-xs text-primary-600 dark:text-primary-400">
+                            <p className="mt-1 text-xs text-primary-700 dark:text-primary-400">
                               📜 {f.hadithSource[L]}
                             </p>
                           )}

@@ -173,7 +173,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
                 href={pageHref(p)}
                 className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-medium transition-colors ${
                   p === currentPage
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-primary-700 text-white'
                     : 'bg-white dark:bg-night-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-night-700 hover:bg-primary-50'
                 }`}
               >

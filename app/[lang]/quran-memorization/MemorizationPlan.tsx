@@ -848,7 +848,7 @@ export default function MemorizationPlan({
           <button
             type="button"
             onClick={() => addToSurah(5)}
-            className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
+            className="rounded-xl bg-primary-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
           >
             {ui.addFive}
           </button>
@@ -856,7 +856,7 @@ export default function MemorizationPlan({
           <button
             type="button"
             onClick={() => addToSurah(10)}
-            className="rounded-xl bg-primary-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
+            className="rounded-xl bg-primary-700 px-4 py-2 text-sm font-bold text-white transition hover:bg-primary-700"
           >
             {ui.addTen}
           </button>

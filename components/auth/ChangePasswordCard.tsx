@@ -257,7 +257,7 @@ export default function ChangePasswordCard({ lang }: { lang: "ar" | "en" }) {
               className="input-islamic"
             />
             {confirm && newPassword !== confirm && (
-              <p className="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs font-bold text-red-700 dark:text-red-400">
                 ⚠️ {copy.mismatch}
               </p>
             )}

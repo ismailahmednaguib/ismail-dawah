@@ -133,7 +133,7 @@ function DashboardTab() {
     return <div className="h-64 flex items-center justify-center text-stone-400">جارٍ التحميل…</div>;
   }
   if (!data) {
-    return <div className="p-4 text-red-600 font-bold">تعذر تحميل البيانات</div>;
+    return <div className="p-4 text-red-700 font-bold">تعذر تحميل البيانات</div>;
   }
 
   const { stats, advanced } = data;
@@ -192,7 +192,7 @@ function DashboardTab() {
                       <span className="font-black text-primary-700">{v}</span>
                       <div className="h-2 w-24 overflow-hidden rounded-full bg-cream-100">
                         <div
-                          className="h-full rounded-full bg-primary-600"
+                          className="h-full rounded-full bg-primary-700"
                           style={{ width: `${Math.min(100, (v / Math.max(1, totalContent)) * 100)}%` }}
                         />
                       </div>
@@ -363,7 +363,7 @@ function SettingsTab() {
                     type="checkbox"
                     checked={boolValue(val)}
                     onChange={(e) => setField(f.key, e.target.checked)}
-                    className="rounded text-primary-600 focus:ring-primary-500"
+                    className="rounded text-primary-700 focus:ring-primary-500"
                   />
                   <span className="text-sm text-stone-600">{boolValue(val) ? 'مفعل' : 'غير مفعل'}</span>
                 </div>
@@ -589,7 +589,7 @@ function SectionsTab() {
                     type="checkbox"
                     checked={pageVisible}
                     onChange={() => togglePage(pageKey)}
-                    className="rounded text-primary-600 focus:ring-primary-500"
+                    className="rounded text-primary-700 focus:ring-primary-500"
                   />
                   {pageVisible ? 'الصفحة ظاهرة' : 'الصفحة مخفية'}
                 </label>
@@ -614,7 +614,7 @@ function SectionsTab() {
                             type="checkbox"
                             checked={isVisible}
                             onChange={() => toggleSection(pageKey, secKey)}
-                            className="mt-0.5 rounded text-primary-600 focus:ring-primary-500"
+                            className="mt-0.5 rounded text-primary-700 focus:ring-primary-500"
                           />
                           <span>
                             <span
@@ -991,7 +991,7 @@ function NavigationTab() {
               type="checkbox"
               checked={isVisible}
               onChange={() => toggleVisible(node.key)}
-              className="rounded text-primary-600 focus:ring-primary-500"
+              className="rounded text-primary-700 focus:ring-primary-500"
             />
             <span className="text-lg" aria-hidden="true">{node.icon}</span>
             <span>
@@ -1194,7 +1194,7 @@ function NavigationTab() {
         <button
           type="button"
           onClick={addCustom}
-          className="mt-3 rounded-lg bg-primary-600 px-4 py-2 text-xs font-bold text-white hover:bg-primary-700"
+          className="mt-3 rounded-lg bg-primary-700 px-4 py-2 text-xs font-bold text-white hover:bg-primary-700"
         >
           ➕ إضافة إلى القائمة
         </button>
@@ -1276,7 +1276,7 @@ function NavigationTab() {
                   type="checkbox"
                   checked={isVisible}
                   onChange={() => toggleVisible(root.key)}
-                  className="rounded text-primary-600 focus:ring-primary-500"
+                  className="rounded text-primary-700 focus:ring-primary-500"
                 />
                 إظهار هذه المجموعة
               </label>
@@ -1461,7 +1461,7 @@ function ContentTab() {
                       </button>
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="p-2 rounded-lg text-sm font-bold transition text-red-600 hover:bg-red-50"
+                        className="p-2 rounded-lg text-sm font-bold transition text-red-700 hover:bg-red-50"
                         title="حذف"
                       >
                         🗑

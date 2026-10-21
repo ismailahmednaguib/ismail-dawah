@@ -315,9 +315,9 @@ export function Callout({
         </span>
         <div className="min-w-0 flex-1">
           {title && (
-            <h3 className="mb-1 text-base font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-amiri)" }}>
+            <h2 className="mb-1 text-base font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-amiri)" }}>
               {title}
-            </h3>
+            </h2>
           )}
           <div className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">{children}</div>
         </div>

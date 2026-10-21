@@ -325,7 +325,7 @@ export default function AdminPanel({
                     <span className="font-black text-primary-700">{formatNumber(item.value)}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-cream-100">
-                    <div className="h-full rounded-full bg-primary-600 transition-all" style={{ width: `${Math.max(6, (item.value / maxContent) * 100)}%` }} />
+                    <div className="h-full rounded-full bg-primary-700 transition-all" style={{ width: `${Math.max(6, (item.value / maxContent) * 100)}%` }} />
                   </div>
                 </div>
               ))}

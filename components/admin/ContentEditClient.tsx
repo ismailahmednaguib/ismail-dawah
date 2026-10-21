@@ -834,7 +834,7 @@ export default function ContentEditClient({
                     : ref.hadith_book ?? ref.book_title ?? ref.scholar_name}
                 </span>
                 {ref.verified && (
-                  <span className="text-primary-600 text-xs">✓ موثق</span>
+                  <span className="text-primary-700 text-xs">✓ موثق</span>
                 )}
                 <span className="mr-auto flex gap-2">
                   {canReview && (
@@ -850,7 +850,7 @@ export default function ContentEditClient({
                     <button
                       type="button"
                       onClick={() => removeReference(ref.id)}
-                      className="text-xs text-red-600 hover:underline"
+                      className="text-xs text-red-700 hover:underline"
                     >
                       حذف
                     </button>

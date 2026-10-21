@@ -66,7 +66,7 @@ function getPasswordStrength(password: string): {
   if (score === 2) return { score, label: "ضعيفة", color: "bg-orange-500" };
   if (score === 3) return { score, label: "متوسطة", color: "bg-yellow-500" };
   if (score === 4) return { score, label: "جيدة", color: "bg-primary-500" };
-  return { score, label: "قوية", color: "bg-primary-600" };
+  return { score, label: "قوية", color: "bg-primary-700" };
 }
 
 // ============================================================
@@ -628,7 +628,7 @@ export default function SetupAdminPage() {
           />
 
           {confirmPassword && password !== confirmPassword ? (
-            <p className="mt-1 text-xs font-bold text-red-600">
+            <p className="mt-1 text-xs font-bold text-red-700">
               كلمتا المرور غير متطابقتين.
             </p>
           ) : null}

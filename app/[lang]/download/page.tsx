@@ -525,7 +525,7 @@ export default async function DownloadPage({
               {/* الفاصل */}
               <div className="my-5 flex items-center gap-3">
                 <div className="h-px flex-1 bg-slate-200 dark:bg-night-700" />
-                <span className="text-xs font-bold text-slate-400">
+                <span className="text-xs font-bold text-slate-500">
                   {ui.or}
                 </span>
                 <div className="h-px flex-1 bg-slate-200 dark:bg-night-700" />

@@ -115,7 +115,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                   </div>
                   <div className="w-full bg-stone-200 dark:bg-gray-600 rounded-full h-2 mb-2">
                     <div
-                      className="bg-primary-600 h-2 rounded-full transition-all"
+                      className="bg-primary-700 h-2 rounded-full transition-all"
                       style={{ width: `${langStats.coverage_percent}%` }}
                     />
                   </div>

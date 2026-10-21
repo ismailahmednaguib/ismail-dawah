@@ -315,7 +315,7 @@ export default function SurahList({ lang }: { lang: Lang }) {
                       className={
                         surah.type === "makki"
                           ? "text-gold-600 dark:text-gold-400"
-                          : "text-primary-600 dark:text-primary-400"
+                          : "text-primary-700 dark:text-primary-400"
                       }
                     >
                       {surah.type === "makki" ? makkiLabel : madaniLabel}

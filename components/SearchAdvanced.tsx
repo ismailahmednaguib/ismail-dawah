@@ -222,7 +222,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
               }}
               className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
                 typeFilter === option.value
-                  ? 'bg-primary-600 text-white shadow-sm'
+                  ? 'bg-primary-700 text-white shadow-sm'
                   : 'bg-slate-100 text-slate-600 hover:bg-primary-50 dark:bg-night-800 dark:text-slate-300 dark:hover:bg-night-700'
               }`}
             >
@@ -294,13 +294,13 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
                   <div className="flex items-start gap-3">
                     <span className="text-2xl">{TYPE_ICONS[result.type] ?? '📄'}</span>
                     <div className="min-w-0 flex-1">
-                      <h3 className="truncate font-bold text-primary-950 dark:text-white">{result.title}</h3>
+                      <h2 className="truncate font-bold text-primary-950 dark:text-white">{result.title}</h2>
                       {result.summary && (
                         <p className="mt-1 line-clamp-2 text-sm text-slate-500 dark:text-slate-400">
                           {result.summary}
                         </p>
                       )}
-                      <div className="mt-2 flex items-center gap-3 text-xs text-slate-400">
+                      <div className="mt-2 flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                         {result.published_at && (
                           <span>📅 {new Date(result.published_at).toLocaleDateString(copy.dateLocale)}</span>
                         )}
@@ -340,7 +340,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       )}
 
       {query.trim().length < 2 && (
-        <p className="text-center text-sm text-slate-400">{copy.minQuery}</p>
+        <p className="text-center text-sm text-slate-500 dark:text-slate-400">{copy.minQuery}</p>
       )}
     </div>
   );

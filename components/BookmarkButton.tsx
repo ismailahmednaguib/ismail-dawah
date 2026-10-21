@@ -100,7 +100,7 @@ export default function BookmarkButton({
         ${
           isBookmarked
             ? "bg-gold-100 dark:bg-gold-900/30 text-gold-600 dark:text-gold-400 shadow-gold"
-            : "bg-slate-100 dark:bg-night-800 text-slate-400 dark:text-slate-500 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400"
+            : "bg-slate-100 dark:bg-night-800 text-slate-400 dark:text-slate-500 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-700 dark:hover:text-primary-400"
         }
       `}
       title={isBookmarked ? "إزالة من المحفوظات" : "حفظ في المحفوظات"}

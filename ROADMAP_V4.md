@@ -121,4 +121,14 @@ npm run qa:rls
 npm run qa:matrix
 ```
 
+---
+
+## ٧) الدفعة الأخيرة: PWA لكل لغة + إتاحة ١٠٠
+
+- **بيان تثبيت لكل لغة**: المولّد في `lib/manifest.ts` بدالة `buildManifest(lang)`، وتُخدَم `/ar/manifest.webmanifest` و`/en/manifest.webmanifest`، ويبقى `/manifest.webmanifest` احتياطيًا يختار اللغة من `Accept-Language`. روابط `<link rel="manifest">` صارت لكل لغة، و`start_url`/`id` على `/` ليختار middleware اللغة المفضّلة. `public/sw.js` v4 يخزّن البيانين مسبقًا.
+- **إتاحة**: Lighthouse = ١٠٠ (Accessibility · Best Practices · SEO) لأربعين مسارًا عربيًّا/إنجليزيًّا. أبرز الإصلاحات: تسلسل عناوين صحيح، إزالة `aria-label` المخالف للنص المرئي، وإزالة خفض الشفافية عن النصوص.
+- **تباين ألوان الهوية**: `gold-600` = `#85650a` و`gold-700` = `#7a5c0f`، و`text-primary-600` → `text-primary-700`، و`bg-primary-600` → `bg-primary-700`. `qa:theme` يمرّ.
+- **SEO**: بيانات `forgot-password` · `reset-password` · `verify-email` في `layout.tsx` لتُحقن في `<head>`؛ والرمز يُقرأ على العميل عبر `useSearchParams` داخل `Suspense`.
+- **اختبار جديد**: `tests/manifest.test.ts` ضمن `npm run test:unit` (المجموع ١١٢ اختبارًا).
+
 المرجع التشغيلي: `RUNBOOK.md` · خطة المراحل السابقة: `ROADMAP_V3.md`.

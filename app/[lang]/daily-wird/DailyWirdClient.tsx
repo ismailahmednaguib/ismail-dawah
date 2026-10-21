@@ -369,7 +369,7 @@ export default function DailyWirdClient({
               </p>
             </div>
 
-            <div className="text-4xl font-black text-primary-600 md:text-5xl dark:text-primary-400">
+            <div className="text-4xl font-black text-primary-700 md:text-5xl dark:text-primary-400">
               {formatNumber(weeklyPercent)}%
             </div>
           </div>
@@ -444,7 +444,7 @@ export default function DailyWirdClient({
         {/* ===== عدد النتائج ===== */}
         <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
           {UI.results}:{" "}
-          <span className="text-primary-600 dark:text-primary-400">
+          <span className="text-primary-700 dark:text-primary-400">
             {formatNumber(filteredDays.reduce((sum, day) => sum + day.tasks.length, 0))}
           </span>{" "}
           {UI.of}{" "}
@@ -515,7 +515,7 @@ export default function DailyWirdClient({
                     <div className="w-full md:w-56">
                       <div className="mb-2 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
                         <span>{UI.dayProgress}</span>
-                        <span className="text-primary-600 dark:text-primary-400">
+                        <span className="text-primary-700 dark:text-primary-400">
                           {formatNumber(dayPercent)}%
                         </span>
                       </div>
@@ -550,7 +550,7 @@ export default function DailyWirdClient({
                           <button
                             onClick={() => toggleTask(task.id)}
                             className="flex min-w-0 flex-1 items-start gap-3 text-start"
-                            aria-label={isDone ? UI.markUndone : UI.markDone}
+                            aria-pressed={isDone}
                           >
                             <span
                               className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 ${

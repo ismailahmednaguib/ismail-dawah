@@ -592,7 +592,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
       <div className="card mb-8 p-6 md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="mb-1 text-sm font-bold text-primary-600 dark:text-primary-400">
+            <p className="mb-1 text-sm font-bold text-primary-700 dark:text-primary-400">
               {ui.currentLocation}
             </p>
 
@@ -606,7 +606,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
             <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
               {ui.coordinates}: {location.latitude.toFixed(4)},{" "}
               {location.longitude.toFixed(4)} • {ui.calculation}:{" "}
-              <span className="font-bold text-primary-600 dark:text-primary-400">
+              <span className="font-bold text-primary-700 dark:text-primary-400">
                 {isRTL ? methodName?.ar : methodName?.en}
               </span>
             </p>
@@ -750,7 +750,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
                     type="checkbox"
                     checked={settings.soundEnabled}
                     onChange={(e) => saveSettings({ ...settings, soundEnabled: e.target.checked })}
-                    className="h-5 w-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                    className="h-5 w-5 rounded border-slate-300 text-primary-700 focus:ring-primary-500"
                   />
                   <div>
                     <p className="text-sm font-bold text-slate-900 dark:text-white">
@@ -764,7 +764,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
                     type="checkbox"
                     checked={settings.adhanEnabled}
                     onChange={(e) => saveSettings({ ...settings, adhanEnabled: e.target.checked })}
-                    className="h-5 w-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                    className="h-5 w-5 rounded border-slate-300 text-primary-700 focus:ring-primary-500"
                   />
                   <div>
                     <p className="text-sm font-bold text-slate-900 dark:text-white">
@@ -778,7 +778,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
               {settings.soundEnabled && (
                 <div>
                   <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
-                    {ui.notifyBefore}: <span className="text-primary-600 dark:text-primary-400">{settings.notifyBefore}</span> {ui.minutesBefore}
+                    {ui.notifyBefore}: <span className="text-primary-700 dark:text-primary-400">{settings.notifyBefore}</span> {ui.minutesBefore}
                   </label>
                   <input
                     type="range"
@@ -962,7 +962,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
                     isNext
                       ? "border-primary-400 bg-primary-50/70 shadow-lg shadow-primary-500/10 dark:border-primary-600 dark:bg-primary-950/30"
                       : isPassed
-                      ? "opacity-70"
+                      ? "border-slate-200 bg-slate-50 dark:border-night-800 dark:bg-night-800/40"
                       : ""
                   }`}
                 >

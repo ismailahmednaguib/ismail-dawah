@@ -102,7 +102,7 @@ export default function ReferenceDisplay({
                     {ref.ayah_to && `-${ref.ayah_to}`}
                   </p>
                 </div>
-                {ref.verified && <span className="mr-auto text-primary-600 text-xs">✓ {copy.verified}</span>}
+                {ref.verified && <span className="mr-auto text-primary-700 text-xs">✓ {copy.verified}</span>}
               </div>
             )}
 
@@ -125,7 +125,7 @@ export default function ReferenceDisplay({
                     </span>
                   )}
                 </div>
-                {ref.verified && <span className="text-primary-600 text-xs">✓ {copy.verified}</span>}
+                {ref.verified && <span className="text-primary-700 text-xs">✓ {copy.verified}</span>}
               </div>
             )}
 

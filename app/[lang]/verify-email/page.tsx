@@ -1,34 +1,22 @@
 // app/[lang]/verify-email/page.tsx
 // صفحة استقبال رابط التفعيل — تقرأ الرمز من الرابط ثم يستهلكه العميل عبر POST.
 
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Header from "@/components/Header";
 import TopBar from "@/components/TopBar";
 import Footer from "@/components/Footer";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import VerifyEmailClient from "./VerifyEmailClient";
 
-export const dynamic = "force-dynamic";
-
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}): Promise<Metadata> {
-  const { lang } = await params;
-  return {
-    title: lang === "ar" ? "تفعيل البريد الإلكتروني" : "Verify your email",
-    robots: { index: false, follow: false },
-  };
+export function generateStaticParams() {
+  return [{ lang: "ar" }, { lang: "en" }];
 }
 
 export default async function VerifyEmailPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ lang: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { lang } = await params;
 
@@ -38,14 +26,6 @@ export default async function VerifyEmailPage({
 
   const l = lang as Lang;
   const isRTL = l === "ar";
-  const query = await searchParams;
-  const rawToken = query?.token;
-  const token =
-    typeof rawToken === "string"
-      ? rawToken
-      : Array.isArray(rawToken)
-        ? rawToken[0] ?? ""
-        : "";
 
   return (
     <main
@@ -74,7 +54,9 @@ export default async function VerifyEmailPage({
 
       <section className="container-page py-10 md:py-14">
         <div className="mx-auto max-w-2xl">
-          <VerifyEmailClient lang={l} token={token} />
+          <Suspense fallback={null}>
+            <VerifyEmailClient lang={l} />
+          </Suspense>
         </div>
       </section>
 

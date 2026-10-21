@@ -631,7 +631,7 @@ export default async function QuranPage({
           <div className="mt-5 flex flex-wrap items-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400">
             <span>
               {ui.totalSurahs}:{" "}
-              <span className="text-primary-600 dark:text-primary-400">
+              <span className="text-primary-700 dark:text-primary-400">
                 {formatNumber(surahs.length, l)}
               </span>
             </span>

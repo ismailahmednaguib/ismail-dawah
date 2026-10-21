@@ -361,7 +361,7 @@ export default async function QuranMemorizationPage({
               >
                 «{ui.hadith}»
               </p>
-              <p className="text-xs text-primary-600 dark:text-primary-400">
+              <p className="text-xs text-primary-700 dark:text-primary-400">
                 📜 {ui.hadithSource}
               </p>
             </div>

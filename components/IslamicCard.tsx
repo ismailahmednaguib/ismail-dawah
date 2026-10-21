@@ -35,7 +35,7 @@ export default function IslamicCard({
       )}
 
       {/* العنوان */}
-      <h3 className="mb-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-primary-600 dark:text-white dark:group-hover:text-primary-300">
+      <h3 className="mb-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
         {title}
       </h3>
 
@@ -48,7 +48,7 @@ export default function IslamicCard({
 
       {/* سهم "اقرأ المزيد" لو فيه رابط */}
       {href && (
-        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary-600 dark:text-primary-400">
+        <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary-700 dark:text-primary-400">
           <span>اقرأ المزيد</span>
           <svg
             width="16"

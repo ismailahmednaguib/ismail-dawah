@@ -232,7 +232,7 @@ export default function SurahPlayer({
         {/* معلومات التشغيل */}
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-bold text-primary-600 dark:text-primary-400">
+            <p className="text-xs font-bold text-primary-700 dark:text-primary-400">
               🎵 {ui.nowPlaying}
             </p>
             <p

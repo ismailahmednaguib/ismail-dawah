@@ -219,9 +219,18 @@ npm run fix:citations -- --commit     # كتابة
 - **الترطيب (Hydration)**: لا تستخدم `toLocaleDateString` في مكوّن يُرسم على الخادم والعميل معًا. استخدم `formatPublishDate` من `lib/date-format.ts` (UTC وأسماء أشهر ثابتة). `<noscript>` يكون في صفحة خادمية لا داخل مكوّن عميل.
 - **العنوان الرئيسي (h1)**: `TopBar` يعرض عنوانه `<p>` افتراضيًا لأن معظم الصفحات تعرض `h1` في المحتوى. لا تستخدم `titleAs="h1"` إلا في صفحة بلا عنوان داخلي (مثل الدخول والاستعادة). فلاتر المكتبة مرتبطة بتسمياتها عبر `htmlFor`/`id`؛ لا تترك `<select>` بلا تسمية.
 - **SEO**: لا تُكتب `| اسم المنصة` يدويًّا في `title` داخل `app/[lang]`؛ قالب `layout` يضيفه. صفحات المواد تضيف صورتها من أول وسيط `image` أو `/icon-512.png`، مع `hreflang` للترجمات فقط.
-- **PWA**: `app/manifest.ts` هو المصدر الوحيد لـ`/manifest.webmanifest`؛ لا تُعِد إنشاء ملف في `public/`. `start_url="/"` ليختار middleware لغة المتصفح.
+- **PWA**: لا يوجد `public/manifest.webmanifest` ولا `app/manifest.ts`. المولّد في `lib/manifest.ts` (`buildManifest(lang)`)، وتُخدَم النسختان `/ar/manifest.webmanifest` و`/en/manifest.webmanifest`، بينما `/manifest.webmanifest` احتياطي يختار اللغة من `Accept-Language`. `start_url="/"` ليختار middleware لغة المتصفح. `public/sw.js` (الإصدار `v4`) يخزّن البيانين مسبقًا؛ بعد أي تغيير في الأيقونات ارفع الإصدار.
 - **الرئيسية وISR**: `app/[lang]/page.tsx` يستخدم `revalidate = 60` بدل `force-dynamic`، فتُخزَّن صفحة `/ar` و`/en` في الحافة. أي تعديل محتوى عبر `/api/admin/content` أو `[id]` يستدعي `revalidatePublicContent()` من `lib/revalidate-public.ts` لإبطال الرئيسية والقوائم، وتعديلات الإعدادات تُبطلها مسار الإعدادات. لا تعِد `force-dynamic` بلا سبب؛ سترفع TTFB وتلغي التخزين.
 - **قياس الأداء الأولي**: Trace على `/ar` الإنتاجي أظهر ٠ مهام طويلة (>٥٠ms)، وCLS = ٠، وFCP/LCP ≈ ١٫٥–٢٫٠ث. بعد ISR صار `x-vercel-cache: HIT` وTTFB ≈ ٠٫٢–٠٫٤ث بدل ١٫٣–١٫٧ث. هذا ليس بديلًا عن Lighthouse؛ يتبقّى قياس LCP/INP على أجهزة وشبكات أبطأ.
+
+## ٧.٧) الإتاحة وبيانات التعريف لصفحات الحساب (2026-10-21)
+
+- **Lighthouse = ١٠٠** في Accessibility وBest Practices وSEO لأربعين مسارًا عربيًّا/إنجليزيًّا. القياس محلي على `npm start` قبل الفحص النهائي.
+- **تسلسل العناوين**: كل صفحة تبدأ بـ`h1` واحد؛ بطاقات `InfoCard` والنداءات `Callout` والفوتر صارت `h2`، وبطاقات الأذكار/الورد اليومي/نتائج البحث بلا عناوين تقفز مستويات.
+- **الأسماء البديلة**: أُزيلت `aria-label` التي تخالف النص المرئي في بطاقات المحتوى وزر الأذكار والورد اليومي؛ استُبدلت بـ`aria-pressed`/`aria-describedby` عند الحاجة، وبقيت التسمية الصغيرة للشعار للشاشات التي يُخفى فيها النص.
+- **تباين الألوان**: `--color-gold-700` صار `#7a5c0f` و`--color-gold-600` صار `#85650a`، و`text-primary-600` صار `text-primary-700`، و`bg-primary-600` صار `bg-primary-700`، مع إزالة خفض الشفافية عن النصوص (كانت تُسقط التباين). لا تعد إلى `text-gold-500` على خلفيات فاتحة للنصوص الصغيرة.
+- **بيانات SEO للصفحات الديناميكية**: `generateMetadata` لـ`forgot-password` · `reset-password` · `verify-email` في `layout.tsx` لا في الصفحة؛ الصفحة الديناميكية تبثّ بياناتها داخل `<body>` فلا يقرأها الزاحف. رمز الاستعادة/التحقق يُقرأ في العميل عبر `useSearchParams` داخل `Suspense`.
+- **اختبار نوع**: `tests/manifest.test.ts` يغطّي `buildManifest` (اللغة/الاتجاه/الاسم/الاختصارات/الأيقونات). شغّله مع `npm run test:unit`.
 
 ## ٨) migrations معلّقة على الإنتاج
 

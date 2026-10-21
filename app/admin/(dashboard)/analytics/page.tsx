@@ -99,7 +99,7 @@ export default async function AnalyticsPage({
               href={`/admin/analytics?range=${r.key}`}
               className={`rounded-full px-3 py-1 ${
                 r.key === range.key
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-primary-700 text-white'
                   : 'bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20'
               }`}
             >

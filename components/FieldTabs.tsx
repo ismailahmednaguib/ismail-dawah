@@ -77,7 +77,7 @@ export default function FieldTabs({
                 transition-colors duration-200 cursor-pointer
                 ${
                   activeTab === tab.id
-                    ? "text-primary-600 dark:text-primary-400"
+                    ? "text-primary-700 dark:text-primary-400"
                     : "text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
                 }
               `}

@@ -204,12 +204,12 @@ export default function Footer({
                   >
                     📬
                   </span>
-                  <h3
+                  <h2
                     className="text-2xl font-bold"
                     style={{ fontFamily: "var(--font-amiri)" }}
                   >
                     {t(lang, "newsletter_title")}
-                  </h3>
+                  </h2>
                 </div>
                 <p className="leading-relaxed text-primary-100">
                   {t(lang, "newsletter_desc")}
@@ -360,9 +360,9 @@ export default function Footer({
 
           {visibleColumns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <h4 className="mb-4 font-bold" style={{ color: "#d4af37" }}>
+              <h3 className="mb-4 font-bold" style={{ color: "#d4af37" }}>
                 {col.title}
-              </h4>
+              </h3>
               <ul className="flex flex-col gap-2.5">
                 {col.links.map((link) => (
                   <li key={link.href}>

@@ -444,7 +444,7 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
       <div className="card mb-8 p-6 md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="mb-1 text-sm font-bold text-primary-600 dark:text-primary-400">
+            <p className="mb-1 text-sm font-bold text-primary-700 dark:text-primary-400">
               {ui.currentLocation}
             </p>
 
@@ -575,7 +575,7 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
       {/* ===== حالة الخطأ ===== */}
       {error && (
         <div className="card mb-8 border-red-200 p-6 text-center dark:border-red-900/40">
-          <p className="mb-4 text-red-600 dark:text-red-300">{error}</p>
+          <p className="mb-4 text-red-700 dark:text-red-300">{error}</p>
           <button
             type="button"
             onClick={() => setError(null)}
@@ -603,7 +603,7 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
               >
                 {/* علامات الاتجاهات */}
                 {[
-                  { angle: 0, label: ui.north, color: "text-red-600" },
+                  { angle: 0, label: ui.north, color: "text-red-700" },
                   { angle: 90, label: ui.east, color: "text-slate-500" },
                   { angle: 180, label: ui.south, color: "text-slate-500" },
                   { angle: 270, label: ui.west, color: "text-slate-500" },
@@ -700,13 +700,13 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
             {/* معلومات القبلة */}
             <div className="w-full max-w-md">
               <div className="card mb-5 p-6">
-                <p className="mb-2 text-sm font-bold text-primary-600 dark:text-primary-400">
+                <p className="mb-2 text-sm font-bold text-primary-700 dark:text-primary-400">
                   {ui.qiblaDirection}
                 </p>
 
                 <p className="text-5xl font-black text-slate-900 md:text-6xl dark:text-white">
                   {formatNumber(Math.round(qibla.bearing), lang)}
-                  <span className="ms-1 text-2xl text-gold-500">
+                  <span className="ms-1 text-2xl text-gold-600">
                     {ui.degrees}
                   </span>
                 </p>

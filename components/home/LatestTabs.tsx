@@ -90,7 +90,7 @@ export default function LatestTabs({
               onClick={() => setActive(row.key)}
               className={`rounded-full border px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
                 selected
-                  ? "border-primary-700 bg-primary-700 text-white shadow-sm dark:border-primary-500 dark:bg-primary-600"
+                  ? "border-primary-700 bg-primary-700 text-white shadow-sm dark:border-primary-500 dark:bg-primary-700"
                   : "border-black/10 bg-white/70 text-slate-700 hover:border-primary-400 hover:text-primary-700 dark:border-white/15 dark:bg-night-800/70 dark:text-slate-200 dark:hover:text-primary-200"
               }`}
             >

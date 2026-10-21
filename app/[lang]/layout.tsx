@@ -33,6 +33,7 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL(baseUrl),
+    manifest: `/${l}/manifest.webmanifest`,
     title: {
       default: siteName,
       template: isRTL ? `%s | ${siteName}` : `%s | ${siteName}`,

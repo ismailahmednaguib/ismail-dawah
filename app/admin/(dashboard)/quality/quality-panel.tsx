@@ -308,7 +308,7 @@ export default function QualityPanel() {
               onClick={() => setFilter(f.key)}
               className={`rounded-full px-3 py-1 text-xs ${
                 filter === f.key
-                  ? "bg-primary-600 text-white"
+                  ? "bg-primary-700 text-white"
                   : "bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20"
               }`}
             >
@@ -367,7 +367,7 @@ export default function QualityPanel() {
                     </td>
                     <td className="p-3 text-xs">
                       {bodyLength === 0 ? (
-                        <span className="text-red-600 dark:text-red-400">فارغ</span>
+                        <span className="text-red-700 dark:text-red-400">فارغ</span>
                       ) : bodyLength < 220 ? (
                         <span className="text-amber-600 dark:text-amber-400">
                           {bodyLength} حرفًا
@@ -378,7 +378,7 @@ export default function QualityPanel() {
                     </td>
                     <td className="p-3 text-xs">
                       {row.is_reviewed ? (
-                        <span className="text-primary-600 dark:text-primary-400">
+                        <span className="text-primary-700 dark:text-primary-400">
                           ✔ مُعتمَدة
                           {row.reviewed_at
                             ? ` · ${new Date(row.reviewed_at).toLocaleDateString("ar")}`

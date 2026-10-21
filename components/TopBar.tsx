@@ -131,7 +131,7 @@ export default function TopBar({
                       {crumb.href ? (
                         <Link
                           href={crumb.href}
-                          className="transition-colors hover:text-primary-600 dark:hover:text-primary-300"
+                          className="transition-colors hover:text-primary-700 dark:hover:text-primary-300"
                         >
                           {crumb.label}
                         </Link>

@@ -379,14 +379,14 @@ export default function LoginForm({ lang }: { lang: Lang }) {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+                  className="h-4 w-4 rounded border-slate-300 text-primary-700 focus:ring-primary-500"
                 />
                 {t.rememberMe}
               </label>
 
               <Link
                 href={`/${lang}/forgot-password`}
-                className="text-sm font-bold text-primary-700 hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200"
+                className="text-sm font-bold text-primary-700 hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200"
               >
                 {t.forgotPassword}
               </Link>
@@ -457,7 +457,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
               <button
                 type="button"
                 onClick={() => setMode(mode === "login" ? "register" : "login")}
-                className="font-black text-primary-700 hover:text-primary-600 hover:underline dark:text-primary-300 dark:hover:text-primary-200"
+                className="font-black text-primary-700 hover:text-primary-700 hover:underline dark:text-primary-300 dark:hover:text-primary-200"
               >
                 {mode === "login" ? t.registerNow : t.loginNow}
               </button>

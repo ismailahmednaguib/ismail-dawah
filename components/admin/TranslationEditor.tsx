@@ -141,7 +141,7 @@ export default function TranslationEditor({
           {/* العمود الأيمن: الأصل */}
           <div className="space-y-4">
             <h3 className="font-bold text-stone-700 dark:text-gray-300 flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary-600 rounded-full" />
+              <span className="w-2 h-2 bg-primary-700 rounded-full" />
               النص الأصلي (العربية)
             </h3>
 
@@ -175,7 +175,7 @@ export default function TranslationEditor({
           {/* العمود الأيسر: الترجمة */}
           <div className="space-y-4">
             <h3 className="font-bold text-stone-700 dark:text-gray-300 flex items-center gap-2">
-              <span className="w-2 h-2 bg-primary-600 rounded-full" />
+              <span className="w-2 h-2 bg-primary-700 rounded-full" />
               الترجمة ({langInfo?.nativeName})
             </h3>
 

@@ -504,7 +504,7 @@ export default async function SurahPage({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.2"
-                className="shrink-0 text-primary-600 transition-transform group-hover:-translate-x-1 rtl:rotate-180 dark:text-primary-300"
+                className="shrink-0 text-primary-700 transition-transform group-hover:-translate-x-1 rtl:rotate-180 dark:text-primary-300"
               >
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
@@ -539,7 +539,7 @@ export default async function SurahPage({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.2"
-                className="shrink-0 text-primary-600 transition-transform group-hover:translate-x-1 rtl:rotate-180 dark:text-primary-300"
+                className="shrink-0 text-primary-700 transition-transform group-hover:translate-x-1 rtl:rotate-180 dark:text-primary-300"
               >
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

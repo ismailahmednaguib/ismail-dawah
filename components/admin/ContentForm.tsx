@@ -226,7 +226,7 @@ export default function ContentForm() {
                 onClick={() => setAudience(toggle(audience, a.value))}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   audience.includes(a.value)
-                    ? 'bg-primary-600 text-white border-primary-600'
+                    ? 'bg-primary-700 text-white border-primary-600'
                     : 'border-primary-200 text-slate-600 dark:border-night-700 dark:text-slate-300'
                 }`}
               >
@@ -287,7 +287,7 @@ export default function ContentForm() {
                 onClick={() => setMadhhabs(toggle(madhhabs, madhhab.value))}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   madhhabs.includes(madhhab.value)
-                    ? 'bg-primary-600 text-white border-primary-600'
+                    ? 'bg-primary-700 text-white border-primary-600'
                     : 'border-primary-200 text-slate-600 dark:border-night-700 dark:text-slate-300'
                 }`}
               >

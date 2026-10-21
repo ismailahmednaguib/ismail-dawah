@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 type State =
   | "idle"
@@ -24,12 +25,12 @@ type ResetResponse = {
 
 export default function ResetPasswordClient({
   lang,
-  token,
 }: {
   lang: "ar" | "en";
-  token: string;
 }) {
   const isRTL = lang === "ar";
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? "";
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [state, setState] = useState<State>(token ? "idle" : "missing");
@@ -305,7 +306,7 @@ export default function ResetPasswordClient({
             className="input-islamic"
           />
           {confirm && password !== confirm && (
-            <p className="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+            <p className="mt-1 text-xs font-bold text-red-700 dark:text-red-400">
               ⚠️ {copy.mismatch}
             </p>
           )}

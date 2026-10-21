@@ -177,7 +177,7 @@ export default function ContentMediaEditor({
               <span className="badge-primary">{mediaLabel(item.type)}</span>
               <span className="min-w-0 flex-1 truncate text-primary-900">{item.title || item.url}</span>
               {canEdit && (
-                <button type="button" onClick={() => removeMedia(item)} disabled={removing === item.id} className="text-xs text-red-600 hover:underline">
+                <button type="button" onClick={() => removeMedia(item)} disabled={removing === item.id} className="text-xs text-red-700 hover:underline">
                   {removing === item.id ? 'جارٍ الحذف...' : 'حذف'}
                 </button>
               )}

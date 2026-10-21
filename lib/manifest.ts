@@ -1,4 +1,4 @@
-// app/manifest.ts
+// lib/manifest.ts
 import type { MetadataRoute } from "next";
 
 // ============================================================
@@ -31,15 +31,7 @@ const COLORS = {
 // Types
 // ============================================================
 
-type ManifestLang = "ar" | "en";
-
-type MaybeParams = {
-  lang?: string;
-};
-
-type ManifestContext = {
-  params?: Promise<MaybeParams> | MaybeParams;
-};
+export type ManifestLang = "ar" | "en";
 
 type Shortcut = {
   name: string;
@@ -190,26 +182,10 @@ const MANIFEST_TEXT: Record<ManifestLang, ManifestText> = {
 };
 
 // ============================================================
-// Safe lang resolver
-// ============================================================
-
-async function resolveLang(ctx?: ManifestContext): Promise<ManifestLang> {
-  try {
-    const params = await ctx?.params;
-    return params?.lang === "en" ? "en" : "ar";
-  } catch {
-    return "ar";
-  }
-}
-
-// ============================================================
 // Manifest generator
 // ============================================================
 
-export default async function manifest(
-  ctx?: ManifestContext
-): Promise<MetadataRoute.Manifest> {
-  const lang = await resolveLang(ctx);
+export function buildManifest(lang: ManifestLang): MetadataRoute.Manifest {
   const text = MANIFEST_TEXT[lang];
 
   return {

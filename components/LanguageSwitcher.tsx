@@ -97,7 +97,7 @@ export default function LanguageSwitcher() {
                   <span className="text-lg">{lang.flag}</span>
                   <span className="font-medium">{lang.nativeName}</span>
                   {active && (
-                    <span className="ml-auto text-xs font-bold text-primary-600">
+                    <span className="ml-auto text-xs font-bold text-primary-700">
                       فعال
                     </span>
                   )}
@@ -185,7 +185,7 @@ export function LanguageSwitcherCompact() {
                 <span className="text-lg">{lang.flag}</span>
                 <span>{lang.nativeName}</span>
                 {active && (
-                  <span className="ml-auto text-xs font-bold text-primary-600">
+                  <span className="ml-auto text-xs font-bold text-primary-700">
                     فعال
                   </span>
                 )}

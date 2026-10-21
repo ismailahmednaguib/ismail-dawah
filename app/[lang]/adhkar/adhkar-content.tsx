@@ -244,7 +244,6 @@ function DhikrCard({
       role="button"
       tabIndex={disabled || done ? -1 : 0}
       aria-disabled={disabled || done}
-      aria-label={`${dhikr.text} — ${count}/${dhikr.count}`}
       onClick={!disabled && !done ? handleIncrement : undefined}
       onKeyDown={handleKeyDown}
       className={`card relative overflow-hidden p-5 transition-all duration-300 md:p-6 ${
@@ -253,7 +252,7 @@ function DhikrCard({
         done
           ? "border-primary-300 bg-primary-50/60 dark:border-primary-800/60 dark:bg-primary-950/20"
           : disabled
-          ? "opacity-70"
+          ? "cursor-wait"
           : "card-interactive cursor-pointer active:scale-[0.98]"
       }`}
     >
@@ -282,9 +281,7 @@ function DhikrCard({
 
       {/* نص الذكر */}
       <p
-        className={`mb-5 text-lg leading-loose text-slate-800 md:text-xl dark:text-slate-100 ${
-          done ? "opacity-60" : ""
-        }`}
+        className={`mb-5 text-lg leading-loose text-slate-800 md:text-xl dark:text-slate-100`}
         style={{ fontFamily: "var(--font-amiri)" }}
       >
         {dhikr.text}
@@ -312,7 +309,7 @@ function DhikrCard({
 
           <p className="mt-1 text-sm font-bold text-slate-700 dark:text-slate-200">
             {formatNumber(count, lang)}{" "}
-            <span className="text-slate-400 dark:text-slate-500">{ui.of}</span>{" "}
+            <span className="text-slate-500 dark:text-slate-400">{ui.of}</span>{" "}
             {formatNumber(dhikr.count, lang)}
           </p>
         </div>
@@ -322,7 +319,7 @@ function DhikrCard({
             <button
               type="button"
               onClick={handleResetClick}
-              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3 text-xs font-bold text-red-600 transition-all hover:bg-red-100 active:scale-95 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+              className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3 text-xs font-bold text-red-700 transition-all hover:bg-red-100 active:scale-95 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
             >
               <svg
                 width="14"
@@ -616,9 +613,9 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
         <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
         <div className="p-6 md:p-7">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-black text-slate-900 dark:text-white">
+            <h2 className="text-lg font-black text-slate-900 dark:text-white">
               📊 {ui.overallProgress}
-            </h3>
+            </h2>
             <button
               type="button"
               onClick={() => setShowSettings(!showSettings)}
@@ -769,7 +766,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
 
             <p className="text-sm text-slate-500 dark:text-slate-400">
               {ui.todaysProgress}:{" "}
-              <span className="font-bold text-primary-600 dark:text-primary-400">
+              <span className="font-bold text-primary-700 dark:text-primary-400">
                 {formatNumber(categoryStats.done, lang)}
               </span>{" "}
               {ui.of}{" "}
@@ -777,7 +774,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
                 {formatNumber(categoryStats.total, lang)}
               </span>
               {" · "}
-              <span className="text-primary-600 dark:text-primary-400">
+              <span className="text-primary-700 dark:text-primary-400">
                 {formatNumber(categoryStats.completedCount, lang)}/{formatNumber(categoryStats.adhkarCount, lang)} {ui.completed}
               </span>
             </p>
@@ -787,7 +784,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
             <div className="w-40 md:w-56">
               <div className="mb-2 flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
                 <span>{ui.progress}</span>
-                <span className="text-primary-600 dark:text-primary-400">
+                <span className="text-primary-700 dark:text-primary-400">
                   {formatNumber(categoryStats.percent, lang)}%
                 </span>
               </div>
@@ -807,7 +804,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
             <button
               type="button"
               onClick={resetCategory}
-              className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-bold text-red-600 transition-all hover:bg-red-100 active:scale-95 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+              className="inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-bold text-red-700 transition-all hover:bg-red-100 active:scale-95 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
             >
               <svg
                 width="16"

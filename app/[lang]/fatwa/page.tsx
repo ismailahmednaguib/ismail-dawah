@@ -558,7 +558,7 @@ export default async function FatwaPage({
 
               <Link
                 href={`/${l}/fatwa`}
-                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
               >
                 <svg
                   width="16"
@@ -724,7 +724,7 @@ export default async function FatwaPage({
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
             {ui.results}:{" "}
-            <span className="text-primary-600 dark:text-primary-400">
+            <span className="text-primary-700 dark:text-primary-400">
               {formatNumber(filteredFatwas.length, l)}
             </span>{" "}
             {ui.of}{" "}
@@ -735,7 +735,7 @@ export default async function FatwaPage({
 
           <Link
             href={`/${l}/contact`}
-            className="inline-flex items-center gap-2 text-sm font-bold text-primary-700 transition-colors hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200"
+            className="inline-flex items-center gap-2 text-sm font-bold text-primary-700 transition-colors hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200"
           >
             <svg
               width="18"

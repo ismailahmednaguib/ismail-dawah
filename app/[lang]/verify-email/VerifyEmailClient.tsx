@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 type Status =
   | "checking"
@@ -22,14 +23,10 @@ type VerifyResponse = {
   error?: string;
 };
 
-export default function VerifyEmailClient({
-  lang,
-  token,
-}: {
-  lang: "ar" | "en";
-  token: string;
-}) {
+export default function VerifyEmailClient({ lang }: { lang: "ar" | "en" }) {
   const isRTL = lang === "ar";
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") ?? "";
   const [status, setStatus] = useState<Status>(token ? "checking" : "missing");
 
   useEffect(() => {

@@ -92,7 +92,7 @@ const TONES = {
     line: "bg-gradient-to-r from-primary-300 via-primary-500 to-primary-300",
     badge:
       "bg-primary-50 text-primary-700 ring-primary-200 dark:bg-primary-900/30 dark:text-primary-300 dark:ring-primary-800/60",
-    text: "text-primary-600 dark:text-primary-400",
+    text: "text-primary-700 dark:text-primary-400",
     chip: "border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-800 dark:bg-primary-950/40 dark:text-primary-300",
   },
 } as const;
@@ -209,7 +209,7 @@ export default function SurahExplorer({
                     aria-pressed={active}
                     className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-all duration-200 ${
                       active
-                        ? "bg-primary-600 text-white shadow-md"
+                        ? "bg-primary-700 text-white shadow-md"
                         : "border border-primary-100 bg-white text-slate-600 hover:border-primary-300 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:text-primary-300"
                     }`}
                   >

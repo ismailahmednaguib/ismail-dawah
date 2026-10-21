@@ -137,7 +137,7 @@ export default function UsersClient({ session }: { session: AdminSession }) {
                       title={role.value === 'admin' && !user.roles.includes('admin') ? 'ترقية الحساب إلى مدير' : undefined}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium border transition ${
                         user.roles.includes(role.value)
-                          ? 'bg-primary-600 text-white border-primary-600'
+                          ? 'bg-primary-700 text-white border-primary-600'
                           : 'border-stone-300 dark:border-gray-600 text-stone-600 dark:text-gray-300 hover:border-primary-500'
                       }`}
                     >

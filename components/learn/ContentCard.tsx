@@ -12,13 +12,13 @@ type ContentTypeConfig = {
 
 const TYPE_CONFIG: Record<string, ContentTypeConfig> = {
   article: { icon: '📰', ar: 'مقال', en: 'Article', accent: 'bg-primary-500', badge: 'badge-primary' },
-  lesson: { icon: '📖', ar: 'درس', en: 'Lesson', accent: 'bg-primary-600', badge: 'badge-primary' },
+  lesson: { icon: '📖', ar: 'درس', en: 'Lesson', accent: 'bg-primary-700', badge: 'badge-primary' },
   course: { icon: '🎓', ar: 'دورة', en: 'Course', accent: 'bg-gold-500', badge: 'badge-gold' },
   book: { icon: '📚', ar: 'كتاب', en: 'Book', accent: 'bg-gold-600', badge: 'badge-gold' },
   fatwa: { icon: '⚖️', ar: 'فتوى', en: 'Fatwa', accent: 'bg-primary-700', badge: 'badge-primary' },
   khutbah: { icon: '🕌', ar: 'خطبة', en: 'Khutbah', accent: 'bg-primary-800', badge: 'badge-primary' },
   audio: { icon: '🎧', ar: 'صوت', en: 'Audio', accent: 'bg-primary-500', badge: 'badge-primary' },
-  video: { icon: '🎬', ar: 'فيديو', en: 'Video', accent: 'bg-primary-600', badge: 'badge-primary' },
+  video: { icon: '🎬', ar: 'فيديو', en: 'Video', accent: 'bg-primary-700', badge: 'badge-primary' },
   hadith: { icon: '💬', ar: 'حديث', en: 'Hadith', accent: 'bg-primary-700', badge: 'badge-primary' },
   duaa: { icon: '🤲', ar: 'دعاء', en: 'Duaa', accent: 'bg-gold-500', badge: 'badge-gold' },
   story: { icon: '📜', ar: 'قصة', en: 'Story', accent: 'bg-gold-600', badge: 'badge-gold' },
@@ -60,7 +60,6 @@ export default function ContentCard({
     <Link
       href={href}
       className="group card-interactive block"
-      aria-label={`${title} — ${isArabic ? config.ar : config.en}`}
     >
       <div className={`h-1.5 ${config.accent}`} aria-hidden="true" />
 
@@ -81,9 +80,9 @@ export default function ContentCard({
         </div>
 
         {title && (
-          <h3 className="mb-2 line-clamp-2 text-lg font-bold text-primary-950 transition-colors group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+          <h2 className="mb-2 line-clamp-2 text-lg font-bold text-primary-950 transition-colors group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
             {title}
-          </h3>
+          </h2>
         )}
 
         {isFallback && (

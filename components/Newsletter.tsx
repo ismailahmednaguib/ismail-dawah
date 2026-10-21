@@ -108,14 +108,14 @@ export default function Newsletter({ lang }: NewsletterProps) {
 
           <div role="status" aria-live="polite" className="min-h-6">
             {status === "done" && (
-              <p className="mt-3 animate-fade-in text-sm text-primary-600 dark:text-primary-400">
+              <p className="mt-3 animate-fade-in text-sm text-primary-700 dark:text-primary-400">
                 {isRTL
                   ? "✓ تم الاشتراك بنجاح! ستصلك أحدث المحتويات على بريدك."
                   : "✓ Subscribed successfully! You'll receive the latest content."}
               </p>
             )}
             {status === "error" && (
-              <p className="mt-3 animate-fade-in text-sm text-red-600 dark:text-red-400">
+              <p className="mt-3 animate-fade-in text-sm text-red-700 dark:text-red-400">
                 {isRTL
                   ? "✗ حدث خطأ، حاول مرة أخرى."
                   : "✗ Something went wrong, please try again."}

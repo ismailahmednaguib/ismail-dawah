@@ -531,7 +531,7 @@ export default async function AccountPage({
                   <div className="rounded-2xl bg-primary-50 px-5 py-3 text-center dark:bg-primary-900/30">
                     <div className="text-2xl font-black text-primary-800 dark:text-primary-200">
                       {progressSummary.completed}
-                      <span className="text-base font-medium text-primary-600 dark:text-primary-300">
+                      <span className="text-base font-medium text-primary-700 dark:text-primary-300">
                         /{progressSummary.total}
                       </span>
                     </div>

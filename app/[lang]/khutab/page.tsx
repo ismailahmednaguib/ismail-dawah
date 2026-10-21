@@ -527,7 +527,7 @@ export default function KhutabPage() {
             {/* زر العودة */}
             <button
               onClick={() => setSelectedId(null)}
-              className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-primary-700 transition-colors hover:text-primary-600 dark:text-primary-300 dark:hover:text-primary-200"
+              className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-primary-700 transition-colors hover:text-primary-700 dark:text-primary-300 dark:hover:text-primary-200"
             >
               <svg
                 width="16"

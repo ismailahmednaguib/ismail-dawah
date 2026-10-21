@@ -415,7 +415,6 @@ export default function Header({
           <Link
             href={localizedPath(lang, "")}
             className="flex shrink-0 items-center gap-3"
-            aria-label={brandName}
           >
             <span
               className="flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg"
@@ -446,11 +445,16 @@ export default function Header({
                 className={`block text-xs font-semibold ${
                   onDark
                     ? "text-primary-100"
-                    : "text-primary-600 dark:text-primary-300"
+                    : "text-primary-700 dark:text-primary-300"
                 }`}
               >
                 {brandTagline}
               </span>
+            </span>
+
+            {/* اسم بديل للشاشات الصغيرة حيث يُخفى نص الشعار */}
+            <span className="sr-only sm:hidden">
+              {brandName} {brandTagline}
             </span>
           </Link>
 
@@ -536,7 +540,7 @@ export default function Header({
                               className={`py-1 text-sm font-semibold transition-colors ${
                                 active
                                   ? "text-primary-700 dark:text-primary-200"
-                                  : "text-slate-600 hover:text-primary-600 dark:text-slate-300 dark:hover:text-primary-300"
+                                  : "text-slate-600 hover:text-primary-700 dark:text-slate-300 dark:hover:text-primary-300"
                               }`}
                             >
                               {it.label}
@@ -623,7 +627,9 @@ export default function Header({
               hrefLang={otherLang}
               lang={otherLang}
               aria-label={
-                isRTL ? "التبديل إلى الإنجليزية" : "Switch to Arabic"
+                isRTL
+                  ? `التبديل إلى الإنجليزية (${otherLang.toUpperCase()})`
+                  : `Switch to Arabic (${otherLang.toUpperCase()})`
               }
               className={`hidden h-10 items-center gap-1.5 rounded-xl border-2 px-3.5 text-sm font-black transition-all sm:flex ${langBtnClass}`}
             >

@@ -11,7 +11,7 @@
 //     وإلّا تعطّل التطبيق كله بسبب رابط واحد غير موجود.
 // ============================================================================
 
-const VERSION = "v3";
+const VERSION = "v4";
 const PAGE_CACHE = `ismail-pages-${VERSION}`;
 const STATIC_CACHE = `ismail-static-${VERSION}`;
 const OFFLINE_URL = "/offline.html";
@@ -20,6 +20,8 @@ const OFFLINE_URL = "/offline.html";
 const PRECACHE_URLS = [
   OFFLINE_URL,
   "/manifest.webmanifest",
+  "/ar/manifest.webmanifest",
+  "/en/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",
   "/apple-touch-icon.png",

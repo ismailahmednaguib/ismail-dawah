@@ -824,7 +824,7 @@ function StatCard({
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-red-600" />
           </span>
-          <p className="text-2xl font-black text-red-600 dark:text-red-400">LIVE</p>
+          <p className="text-2xl font-black text-red-700 dark:text-red-400">LIVE</p>
         </div>
       ) : (
         <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

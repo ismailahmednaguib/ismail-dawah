@@ -420,12 +420,12 @@ export default function RegisterPage() {
                         <span
                           className={`font-black ${
                             passwordStrength <= 2
-                              ? "text-red-600 dark:text-red-400"
+                              ? "text-red-700 dark:text-red-400"
                               : passwordStrength === 3
                               ? "text-amber-600 dark:text-amber-400"
                               : passwordStrength === 4
-                              ? "text-primary-600 dark:text-primary-400"
-                              : "text-primary-600 dark:text-primary-400"
+                              ? "text-primary-700 dark:text-primary-400"
+                              : "text-primary-700 dark:text-primary-400"
                           }`}
                         >
                           {strengthLabel}
@@ -461,7 +461,7 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                   />
                   {confirmPassword && password !== confirmPassword && (
-                    <p className="mt-1 text-xs font-bold text-red-600 dark:text-red-400">
+                    <p className="mt-1 text-xs font-bold text-red-700 dark:text-red-400">
                       ⚠️ {ui.passwordMismatch}
                     </p>
                   )}
@@ -517,7 +517,7 @@ export default function RegisterPage() {
                   {ui.hasAccount}{" "}
                   <Link
                     href={`/${L}/login`}
-                    className="font-black text-primary-700 hover:text-primary-600 hover:underline dark:text-primary-300 dark:hover:text-primary-200"
+                    className="font-black text-primary-700 hover:text-primary-700 hover:underline dark:text-primary-300 dark:hover:text-primary-200"
                   >
                     {ui.loginLink}
                   </Link>
@@ -529,12 +529,12 @@ export default function RegisterPage() {
             <div className="space-y-6">
               {/* فوائد التسجيل */}
               <div className="card p-6">
-                <h3
+                <h2
                   className="mb-5 text-xl font-black text-slate-900 dark:text-white"
                   style={{ fontFamily: "var(--font-amiri)" }}
                 >
                   🌟 {ui.benefitsTitle}
-                </h3>
+                </h2>
                 <ul className="space-y-3">
                   {[ui.benefit1, ui.benefit2, ui.benefit3, ui.benefit4, ui.benefit5].map(
                     (benefit, index) => (
@@ -558,12 +558,12 @@ export default function RegisterPage() {
                     🔒
                   </span>
                   <div>
-                    <h3
+                    <h2
                       className="mb-2 text-lg font-black text-slate-900 dark:text-white"
                       style={{ fontFamily: "var(--font-amiri)" }}
                     >
                       {ui.safeTitle}
-                    </h3>
+                    </h2>
                     <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                       {ui.safeDesc}
                     </p>

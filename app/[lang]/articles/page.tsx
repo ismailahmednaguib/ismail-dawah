@@ -655,7 +655,7 @@ export default async function ArticlesPage({
               {q && <span className="badge-gold">&quot;{q}&quot;</span>}
               <Link
                 href={`/${l}/articles`}
-                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
+                className="inline-flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 transition-all hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/30"
               >
                 <svg
                   width="16"
@@ -710,7 +710,7 @@ export default async function ArticlesPage({
         {gate.visible('k5') && (<>
         <p className="mb-6 text-sm font-semibold text-slate-500 dark:text-slate-400">
           {ui.results}:{" "}
-          <span className="text-primary-600 dark:text-primary-400">
+          <span className="text-primary-700 dark:text-primary-400">
             {formatNumber(filteredArticles.length, l)}
           </span>{" "}
           {ui.of}{" "}
@@ -776,7 +776,7 @@ export default async function ArticlesPage({
                   {ui.previous}
                 </Link>
               ) : (
-                <span className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-400 opacity-60 dark:border-night-700 dark:bg-night-800 dark:text-slate-500">
+                <span className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-500 dark:border-night-700 dark:bg-night-800 dark:text-slate-400">
                   <svg
                     width="16"
                     height="16"
@@ -839,7 +839,7 @@ export default async function ArticlesPage({
                   </svg>
                 </Link>
               ) : (
-                <span className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-400 opacity-60 dark:border-night-700 dark:bg-night-800 dark:text-slate-500">
+                <span className="inline-flex h-10 cursor-not-allowed items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-500 dark:border-night-700 dark:bg-night-800 dark:text-slate-400">
                   {ui.next}
                   <svg
                     width="16"

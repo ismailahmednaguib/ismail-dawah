@@ -296,12 +296,12 @@ function FeatureCard({
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
           {icon}
         </span>
-        <h3
+        <h2
           className="text-base font-black text-slate-900 dark:text-white"
           style={{ fontFamily: "var(--font-amiri)" }}
         >
           {title}
-        </h3>
+        </h2>
       </div>
 
       <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
