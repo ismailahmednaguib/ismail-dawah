@@ -11,10 +11,17 @@ import ResetPasswordClient from "./ResetPasswordClient";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "إعادة تعيين كلمة المرور | Reset password",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === "ar" ? "إعادة تعيين كلمة المرور" : "Reset password",
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function ResetPasswordPage({
   params,

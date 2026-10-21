@@ -11,10 +11,17 @@ import VerifyEmailClient from "./VerifyEmailClient";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "تفعيل البريد الإلكتروني | Verify your email",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === "ar" ? "تفعيل البريد الإلكتروني" : "Verify your email",
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function VerifyEmailPage({
   params,

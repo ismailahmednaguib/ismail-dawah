@@ -11,10 +11,17 @@ import ForgotPasswordClient from "./ForgotPasswordClient";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "نسيت كلمة المرور | Forgot password",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === "ar" ? "نسيت كلمة المرور" : "Forgot password",
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function ForgotPasswordPage({
   params,
