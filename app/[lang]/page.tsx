@@ -567,6 +567,10 @@ export default async function HomePage({
               </p>
             </div>
 
+            <noscript>
+              <style>{`[data-latest-panel][hidden]{display:block!important}`}</style>
+            </noscript>
+
             <LatestTabs
               lang={l}
               viewAll={ui.viewAll}

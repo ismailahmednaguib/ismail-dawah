@@ -100,11 +100,6 @@ export default function LatestTabs({
         })}
       </div>
 
-      {/* نُبقي كل اللوحات في HTML للفهرسة، ونخفي غير النشط بصريًّا فقط. */}
-      <noscript>
-        <style>{`[data-latest-panel][hidden]{display:block!important}`}</style>
-      </noscript>
-
       {available.map((row) => {
         const selected = row.key === current.key;
 
