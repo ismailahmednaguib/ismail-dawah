@@ -56,6 +56,21 @@ function settingText(
   return fallback;
 }
 
+function settingFlag(
+  settings: Record<string, any>,
+  key: string,
+  fallback: boolean
+): boolean {
+  const value = settings[key];
+  if (typeof value === "boolean") return value;
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    if (typeof record.ar === "boolean") return record.ar;
+    if (typeof record.en === "boolean") return record.en;
+  }
+  return fallback;
+}
+
 // ============================================================
 // نصوص الواجهة
 // ============================================================
@@ -463,7 +478,7 @@ export default async function HomePage({
       </section>
       )}
 
-      <PrayerWidget lang={l} />
+      {settingFlag(settings, "showPrayerBar", true) && <PrayerWidget lang={l} />}
 
       {/* ============ أبواب الموقع ============ */}
       {gate.visible('sections') && topGroups.length > 0 && (
