@@ -24,6 +24,20 @@ type FooterProps = {
 
 type Status = "idle" | "loading" | "done" | "error";
 
+function settingUrl(value: unknown, lang: Lang): string {
+  if (typeof value === "string") return value.trim();
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    for (const key of [lang, "ar", "en"]) {
+      const candidate = record[key];
+      if (typeof candidate === "string" && candidate.trim()) {
+        return candidate.trim();
+      }
+    }
+  }
+  return "";
+}
+
 export default function Footer({
   lang: langProp,
   settings,
@@ -82,11 +96,10 @@ export default function Footer({
     ["Telegram", effectiveSettings?.telegramUrl],
     ["X", effectiveSettings?.twitterUrl],
     ["Instagram", effectiveSettings?.instagramUrl],
-  ] as Array<[string, unknown]>).flatMap(([label, value]) =>
-    typeof value === "string" && /^https?:\/\//i.test(value.trim())
-      ? [[label, value.trim()]]
-      : []
-  );
+  ] as Array<[string, unknown]>).flatMap(([label, value]) => {
+    const url = settingUrl(value, lang);
+    return /^https?:\/\//i.test(url) ? [[label, url]] : [];
+  });
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
