@@ -35,6 +35,18 @@ type LiveSettings = {
   meetingLink: string;
 };
 
+function settingText(value: unknown, lang: Lang): string {
+  if (typeof value === "string") return value.trim();
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    const localized = record[lang];
+    if (typeof localized === "string" && localized.trim()) return localized.trim();
+    const arabic = record.ar;
+    if (typeof arabic === "string") return arabic.trim();
+  }
+  return "";
+}
+
 // ============================================================
 // بيانات احتياطية (fallback في حال فشل getContent)
 // ============================================================
@@ -294,29 +306,28 @@ export default async function LivePage({
   try {
     const { getContent } = await import("@/lib/content");
     const c = await getContent();
+    const s = __pageSettings as Record<string, unknown>;
 
-    if (c?.settings) {
-      settings = {
-        liveUrl: c.settings.liveUrl || FALLBACK_SETTINGS.liveUrl,
-        liveTitle: {
-          ar: c.settings.liveTitle?.ar || FALLBACK_SETTINGS.liveTitle.ar,
-          en: c.settings.liveTitle?.en || FALLBACK_SETTINGS.liveTitle.en,
-        },
-        meetingDay: {
-          ar: c.settings.meetingDay?.ar || c.settings.meetingDay || FALLBACK_SETTINGS.meetingDay.ar,
-          en: c.settings.meetingDay?.en || c.settings.meetingDay || FALLBACK_SETTINGS.meetingDay.en,
-        },
-        meetingTime: {
-          ar: c.settings.meetingTime?.ar || c.settings.meetingTime || FALLBACK_SETTINGS.meetingTime.ar,
-          en: c.settings.meetingTime?.en || c.settings.meetingTime || FALLBACK_SETTINGS.meetingTime.en,
-        },
-        meetingPlace: {
-          ar: c.settings.meetingPlace?.ar || c.settings.meetingPlace || FALLBACK_SETTINGS.meetingPlace.ar,
-          en: c.settings.meetingPlace?.en || c.settings.meetingPlace || FALLBACK_SETTINGS.meetingPlace.en,
-        },
-        meetingLink: c.settings.meetingLink || FALLBACK_SETTINGS.meetingLink,
-      };
-    }
+    settings = {
+      liveUrl: settingText(s.liveUrl, L) || FALLBACK_SETTINGS.liveUrl,
+      liveTitle: {
+        ar: settingText(s.liveTitle, "ar") || FALLBACK_SETTINGS.liveTitle.ar,
+        en: settingText(s.liveTitle, "en") || FALLBACK_SETTINGS.liveTitle.en,
+      },
+      meetingDay: {
+        ar: settingText(s.meetingDay, "ar") || FALLBACK_SETTINGS.meetingDay.ar,
+        en: settingText(s.meetingDay, "en") || FALLBACK_SETTINGS.meetingDay.en,
+      },
+      meetingTime: {
+        ar: settingText(s.meetingTime, "ar") || FALLBACK_SETTINGS.meetingTime.ar,
+        en: settingText(s.meetingTime, "en") || FALLBACK_SETTINGS.meetingTime.en,
+      },
+      meetingPlace: {
+        ar: settingText(s.meetingPlace, "ar") || FALLBACK_SETTINGS.meetingPlace.ar,
+        en: settingText(s.meetingPlace, "en") || FALLBACK_SETTINGS.meetingPlace.en,
+      },
+      meetingLink: settingText(s.meetingLink, L) || FALLBACK_SETTINGS.meetingLink,
+    };
 
     if (c?.schedule && Array.isArray(c.schedule) && c.schedule.length > 0) {
       schedule = c.schedule.map((s: any) => ({

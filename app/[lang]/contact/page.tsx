@@ -288,6 +288,24 @@ export default async function ContactPage({
   const ui = UI[l];
   const isRTL = l === "ar";
 
+  const settingText = (key: string) => {
+    const value = (__pageSettings as Record<string, unknown>)[key];
+    if (typeof value === "string") return value.trim();
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const record = value as Record<string, unknown>;
+      const localized = record[l];
+      if (typeof localized === "string" && localized.trim()) return localized.trim();
+      const arabic = record.ar;
+      if (typeof arabic === "string") return arabic.trim();
+    }
+    return "";
+  };
+
+  const contactEmail = settingText("email") || CONTACT_INFO.email;
+  const contactWhatsApp = settingText("wa") || CONTACT_INFO.whatsapp;
+  const contactPhone = settingText("wa") || CONTACT_INFO.phone;
+  const contactAddress = settingText("address") || getContactLocation(l);
+
   const sp = await searchParams;
   const status = getFirstValue(sp.status);
   const field = getFirstValue(sp.field);
@@ -347,17 +365,17 @@ export default async function ContactPage({
       : ui.errorGeneric;
 
   const socials = [
-    { key: "whatsapp", href: SOCIAL_LINKS.whatsapp, icon: "💬", ar: "واتساب", en: "WhatsApp" },
-    { key: "telegram", href: SOCIAL_LINKS.telegram, icon: "✈️", ar: "تيليجرام", en: "Telegram" },
-    { key: "facebook", href: SOCIAL_LINKS.facebook, icon: "📘", ar: "فيسبوك", en: "Facebook" },
-    { key: "twitter", href: SOCIAL_LINKS.twitter, icon: "🐦", ar: "إكس", en: "X" },
-    { key: "instagram", href: SOCIAL_LINKS.instagram, icon: "📸", ar: "إنستغرام", en: "Instagram" },
-    { key: "youtube", href: SOCIAL_LINKS.youtube, icon: "▶️", ar: "يوتيوب", en: "YouTube" },
+    { key: "whatsapp", href: contactWhatsApp ? `https://wa.me/${onlyDigits(contactWhatsApp)}` : SOCIAL_LINKS.whatsapp, icon: "💬", ar: "واتساب", en: "WhatsApp" },
+    { key: "telegram", href: settingText("telegramUrl") || SOCIAL_LINKS.telegram, icon: "✈️", ar: "تيليجرام", en: "Telegram" },
+    { key: "facebook", href: settingText("facebookUrl") || SOCIAL_LINKS.facebook, icon: "📘", ar: "فيسبوك", en: "Facebook" },
+    { key: "twitter", href: settingText("twitterUrl") || SOCIAL_LINKS.twitter, icon: "🐦", ar: "إكس", en: "X" },
+    { key: "instagram", href: settingText("instagramUrl") || SOCIAL_LINKS.instagram, icon: "📸", ar: "إنستغرام", en: "Instagram" },
+    { key: "youtube", href: settingText("youtubeUrl") || SOCIAL_LINKS.youtube, icon: "▶️", ar: "يوتيوب", en: "YouTube" },
     { key: "tiktok", href: SOCIAL_LINKS.tiktok, icon: "🎵", ar: "تيك توك", en: "TikTok" },
   ].filter((social) => !isPlaceholderLink(social.href));
 
-  const whatsappNumber = onlyDigits(CONTACT_INFO.whatsapp);
-  const phoneNumber = onlyDigits(CONTACT_INFO.phone);
+  const whatsappNumber = onlyDigits(contactWhatsApp);
+  const phoneNumber = onlyDigits(contactPhone);
 
   // JSON-LD
   const jsonLd = {
@@ -376,7 +394,7 @@ export default async function ContactPage({
         url: `/${l}`,
         contactPoint: {
           "@type": "ContactPoint",
-          email: !isPlaceholderLink(CONTACT_INFO.email) ? CONTACT_INFO.email : undefined,
+          email: !isPlaceholderLink(contactEmail) ? contactEmail : undefined,
           telephone: phoneNumber || undefined,
           contactType: "customer support",
           availableLanguage: ["Arabic", "English"],
@@ -672,9 +690,9 @@ export default async function ContactPage({
               </h2>
 
               <div className="space-y-4">
-                {!isPlaceholderLink(CONTACT_INFO.email) && (
+                {!isPlaceholderLink(contactEmail) && (
                   <a
-                    href={`mailto:${CONTACT_INFO.email}`}
+                    href={`mailto:${contactEmail}`}
                     className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:hover:border-primary-800 dark:hover:bg-night-800"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-xl dark:bg-primary-900/40">
@@ -685,7 +703,7 @@ export default async function ContactPage({
                         {ui.email}
                       </p>
                       <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">
-                        {CONTACT_INFO.email}
+                        {contactEmail}
                       </p>
                     </div>
                   </a>
@@ -706,13 +724,13 @@ export default async function ContactPage({
                         WhatsApp
                       </p>
                       <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">
-                        {CONTACT_INFO.whatsapp}
+                        {contactWhatsApp}
                       </p>
                     </div>
                   </a>
                 )}
 
-                {phoneNumber && !isPlaceholderLink(`tel:${phoneNumber}`) && (
+                {phoneNumber && phoneNumber !== whatsappNumber && !isPlaceholderLink(`tel:${phoneNumber}`) && (
                   <a
                     href={`tel:${phoneNumber}`}
                     className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:hover:border-primary-800 dark:hover:bg-night-800"
@@ -725,7 +743,7 @@ export default async function ContactPage({
                         {ui.phone}
                       </p>
                       <p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">
-                        {CONTACT_INFO.phone}
+                        {contactPhone}
                       </p>
                     </div>
                   </a>
@@ -740,7 +758,7 @@ export default async function ContactPage({
                       {ui.locationTitle}
                     </p>
                     <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
-                      {getContactLocation(l)}
+                      {contactAddress}
                     </p>
                   </div>
                 </div>

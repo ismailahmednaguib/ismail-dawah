@@ -572,7 +572,15 @@ export default async function AboutPage({
   const toolCount = aboutNav.find((node) => node.key === "tools")?.children?.length ?? 0;
   const settingText = (key: string) => {
     const value = (__pageSettings as Record<string, unknown>)[key];
-    return typeof value === "string" ? value.trim() : "";
+    if (typeof value === "string") return value.trim();
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const record = value as Record<string, unknown>;
+      const localized = record[l];
+      if (typeof localized === "string" && localized.trim()) return localized.trim();
+      const fallback = record.ar;
+      if (typeof fallback === "string") return fallback.trim();
+    }
+    return "";
   };
   const cred1 = settingText("cred1");
   const cred2 = settingText("cred2");
