@@ -237,9 +237,9 @@ interface FieldDef {
 }
 
 const FIELDS: FieldDef[] = [
-  { key: 'ownerName', label: 'اسم المنصة', type: 'text' },
-  { key: 'shortName', label: 'الاسم المختصر', type: 'text' },
-  { key: 'jobTitle', label: 'الوظيفة / المسمى', type: 'text' },
+  { key: 'ownerName', label: 'اسم المنصة', type: 'text', ar: true, en: true },
+  { key: 'shortName', label: 'الاسم المختصر', type: 'text', ar: true, en: true },
+  { key: 'jobTitle', label: 'الوظيفة / المسمى', type: 'text', ar: true, en: true },
   { key: 'motto', label: 'الشعار (Meta)', type: 'text', ar: true, en: true },
   { key: 'homeTitle', label: 'عنوان الصفحة الرئيسية', type: 'text', ar: true, en: true },
   { key: 'homeSubtitle', label: 'وصف الصفحة الرئيسية', type: 'textarea', ar: true, en: true },

@@ -55,7 +55,13 @@ const DEFAULT_SETTINGS: SettingsRecord = {
 };
 
 function text(value: unknown): string {
-  return typeof value === 'string' ? value : '';
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    if (typeof record.ar === 'string') return record.ar;
+    if (typeof record.en === 'string') return record.en;
+  }
+  return '';
 }
 
 function listText(value: unknown): string {
@@ -188,13 +194,20 @@ export default function SiteSettingsClient() {
   };
 
   const setLocalized = (key: string, lang: 'ar' | 'en', value: string) => {
-    setSettings((current) => ({
-      ...current,
-      [key]: {
-        ...(current[key] && typeof current[key] === 'object' ? current[key] : {}),
-        [lang]: value,
-      },
-    }));
+    setSettings((current) => {
+      const existing = current[key];
+      const base =
+        existing && typeof existing === 'object' && !Array.isArray(existing)
+          ? (existing as Record<string, unknown>)
+          : existing
+            ? { ar: String(existing), en: String(existing) }
+            : {};
+
+      return {
+        ...current,
+        [key]: { ...base, [lang]: value },
+      };
+    });
   };
 
   const setJourney = (patch: Record<string, unknown>) => {
@@ -263,6 +276,10 @@ export default function SiteSettingsClient() {
     );
   }
 
+  const brandName = text(settings.ownerName).trim();
+  const metaTitleAr = text(settings.metaTitle?.ar).trim();
+  const brandMismatch = Boolean(brandName && metaTitleAr && brandName !== metaTitleAr);
+
   return (
     <div className="space-y-6 pb-8">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -298,19 +315,25 @@ export default function SiteSettingsClient() {
 
       <Section title="الهوية والبيانات الأساسية" description="هذه البيانات تظهر في الهيدر والفوتر والصفحات التعريفية.">
         <div className="grid gap-4 md:grid-cols-2">
-          <InputField label="الاسم الكامل" value={text(settings.ownerName)} onChange={(value) => setValue('ownerName', value)} />
-          <InputField label="الاسم المختصر" value={text(settings.shortName)} onChange={(value) => setValue('shortName', value)} />
-          <InputField label="المسمى أو الصفة" value={text(settings.jobTitle)} onChange={(value) => setValue('jobTitle', value)} />
-          <InputField label="الشعار المختصر" value={text(settings.motto)} onChange={(value) => setValue('motto', value)} />
+          <InputField label="اسم المنصة (يظهر في الهيدر)" value={text(settings.ownerName)} onChange={(value) => setLocalized('ownerName', 'ar', value)} />
+          <InputField label="الاسم المختصر" value={text(settings.shortName)} onChange={(value) => setLocalized('shortName', 'ar', value)} />
+          <InputField label="المسمى أو الصفة" value={text(settings.jobTitle)} onChange={(value) => setLocalized('jobTitle', 'ar', value)} />
+          <InputField label="الشعار المختصر" value={text(settings.motto)} onChange={(value) => setLocalized('motto', 'ar', value)} />
           <InputField label="رابط الصورة الشخصية" value={text(settings.portraitSrc)} onChange={(value) => setValue('portraitSrc', value)} dir="ltr" placeholder="https://..." />
           <InputField label="رابط صورة المشاركة" value={text(settings.ogImage)} onChange={(value) => setValue('ogImage', value)} dir="ltr" placeholder="https://..." />
         </div>
+        {brandMismatch ? (
+          <p className="mt-4 rounded-xl border border-gold-500/40 bg-gold-500/10 p-3 text-sm leading-7 text-primary-950">
+            اسم المنصة في الهيدر («{brandName}») يختلف عن عنوان SEO العربي («{metaTitleAr}»).
+            وحّدهما لتظهر الهوية نفسها في الهيدر ومحركات البحث.
+          </p>
+        ) : null}
       </Section>
 
       <Section title="الصفحة الرئيسية" description="تحكم في الرسالة التي يراها الزائر أولًا.">
         <div className="space-y-4">
-          <InputField label="العنوان التمهيدي" value={text(settings.homeKicker)} onChange={(value) => setValue('homeKicker', value)} />
-          <TextareaField label="النص الرئيسي" value={text(settings.homeHeroText)} onChange={(value) => setValue('homeHeroText', value)} rows={5} />
+          <InputField label="العنوان التمهيدي" value={text(settings.homeKicker)} onChange={(value) => setLocalized('homeKicker', 'ar', value)} />
+          <TextareaField label="النص الرئيسي" value={text(settings.homeHeroText)} onChange={(value) => setLocalized('homeHeroText', 'ar', value)} rows={5} />
           {[
             ['homeTitle', 'عنوان الصفحة الرئيسية'],
             ['homeSubtitle', 'وصف الصفحة الرئيسية'],
