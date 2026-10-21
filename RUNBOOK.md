@@ -225,7 +225,8 @@ npm run fix:citations -- --commit     # كتابة
 
 ## ٧.٧) الإتاحة وبيانات التعريف لصفحات الحساب (2026-10-21)
 
-- **Lighthouse = ١٠٠** في Accessibility وBest Practices وSEO لأربعين مسارًا عربيًّا/إنجليزيًّا. القياس محلي على `npm start` قبل الفحص النهائي.
+- **Lighthouse = ١٠٠** في Accessibility وBest Practices وSEO لأربعين مسارًا عربيًّا/إنجليزيًّا محليًّا، ثم تأكّد على الإنتاج (`ismailahmednaguib.vercel.app`) لعشرة مسارات بعد النشر: `/ar` · `/en` · `/ar/download` · `/ar/register` · `/ar/fields` · `/ar/forgot-password` · `/ar/reset-password` · `/ar/verify-email` · `/ar/daily-wird` · `/ar/hadith` · `/ar/quran-memorization` · `/ar/account`.
+- **PWA على الإنتاج**: `<link rel="manifest">` صار `/ar/manifest.webmanifest` و`/en/manifest.webmanifest`، وكلاهما يرد ٢٠٠ باسم ولغة واتجاه صحيحين. `sw.js` v4 يسجّل ويتحكم في الصفحة وذاكرته `ismail-pages-v4`/`ismail-static-v4` تضم البيانين الثلاثة (اللغويين والاحتياطي).
 - **تسلسل العناوين**: كل صفحة تبدأ بـ`h1` واحد؛ بطاقات `InfoCard` والنداءات `Callout` والفوتر صارت `h2`، وبطاقات الأذكار/الورد اليومي/نتائج البحث بلا عناوين تقفز مستويات.
 - **الأسماء البديلة**: أُزيلت `aria-label` التي تخالف النص المرئي في بطاقات المحتوى وزر الأذكار والورد اليومي؛ استُبدلت بـ`aria-pressed`/`aria-describedby` عند الحاجة، وبقيت التسمية الصغيرة للشعار للشاشات التي يُخفى فيها النص.
 - **تباين الألوان**: `--color-gold-700` صار `#7a5c0f` و`--color-gold-600` صار `#85650a`، و`text-primary-600` صار `text-primary-700`، و`bg-primary-600` صار `bg-primary-700`، مع إزالة خفض الشفافية عن النصوص (كانت تُسقط التباين). لا تعد إلى `text-gold-500` على خلفيات فاتحة للنصوص الصغيرة.
