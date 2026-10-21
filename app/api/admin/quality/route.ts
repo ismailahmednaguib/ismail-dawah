@@ -1,6 +1,7 @@
 // app/api/admin/quality/route.ts
 // جودة المحتوى: ملخّص آلي + طابور مراجعة الترجمات (اعتماد/إلغاء) من اللوحة.
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
@@ -267,7 +268,7 @@ export async function POST(req: Request) {
   if (rawAction === 'approve-fatwa') {
     const { data: content, error: contentError } = await supabase
       .from('content')
-      .select('id, content_type, status, reviewer_id')
+      .select('id, content_type, status, reviewer_id, content_translations(lang, slug)')
       .eq('id', id)
       .maybeSingle();
 
@@ -341,6 +342,19 @@ export async function POST(req: Request) {
         () => undefined,
         () => undefined
       );
+
+    // صفحات الفتاوى مبنية مسبقًا (SSG)؛ نُبطلها ليظهر الاعتماد للزائر فورًا.
+    const translations = Array.isArray(content.content_translations)
+      ? (content.content_translations as Array<{ lang?: string; slug?: string }>)
+      : [];
+    for (const lang of ['ar', 'en']) {
+      revalidatePath(`/${lang}/fatwa`);
+    }
+    for (const translation of translations) {
+      if (translation.lang && translation.slug) {
+        revalidatePath(`/${translation.lang}/learn/fatwa/${translation.slug}`);
+      }
+    }
 
     return NextResponse.json({ ok: true, id, reviewed: true });
   }
