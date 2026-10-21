@@ -5,7 +5,7 @@
 // تقلل طول الرئيسية وتُبقي كل الأنواع على بُعد نقرة واحدة.
 // ============================================================
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import ContentCard from "@/components/learn/ContentCard";
 import type { PublicItem } from "@/lib/learn/public";
@@ -35,11 +35,45 @@ export default function LatestTabs({
 
   const isRTL = lang === "ar";
 
+  function focusTab(key: string) {
+    setActive(key);
+    requestAnimationFrame(() => {
+      document.getElementById(`latest-tab-${key}`)?.focus();
+    });
+  }
+
+  function handleTabListKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const index = available.findIndex((row) => row.key === current.key);
+
+    if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+      event.preventDefault();
+      const forward =
+        event.key === "ArrowRight" ? (isRTL ? -1 : 1) : isRTL ? 1 : -1;
+      const next = available[(index + forward + available.length) % available.length];
+      if (next) focusTab(next.key);
+      return;
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      if (available[0]) focusTab(available[0].key);
+      return;
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      const last = available[available.length - 1];
+      if (last) focusTab(last.key);
+    }
+  }
+
   return (
     <div>
       <div
         role="tablist"
         aria-label={isRTL ? "أحدث المحتوى" : "Latest content"}
+        aria-orientation="horizontal"
+        onKeyDown={handleTabListKeyDown}
         className="mb-6 flex flex-wrap justify-center gap-2"
       >
         {available.map((row) => {
@@ -52,6 +86,7 @@ export default function LatestTabs({
               id={`latest-tab-${row.key}`}
               aria-selected={selected}
               aria-controls={`latest-panel-${row.key}`}
+              tabIndex={selected ? 0 : -1}
               onClick={() => setActive(row.key)}
               className={`rounded-full border px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
                 selected
