@@ -586,6 +586,7 @@ export default async function AboutPage({
   const cred1 = settingText("cred1");
   const cred2 = settingText("cred2");
   const portraitSrc = settingText("portraitSrc");
+  const founderRole = settingText("jobTitle") || ui.founderRole;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -606,7 +607,7 @@ export default async function AboutPage({
       founder: {
         "@type": "Person",
         name: ui.founderName,
-        jobTitle: ui.founderRole,
+        jobTitle: founderRole,
       },
       sameAs: [],
     },
@@ -817,7 +818,7 @@ export default async function AboutPage({
                 {ui.founderName}
               </h2>
               <p className="mb-5 text-sm font-bold text-gold-700 dark:text-gold-300">
-                {ui.founderRole}
+                {founderRole}
               </p>
               <div className="space-y-4">
                 <p className="leading-relaxed text-slate-600 dark:text-slate-300">
