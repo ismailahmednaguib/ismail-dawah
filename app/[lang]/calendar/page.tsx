@@ -516,6 +516,7 @@ export default async function CalendarPage({
 
       <TopBar
         title={ui.title}
+        titleAs="h1"
         subtitle={ui.subtitle}
         backHref={`/${l}`}
         showBookmark={false}
@@ -578,12 +579,12 @@ export default async function CalendarPage({
           <div className="mx-auto max-w-3xl text-center">
             <span className="badge-primary mb-5">{ui.todayLabel}</span>
 
-            <h1
+            <h2
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
               {formatGregorian(today, l)}
-            </h1>
+            </h2>
 
             <p className="mb-8 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.hijriToday}:{" "}
