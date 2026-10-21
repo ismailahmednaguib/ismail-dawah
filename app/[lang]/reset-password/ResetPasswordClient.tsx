@@ -208,7 +208,7 @@ export default function ResetPasswordClient({
               ✅
             </span>
             <div>
-              <h1 className="text-xl font-black leading-relaxed">{copy.successTitle}</h1>
+              <h2 className="text-xl font-black leading-relaxed">{copy.successTitle}</h2>
               <p className="mt-2 text-sm leading-7">{copy.successBody}</p>
             </div>
           </div>
@@ -235,7 +235,7 @@ export default function ResetPasswordClient({
               {blockedState.icon}
             </span>
             <div>
-              <h1 className="text-xl font-black leading-relaxed">{blockedState.title}</h1>
+              <h2 className="text-xl font-black leading-relaxed">{blockedState.title}</h2>
               <p className="mt-2 text-sm leading-7">{blockedState.body}</p>
             </div>
           </div>
@@ -255,12 +255,12 @@ export default function ResetPasswordClient({
 
   return (
     <div className="card overflow-hidden p-6 md:p-8">
-      <h1
+      <h2
         className="text-2xl font-black text-slate-900 dark:text-white"
         style={{ fontFamily: "var(--font-amiri)" }}
       >
         {copy.title}
-      </h1>
+      </h2>
       <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
         {copy.body}
       </p>

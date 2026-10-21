@@ -208,7 +208,7 @@ export default function VerifyEmailClient({
           </span>
 
           <div className="min-w-0">
-            <h1 className="text-xl font-black leading-relaxed">{state.title}</h1>
+            <h2 className="text-xl font-black leading-relaxed">{state.title}</h2>
             <p className="mt-2 text-sm leading-7">{state.body}</p>
           </div>
         </div>
