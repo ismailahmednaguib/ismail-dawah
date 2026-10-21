@@ -207,6 +207,17 @@ npm run fix:citations -- --commit     # كتابة
 - اختبار حي (مستخدم مؤقت ثم حُذف): تسجيل 200 → دخول 200 → تغيير كلمة المرور 200 → كلمة المرور القديمة 401 → الجديدة 200 → الجلسة القديمة باطلة.
 - **تم تنفيذ** `20261018_public_content_read_repair.sql` — `npm run qa:rls` يمرّ: الجداول الخاصة محجوبة، و`content` · `content_translations` · `content_terms` متاحة للزائر. تبقى القراءة الخادمية بمفتاح الخدمة هي المسار المفضّل في البحث و`sitemap.xml` و`rss.xml`.
 
+## ٧.٦) ربط الإعدادات وإصلاحات الترطيب (2026-10-21)
+
+- **صفحة البث** `/{lang}/live` تقرأ `liveUrl` · `liveTitle` · `meetingDay` · `meetingTime` · `meetingPlace` · `meetingLink` من `getSiteSettings`، لا من `getContent().settings` القديمة. تعديلها من `/admin/settings` أو `/admin/control` يظهر بعد إعادة التحقق.
+- **صفحة التواصل** `/{lang}/contact` تقرأ `email` · `wa` · `address` وروابط فيسبوك/يوتيوب/تيليجرام/إكس/إنستغرام من اللوحة، مع الرجوع إلى `CONTACT_INFO`/`SOCIAL_LINKS` عند غيابها. رقم الواتساب يُستخدم للاتصال أيضًا، وتُخفى بطاقة الهاتف إن طابقته.
+- **صفحة «من نحن»** تعرض `cred1` · `cred2` · `portraitSrc` · `jobTitle` من الإعدادات. الحقول الثلاثة الأولى صارت قابلة للتحرير بالعربية والإنجليزية من `/admin/control`، ولا يفقد التعديل العربي النسخة الإنجليزية.
+- **القيم المنطقية**: `publicApiEnabled` و`showPrayerBar` مُدرجتان في `lib/settings-keys.ts` وتُخزَّنان بلا لغة. لا تعِد `Boolean(settings.flag)` لأن الكائن القديم `{ar:false}` يظهر truthy؛ استخدم `flag()` أو `boolValue()`.
+- **`showPrayerBar`** يتحكم الآن في كارت مواقيت الصلاة بالرئيسية. الافتراضي إظهاره.
+- **الترطيب (Hydration)**: لا تستخدم `toLocaleDateString` في مكوّن يُرسم على الخادم والعميل معًا. استخدم `formatPublishDate` من `lib/date-format.ts` (UTC وأسماء أشهر ثابتة). `<noscript>` يكون في صفحة خادمية لا داخل مكوّن عميل.
+- **SEO**: لا تُكتب `| اسم المنصة` يدويًّا في `title` داخل `app/[lang]`؛ قالب `layout` يضيفه. صفحات المواد تضيف صورتها من أول وسيط `image` أو `/icon-512.png`، مع `hreflang` للترجمات فقط.
+- **PWA**: `app/manifest.ts` هو المصدر الوحيد لـ`/manifest.webmanifest`؛ لا تُعِد إنشاء ملف في `public/`. `start_url="/"` ليختار middleware لغة المتصفح.
+
 ## ٨) migrations معلّقة على الإنتاج
 
 هذه ملفات تُنفَّذ **يدويًّا** في SQL Editor بلوحة Supabase (لا يوجد مسار آلي لها):
