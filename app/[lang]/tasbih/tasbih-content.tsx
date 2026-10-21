@@ -350,12 +350,12 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
                 {ui.current}
               </p>
 
-              <h1
+              <h2
                 className="text-2xl font-black leading-relaxed text-slate-900 md:text-3xl dark:text-white"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
                 {phraseLabel(selectedPhrase, lang)}
-              </h1>
+              </h2>
             </div>
 
             {selectedPhrase.virtue && (
