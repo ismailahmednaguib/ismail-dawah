@@ -8,6 +8,7 @@ import { getAdminSession, hasAnyRole } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
 import { listContent } from '@/lib/admin/content-service';
 import { createContent } from '@/lib/supabase/admin';
+import { revalidatePublicContent } from '@/lib/revalidate-public';
 
 export async function GET(req: NextRequest) {
   const session = await getAdminSession();
@@ -42,6 +43,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const content = await createContent(body, session.userId);
+    revalidatePublicContent();
     return NextResponse.json({ content }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });

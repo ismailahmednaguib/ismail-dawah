@@ -13,6 +13,7 @@ import {
   updateContentDetails,
   deleteContent,
 } from '@/lib/admin/content-service';
+import { revalidatePublicContent } from '@/lib/revalidate-public';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -68,10 +69,12 @@ export async function PUT(req: NextRequest, { params }: Params) {
       }
 
       await setStatus(id, body.status, session.userId);
+      revalidatePublicContent();
       return NextResponse.json({ success: true });
     }
 
     const content = await updateContentDetails(id, body, session.userId);
+    revalidatePublicContent();
     return NextResponse.json({ success: true, content });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });
@@ -86,6 +89,7 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { id } = await params;
   try {
     await deleteContent(id);
+    revalidatePublicContent();
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 400 });

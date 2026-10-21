@@ -21,8 +21,9 @@ import {
   type NavNode,
 } from "@/lib/navigation";
 
-// المحتوى يُقرأ من قاعدة البيانات وقت الطلب حتى تظهر تعديلات لوحة التحكم فورًا.
-export const dynamic = "force-dynamic";
+// نستخدم ISR قصيرًا بدل force-dynamic: صفحات الرئيسية تُخزَّن في الحافة،
+// وتعديلات الإعدادات تُحدَّث فورًا عبر revalidatePath من مسار الإدارة.
+export const revalidate = 60;
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"
