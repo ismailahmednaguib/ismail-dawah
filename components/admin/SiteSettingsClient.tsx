@@ -396,9 +396,9 @@ export default function SiteSettingsClient() {
         <div className="grid gap-4 md:grid-cols-2">
           <InputField label="البريد الإلكتروني" value={text(settings.email)} onChange={(value) => setValue('email', value)} dir="ltr" />
           <InputField label="واتساب أو هاتف" value={text(settings.wa)} onChange={(value) => setValue('wa', value)} dir="ltr" />
-          <InputField label="العنوان" value={text(settings.address)} onChange={(value) => setValue('address', value)} />
-          <InputField label="اعتماد أو مؤهل أول" value={text(settings.cred1)} onChange={(value) => setValue('cred1', value)} />
-          <InputField label="اعتماد أو مؤهل ثانٍ" value={text(settings.cred2)} onChange={(value) => setValue('cred2', value)} />
+          <InputField label="العنوان" value={text(settings.address)} onChange={(value) => setLocalized('address', 'ar', value)} />
+          <InputField label="اعتماد أو مؤهل أول" value={text(settings.cred1)} onChange={(value) => setLocalized('cred1', 'ar', value)} />
+          <InputField label="اعتماد أو مؤهل ثانٍ" value={text(settings.cred2)} onChange={(value) => setLocalized('cred2', 'ar', value)} />
         </div>
       </Section>
 
