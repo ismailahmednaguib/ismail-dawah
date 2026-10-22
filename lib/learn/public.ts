@@ -9,6 +9,7 @@
 
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
+import { mergeTermTranslations } from './terms';
 
 function getClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -200,23 +201,7 @@ async function localizeTermList(
 
   if (error || !Array.isArray(data)) return terms;
 
-  const byKey = new Map<string, PublicTerm>();
-  for (const row of data as PublicTerm[]) {
-    byKey.set(`${row.slug}\u0000${row.kind}`, row);
-  }
-
-  return terms.map((term) => {
-    const translation = byKey.get(`${term.slug}\u0000${term.kind}`);
-    if (!translation) return term;
-    return {
-      ...term,
-      id: translation.id,
-      name: translation.name,
-      lang: translation.lang ?? lang,
-      icon: translation.icon ?? term.icon,
-      color: translation.color ?? term.color,
-    };
-  });
+  return mergeTermTranslations(terms, data as PublicTerm[], lang);
 }
 
 /** يطبّق ترجمة التصنيفات على قائمة عناصر، مع الحفاظ على ترتيب كل عنصر. */

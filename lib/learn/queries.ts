@@ -1,6 +1,7 @@
 // lib/learn/queries.ts
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
+import { mergeTermTranslations, type TermLike } from './terms';
 import type {
   ContentType,
   Audience,
@@ -101,6 +102,31 @@ function onlyVerifiedReferences<T extends { verified?: boolean }>(
   references: T[] | null | undefined
 ): T[] {
   return (references ?? []).filter((reference) => reference.verified === true);
+}
+
+/**
+ * التصنيفات المرتبطة بالمحتوى تشير إلى الصف العربي دائمًا، فنستبدلها
+ * بترجمتها (نفس slug + kind) قبل عرضها في صفحة المادة.
+ */
+async function localizeTerms(
+  supabase: ReturnType<typeof getClient>,
+  terms: any[],
+  lang: string
+): Promise<any[]> {
+  if (lang === 'ar' || terms.length === 0) return terms;
+
+  const slugs = [...new Set(terms.map((term) => term?.slug).filter(Boolean))];
+  if (slugs.length === 0) return terms;
+
+  const { data, error } = (await supabase
+    .from('taxonomies')
+    .select('id, kind, parent_id, name, slug, icon, color, lang')
+    .eq('lang', lang)
+    .in('slug', slugs)) as { data: any; error: any };
+
+  if (error || !Array.isArray(data)) return terms;
+
+  return mergeTermTranslations(terms as TermLike[], data as TermLike[], lang);
 }
 
 async function addReviewerName(
@@ -275,12 +301,16 @@ export async function getContentBySlug(
   if (!content || content.status !== 'published') return null;
   if (content.content_type !== type) return null;
 
+  const rawTerms = (content.content_terms ?? [])
+    .map((ct: any) => ct.taxonomies)
+    .filter(Boolean);
+
   return {
     ...(await addReviewerName(supabase, content)),
     translation: data,
     references: onlyVerifiedReferences(content.content_references),
     media: content.content_media ?? [],
-    terms: (content.content_terms ?? []).map((ct: any) => ct.taxonomies),
+    terms: await localizeTerms(supabase, rawTerms, lang),
   };
 }
 // إضافة إلى lib/learn/queries.ts
@@ -304,6 +334,10 @@ export async function getContentWithFallback(
     translated.content?.status === 'published' &&
     translated.content?.content_type === type
   ) {
+    const rawTerms = (translated.content.content_terms ?? [])
+      .map((ct: any) => ct.taxonomies)
+      .filter(Boolean);
+
     return {
       ...(await addReviewerName(supabase, translated.content)),
       translation: translated,
@@ -311,7 +345,7 @@ export async function getContentWithFallback(
       translationLang: lang,
       references: onlyVerifiedReferences(translated.content.content_references),
       media: translated.content.content_media ?? [],
-      terms: (translated.content.content_terms ?? []).map((ct: any) => ct.taxonomies),
+      terms: await localizeTerms(supabase, rawTerms, lang),
     };
   }
 
@@ -325,6 +359,10 @@ export async function getContentWithFallback(
   );
 
   if (fallback && fallback.content?.status === 'published') {
+    const rawTerms = (fallback.content.content_terms ?? [])
+      .map((ct: any) => ct.taxonomies)
+      .filter(Boolean);
+
     return {
       ...(await addReviewerName(supabase, fallback.content)),
       translation: fallback,
@@ -333,7 +371,7 @@ export async function getContentWithFallback(
       originalLang: fallback.content.lang_original,
       references: onlyVerifiedReferences(fallback.content.content_references),
       media: fallback.content.content_media ?? [],
-      terms: (fallback.content.content_terms ?? []).map((ct: any) => ct.taxonomies),
+      terms: await localizeTerms(supabase, rawTerms, lang),
     };
   }
 

@@ -100,22 +100,34 @@ export async function generateMetadata({
   if (!isValidLang(lang)) return {};
 
   const l = lang as Lang;
-  const fields = await getPublicTaxonomies(l, "field");
-  const field = fields.find((f) => f.slug === slug);
+  // نبحث عن التصنيف في كل الأنواع (مجال/فرع/تحت-فرع/تصنيف) كما تفعل الصفحة،
+  // وإلا رجعت صفحات الفروع بلا عنوان أو بوصف الصفحة الرئيسية.
+  const [fields, branches, subbranches, categories] = await Promise.all([
+    getPublicTaxonomies(l, "field"),
+    getPublicTaxonomies(l, "branch"),
+    getPublicTaxonomies(l, "subbranch"),
+    getPublicTaxonomies(l, "category"),
+  ]);
+  const field = [...fields, ...branches, ...subbranches, ...categories].find(
+    (item) => item.slug === slug
+  );
   if (!field) return {};
+
+  const description = `${field.name} — ${UI[l].topicsDesc}`;
+  const path = `/${l}/fields/${encodeURIComponent(slug)}`;
 
   return {
     title: field.name,
-    description: field.name,
+    description,
     alternates: {
-      canonical: `/${l}/fields/${slug}`,
-      languages: { ar: `/ar/fields/${slug}`, en: `/en/fields/${slug}` },
+      canonical: path,
+      languages: { ar: `/ar/fields/${encodeURIComponent(slug)}`, en: `/en/fields/${encodeURIComponent(slug)}` },
     },
     openGraph: {
       siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: field.name,
-      description: field.name,
-      url: `/${l}/fields/${slug}`,
+      description,
+      url: path,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "article",
       images: [{ url: `/og/og-${l}.png`, width: 1200, height: 630, alt: field.name }],
@@ -123,7 +135,7 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       title: field.name,
-      description: field.name,
+      description,
       images: [`/og/og-${l}.png`],
     },
   };

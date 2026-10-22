@@ -44,10 +44,7 @@ const SITE_DESCRIPTION_AR =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
+  title: SITE_NAME,
 
   description: SITE_DESCRIPTION_AR,
 

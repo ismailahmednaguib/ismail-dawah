@@ -20,9 +20,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang: rawLang, slug: rawSlug } = await params;
   const lang = isValidLang(rawLang) ? (rawLang as Lang) : 'ar';
   const resource = getReligionResource(decodeParam(rawSlug));
+  const section = lang === 'ar' ? 'الأديان والفكر' : 'Religions & Thought';
   return resource
-    ? { title: `${localized(resource.title, lang)} | الأديان والفكر`, description: localized(resource.summary, lang) }
-    : { title: 'غير موجود' };
+    ? {
+        title: `${localized(resource.title, lang)} | ${section}`,
+        description: localized(resource.summary, lang),
+        alternates: { canonical: `/${lang}/religions/resources/${resource.slug}` },
+      }
+    : { title: lang === 'ar' ? 'غير موجود' : 'Not found' };
 }
 
 export default async function ReligionsResourcePage({ params }: PageProps) {
