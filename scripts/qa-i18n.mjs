@@ -52,6 +52,7 @@ const PATHS = [
   '/en/religions/resources/questions',
   '/en/prayer-guide',
   '/en/quran-memorization',
+  '/en/tasbih',
   '/en/calendar',
   '/en/dawah-guide',
   '/en/embrace-islam',
