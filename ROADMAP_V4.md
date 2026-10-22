@@ -132,6 +132,7 @@ npm run qa:content
 npm run qa:review
 npm run qa:citations
 npm run qa:theme
+npm run qa:i18n -- --base=http://localhost:3000 --full
 npm run qa:rls
 npm run qa:matrix
 ```

@@ -99,6 +99,9 @@ jobs:
       - name: كل روابط المحتوى (٤٣٨ رابطًا)
         run: npm run check:smoke
 
+      - name: تسرّب العربية إلى الواجهة الإنجليزية (إلزامي)
+        run: npm run qa:i18n -- --base=http://localhost:3000 --full
+
       - name: تغطية التصنيفات
         run: npm run check:tax
 
