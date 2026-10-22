@@ -19,7 +19,7 @@ type FilterOption = { value: string; icon?: string; ar: string; en: string };
 
 const TYPE_OPTIONS: FilterOption[] = [
   { value: '', ar: 'الكل', en: 'All' },
-  { value: 'quran', icon: '📖', ar: 'القرآن', en: 'Quran' },
+  { value: 'quran', icon: '📖', ar: 'السور', en: 'Surahs' },
   { value: 'article', icon: '📰', ar: 'مقالات', en: 'Articles' },
   { value: 'lesson', icon: '📖', ar: 'دروس', en: 'Lessons' },
   { value: 'course', icon: '🎓', ar: 'دورات', en: 'Courses' },
@@ -80,7 +80,7 @@ const TYPE_ICONS: Record<string, string> = {
 
 const COPY: Record<string, any> = {
   ar: {
-    placeholder: '🔍 ابحث في القرآن، الأحاديث، المقالات، الفتاوى، والدروس...',
+    placeholder: '🔍 ابحث في أسماء السور، الأحاديث، المقالات، الفتاوى، والدروس...',
     type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى', madhhab: 'المذهب',
     results: (count: number) => (count > 0 ? count + ' نتيجة' : 'لا توجد نتائج'),
     noResults: (query: string) => 'لم نعثر على نتائج لـ "' + query + '"',
@@ -88,7 +88,7 @@ const COPY: Record<string, any> = {
     minQuery: 'اكتب كلمتين على الأقل لبدء البحث.', dateLocale: 'ar-EG',
   },
   en: {
-    placeholder: '🔍 Search Quran, hadith, articles, fatwas, and lessons...',
+    placeholder: '🔍 Search surah names, hadith, articles, fatwas, and lessons...',
     type: 'Content type', audience: 'Audience', age: 'Age group', level: 'Level', madhhab: 'Madhhab',
     results: (count: number) => (count > 0 ? count + ' results' : 'No results'),
     noResults: (query: string) => 'No results found for "' + query + '"',

@@ -26,6 +26,7 @@ const SCOPE_LABELS: Record<string, string> = {
   analytics: 'أحداث التحليلات',
   verify: 'روابط التحقق',
   upload: 'رفع الملفات',
+  search: 'البحث العام',
 };
 
 type SharedProbe = 'ready' | 'missing' | 'unknown';

@@ -1,7 +1,8 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { isValidLang, type Lang } from '@/lib/i18n';
-import { quranReferenceLabel } from '@/lib/references/display';
+import { searchSurahs } from '@/lib/references/quran-search';
+import { rateLimitGuard } from '@/lib/rate-limit';
 import { getPublicReadClient } from '@/lib/supabase/public-read';
 import type { Madhhab } from '@/lib/types/content';
 
@@ -28,6 +29,9 @@ function positiveInt(raw: string | null, fallback: number, max: number): number 
 }
 
 export async function GET(req: NextRequest) {
+  const limited = await rateLimitGuard(req, 'search');
+  if (limited) return limited;
+
   const { searchParams } = new URL(req.url);
   const rawQuery = searchParams.get('q')?.trim() ?? '';
   const q = rawQuery
@@ -72,20 +76,24 @@ export async function GET(req: NextRequest) {
   const from = (page - 1) * perPage;
 
   // 1) مطابقة النص في جدول الترجمات أولًا (يتفادى قيود الفلترة على الموارد المدمجة في PostgREST).
-  const { data: matchRows, error: matchError } = await supabase
-    .from('content_translations')
-    .select('content_id')
-    .eq('lang', lang)
-    .or(`title.ilike.%${q}%,body_plain.ilike.%${q}%`)
-    .limit(500);
+  let matchedIds: string[] = [];
 
-  if (matchError) {
-    return NextResponse.json({ error: matchError.message }, { status: 500 });
+  if (type !== 'quran') {
+    const { data: matchRows, error: matchError } = await supabase
+      .from('content_translations')
+      .select('content_id')
+      .eq('lang', lang)
+      .or(`title.ilike.%${q}%,body_plain.ilike.%${q}%`)
+      .limit(500);
+
+    if (matchError) {
+      return NextResponse.json({ error: matchError.message }, { status: 500 });
+    }
+
+    matchedIds = Array.from(
+      new Set(((matchRows ?? []) as Array<{ content_id: string }>).map((r) => r.content_id))
+    );
   }
-
-  const matchedIds = Array.from(
-    new Set(((matchRows ?? []) as Array<{ content_id: string }>).map((r) => r.content_id))
-  );
 
   // 2) البحث في المحتوى بالاعتماد على المعرّفات المطابقة، مع بقية الفلاتر والترقيم.
   let data: any[] = [];
@@ -130,41 +138,39 @@ export async function GET(req: NextRequest) {
     count = result.count ?? 0;
   }
 
-  // البحث في القرآن (اختياري - لو عندك جدول آيات)
-  let quranResults: any[] = [];
-  if (!type || type === 'quran') {
-    const { data: quranData } = await supabase
-      .from('quran_verses')
-      .select('id, surah, ayah_from, text, translation')
-      .ilike('text', `%${q}%`)
-      .limit(5);
-    
-    quranResults = (quranData ?? []).map((v: any) => ({
-      id: v.id,
-      type: 'quran_verse',
-      title: quranReferenceLabel(v.surah, v.ayah_from, null, lang),
-      excerpt:
-        lang === 'ar'
-          ? v.text?.slice(0, 150)
-          : (v.translation?.slice(0, 150) ?? v.text?.slice(0, 150)),
-      url: `/${lang}/quran?surah=${v.surah}`,
-    }));
-  }
+  // البحث في القرآن: أسماء السور وأرقامها من بيانات محلية موثوقة.
+  // لا نعتمد على جدول quran_verses غير الموجود، ولا نبحث في نص الآيات هنا.
+  // نعرض أفضل ٥ سور؛ صفحة القرآن تتكفل بالتصفح الكامل. نحسب المطابقات دائمًا
+  // ليعرض مرشّح «السور» عدده حتى أثناء فلتر نوع آخر.
+  const quranMatches = searchSurahs(q, lang).slice(0, 5);
+  const quranResults = (!type || type === 'quran')
+    ? quranMatches.map((match) => ({
+        id: `quran-surah-${match.number}`,
+        type: 'quran',
+        title: match.title,
+        summary: match.summary,
+        url: `/${lang}/quran/${match.number}`,
+      }))
+    : [];
 
-  const results = (data ?? []).map((item: any) => {
-    const t =
-      (item.content_translations ?? []).find((x: any) => x.lang === lang) ??
-      item.content_translations?.[0];
-    return {
+  // لا نرجع لترجمة لغة أخرى عند غياب ترجمة اللغة المطلوبة؛ هذا كان يسرّب
+  // العنوان العربي إلى نتائج البحث الإنجليزية. النتيجة بلا ترجمة تُسقَط.
+  const results = (data ?? []).flatMap((item: any) => {
+    const t = (item.content_translations ?? []).find(
+      (translation: any) => translation.lang === lang
+    );
+    if (!t?.slug || !t?.title) return [];
+
+    return [{
       id: item.id,
       type: item.content_type,
-      title: t?.title,
-      slug: t?.slug,
-      summary: t?.summary?.slice(0, 200),
-      url: `/${lang}/learn/${item.content_type}/${t?.slug}`,
+      title: t.title,
+      slug: t.slug,
+      summary: typeof t.summary === 'string' ? t.summary.slice(0, 200) : undefined,
+      url: `/${lang}/learn/${item.content_type}/${t.slug}`,
       published_at: item.published_at,
       views: item.views,
-    };
+    }];
   });
 
   // إحصاءات الأنواع (facets): عدد النتائج لكل نوع مع تطبيق بقية الفلاتر.
@@ -186,8 +192,8 @@ export async function GET(req: NextRequest) {
       facets[row.content_type] = (facets[row.content_type] ?? 0) + 1;
     }
   }
-  if (!type || type === 'quran') {
-    facets.quran = quranResults.length;
+  if (quranMatches.length > 0) {
+    facets.quran = quranMatches.length;
   }
 
   return NextResponse.json({

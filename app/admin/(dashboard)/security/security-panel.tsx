@@ -28,6 +28,7 @@ const SCOPE_HINTS: Record<string, string> = {
   analytics: "يُطبَّق في الذاكرة (حجم مرتفع)",
   verify: "حماية مسار التحقق",
   upload: "يُطبَّق في الذاكرة داخل تقييد الرفع",
+  search: "حماية البحث العام من الطلبات المتكررة",
 };
 
 export default function SecurityPanel() {

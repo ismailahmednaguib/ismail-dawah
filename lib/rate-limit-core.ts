@@ -23,7 +23,8 @@ export type RateLimitScope =
   | 'assistant'
   | 'analytics'
   | 'verify'
-  | 'upload';
+  | 'upload'
+  | 'search';
 
 export type ScopeConfig = { windowSeconds: number; max: number };
 
@@ -39,6 +40,7 @@ export const RATE_LIMIT_DEFAULTS: Record<RateLimitScope, ScopeConfig> = {
   analytics: { windowSeconds: 60, max: 120 },
   verify: { windowSeconds: 3600, max: 20 },
   upload: { windowSeconds: 3600, max: 30 },
+  search: { windowSeconds: 60, max: 120 },
 };
 
 export const RATE_LIMIT_SCOPES = Object.keys(

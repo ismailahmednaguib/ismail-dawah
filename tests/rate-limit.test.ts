@@ -92,6 +92,12 @@ test('rateLimitKey يوحّد الحالة ويحدّ الطول', () => {
   assert.equal(rateLimitKey('login', 'x'.repeat(500)).length, 'login:'.length + 190);
 });
 
+test('نطاق البحث العام له حدّ افتراضي قابل للتحكم', () => {
+  assert.ok(RATE_LIMIT_SCOPES.includes('search'));
+  assert.equal(RATE_LIMIT_DEFAULTS.search.windowSeconds, 60);
+  assert.equal(RATE_LIMIT_DEFAULTS.search.max, 120);
+});
+
 test('clientIpFromHeaders يقرأ الترويسات بترتيب الثقة', () => {
   const headers = new Map<string, string>([
     ['x-forwarded-for', '9.9.9.9, 10.0.0.1'],

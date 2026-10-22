@@ -147,3 +147,18 @@ test('الافتراضي في lib/seo.ts يستخدم صور OG اللغوية',
   assert.match(seo, /en:\s*"\/og\/og-en\.png"/);
   assert.match(seo, /resolveImageUrl\(options\.image,\s*lang\)/);
 });
+
+test('البحث لا يعود لترجمة لغة أخرى عند غياب الترجمة المطلوبة', () => {
+  const route = readFileSync(join(ROOT, 'app', 'api', 'search', 'route.ts'), 'utf8');
+
+  assert.doesNotMatch(route, /content_translations\?\.\[0\]/);
+  assert.doesNotMatch(route, /\?\?\s*item\.content_translations/);
+  assert.match(route, /translation\.lang === lang/);
+});
+
+test('البحث لا يستعلم جدول quran_verses غير الموجود', () => {
+  const route = readFileSync(join(ROOT, 'app', 'api', 'search', 'route.ts'), 'utf8');
+
+  assert.doesNotMatch(route, /from\('quran_verses'\)/);
+  assert.match(route, /searchSurahs\(q,\s*lang\)/);
+});
