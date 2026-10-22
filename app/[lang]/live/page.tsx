@@ -9,6 +9,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import { readSettingText } from "@/lib/settings-text";
 
 export const dynamic = "force-dynamic";
 
@@ -37,15 +38,7 @@ type LiveSettings = {
 };
 
 function settingText(value: unknown, lang: Lang): string {
-  if (typeof value === "string") return value.trim();
-  if (value && typeof value === "object" && !Array.isArray(value)) {
-    const record = value as Record<string, unknown>;
-    const localized = record[lang];
-    if (typeof localized === "string" && localized.trim()) return localized.trim();
-    const arabic = record.ar;
-    if (typeof arabic === "string") return arabic.trim();
-  }
-  return "";
+  return readSettingText(value, lang, "");
 }
 
 // ============================================================
