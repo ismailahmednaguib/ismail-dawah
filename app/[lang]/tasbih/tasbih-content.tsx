@@ -2,7 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { TASBIH_PHRASES, toArabicNumeral, type TasbihPhrase } from "@/lib/data";
+import { TASBIH_PHRASES, tasbihVirtueText, toArabicNumeral, type TasbihPhrase } from "@/lib/data";
 import type { Lang } from "@/lib/i18n";
 
 const STORAGE_KEY = "dawah_tasbih_state_v1";
@@ -358,13 +358,13 @@ export default function TasbihContent({ lang }: { lang: Lang }) {
               </h2>
             </div>
 
-            {selectedPhrase.virtue && (
+            {tasbihVirtueText(selectedPhrase, lang) && (
               <div className="card mb-6 border-gold-200 bg-gold-50/60 p-5 dark:border-gold-800/40 dark:bg-gold-950/20">
                 <p className="mb-1 text-xs font-black text-gold-700 dark:text-gold-400">
                   {ui.virtue}
                 </p>
                 <p className="leading-relaxed text-slate-700 dark:text-slate-200">
-                  {selectedPhrase.virtue}
+                  {tasbihVirtueText(selectedPhrase, lang)}
                 </p>
               </div>
             )}

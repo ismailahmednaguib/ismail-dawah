@@ -546,6 +546,8 @@ export interface TasbihPhrase {
   englishText: string;
   count: number;
   virtue?: string;
+  /** ترجمة الفضل للإنجليزية؛ تبقى فارغة إن لم تُراجَع. */
+  virtueEn?: string;
 }
 
 export const TASBIH_PHRASES: TasbihPhrase[] = freezeAs([
@@ -555,6 +557,7 @@ export const TASBIH_PHRASES: TasbihPhrase[] = freezeAs([
     englishText: "Subhan Allah",
     count: 33,
     virtue: "غرس نخلة في الجنة",
+    virtueEn: "A palm tree planted in Paradise",
   },
   {
     id: "hamd",
@@ -562,6 +565,7 @@ export const TASBIH_PHRASES: TasbihPhrase[] = freezeAs([
     englishText: "Alhamdulillah",
     count: 33,
     virtue: "تملأ الميزان",
+    virtueEn: "Fills the Scale with reward",
   },
   {
     id: "takbir",
@@ -575,6 +579,7 @@ export const TASBIH_PHRASES: TasbihPhrase[] = freezeAs([
     englishText: "Astaghfirullah",
     count: 100,
     virtue: "يغفر الذنوب",
+    virtueEn: "A means of forgiveness",
   },
   {
     id: "tahlil",
@@ -588,8 +593,21 @@ export const TASBIH_PHRASES: TasbihPhrase[] = freezeAs([
     englishText: "O Allah, send blessings upon our Prophet Muhammad",
     count: 100,
     virtue: "من صلى عليه واحدة صلى الله عليه بها عشرا",
+    virtueEn: "One blessing is answered with ten",
   },
 ]);
+
+/**
+ * نص الفضل بلغة الواجهة.
+ * في الإنجليزية نعرض الترجمة إن وُجدت، وإلا نخفي النص بدل تسريب العربية.
+ */
+export function tasbihVirtueText(
+  phrase: Pick<TasbihPhrase, "virtue" | "virtueEn">,
+  lang: "ar" | "en"
+): string {
+  if (lang === "ar") return phrase.virtue ?? "";
+  return phrase.virtueEn ?? "";
+}
 
 // ============================================================
 // 🛡️ بيانات الرقية الشرعية
