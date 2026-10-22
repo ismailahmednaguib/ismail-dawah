@@ -15,13 +15,13 @@ import { normalizeAssistantConfig } from '@/lib/assistant-core';
 const COPY: Record<Lang, { title: string; subtitle: string; meta: string }> = {
   ar: {
     title: 'البحث الموحد',
-    subtitle: 'ابحث في كل محتوى المنصة: القرآن، الأحاديث، المقالات، الفتاوى، والدروس',
-    meta: 'ابحث في القرآن الكريم، الأحاديث، المقالات، الفتاوى، والدروس الإسلامية',
+    subtitle: 'ابحث في أسماء السور، الأحاديث، المقالات، الفتاوى، والدروس',
+    meta: 'ابحث في أسماء السور والأحاديث والمقالات والفتاوى والدروس الإسلامية',
   },
   en: {
     title: 'Unified Search',
-    subtitle: 'Search the platform: Quran, hadith, articles, fatwas, and lessons',
-    meta: 'Search Quran, hadith, articles, fatwas, and Islamic lessons',
+    subtitle: 'Search surah names, hadith, articles, fatwas, and lessons',
+    meta: 'Search surah names, hadith, articles, fatwas, and Islamic lessons',
   },
 } as const;
 
