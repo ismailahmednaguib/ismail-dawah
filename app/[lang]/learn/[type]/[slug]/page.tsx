@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? /^https?:\/\//i.test(imageUrl)
       ? imageUrl
       : `${siteUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
-    : `${siteUrl}/icon-512.png`;
+    : `${siteUrl}/og/og-${lang}.png`;
 
   return {
     title,

@@ -241,13 +241,13 @@ export async function generateMetadata({
       url: `/${l}/daily-wird`,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
-      images: [{ url: "/icon-512.png", width: 512, height: 512, alt: ui.title }],
+      images: [{ url: `/og/og-${l}.png`, width: 1200, height: 630, alt: ui.title }],
     },
     twitter: {
       card: "summary_large_image",
       title: ui.title,
       description: ui.description,
-      images: ["/icon-512.png"],
+      images: [`/og/og-${l}.png`],
     },
   };
 }

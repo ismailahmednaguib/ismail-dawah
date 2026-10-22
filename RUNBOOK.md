@@ -246,6 +246,7 @@ npm run fix:citations -- --commit     # كتابة
   - `metaDescription[ar]`/`metaDescription[en]` وصفان مختصران
 - **قابلية التحكم**: كل القيم أعلاه تُحرَّر من `/admin/control` (أُضيفت حقول `homeKicker` · `homeHeroText` · `metaTitle` · `metaDescription`). تعديلها من اللوحة يُبطِل الصفحات فورًا.
 - **التذييل والبريد**: `FROM_NAME` في البريد ما زال احتياطيه اسم الشخص؛ اضبطه من متغيّرات البيئة إن أردت العلامة.
+- **صور OG (1200×630)**: `npm run og:generate` يبني `public/og/og-ar.png` و`public/og/og-en.png` بـ`sharp` (خطوط النظام، بلا شبكة). كل صفحات `/{lang}/…` تستخدم `/og/og-${lang}.png` في `openGraph.images` و`twitter:image` مع `summary_large_image`، ويبقى `ogImage` في `/admin/control` متجاوزًا اختياريًّا. لا تُعِد `width/height` إلى ٥١٢ ولا `card` إلى `summary`.
 
 ## ٨) migrations معلّقة على الإنتاج
 

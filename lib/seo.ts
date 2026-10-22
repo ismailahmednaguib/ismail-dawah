@@ -120,6 +120,12 @@ const SUPPORTED_LANGS: SupportedLang[] = ["ar", "en"];
 const FALLBACK_LANG: SupportedLang = "ar";
 const DEFAULT_IMAGE_PATH = "/icon-512.png";
 
+// صور المشاركة الاجتماعية لكل لغة (1200×630) — تُولَّد بـ scripts/generate-og.mjs.
+const DEFAULT_OG_IMAGES: Record<SupportedLang, string> = {
+  ar: "/og/og-ar.png",
+  en: "/og/og-en.png",
+};
+
 function isSupportedLangStatic(value: unknown): value is SupportedLang {
   return (
     typeof value === "string" &&
@@ -237,8 +243,12 @@ function toAbsoluteUrl(value?: string | null): string | undefined {
   return `${BASE_URL}/${raw}`;
 }
 
-function resolveImageUrl(image?: string | null): string {
-  return toAbsoluteUrl(image || DEFAULT_IMAGE_PATH) || `${BASE_URL}${DEFAULT_IMAGE_PATH}`;
+function resolveImageUrl(
+  image?: string | null,
+  lang: SupportedLang = DEFAULT_LANG
+): string {
+  const fallback = DEFAULT_OG_IMAGES[lang] || DEFAULT_IMAGE_PATH;
+  return toAbsoluteUrl(image || fallback) || `${BASE_URL}${fallback}`;
 }
 
 export function buildImageUrl(path: string): string {
@@ -376,7 +386,7 @@ export function generateSEO(options: SEOOptions): Metadata {
     ? truncateText(stripHtml(options.description), 300)
     : undefined;
 
-  const imageUrl = resolveImageUrl(options.image);
+  const imageUrl = resolveImageUrl(options.image, lang);
   const publishedTime = toIsoDate(options.publishedTime);
   const modifiedTime = toIsoDate(options.modifiedTime);
   const author = stripHtml(options.author);
@@ -391,8 +401,10 @@ export function generateSEO(options: SEOOptions): Metadata {
   };
 
   const imageDimensions =
-    !options.image || options.image === DEFAULT_IMAGE_PATH
-      ? { width: 512, height: 512 }
+    !options.image ||
+    options.image === DEFAULT_IMAGE_PATH ||
+    Object.values(DEFAULT_OG_IMAGES).includes(options.image)
+      ? { width: 1200, height: 630 }
       : {};
 
   return {

@@ -639,15 +639,15 @@ export async function generateMetadata({
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "article",
       images: [{
-        url: "/icon-512.png",
-        width: 512, height: 512, alt: ui.title,
+        url: `/og/og-${l}.png`,
+        width: 1200, height: 630, alt: ui.title,
       }],
     },
     twitter: {
       card: "summary_large_image",
       title: ui.title,
       description: ui.description,
-      images: ["/icon-512.png"],
+      images: [`/og/og-${l}.png`],
     },
   };
 }

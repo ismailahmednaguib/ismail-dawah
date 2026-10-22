@@ -118,18 +118,18 @@ export async function generateMetadata({
       description,
       images: [
         {
-          url: "/icon-512.png",
-          width: 512,
-          height: 512,
+          url: `/og/og-${l}.png`,
+          width: 1200,
+          height: 630,
           alt: siteName,
         },
       ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: siteName,
       description,
-      images: ["/icon-512.png"],
+      images: [`/og/og-${l}.png`],
       creator: "@ismail_dawah",
     },
     robots: {

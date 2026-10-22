@@ -112,10 +112,10 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION_AR,
     images: [
       {
-        url: "/icon-512.png",
-        width: 512,
-        height: 512,
-        alt: SITE_SHORT_NAME,
+        url: "/og/og-ar.png",
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
       },
     ],
   },
@@ -124,7 +124,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_NAME,
     description: "منصة إسلامية شاملة لكل ما يحتاجه المسلم.",
-    images: ["/icon-512.png"],
+    images: ["/og/og-ar.png"],
   },
 
   robots: {
@@ -162,7 +162,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: SITE_SHORT_NAME,
+    title: SITE_NAME,
   },
 
   formatDetection: {

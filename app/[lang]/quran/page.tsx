@@ -321,9 +321,9 @@ export async function generateMetadata({
       type: "book",
       images: [
         {
-          url: "/icon-512.png",
-          width: 512,
-          height: 512,
+          url: `/og/og-${l}.png`,
+          width: 1200,
+          height: 630,
           alt: ui.title,
         },
       ],
@@ -332,7 +332,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: ui.title,
       description: ui.description,
-      images: ["/icon-512.png"],
+      images: [`/og/og-${l}.png`],
     },
   };
 }

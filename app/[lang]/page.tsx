@@ -264,7 +264,9 @@ export async function generateMetadata({
   const settings = await getSiteSettings();
   const metaTitle = settingText(settings, "metaTitle", l, ui.metaTitle);
   const metaDesc = settingText(settings, "metaDescription", l, ui.metaDesc);
-  const ogImage = settingText(settings, "ogImage", l, `${SITE_URL}/icon-512.png`);
+  const customOgImage = settingText(settings, "ogImage", l, "");
+  const ogImage = customOgImage || `${SITE_URL}/og/og-${l}.png`;
+  const ogDimensions = customOgImage ? {} : { width: 1200, height: 630 };
 
   return {
     // absolute: عشان الـ template اللي في الـ layout ما يكرّرش الاسم
@@ -287,15 +289,14 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: ogImage, // كان فيه نقطة زيادة في الآخر: "/icon-512.png."
-          width: 512,
-          height: 512,
+          url: ogImage,
+          ...ogDimensions,
           alt: metaTitle,
         },
       ],
     },
     twitter: {
-      card: "summary", // الصورة مربعة 512×512 فمش مناسبة لـ summary_large_image
+      card: "summary_large_image",
       title: metaTitle,
       description: metaDesc,
       images: [ogImage],
