@@ -176,7 +176,7 @@ export default async function LearnContentPage({ params }: PageProps) {
     <>
       <JsonLd data={[jsonLd, breadcrumbJsonLd]} />
       <Header lang={currentLang} />
-      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 pt-16 dark:bg-night-900 md:pt-20">
       {/* شريط علوي */}
       <div className="bg-primary-900 text-white py-4 px-4">
         <div className="max-w-4xl mx-auto">

@@ -277,7 +277,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
             <div className="py-12 text-center">
               <p className="mb-3 text-4xl">🔍</p>
               <p className="text-slate-500 dark:text-slate-400">{copy.noResults(query)}</p>
-              <p className="mt-2 text-sm text-slate-400">{copy.tryAgain}</p>
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{copy.tryAgain}</p>
             </div>
           ) : error ? (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-300">
