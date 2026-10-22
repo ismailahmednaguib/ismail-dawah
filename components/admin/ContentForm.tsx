@@ -248,7 +248,7 @@ export default function ContentForm() {
                 onClick={() => setAgeGroups(toggle(ageGroups, a.value))}
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   ageGroups.includes(a.value)
-                    ? 'bg-gold-500 text-white border-gold-500'
+                    ? 'bg-gold-500 text-gray-900 border-gold-500'
                     : 'border-primary-200 text-slate-600 dark:border-night-700 dark:text-slate-300'
                 }`}
               >

@@ -706,7 +706,7 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
 
                 <p className="text-5xl font-black text-slate-900 md:text-6xl dark:text-white">
                   {formatNumber(Math.round(qibla.bearing), lang)}
-                  <span className="ms-1 text-2xl text-gold-600">
+                  <span className="ms-1 text-2xl text-gold-600 dark:text-gold-400">
                     {ui.degrees}
                   </span>
                 </p>

@@ -123,7 +123,7 @@ export default function TopBar({
                   {breadcrumb.map((crumb, index) => (
                     <Fragment key={`${crumb.label}-${index}`}>
                       {index > 0 && (
-                        <span className="text-slate-300 dark:text-slate-600">
+                        <span aria-hidden="true" className="text-slate-300 dark:text-slate-500">
                           /
                         </span>
                       )}

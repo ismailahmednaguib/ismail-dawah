@@ -525,7 +525,7 @@ export default async function DownloadPage({
               {/* الفاصل */}
               <div className="my-5 flex items-center gap-3">
                 <div className="h-px flex-1 bg-slate-200 dark:bg-night-700" />
-                <span className="text-xs font-bold text-slate-500">
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
                   {ui.or}
                 </span>
                 <div className="h-px flex-1 bg-slate-200 dark:bg-night-700" />
@@ -769,7 +769,7 @@ function StepCard({
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
           {icon}
         </span>
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500 font-black text-white shadow-lg">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500 font-black text-gray-900 shadow-lg">
           {step}
         </span>
       </div>

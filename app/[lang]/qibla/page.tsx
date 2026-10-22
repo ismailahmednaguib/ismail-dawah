@@ -300,7 +300,7 @@ export default async function QiblaPage({
               >
                 {ui.verse}
               </p>
-              <p className="text-xs text-gold-500/80">
+              <p className="text-xs text-gold-600 dark:text-gold-400">
                 {ui.verseSource}
               </p>
             </div>
