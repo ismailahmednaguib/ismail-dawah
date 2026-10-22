@@ -6,8 +6,12 @@
 //
 // الاستخدام:
 //   node scripts/qa-i18n.mjs --base=http://localhost:3000
+//   node scripts/qa-i18n.mjs --base=http://localhost:3000 --full
 //   node scripts/qa-i18n.mjs --base=https://ismailahmednaguib.vercel.app
 //   npm run qa:i18n -- --base=http://localhost:3000
+//
+// --full يضيف كل روابط /en في sitemap.xml ويتحقق من العنوان والوصف فقط،
+// بينما تُفحص الصفحات الثلاث والثلاثون الأساسية نصًّا أيضًا.
 //
 // تعتمد على خادم يعمل (مثل smoke-content). تخرج بالرمز 1 عند وجود تسريب.
 
@@ -19,6 +23,7 @@ function readBase() {
 }
 
 const BASE = readBase();
+const FULL = process.argv.includes('--full');
 const ARABIC = /[\u0600-\u06FF]/;
 
 // صفحات واجهة لا يُفترض أن يظهر فيها أي نص عربي في النسخة الإنجليزية.
@@ -85,7 +90,7 @@ function metaValues(html) {
   return values;
 }
 
-async function checkPath(path) {
+async function checkPath(path, checkBody) {
   let response;
   try {
     response = await fetch(BASE + path, {
@@ -103,15 +108,18 @@ async function checkPath(path) {
   const html = await response.text();
   const meta = metaValues(html).filter((item) => ARABIC.test(item.value));
 
-  const text = stripHtml(html);
-  const snippets = [
-    ...new Set(
-      text
-        .split(/\n+/)
-        .map((line) => line.trim())
-        .filter((line) => line.length > 1 && line.length < 160 && ARABIC.test(line))
-    ),
-  ].slice(0, 6);
+  let snippets = [];
+  if (checkBody) {
+    const text = stripHtml(html);
+    snippets = [
+      ...new Set(
+        text
+          .split(/\n+/)
+          .map((line) => line.trim())
+          .filter((line) => line.length > 1 && line.length < 160 && ARABIC.test(line))
+      ),
+    ].slice(0, 6);
+  }
 
   if (meta.length === 0 && snippets.length === 0) return null;
 
@@ -122,16 +130,47 @@ async function checkPath(path) {
   };
 }
 
+async function sitemapPaths() {
+  try {
+    const response = await fetch(`${BASE}/sitemap.xml`, {
+      headers: { 'cache-control': 'no-cache' },
+      signal: AbortSignal.timeout(30000),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const xml = await response.text();
+    return [
+      ...new Set(
+        [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => {
+          try {
+            return new URL(match[1]).pathname;
+          } catch {
+            return '';
+          }
+        })
+      ),
+    ].filter((path) => path.startsWith('/en'));
+  } catch (error) {
+    console.error(`⚠ تعذّر قراءة sitemap.xml من ${BASE}: ${error}`);
+    process.exit(1);
+  }
+}
+
 async function main() {
-  console.log(`فحص الواجهة الإنجليزية على ${BASE} (${PATHS.length} صفحة)`);
+  const allPaths = FULL ? await sitemapPaths() : [];
+  const paths = FULL ? [...new Set([...PATHS, ...allPaths])] : PATHS;
+  const bodyPaths = new Set(PATHS);
+
+  console.log(
+    `فحص الواجهة الإنجليزية على ${BASE} (${paths.length} صفحة${FULL ? '، وضع كامل' : ''})`
+  );
 
   const results = [];
   let cursor = 0;
 
   async function worker() {
-    while (cursor < PATHS.length) {
-      const path = PATHS[cursor++];
-      const result = await checkPath(path);
+    while (cursor < paths.length) {
+      const path = paths[cursor++];
+      const result = await checkPath(path, bodyPaths.has(path));
       if (result) results.push(result);
     }
   }
@@ -156,7 +195,7 @@ async function main() {
   }
 
   if (leaks.length === 0 && errors.length === 0) {
-    console.log(`\n✔ لا يوجد تسريب عربي في ${PATHS.length} صفحة إنجليزية.`);
+    console.log(`\n✔ لا يوجد تسريب عربي في ${paths.length} صفحة إنجليزية.`);
     return;
   }
 
