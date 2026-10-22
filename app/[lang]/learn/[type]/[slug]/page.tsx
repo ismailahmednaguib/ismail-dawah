@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const slug = decodeParam(rawSlug);
   const content = await getContentWithFallback(lang, type, slug);
 
-  if (!content) return { title: 'غير موجود' };
+  if (!content) return { title: lang === 'ar' ? 'غير موجود' : 'Not found' };
 
   const siteUrl = (
     process.env.NEXT_PUBLIC_SITE_URL || 'https://ismailahmednaguib.vercel.app'

@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang: rawLang, slug: rawSlug } = await params;
   const lang = isValidLang(rawLang) ? (rawLang as Lang) : 'ar';
   const entry = getReligionEntry(decodeParam(rawSlug));
-  if (!entry) return { title: 'غير موجود' };
+  if (!entry) return { title: lang === 'ar' ? 'غير موجود' : 'Not found' };
   return {
     title: `${localized(entry.title, lang)} | ${lang === 'ar' ? 'الأديان والفكر' : 'Religions & Thought'}`,
     description: localized(entry.summary, lang),

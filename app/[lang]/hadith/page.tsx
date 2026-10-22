@@ -10,10 +10,21 @@ import { PageHero } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-  title: 'الحديث الشريف',
-  description: 'تصفح محتوى الحديث الشريف الموثق في منصة اكتشف الإسلام.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isAr = lang === 'ar';
+
+  return {
+    title: isAr ? 'الحديث الشريف' : 'Hadith',
+    description: isAr
+      ? 'تصفح محتوى الحديث الشريف الموثق في منصة اكتشف الإسلام.'
+      : 'Browse hadith content with its source and grade on the Discover Islam platform.',
+  };
+}
 
 const COPY: Record<string, any> = {
   ar: {
