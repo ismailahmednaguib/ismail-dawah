@@ -1,10 +1,11 @@
 // lib/references/quran-search.ts
-// بحث محلي في أسماء السور وأرقامها — منطق نقي بلا قاعدة بيانات أو شبكة.
+// بحث محلي في أسماء السور وأرقامها ومعانيها الإنجليزية — منطق نقي بلا قاعدة بيانات أو شبكة.
 // لا يبحث في نص الآيات؛ نص المصحف يأتي من مصدره في صفحة القرآن. الهدف هنا
 // أن يعمل مرشّح «القرآن» في البحث العام بدل الاعتماد على جدول quran_verses
 // غير الموجود، وأن يعيد رابطًا صحيحًا لصفحة السورة.
 import type { Lang } from '../i18n';
 import { SURAHS, type SurahInfo } from './display.ts';
+import { SURAH_MEANINGS_EN } from './surah-meanings.ts';
 import { normalizeArabicText } from './quran.ts';
 
 export type SurahSearchMatch = {
@@ -48,6 +49,17 @@ function compact(value: string): string {
   return value.replace(/\s+/g, '');
 }
 
+// كلمات وظيفية لا تصلح وحدها للبحث في معاني السور؛ حذفها يجعل «The Cave»
+// و«cave» متطابقين، ويمنع أن يعيد البحث عن «the» أو «of» معظم السور.
+const MEANING_STOP_WORDS = new Set(['a', 'an', 'and', 'in', 'of', 'the']);
+
+function stripMeaningStopWords(input: string): string {
+  return input
+    .split(' ')
+    .filter((word) => word && !MEANING_STOP_WORDS.has(word))
+    .join(' ');
+}
+
 function matchScore(
   surah: SurahInfo,
   arabicQuery: string,
@@ -58,6 +70,10 @@ function matchScore(
 
   const arabicName = normalizeArabicText(surah.ar);
   const latinName = normalizeLatin(surah.en);
+  const latinMeaning = stripMeaningStopWords(
+    normalizeLatin(SURAH_MEANINGS_EN[surah.n] ?? '')
+  );
+  const meaningQuery = stripMeaningStopWords(latinQuery);
 
   if (
     arabicQuery &&
@@ -84,14 +100,35 @@ function matchScore(
     return 3;
   }
 
+  // معاني الأسماء الإنجليزية بعد مطابقات الاسم نفسها، فلا يسبق المعنى
+  // الاسمَ المطابق عند البحث باسم سورة أو بجزء منه.
+  if (
+    meaningQuery &&
+    latinMeaning &&
+    (latinMeaning === meaningQuery ||
+      compact(latinMeaning) === compact(meaningQuery))
+  ) {
+    return 4;
+  }
+  if (meaningQuery && latinMeaning.startsWith(meaningQuery)) return 5;
+  if (
+    meaningQuery &&
+    latinMeaning &&
+    (latinMeaning.includes(meaningQuery) ||
+      compact(latinMeaning).includes(compact(meaningQuery)))
+  ) {
+    return 6;
+  }
+
   return null;
 }
 
 /**
  * يعيد كل السور المطابقة مرتبة: تطابق الرقم/الاسم التام أولًا، ثم البداية،
  * ثم الاحتواء. العربية تطابق الأسماء العربية، والإنجليزية تطابق الأسماء
- * الإنجليزية، والرقم يعمل في اللغتين. النتائج تحمل عنوانًا وملخصًا باللغة
- * المطلوبة فقط، فلا تتسرب أسماء عربية إلى الواجهة الإنجليزية.
+ * الإنجليزية ومعانيها الشائعة (The Cave ← الكهف)، والرقم يعمل في اللغتين.
+ * النتائج تحمل عنوانًا وملخصًا باللغة المطلوبة فقط، فلا تتسرب أسماء عربية
+ * إلى الواجهة الإنجليزية.
  */
 export function searchSurahs(query: string, lang: Lang): SurahSearchMatch[] {
   const trimmed = String(query ?? '').trim();

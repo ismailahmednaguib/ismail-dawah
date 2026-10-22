@@ -34,6 +34,7 @@ const SEARCH_QUERIES = [
   'prayer',
   'hadith',
   'god',
+  'The Cave',
   'الفاتحة',
   'البقرة',
 ];

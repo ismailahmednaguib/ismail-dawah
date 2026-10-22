@@ -6,6 +6,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { SURAHS } from "@/lib/data";
+import { SURAH_MEANINGS_EN } from "@/lib/references/surah-meanings";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -80,7 +81,7 @@ const UI: Record<string, UILang> = {
     home: "الرئيسية",
     description:
       "صفحة القرآن الكريم في منصة اكتشف الإسلام. تصفح 114 سورة، اقرأ واستمع بأصوات أفضل القراء، مع البحث والفلترة بين المكية والمدنية.",
-    searchPlaceholder: "ابحث باسم السورة أو رقمها...",
+    searchPlaceholder: "ابحث باسم السورة أو معناها أو رقمها...",
     search: "بحث",
     all: "الكل",
     meccan: "مكية",
@@ -130,7 +131,7 @@ const UI: Record<string, UILang> = {
     home: "Home",
     description:
       "Quran page on the Discover Islam. Browse 114 surahs, read and listen with the best reciters, with search and filtering between Meccan and Medinan.",
-    searchPlaceholder: "Search by surah name or number...",
+    searchPlaceholder: "Search by surah name, meaning, or number...",
     search: "Search",
     all: "All",
     meccan: "Meccan",
@@ -283,7 +284,7 @@ function fallbackSurahs(): Surah[] {
     number: surah.number,
     name: surah.arabicName,
     englishName: surah.englishName,
-    englishNameTranslation: "",
+    englishNameTranslation: SURAH_MEANINGS_EN[surah.number] ?? "",
     numberOfAyahs: surah.ayahs,
     revelationType: surah.type === "makki" ? "Meccan" : "Medinan",
   }));

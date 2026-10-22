@@ -80,7 +80,7 @@ const TYPE_ICONS: Record<string, string> = {
 
 const COPY: Record<string, any> = {
   ar: {
-    placeholder: '🔍 ابحث في أسماء السور، الأحاديث، المقالات، الفتاوى، والدروس...',
+    placeholder: '🔍 ابحث في أسماء السور ومعانيها، الأحاديث، المقالات، الفتاوى، والدروس...',
     type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى', madhhab: 'المذهب',
     results: (count: number) => (count > 0 ? count + ' نتيجة' : 'لا توجد نتائج'),
     noResults: (query: string) => 'لم نعثر على نتائج لـ "' + query + '"',
@@ -88,7 +88,7 @@ const COPY: Record<string, any> = {
     minQuery: 'اكتب كلمتين على الأقل لبدء البحث.', dateLocale: 'ar-EG',
   },
   en: {
-    placeholder: '🔍 Search surah names, hadith, articles, fatwas, and lessons...',
+    placeholder: '🔍 Search surah names and meanings, hadith, articles, fatwas, and lessons...',
     type: 'Content type', audience: 'Audience', age: 'Age group', level: 'Level', madhhab: 'Madhhab',
     results: (count: number) => (count > 0 ? count + ' results' : 'No results'),
     noResults: (query: string) => 'No results found for "' + query + '"',
