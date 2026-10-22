@@ -1,6 +1,7 @@
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { isValidLang, type Lang } from '@/lib/i18n';
+import { quranReferenceLabel } from '@/lib/references/display';
 import { getPublicReadClient } from '@/lib/supabase/public-read';
 import type { Madhhab } from '@/lib/types/content';
 
@@ -141,8 +142,11 @@ export async function GET(req: NextRequest) {
     quranResults = (quranData ?? []).map((v: any) => ({
       id: v.id,
       type: 'quran_verse',
-      title: lang === 'ar' ? `سورة ${v.surah} - آية ${v.ayah_from}` : `Surah ${v.surah} - Ayah ${v.ayah_from}`,
-      excerpt: v.text?.slice(0, 150),
+      title: quranReferenceLabel(v.surah, v.ayah_from, null, lang),
+      excerpt:
+        lang === 'ar'
+          ? v.text?.slice(0, 150)
+          : (v.translation?.slice(0, 150) ?? v.text?.slice(0, 150)),
       url: `/${lang}/quran?surah=${v.surah}`,
     }));
   }
