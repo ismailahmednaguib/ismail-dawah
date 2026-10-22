@@ -10,6 +10,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { readSettingText } from "@/lib/settings-text";
+import {
+  hasWeeklyScheduleSetting,
+  parseWeeklySchedule,
+  type WeeklyScheduleEntry,
+} from "@/lib/live-schedule";
 
 export const dynamic = "force-dynamic";
 
@@ -57,40 +62,34 @@ const FALLBACK_SETTINGS: LiveSettings = {
   meetingLink: "",
 };
 
-const FALLBACK_SCHEDULE: ScheduleItem[] = [
-  {
-    id: "tafsir",
-    icon: "📖",
-    day: { ar: "السبت", en: "Saturday" },
-    time: { ar: "بعد العشاء", en: "After Isha" },
-    topic: { ar: "تفسير جزء عم", en: "Tafsir of Juz Amma" },
-    place: { ar: "مسجد الرحمن", en: "Ar-Rahman Mosque" },
-  },
-  {
-    id: "aqeedah",
-    icon: "🕌",
-    day: { ar: "الأحد", en: "Sunday" },
-    time: { ar: "بعد المغرب", en: "After Maghrib" },
-    topic: { ar: "شرح العقيدة الواسطية", en: "Explanation of Al-Aqeedah Al-Wasitiyyah" },
-    place: { ar: "مسجد الرحمن", en: "Ar-Rahman Mosque" },
-  },
-  {
-    id: "seerah",
-    icon: "🌙",
-    day: { ar: "الاثنين", en: "Monday" },
-    time: { ar: "بعد العشاء", en: "After Isha" },
-    topic: { ar: "السيرة النبوية", en: "Prophetic Biography" },
-    place: { ar: "مسجد الرحمن", en: "Ar-Rahman Mosque" },
-  },
-  {
-    id: "hadith",
-    icon: "📜",
-    day: { ar: "الأربعاء", en: "Wednesday" },
-    time: { ar: "بعد المغرب", en: "After Maghrib" },
-    topic: { ar: "شرح الأربعين النووية", en: "Explanation of An-Nawawi's 40 Hadith" },
-    place: { ar: "مسجد الرحمن", en: "Ar-Rahman Mosque" },
-  },
-];
+// أيقونات دورية لبطاقات الجدول النصّي (لا يكتبها الأدمن في كل سطر).
+const SCHEDULE_ICONS = ["📖", "🕌", "🌙", "📜", "📚", "🎓"];
+
+function toScheduleItems(
+  entries: WeeklyScheduleEntry[],
+  lang: Lang
+): ScheduleItem[] {
+  return entries.map((entry, index) => ({
+    id: `weekly-${lang}-${index}`,
+    icon: SCHEDULE_ICONS[index % SCHEDULE_ICONS.length],
+    day: {
+      ar: lang === "ar" ? entry.day : "",
+      en: lang === "en" ? entry.day : "",
+    },
+    time: {
+      ar: lang === "ar" ? entry.time : "",
+      en: lang === "en" ? entry.time : "",
+    },
+    topic: {
+      ar: lang === "ar" ? entry.topic : "",
+      en: lang === "en" ? entry.topic : "",
+    },
+    place: {
+      ar: lang === "ar" ? entry.place : "",
+      en: lang === "en" ? entry.place : "",
+    },
+  }));
+}
 
 // ============================================================
 // نصوص الواجهة
@@ -299,8 +298,8 @@ export default async function LivePage({
 
   // محاولة جلب البيانات من Supabase، مع fallback
   let settings: LiveSettings = FALLBACK_SETTINGS;
-  let rawSchedule: ScheduleItem[] = FALLBACK_SCHEDULE;
-  let schedule: ScheduleItem[] = FALLBACK_SCHEDULE;
+  let rawSchedule: ScheduleItem[] = [];
+  let schedule: ScheduleItem[] = [];
   let scheduleOnlyArabic = false;
 
   const siteSettings = __pageSettings as Record<string, unknown>;
@@ -325,46 +324,67 @@ export default async function LivePage({
     meetingLink: settingText(siteSettings.meetingLink, L) || FALLBACK_SETTINGS.meetingLink,
   };
 
-  try {
-    const { getContent } = await import("@/lib/content");
-    const c = await getContent();
+  // الجدول الجديد المترجم (يحرّره الأدمن) له الأولوية على الجدول القديم.
+  const weeklyScheduleSetting = siteSettings.weeklySchedule;
 
-    if (c?.schedule && Array.isArray(c.schedule) && c.schedule.length > 0) {
-      const localized = c.schedule.map((s: any) => ({
-        id: s.id || String(Math.random()),
-        icon: s.icon || "📅",
-        day: {
-          ar: settingText(s.day, "ar"),
-          en: settingText(s.day, "en"),
-        },
-        time: {
-          ar: settingText(s.time, "ar"),
-          en: settingText(s.time, "en"),
-        },
-        topic: {
-          ar: settingText(s.topic, "ar"),
-          en: settingText(s.topic, "en"),
-        },
-        place: {
-          ar: settingText(s.place, "ar"),
-          en: settingText(s.place, "en"),
-        },
-      }));
+  if (hasWeeklyScheduleSetting(weeklyScheduleSetting)) {
+    const entries = parseWeeklySchedule(weeklyScheduleSetting, L);
+    // في الإنجليزية لا نعرض درسًا ناقص الوقت أو المكان.
+    const visibleEntries =
+      L === "en"
+        ? entries.filter(
+            (entry) => entry.day && entry.time && entry.topic && entry.place
+          )
+        : entries;
 
-      rawSchedule = localized;
+    schedule = toScheduleItems(visibleEntries, L);
+    rawSchedule = schedule;
+    scheduleOnlyArabic =
+      L === "en" &&
+      schedule.length === 0 &&
+      parseWeeklySchedule(weeklyScheduleSetting, "ar").length > 0;
+  } else {
+    try {
+      const { getContent } = await import("@/lib/content");
+      const c = await getContent();
 
-      if (L === "ar") {
-        schedule = localized;
-      } else {
+      if (c?.schedule && Array.isArray(c.schedule) && c.schedule.length > 0) {
+        const localized = c.schedule.map((s: any) => ({
+          id: s.id || String(Math.random()),
+          icon: s.icon || "📅",
+          day: {
+            ar: settingText(s.day, "ar"),
+            en: settingText(s.day, "en"),
+          },
+          time: {
+            ar: settingText(s.time, "ar"),
+            en: settingText(s.time, "en"),
+          },
+          topic: {
+            ar: settingText(s.topic, "ar"),
+            en: settingText(s.topic, "en"),
+          },
+          place: {
+            ar: settingText(s.place, "ar"),
+            en: settingText(s.place, "en"),
+          },
+        }));
+
         // لا نعرض تفاصيل عربية في الواجهة الإنجليزية؛ نخفي غير المترجم.
-        schedule = localized.filter(
-          (item) => item.day[L] && item.time[L] && item.topic[L] && item.place[L]
-        );
-        scheduleOnlyArabic = localized.length > 0 && schedule.length === 0;
+        schedule =
+          L === "ar"
+            ? localized
+            : localized.filter(
+                (item) =>
+                  item.day[L] && item.time[L] && item.topic[L] && item.place[L]
+              );
+        rawSchedule = schedule;
+        scheduleOnlyArabic =
+          L === "en" && localized.length > 0 && schedule.length === 0;
       }
+    } catch {
+      // لا جدول متاح؛ تظهر رسالة "لا يوجد دروس مجدولة".
     }
-  } catch {
-    // استخدام البيانات الاحتياطية
   }
 
   // تفاصيل المجلس الأسبوعي بلغة الصفحة فقط، بلا قيم احتياطية قد تكون مضلّلة.
@@ -676,9 +696,11 @@ export default async function LivePage({
                       >
                         {s.day[L]}
                       </p>
-                      <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-                        🕐 {s.time[L]}
-                      </p>
+                      {s.time[L] && (
+                        <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
+                          🕐 {s.time[L]}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -689,9 +711,11 @@ export default async function LivePage({
                     {s.topic[L]}
                   </h3>
 
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    📍 {s.place[L]}
-                  </p>
+                  {s.place[L] && (
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      📍 {s.place[L]}
+                    </p>
+                  )}
                 </article>
               ))}
             </div>

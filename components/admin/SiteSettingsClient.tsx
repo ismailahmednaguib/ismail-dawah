@@ -7,6 +7,7 @@ import { DEFAULT_EMAIL_VERIFICATION_CONFIG } from '@/lib/email-verification-conf
 import { DEFAULT_PASSWORD_RESET_CONFIG } from '@/lib/password-reset-config';
 import { DEFAULT_PASSWORD_CHANGE_CONFIG } from '@/lib/password-change-config';
 import EmailTestCard from '@/components/admin/EmailTestCard';
+import { legacyScheduleToText } from '@/lib/live-schedule';
 
 type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
@@ -119,12 +120,14 @@ function TextareaField({
   onChange,
   rows = 4,
   placeholder,
+  dir = 'rtl',
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   rows?: number;
   placeholder?: string;
+  dir?: 'rtl' | 'ltr';
 }) {
   return (
     <label className="block">
@@ -134,6 +137,7 @@ function TextareaField({
         onChange={(event) => onChange(event.target.value)}
         rows={rows}
         placeholder={placeholder}
+        dir={dir}
         className="input-islamic w-full resize-y"
       />
     </label>
@@ -180,10 +184,19 @@ export default function SiteSettingsClient() {
 
       if (!response.ok) throw new Error(data.error || 'تعذر تحميل الإعدادات.');
 
-      setSettings({
+      const loaded: SettingsRecord = {
         ...DEFAULT_SETTINGS,
         ...(data.settings && typeof data.settings === 'object' ? data.settings : {}),
-      });
+      };
+
+      // ترحيل غير هدّام: ابدأ من الجدول القديم حتى لا يفقده الأدمن عند أول حفظ.
+      if (loaded.weeklySchedule === undefined && loaded.schedule !== undefined) {
+        const ar = legacyScheduleToText(loaded.schedule, 'ar');
+        const en = legacyScheduleToText(loaded.schedule, 'en');
+        if (ar || en) loaded.weeklySchedule = { ar, en };
+      }
+
+      setSettings(loaded);
       setUpdatedAt(data.updatedAt ?? null);
     } catch (error) {
       setMessage({
@@ -434,6 +447,30 @@ export default function SiteSettingsClient() {
               </div>
             </div>
           ))}
+          <div className="rounded-xl border border-cream-200 bg-cream-50 p-4 md:col-span-2">
+            <p className="mb-1 text-sm font-black text-primary-950">الجدول الأسبوعي</p>
+            <p className="mb-3 text-xs leading-6 text-stone-500">
+              كل درس في سطر: اليوم | الوقت | الموضوع | المكان. اترك اللغة فارغة لإخفاء الجدول فيها.
+              إن لم تُحفظ نسخة جديدة يبقى الجدول القديم ظاهرًا بالعربية.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <TextareaField
+                label="العربية"
+                value={text(settings.weeklySchedule?.ar)}
+                onChange={(value) => setLocalized('weeklySchedule', 'ar', value)}
+                rows={5}
+                placeholder="السبت | بعد العشاء | تفسير جزء عم | مسجد الرحمن"
+              />
+              <TextareaField
+                label="English"
+                value={text(settings.weeklySchedule?.en)}
+                onChange={(value) => setLocalized('weeklySchedule', 'en', value)}
+                rows={5}
+                dir="ltr"
+                placeholder="Saturday | After Isha | Tafsir of Juz Amma | Ar-Rahman Mosque"
+              />
+            </div>
+          </div>
         </div>
       </Section>
 

@@ -16,6 +16,7 @@ import {
   mergePagesVisibility,
 } from '@/lib/page-sections';
 import { flattenNav, type CustomNavNode } from '@/lib/navigation';
+import { legacyScheduleToText } from '@/lib/live-schedule';
 
 type TabId =
   | 'dashboard'
@@ -234,6 +235,7 @@ interface FieldDef {
   type: 'text' | 'textarea' | 'boolean' | 'url' | 'color';
   ar?: boolean;
   en?: boolean;
+  help?: string;
 }
 
 const FIELDS: FieldDef[] = [
@@ -265,6 +267,14 @@ const FIELDS: FieldDef[] = [
   { key: 'meetingTime', label: 'وقت المجلس', type: 'text', ar: true, en: true },
   { key: 'meetingPlace', label: 'مكان المجلس', type: 'text', ar: true, en: true },
   { key: 'meetingLink', label: 'رابط مكان المجلس/خريطة', type: 'url' },
+  {
+    key: 'weeklySchedule',
+    label: 'الجدول الأسبوعي (سطر لكل درس)',
+    type: 'textarea',
+    ar: true,
+    en: true,
+    help: 'كل درس في سطر: اليوم | الوقت | الموضوع | المكان. مثال: السبت | بعد العشاء | تفسير جزء عم | مسجد الرحمن. اترك لغة فارغة لإخفاء الجدول فيها.',
+  },
   { key: 'ogImage', label: 'صورة المشاركة (OG)', type: 'text' },
   { key: 'showPrayerBar', label: 'إظهار شريط مواقيت الصلاة', type: 'boolean' },
 ];
@@ -286,7 +296,17 @@ function SettingsTab() {
 
   const load = useCallback(async () => {
     const res = await apiFetch('/api/admin/settings', { cache: 'no-store' }).then(handleResponse);
-    setSettings(res.settings ?? {});
+    const next: Record<string, any> = { ...(res.settings ?? {}) };
+
+    // ترحيل غير هدّام: إن لم يُحفظ جدول جديد بعد، ابدأ من الجدول القديم
+    // حتى لا يفقده الأدمن عند أول حفظ لإعداد آخر.
+    if (next.weeklySchedule === undefined && next.schedule !== undefined) {
+      const ar = legacyScheduleToText(next.schedule, 'ar');
+      const en = legacyScheduleToText(next.schedule, 'en');
+      if (ar || en) next.weeklySchedule = { ar, en };
+    }
+
+    setSettings(next);
   }, []);
 
   useEffect(() => {
@@ -343,6 +363,9 @@ function SettingsTab() {
               <label className="mb-2 block text-xs font-bold text-primary-700 uppercase tracking-wider">
                 {f.label}
               </label>
+              {f.help && (
+                <p className="mb-2 text-[11px] leading-relaxed text-stone-500">{f.help}</p>
+              )}
               {isLocalized ? (
                 <div className="grid gap-3 sm:grid-cols-2">
                   {['ar', 'en'].map((lang) => (
@@ -350,14 +373,33 @@ function SettingsTab() {
                       <span className="text-[10px] font-bold text-stone-400 uppercase">
                         {lang === 'ar' ? 'عربي' : 'إنجليزي'}
                       </span>
-                      <input
-                        value={curObj[lang] ?? ''}
-                        onChange={(e) =>
-                          setField(f.key, { ...curObj, [lang]: e.target.value })
-                        }
-                        className="input-islamic w-full text-sm"
-                        placeholder={lang}
-                      />
+                      {f.type === 'textarea' ? (
+                        <textarea
+                          value={curObj[lang] ?? ''}
+                          onChange={(e) =>
+                            setField(f.key, { ...curObj, [lang]: e.target.value })
+                          }
+                          rows={4}
+                          dir={lang === 'en' ? 'ltr' : 'rtl'}
+                          className="input-islamic w-full text-sm"
+                          placeholder={
+                            f.key === 'weeklySchedule'
+                              ? lang === 'ar'
+                                ? 'السبت | بعد العشاء | تفسير جزء عم | مسجد الرحمن'
+                                : 'Saturday | After Isha | Tafsir of Juz Amma | Ar-Rahman Mosque'
+                              : lang
+                          }
+                        />
+                      ) : (
+                        <input
+                          value={curObj[lang] ?? ''}
+                          onChange={(e) =>
+                            setField(f.key, { ...curObj, [lang]: e.target.value })
+                          }
+                          className="input-islamic w-full text-sm"
+                          placeholder={lang}
+                        />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -371,6 +413,14 @@ function SettingsTab() {
                   />
                   <span className="text-sm text-stone-600">{boolValue(val) ? 'مفعل' : 'غير مفعل'}</span>
                 </div>
+              ) : f.type === 'textarea' ? (
+                <textarea
+                  value={displayVal}
+                  onChange={(e) => setField(f.key, e.target.value)}
+                  rows={4}
+                  className="input-islamic w-full text-sm"
+                  placeholder={f.label}
+                />
               ) : (
                 <input
                   type={f.type}

@@ -30,7 +30,7 @@ test('الإعدادات المركّبة غير مرتبطة بلغة', () => {
 });
 
 test('النصوص القابلة للترجمة ليست ضمن القائمة', () => {
-  for (const key of ['ownerName', 'homeTitle', 'metaTitle', 'email', 'address']) {
+  for (const key of ['ownerName', 'homeTitle', 'metaTitle', 'email', 'address', 'weeklySchedule']) {
     assert.equal(isNonLocalizedSetting(key), false, key);
   }
   assert.equal(NON_LOCALIZED_SETTING_KEYS.has('ownerName'), false);
