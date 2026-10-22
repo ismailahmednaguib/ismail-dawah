@@ -26,6 +26,18 @@ const BASE = readBase();
 const FULL = process.argv.includes('--full');
 const ARABIC = /[\u0600-\u06FF]/;
 
+// استعلامات بحث إنجليزية (وبعضها عربي عمدًا) للتأكد أن النتائج المعروضة
+// بالإنجليزية لا تعود إلى ترجمة عربية عند غياب الترجمة المطلوبة.
+const SEARCH_QUERIES = [
+  'al',
+  'kahf',
+  'prayer',
+  'hadith',
+  'god',
+  'الفاتحة',
+  'البقرة',
+];
+
 // صفحات واجهة لا يُفترض أن يظهر فيها أي نص عربي في النسخة الإنجليزية.
 const PATHS = [
   '/en',
@@ -130,6 +142,48 @@ async function checkPath(path, checkBody) {
   };
 }
 
+async function checkSearchApi() {
+  const leaks = [];
+  const errors = [];
+
+  for (const query of SEARCH_QUERIES) {
+    const path = `/api/search?q=${encodeURIComponent(query)}&lang=en`;
+
+    try {
+      const response = await fetch(BASE + path, {
+        headers: { 'cache-control': 'no-cache' },
+        signal: AbortSignal.timeout(30000),
+      });
+
+      if (!response.ok) {
+        errors.push({ path, error: `HTTP ${response.status}` });
+        continue;
+      }
+
+      const payload = await response.json().catch(() => null);
+      const items = Array.isArray(payload?.data) ? payload.data : [];
+      const bad = items.filter(
+        (item) =>
+          ARABIC.test(String(item?.title ?? '')) ||
+          ARABIC.test(String(item?.summary ?? ''))
+      );
+
+      if (bad.length > 0) {
+        leaks.push({
+          path,
+          snippets: bad
+            .slice(0, 6)
+            .map((item) => `${item?.title ?? ''} — ${item?.summary ?? ''}`),
+        });
+      }
+    } catch (error) {
+      errors.push({ path, error: String(error) });
+    }
+  }
+
+  return { leaks, errors, count: SEARCH_QUERIES.length };
+}
+
 async function sitemapPaths() {
   try {
     const response = await fetch(`${BASE}/sitemap.xml`, {
@@ -177,8 +231,15 @@ async function main() {
 
   await Promise.all([worker(), worker(), worker(), worker()]);
 
-  const errors = results.filter((result) => result.error);
-  const leaks = results.filter((result) => !result.error);
+  const search = await checkSearchApi();
+  const errors = [
+    ...results.filter((result) => result.error),
+    ...search.errors,
+  ];
+  const leaks = [
+    ...results.filter((result) => !result.error),
+    ...search.leaks,
+  ];
 
   for (const item of leaks) {
     console.log(`\n✖ ${item.path}`);
@@ -196,6 +257,7 @@ async function main() {
 
   if (leaks.length === 0 && errors.length === 0) {
     console.log(`\n✔ لا يوجد تسريب عربي في ${paths.length} صفحة إنجليزية.`);
+    console.log(`✔ لا يوجد تسريب عربي في ${search.count} استعلام بحث إنجليزي.`);
     return;
   }
 
