@@ -9,7 +9,7 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
-import { ADHKAR, toArabicNumeral, type Dhikr } from "@/lib/data";
+import { ADHKAR, dhikrSourceText, dhikrVirtueText, toArabicNumeral, type Dhikr } from "@/lib/data";
 import type { Lang } from "@/lib/i18n";
 
 const STORAGE_KEY = "dawah_adhkar_progress_v1";
@@ -290,12 +290,12 @@ function DhikrCard({
       {/* المصدر والفضل */}
       <div className="mb-5 flex flex-wrap items-center gap-2 text-xs">
         <span className="badge-primary">
-          {ui.source}: {dhikr.source}
+          {ui.source}: {dhikrSourceText(dhikr.source, lang)}
         </span>
 
-        {dhikr.virtue && (
+        {dhikrVirtueText(dhikr.virtue, lang) && (
           <span className="badge-gold">
-            {ui.virtue}: {dhikr.virtue}
+            {ui.virtue}: {dhikrVirtueText(dhikr.virtue, lang)}
           </span>
         )}
       </div>

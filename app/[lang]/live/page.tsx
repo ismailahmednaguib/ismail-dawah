@@ -113,6 +113,7 @@ const UI: Record<string,
     weeklySchedule: string;
     weeklyScheduleDesc: string;
     noSchedule: string;
+    scheduleOnlyArabic: string;
     noteTitle: string;
     note1: string;
     note2: string;
@@ -155,6 +156,7 @@ const UI: Record<string,
     weeklySchedule: "جدول الدروس الأسبوعي",
     weeklyScheduleDesc: "دروس ثابتة خلال الأسبوع",
     noSchedule: "لا يوجد دروس مجدولة حالياً",
+    scheduleOnlyArabic: "الجدول الأسبوعي متاح بالعربية حاليًا",
     noteTitle: "تنبيه مهم",
     note1: "قد يتأخر البث المباشر أو يُؤجل بسبب ظروف طارئة. تابع الصفحة أو وسائل التواصل للمواعيد الدقيقة.",
     note2: "المواعيد والأماكن قد تتغير في المناسبات أو الإجازات، يُفضل التأكد قبل الحضور.",
@@ -196,6 +198,7 @@ const UI: Record<string,
     weeklySchedule: "Weekly Lessons Schedule",
     weeklyScheduleDesc: "Fixed lessons throughout the week",
     noSchedule: "No scheduled lessons currently",
+    scheduleOnlyArabic: "The weekly schedule is currently available in Arabic only.",
     noteTitle: "Important Notice",
     note1: "Live stream may be delayed or postponed due to unexpected circumstances. Follow the page or social media for exact timings.",
     note2: "Times and locations may change during occasions or holidays. Please verify before attending.",
@@ -296,7 +299,9 @@ export default async function LivePage({
 
   // محاولة جلب البيانات من Supabase، مع fallback
   let settings: LiveSettings = FALLBACK_SETTINGS;
+  let rawSchedule: ScheduleItem[] = FALLBACK_SCHEDULE;
   let schedule: ScheduleItem[] = FALLBACK_SCHEDULE;
+  let scheduleOnlyArabic = false;
 
   const siteSettings = __pageSettings as Record<string, unknown>;
   settings = {
@@ -325,34 +330,56 @@ export default async function LivePage({
     const c = await getContent();
 
     if (c?.schedule && Array.isArray(c.schedule) && c.schedule.length > 0) {
-      schedule = c.schedule.map((s: any) => ({
+      const localized = c.schedule.map((s: any) => ({
         id: s.id || String(Math.random()),
         icon: s.icon || "📅",
         day: {
-          ar: s.day?.ar || s.day || "",
-          en: s.day?.en || s.day || "",
+          ar: settingText(s.day, "ar"),
+          en: settingText(s.day, "en"),
         },
         time: {
-          ar: s.time?.ar || s.time || "",
-          en: s.time?.en || s.time || "",
+          ar: settingText(s.time, "ar"),
+          en: settingText(s.time, "en"),
         },
         topic: {
-          ar: s.topic?.ar || s.topic || "",
-          en: s.topic?.en || s.topic || "",
+          ar: settingText(s.topic, "ar"),
+          en: settingText(s.topic, "en"),
         },
         place: {
-          ar: s.place?.ar || s.place || "",
-          en: s.place?.en || s.place || "",
+          ar: settingText(s.place, "ar"),
+          en: settingText(s.place, "en"),
         },
       }));
+
+      rawSchedule = localized;
+
+      if (L === "ar") {
+        schedule = localized;
+      } else {
+        // لا نعرض تفاصيل عربية في الواجهة الإنجليزية؛ نخفي غير المترجم.
+        schedule = localized.filter(
+          (item) => item.day[L] && item.time[L] && item.topic[L] && item.place[L]
+        );
+        scheduleOnlyArabic = localized.length > 0 && schedule.length === 0;
+      }
     }
   } catch {
     // استخدام البيانات الاحتياطية
   }
 
+  // تفاصيل المجلس الأسبوعي بلغة الصفحة فقط، بلا قيم احتياطية قد تكون مضلّلة.
+  const meetingDetails = {
+    day: settingText(siteSettings.meetingDay, L),
+    time: settingText(siteSettings.meetingTime, L),
+    place: settingText(siteSettings.meetingPlace, L),
+  };
+  const hasMeetingDetails = Boolean(
+    meetingDetails.day || meetingDetails.time || meetingDetails.place
+  );
+
   // عدد المجالس الأسبوعية = عدد الأيام الفريدة في الجدول (بدل قيمة ثابتة).
   const weeklyMeetings = new Set(
-    schedule.map((item) => item.day[L]).filter(Boolean)
+    rawSchedule.map((item) => item.day.ar || item.day.en).filter(Boolean)
   ).size;
 
   // لا نعرض زر الخريطة إلا لرابط موقع محدّد، لا لرابط خرائط عام فارغ.
@@ -362,32 +389,34 @@ export default async function LivePage({
   const hasMapLink = mapLink.length > 0 && !isGenericMapLink;
 
   // JSON-LD
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BroadcastEvent",
-        name: settings.liveTitle[L],
-        description: ui.description,
-        inLanguage: L,
-        isLiveBroadcast: true,
-        broadcastOf: {
-          "@type": "Event",
-          name: settings.liveTitle[L],
-        },
-      },
-      {
+  const jsonLdGraph: Record<string, unknown>[] = [
+    {
+      "@type": "BroadcastEvent",
+      name: settings.liveTitle[L],
+      description: ui.description,
+      inLanguage: L,
+      isLiveBroadcast: true,
+      broadcastOf: {
         "@type": "Event",
-        name: ui.weeklyMeeting,
-        description: ui.weeklyMeetingDesc,
-        inLanguage: L,
-        location: {
-          "@type": "Place",
-          name: settings.meetingPlace[L],
-        },
+        name: settings.liveTitle[L],
       },
-    ],
-  };
+    },
+  ];
+
+  if (meetingDetails.place) {
+    jsonLdGraph.push({
+      "@type": "Event",
+      name: ui.weeklyMeeting,
+      description: ui.weeklyMeetingDesc,
+      inLanguage: L,
+      location: {
+        "@type": "Place",
+        name: meetingDetails.place,
+      },
+    });
+  }
+
+  const jsonLd = { "@context": "https://schema.org", "@graph": jsonLdGraph };
 
   return (
     <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
@@ -472,7 +501,7 @@ export default async function LivePage({
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard icon="📡" label={ui.liveCount} value="●" color="primary" isLive />
           <StatCard icon="🕌" label={ui.meetingCount} value={weeklyMeetings} color="gold" />
-          <StatCard icon="📚" label={ui.lessonsCount} value={schedule.length} color="primary" />
+          <StatCard icon="📚" label={ui.lessonsCount} value={rawSchedule.length} color="primary" />
           <StatCard icon="✨" label={ui.freeAlways} value="100%" color="gold" />
         </div>
 
@@ -536,7 +565,7 @@ export default async function LivePage({
 
         </>)}
         {/* ===== المجلس الأسبوعي ===== */}
-        {gate.visible('k3') && (<>
+        {gate.visible('k3') && hasMeetingDetails && (<>
         <div className="mb-10">
           <div className="mb-6 text-center">
             <h2
@@ -558,19 +587,19 @@ export default async function LivePage({
               <InfoCard
                 icon="📅"
                 label={ui.day}
-                value={settings.meetingDay[L]}
+                value={meetingDetails.day}
                 color="gold"
               />
               <InfoCard
                 icon="🕐"
                 label={ui.time}
-                value={settings.meetingTime[L]}
+                value={meetingDetails.time}
                 color="primary"
               />
               <InfoCard
                 icon="📍"
                 label={ui.place}
-                value={settings.meetingPlace[L]}
+                value={meetingDetails.place}
                 color="gold"
               />
             </div>
@@ -623,7 +652,9 @@ export default async function LivePage({
           {schedule.length === 0 ? (
             <div className="card p-10 text-center">
               <div className="mb-3 text-4xl">📭</div>
-              <p className="text-slate-500 dark:text-slate-400">{ui.noSchedule}</p>
+              <p className="text-slate-500 dark:text-slate-400">
+                {scheduleOnlyArabic ? ui.scheduleOnlyArabic : ui.noSchedule}
+              </p>
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">

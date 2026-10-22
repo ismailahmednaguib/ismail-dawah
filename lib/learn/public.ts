@@ -80,7 +80,7 @@ const MAX_SEARCH = 120;
 
 const TERM_SELECT = `
   content_terms (
-    taxonomies ( id, kind, parent_id, name, slug, icon, color )
+    taxonomies ( id, kind, parent_id, name, slug, icon, color, lang )
   )
 `;
 
@@ -174,6 +174,72 @@ function mapItem(row: any, isFallback: boolean): PublicItem {
   };
 }
 
+/**
+ * يترجم أسماء التصنيفات إلى لغة الواجهة.
+ *
+ * كل التصنيفات مخزّنة صفًّا لكل لغة (`lang = 'ar' | 'en'`)، لكن صفوف
+ * `content_terms` تشير دائمًا إلى الصف العربي. لذلك نستبدل كل تصنيف بالصف
+ * المطابق له في `slug` و`kind` باللغة المطلوبة، بدل عرض الاسم العربي في
+ * الواجهة الإنجليزية.
+ */
+async function localizeTermList(
+  supabase: ReturnType<typeof getClient>,
+  terms: PublicTerm[],
+  lang: string
+): Promise<PublicTerm[]> {
+  if (lang === 'ar' || terms.length === 0) return terms;
+
+  const slugs = [...new Set(terms.map((term) => term.slug).filter(Boolean))];
+  if (slugs.length === 0) return terms;
+
+  const { data, error } = (await supabase
+    .from('taxonomies')
+    .select('id, kind, parent_id, name, slug, icon, color, lang')
+    .eq('lang', lang)
+    .in('slug', slugs)) as { data: any; error: any };
+
+  if (error || !Array.isArray(data)) return terms;
+
+  const byKey = new Map<string, PublicTerm>();
+  for (const row of data as PublicTerm[]) {
+    byKey.set(`${row.slug}\u0000${row.kind}`, row);
+  }
+
+  return terms.map((term) => {
+    const translation = byKey.get(`${term.slug}\u0000${term.kind}`);
+    if (!translation) return term;
+    return {
+      ...term,
+      id: translation.id,
+      name: translation.name,
+      lang: translation.lang ?? lang,
+      icon: translation.icon ?? term.icon,
+      color: translation.color ?? term.color,
+    };
+  });
+}
+
+/** يطبّق ترجمة التصنيفات على قائمة عناصر، مع الحفاظ على ترتيب كل عنصر. */
+async function localizeItemTerms(
+  supabase: ReturnType<typeof getClient>,
+  items: PublicItem[],
+  lang: string
+): Promise<PublicItem[]> {
+  if (lang === 'ar' || items.length === 0) return items;
+
+  const allTerms = items.flatMap((item) => item.terms);
+  if (allTerms.length === 0) return items;
+
+  const localized = await localizeTermList(supabase, allTerms, lang);
+  let cursor = 0;
+
+  return items.map((item) => {
+    const terms = localized.slice(cursor, cursor + item.terms.length);
+    cursor += item.terms.length;
+    return { ...item, terms };
+  });
+}
+
 // ============================================================
 // قائمة محتوى منشور بنوع معيّن
 // ============================================================
@@ -263,7 +329,8 @@ async function runListQuery(
     console.error('[getPublicList]', type, error.message ?? error);
     return [];
   }
-  return (data ?? []).map((row: any) => mapItem(row, isFallback));
+  const items = (data ?? []).map((row: any) => mapItem(row, isFallback));
+  return localizeItemTerms(supabase, items, lang);
 }
 
 // ============================================================
@@ -311,6 +378,10 @@ export async function getPublicBySlug(
   if (!row) return null;
 
   const c = row.content;
+  const rawTerms: PublicTerm[] = (c.content_terms ?? [])
+    .map((ct: any) => ct.taxonomies)
+    .filter(Boolean);
+
   return {
     id: c.id,
     content_type: c.content_type,
@@ -322,7 +393,7 @@ export async function getPublicBySlug(
     views: c.views ?? 0,
     audience: c.audience ?? [],
     levels: c.levels ?? [],
-    terms: (c.content_terms ?? []).map((ct: any) => ct.taxonomies).filter(Boolean),
+    terms: await localizeTermList(supabase, rawTerms, lang),
     reviewer_id: c.reviewer_id ?? null,
     isFallback,
   };

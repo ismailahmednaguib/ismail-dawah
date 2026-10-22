@@ -1097,7 +1097,7 @@ function ArticleCard({
 
         {article.href ? (
           <Link href={article.href} className="btn-primary inline-flex">
-            فتح المحتوى الكامل ←
+            {isRTL ? "فتح المحتوى الكامل ←" : "Open full content →"}
           </Link>
         ) : null}
       </div>

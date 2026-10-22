@@ -184,6 +184,7 @@ export function InfoCard({
   badge,
   tone = "primary",
   cta,
+  lang = "ar",
   gradientClass,
 }: {
   href: string;
@@ -193,6 +194,8 @@ export function InfoCard({
   badge?: string;
   tone?: "primary" | "gold";
   cta?: string;
+  /** لغة الواجهة، لاختيار نص النداء الافتراضي دون تسريب العربية للإنجليزية. */
+  lang?: Lang;
   /** كلاس تدرّج مخصّص (Tailwind) لتلوين البطاقة، مثل "from-primary-500 to-primary-600" */
   gradientClass?: string;
 }) {
@@ -230,7 +233,7 @@ export function InfoCard({
       </div>
       {desc && <p className="mb-3 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{desc}</p>}
       <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary-700 dark:text-primary-300">
-        {cta ?? "اقرأ المزيد"}
+        {cta ?? (lang === "en" ? "Read more" : "اقرأ المزيد")}
         <svg
           width="16"
           height="16"
@@ -334,10 +337,12 @@ export function RelatedGrid({
   title,
   items,
   cols = 3,
+  lang = "ar",
 }: {
   title: string;
   items: Array<{ href: string; icon?: string; title: string; desc?: string }>;
   cols?: 2 | 3 | 4;
+  lang?: Lang;
 }) {
   if (items.length === 0) return null;
   return (
@@ -345,7 +350,7 @@ export function RelatedGrid({
       <SectionHeader icon="🔗" title={title} />
       <CardGrid cols={cols}>
         {items.map((it) => (
-          <InfoCard key={it.href} href={it.href} icon={it.icon} title={it.title} desc={it.desc} />
+          <InfoCard key={it.href} href={it.href} icon={it.icon} title={it.title} desc={it.desc} lang={lang} />
         ))}
       </CardGrid>
     </section>

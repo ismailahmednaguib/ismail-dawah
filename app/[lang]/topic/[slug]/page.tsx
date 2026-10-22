@@ -181,6 +181,7 @@ export default async function TopicPage({
                 icon={child.icon}
                 title={navLabel(child, l)}
                 desc={child.desc ? (isRTL ? child.desc.ar : child.desc.en) : undefined}
+                lang={l}
               />
             ))}
           </CardGrid>

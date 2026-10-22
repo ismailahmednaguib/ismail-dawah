@@ -291,7 +291,7 @@ export default async function FieldsPage({
         </section>
       )}
 
-      {gate.visible("k5") && <RelatedGrid title={ui.relatedTitle} items={related} cols={4} />}
+      {gate.visible("k5") && <RelatedGrid title={ui.relatedTitle} items={related} cols={4} lang={L} />}
 
       <Footer lang={L} />
     </main>

@@ -236,6 +236,37 @@ export interface Dhikr {
   virtue?: string;
 }
 
+/**
+ * أسماء مصادر الحديث بالإنجليزية (أسماء الكتب/المصنّفين فقط، لا نص شرعي جديد).
+ * تُستخدم حتى لا يظهر «Source : رواه مسلم» في الواجهة الإنجليزية.
+ */
+const DHIKR_SOURCE_EN: Record<string, string> = {
+  "رواه مسلم": "Narrated by Muslim",
+  "رواه البخاري": "Narrated by Al-Bukhari",
+  "رواه الترمذي": "Narrated by At-Tirmidhi",
+  "رواه أبو داود": "Narrated by Abu Dawud",
+  "رواه ابن ماجه": "Narrated by Ibn Majah",
+  "متفق عليه": "Agreed upon (Al-Bukhari & Muslim)",
+};
+
+/** يعيد مصدر الذكر بلغة الواجهة، ويخفي أي نص عربي غير مترجم في الإنجليزية. */
+export function dhikrSourceText(source: string, lang: "ar" | "en"): string {
+  if (lang === "ar") return source;
+  const text = source.trim();
+  const translated = DHIKR_SOURCE_EN[text];
+  if (translated) return translated;
+  return /[\u0600-\u06FF]/.test(text) ? "" : text;
+}
+
+/**
+ * فضائل الأذكار مكتوبة بالعربية ولم تُراجَع ترجمتها بعد، فلا نعرضها في
+ * الواجهة الإنجليزية بدل تسريب نص عربي أو ترجمة غير معتمدة.
+ */
+export function dhikrVirtueText(virtue: string | undefined, lang: "ar" | "en"): string {
+  if (!virtue) return "";
+  return lang === "ar" ? virtue : "";
+}
+
 export interface DhikrCategory {
   id: string;
   arabicTitle: string;
