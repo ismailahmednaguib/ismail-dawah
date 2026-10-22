@@ -1,6 +1,8 @@
 // components/JsonLd.tsx
 // مكوّن البيانات المنظمة (JSON-LD) لتحسين محركات البحث
 
+import { SITE_NAME } from "@/lib/site";
+
 interface JsonLdProps {
   data: Record<string, unknown> | Record<string, unknown>[];
 }
@@ -30,7 +32,7 @@ export default function JsonLd({ data }: JsonLdProps) {
 
 // بيانات المنظمة / الموقع
 export function OrganizationJsonLd({
-  name = "إسماعيل أحمد نجيب",
+  name = SITE_NAME,
   url = "https://ismailahmednaguib.vercel.app",
   logo = "https://ismailahmednaguib.vercel.app/icon-512.png",
   description = "منصة دعوية إسلامية شاملة",
@@ -61,7 +63,7 @@ export function OrganizationJsonLd({
 
 // بيانات الموقع الإلكتروني
 export function WebSiteJsonLd({
-  name = "إسماعيل أحمد نجيب",
+  name = SITE_NAME,
   url = "https://ismailahmednaguib.vercel.app",
   lang = "ar",
 }: {
@@ -121,7 +123,7 @@ export function ArticleJsonLd({
         },
         publisher: {
           "@type": "Organization",
-          name: "إسماعيل أحمد نجيب",
+          name: SITE_NAME,
           logo: {
             "@type": "ImageObject",
             url: "https://ismailahmednaguib.vercel.app/icon-512.png",
@@ -187,7 +189,7 @@ export function FAQJsonLd({
 
 // بيانات تطبيق الويب (PWA)
 export function WebApplicationJsonLd({
-  name = "إسماعيل أحمد نجيب",
+  name = SITE_NAME,
   url = "https://ismailahmednaguib.vercel.app",
   description = "منصة دعوية إسلامية شاملة",
 }: {
@@ -246,7 +248,7 @@ export function VideoJsonLd({
         isLiveBroadcast,
         publisher: {
           "@type": "Organization",
-          name: "إسماعيل أحمد نجيب",
+          name: SITE_NAME,
           logo: {
             "@type": "ImageObject",
             url: "https://ismailahmednaguib.vercel.app/icon-512.png",
@@ -289,7 +291,7 @@ export function EventJsonLd({
         eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
         organizer: {
           "@type": "Organization",
-          name: "إسماعيل أحمد نجيب",
+          name: SITE_NAME,
         },
       }}
     />
@@ -300,7 +302,7 @@ export function EventJsonLd({
 export function CourseJsonLd({
   name,
   description,
-  provider = "إسماعيل أحمد نجيب",
+  provider = SITE_NAME,
   url,
 }: {
   name: string;

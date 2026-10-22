@@ -1,6 +1,9 @@
 // app/[lang]/rss.xml/route.ts
 // خلاصة RSS لأحدث المحتوى المنشور لكل لغة.
 import { isValidLang } from '@/lib/i18n';
+import { getSiteSettings } from '@/lib/content';
+import { readSettingText } from '@/lib/settings-text';
+import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
 import { getPublicReadClient } from '@/lib/supabase/public-read';
 import { contentUrl, encodeUrl } from '@/lib/url';
 
@@ -9,9 +12,9 @@ export const revalidate = 3600;
 
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ismailahmednaguib.vercel.app').replace(/\/+$/, '');
 
-const FEED_TITLES: Record<string, { title: string; desc: string }> = {
-  ar: { title: 'منصة اكتشف الإسلام — أحدث المحتوى', desc: 'دروس ومقالات وفتاوى وخطب وحديث شريف' },
-  en: { title: 'Discover Islam — Latest', desc: 'Lessons, articles, fatwas, sermons and hadith' },
+const FEED_COPY: Record<string, { suffix: string; desc: string }> = {
+  ar: { suffix: 'أحدث المحتوى', desc: 'دروس ومقالات وفتاوى وخطب وحديث شريف' },
+  en: { suffix: 'Latest', desc: 'Lessons, articles, fatwas, sermons and hadith' },
 };
 
 function esc(value: unknown): string {
@@ -63,13 +66,23 @@ export async function GET(_req: Request, { params }: { params: Promise<{ lang: s
     })
     .slice(0, 30);
 
-  const meta = FEED_TITLES[lang] ?? FEED_TITLES.ar;
+  const meta = FEED_COPY[lang] ?? FEED_COPY.ar;
+
+  // اسم العلامة من اللوحة (`shortName` ثم `ownerName`) حتى لا يتفرّع الاسم
+  // بين الواجهة والخلاصة. القراءة مُخزّنة في `getSiteSettings`.
+  const settings = await getSiteSettings();
+  const fallbackName = lang === 'en' ? SITE_NAME_EN : SITE_NAME;
+  const brand =
+    readSettingText(settings?.shortName, lang, '') ||
+    readSettingText(settings?.ownerName, lang, fallbackName);
+  const feedTitle = `${brand} — ${meta.suffix}`;
+
   const feedUrl = encodeUrl(`${BASE_URL}/${lang}/rss.xml`);
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${esc(meta.title)}</title>
+    <title>${esc(feedTitle)}</title>
     <link>${esc(encodeUrl(`${BASE_URL}/${lang}`))}</link>
     <description>${esc(meta.desc)}</description>
     <language>${esc(lang)}</language>

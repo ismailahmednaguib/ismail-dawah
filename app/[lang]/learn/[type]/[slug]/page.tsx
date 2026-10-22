@@ -12,6 +12,7 @@ import ContentProgressControl from '@/components/learn/ContentProgressControl';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import { decodeParam } from '@/lib/params';
+import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
 
 /**
  * الصور المخزَّنة في Supabase قابلة للتحسين عبر next/image؛ أما الروابط الخارجية
@@ -89,12 +90,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       type: 'article',
       url: `${siteUrl}${path}`,
-      siteName: 'منصة اكتشف الإسلام',
+      siteName: lang === 'ar' ? SITE_NAME : SITE_NAME_EN,
       locale: lang === 'ar' ? 'ar_EG' : 'en_US',
       images: [{ url: ogImage, alt: title }],
     },
     twitter: {
-      card: imageUrl ? 'summary_large_image' : 'summary',
+      card: 'summary_large_image',
       title,
       description,
       images: [ogImage],
@@ -141,14 +142,14 @@ export default async function LearnContentPage({ params }: PageProps) {
     dateModified: content.updated_at || undefined,
     publisher: {
       '@type': 'Organization',
-      name: currentLang === 'ar' ? 'منصة اكتشف الإسلام' : 'Discover Islam',
+      name: currentLang === 'ar' ? SITE_NAME : SITE_NAME_EN,
       url: siteUrl,
     },
     ...(schemaType === 'Course'
       ? {
           provider: {
             '@type': 'Organization',
-            name: currentLang === 'ar' ? 'منصة اكتشف الإسلام' : 'Discover Islam',
+            name: currentLang === 'ar' ? SITE_NAME : SITE_NAME_EN,
           },
         }
       : {}),

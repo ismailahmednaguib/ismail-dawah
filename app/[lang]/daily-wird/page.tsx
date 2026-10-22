@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
 import DailyWirdClient from "./DailyWirdClient";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ============================================================
 // الأنواع
@@ -236,6 +237,7 @@ export async function generateMetadata({
       languages: { ar: "/ar/daily-wird", en: "/en/daily-wird" },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/daily-wird`,

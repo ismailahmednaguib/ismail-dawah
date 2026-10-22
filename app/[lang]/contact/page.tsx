@@ -241,6 +241,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/contact`,

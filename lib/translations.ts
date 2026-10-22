@@ -279,7 +279,7 @@ const arTranslations = {
   footer_tools: "الأدوات",
   footer_contact: "تواصل معنا",
   footer_copyright: "جميع الحقوق محفوظة",
-  footer_platform: "منصة اكتشف الإسلام",
+  footer_platform: "اكتشف الإسلام",
 
   // ⚠️ رسائل الخطأ
   page_not_found: "الصفحة غير موجودة",

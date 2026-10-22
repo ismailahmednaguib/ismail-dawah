@@ -9,6 +9,7 @@ import { SURAHS } from "@/lib/data";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -314,6 +315,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/quran`,

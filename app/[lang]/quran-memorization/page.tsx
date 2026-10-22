@@ -11,6 +11,7 @@ import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MemorizationPlan from "./MemorizationPlan";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ============================================================
 // نصوص الواجهة
@@ -179,6 +180,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/quran-memorization`,

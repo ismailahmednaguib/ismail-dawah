@@ -33,7 +33,7 @@ const COPY: Record<string, NotFoundCopy> = {
     home: "الصفحة الرئيسية",
     searchIcon: "🔍",
     search: "البحث في الموقع",
-    footer: "منصة اكتشف الإسلام",
+    footer: "اكتشف الإسلام",
     homeHref: "/ar",
     searchHref: "/ar/search",
   },

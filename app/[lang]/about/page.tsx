@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero } from "@/components/ui";
 import { applyNavigationConfig, flattenNav, NAV_TREE } from "@/lib/navigation";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ============================================================
 // الأنواع
@@ -86,7 +87,7 @@ type UILang = {
 // ============================================================
 
 const PLATFORM_NAME: Localized = {
-  ar: "منصة اكتشف الإسلام",
+  ar: "اكتشف الإسلام",
   en: "Discover Islam",
 };
 
@@ -518,6 +519,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/about`,

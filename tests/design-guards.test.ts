@@ -107,6 +107,39 @@ test('لا صفحة تعود إلى أيقونة 512 كصورة مشاركة', (
   );
 });
 
+test('كل صفحة تعرّف openGraph لها صورة مشاركة لغوية', () => {
+  const offenders = codeFiles()
+    .filter((file) => file.endsWith('page.tsx'))
+    .filter((file) => {
+      const content = readFileSync(file, 'utf8');
+      if (!content.includes('openGraph')) return false;
+      return !content.includes('/og/og-') && !content.includes('generateSEO');
+    })
+    .map((file) => file.slice(ROOT.length).replaceAll('\\', '/'));
+
+  assert.deepEqual(
+    offenders,
+    [],
+    `صفحات تعرّف openGraph بلا صورة /og/og-<lang>.png أو generateSEO: ${offenders.join(', ')}`
+  );
+});
+
+test('كل صفحة تعرّف openGraph تحمل اسم الموقع (siteName)', () => {
+  const offenders = codeFiles()
+    .filter((file) => file.endsWith('page.tsx'))
+    .filter((file) => {
+      const content = readFileSync(file, 'utf8');
+      return content.includes('openGraph') && !content.includes('siteName');
+    })
+    .map((file) => file.slice(ROOT.length).replaceAll('\\', '/'));
+
+  assert.deepEqual(
+    offenders,
+    [],
+    `صفحات تعرّف openGraph بلا siteName (يُستبدل openGraph كاملًا فلا يرث اسم الموقع من التخطيط): ${offenders.join(', ')}`
+  );
+});
+
 test('الافتراضي في lib/seo.ts يستخدم صور OG اللغوية', () => {
   const seo = readFileSync(join(ROOT, 'lib', 'seo.ts'), 'utf8');
 

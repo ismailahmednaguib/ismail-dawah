@@ -18,6 +18,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContentCard from "@/components/learn/ContentCard";
 import { PageHero, SectionHeader, CardGrid, InfoCard, EmptyState } from "@/components/ui";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +112,7 @@ export async function generateMetadata({
       languages: { ar: `/ar/fields/${slug}`, en: `/en/fields/${slug}` },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: field.name,
       description: field.name,
       url: `/${l}/fields/${slug}`,

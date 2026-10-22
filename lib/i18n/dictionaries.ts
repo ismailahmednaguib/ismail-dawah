@@ -104,7 +104,7 @@ const ar: Dictionary = {
     results: 'نتيجة',
   },
   footer: {
-    rights: 'جميع الحقوق محفوظة © منصة اكتشف الإسلام',
+    rights: 'جميع الحقوق محفوظة © اكتشف الإسلام',
     aboutUs: 'من نحن',
     contactUs: 'اتصل بنا',
     privacy: 'سياسة الخصوصية',

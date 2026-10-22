@@ -10,6 +10,7 @@ import { getPublicTaxonomies, getPublicTaxonomyCounts, type PublicTerm } from "@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, SectionHeader, CardGrid, InfoCard, Callout, RelatedGrid, EmptyState } from "@/components/ui";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -136,6 +137,7 @@ export async function generateMetadata({
       languages: { ar: "/ar/fields", en: "/en/fields" },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/fields`,

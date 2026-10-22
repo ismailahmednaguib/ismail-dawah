@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { decodeParam } from "@/lib/params";
 import { getSiteSettings } from "@/lib/content";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import {
   NAV_TREE,
@@ -103,7 +104,26 @@ export async function generateMetadata({
       canonical: `/${l}/topic/${slug}`,
       languages: { ar: `/ar/topic/${slug}`, en: `/en/topic/${slug}` },
     },
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
+      images: [
+        {
+          url: `/og/og-${l}.png`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`/og/og-${l}.png`],
+    },
   };
 }
 

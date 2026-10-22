@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -96,6 +97,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: m.title,
       description: m.description,
       url: `/${l}/adhkar`,
@@ -153,7 +155,7 @@ export default async function AdhkarPage({
     url: `/${l}/adhkar`,
     isPartOf: {
       "@type": "WebSite",
-      name: isRTL ? "منصة اكتشف الإسلام" : "Discover Islam",
+      name: isRTL ? SITE_NAME : SITE_NAME_EN,
       url: `/${l}`,
     },
     about: {

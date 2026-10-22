@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -384,13 +385,23 @@ export async function generateMetadata({
       title: ui.title,
       description: ui.description,
       url: `/${l}/doubts`,
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       locale: l === "ar" ? "ar_EG" : "en_US",
       type: "website",
+      images: [
+        {
+          url: `/og/og-${l}.png`,
+          width: 1200,
+          height: 630,
+          alt: ui.title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: ui.title,
       description: ui.description,
+      images: [`/og/og-${l}.png`],
     },
   };
 }

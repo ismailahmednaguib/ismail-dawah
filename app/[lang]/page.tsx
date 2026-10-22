@@ -11,6 +11,8 @@ import LatestTabs from "@/components/home/LatestTabs";
 import NavIcon from "@/components/NavIcon";
 import PrayerWidget from "@/components/PrayerWidget";
 import { getSiteSettings } from "@/lib/content";
+import { readSettingText } from "@/lib/settings-text";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { getPublicCounts, getPublicList } from "@/lib/learn/public";
 import {
@@ -39,22 +41,7 @@ function settingText(
   lang: Lang,
   fallback: string
 ): string {
-  const value = settings[key];
-
-  // القيمة المترجمة (كائن {ar,en}) لها الأولوية على النص المفرد.
-  if (value && typeof value === "object") {
-    const localized = value[lang];
-    if (typeof localized === "string" && localized.trim()) return localized.trim();
-  }
-
-  if (typeof value === "string" && value.trim()) {
-    const text = value.trim();
-    // لا نُسرّب نصًا غير مترجم (عربي) إلى الواجهة الإنجليزية.
-    if (lang === "en" && /[\u0600-\u06FF]/.test(text)) return fallback;
-    return text;
-  }
-
-  return fallback;
+  return readSettingText(settings?.[key], lang, fallback);
 }
 
 function settingFlag(
@@ -131,7 +118,7 @@ type UiText = {
 const UI: Record<string, UiText> = {
   ar: {
     badge: "✨ منصة دعوية شاملة",
-    title: "منصة اكتشف الإسلام",
+    title: "اكتشف الإسلام",
     subtitle:
       "منصة إسلامية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد.",
     cta1: "ابدأ رحلة العلم",
@@ -163,7 +150,7 @@ const UI: Record<string, UiText> = {
     ctaDesc: "أنشئ حسابك المجاني وتابع وردك وأذكارك وتعلّمك في مكان واحد.",
     ctaRegister: "إنشاء حساب مجاني",
     ctaAbout: "تعرّف علينا",
-    metaTitle: "منصة اكتشف الإسلام",
+    metaTitle: SITE_NAME,
     metaDesc:
       "منصة إسلامية شاملة للقرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، وأدوات الدعوة. بالعربية والإنجليزية.",
     pathsTitle: "اختر مسارك",
@@ -223,7 +210,7 @@ const UI: Record<string, UiText> = {
       "Create your free account and keep your wird, adhkar and learning in one place.",
     ctaRegister: "Create Free Account",
     ctaAbout: "About Us",
-    metaTitle: "Discover Islam",
+    metaTitle: SITE_NAME_EN,
     metaDesc:
       "A comprehensive Islamic platform for Quran, adhkar, fatwas, prayer times, Qibla, and dawah tools. In Arabic and English.",
     pathsTitle: "Choose your path",

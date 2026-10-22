@@ -11,6 +11,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BookmarkButton from "@/components/BookmarkButton";
 import SurahPlayer from "./SurahPlayer";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ===== إعدادات القرآن من AlQuran Cloud =====
 const ARABIC_EDITION = "quran-uthmani";
@@ -150,6 +151,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: isRTL ? SITE_NAME : SITE_NAME_EN,
       title,
       description,
       url: `/${l}/quran/${surahNumber}`,

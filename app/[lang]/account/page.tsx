@@ -15,6 +15,7 @@ import {
   PASSWORD_CHANGE_SETTING_KEY,
   normalizePasswordChangeConfig,
 } from "@/lib/password-change-config";
+import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -208,6 +209,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      siteName: l === "ar" ? SITE_NAME : SITE_NAME_EN,
       title: ui.title,
       description: ui.description,
       url: `/${l}/account`,

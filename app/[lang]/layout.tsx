@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
+import { readSettingText } from "@/lib/settings-text";
 import { SITE_NAME, SITE_NAME_EN, SITE_AUTHOR, SITE_AUTHOR_EN } from "@/lib/site";
 
 // نُخفّف قراءة الإعدادات: تُقرأ مرة واحدة لكل طلب وتُستخدم في generateMetadata
@@ -20,20 +21,7 @@ function pickSetting(
   lang: Lang,
   fallback: string
 ): string {
-  const value = settings?.[key];
-
-  if (value && typeof value === "object" && !Array.isArray(value)) {
-    const localized = (value as Record<string, unknown>)[lang];
-    if (typeof localized === "string" && localized.trim()) return localized.trim();
-  }
-
-  if (typeof value === "string" && value.trim()) {
-    const text = value.trim();
-    if (lang === "en" && /[\u0600-\u06FF]/.test(text)) return fallback;
-    return text;
-  }
-
-  return fallback;
+  return readSettingText(settings?.[key], lang, fallback);
 }
 
 const DEFAULT_NAMES: Record<Lang, string> = {
