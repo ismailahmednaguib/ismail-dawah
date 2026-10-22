@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, languages, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
+import { readSettingText } from "@/lib/settings-text";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -573,18 +574,8 @@ export default async function AboutPage({
   );
   const sectionCount = Math.max(0, flattenNav(aboutNav).filter((node) => node.key !== "home").length);
   const toolCount = aboutNav.find((node) => node.key === "tools")?.children?.length ?? 0;
-  const settingText = (key: string) => {
-    const value = (__pageSettings as Record<string, unknown>)[key];
-    if (typeof value === "string") return value.trim();
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      const record = value as Record<string, unknown>;
-      const localized = record[l];
-      if (typeof localized === "string" && localized.trim()) return localized.trim();
-      const fallback = record.ar;
-      if (typeof fallback === "string") return fallback.trim();
-    }
-    return "";
-  };
+  const settingText = (key: string) =>
+    readSettingText((__pageSettings as Record<string, unknown>)[key], l, "");
   const cred1 = settingText("cred1");
   const cred2 = settingText("cred2");
   const portraitSrc = settingText("portraitSrc");

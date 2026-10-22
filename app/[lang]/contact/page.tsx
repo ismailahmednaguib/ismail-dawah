@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
+import { readSettingText } from "@/lib/settings-text";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import { handleContactForm } from "@/lib/email";
 import { CONTACT_INFO, SITE_NAME, SITE_NAME_EN, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
@@ -289,18 +290,8 @@ export default async function ContactPage({
   const ui = UI[l];
   const isRTL = l === "ar";
 
-  const settingText = (key: string) => {
-    const value = (__pageSettings as Record<string, unknown>)[key];
-    if (typeof value === "string") return value.trim();
-    if (value && typeof value === "object" && !Array.isArray(value)) {
-      const record = value as Record<string, unknown>;
-      const localized = record[l];
-      if (typeof localized === "string" && localized.trim()) return localized.trim();
-      const arabic = record.ar;
-      if (typeof arabic === "string") return arabic.trim();
-    }
-    return "";
-  };
+  const settingText = (key: string) =>
+    readSettingText((__pageSettings as Record<string, unknown>)[key], l, "");
 
   const contactEmail = settingText("email") || CONTACT_INFO.email;
   const contactWhatsApp = settingText("wa") || CONTACT_INFO.whatsapp;
