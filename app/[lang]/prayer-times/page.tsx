@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import PrayerTimesContent from "./prayer-times-content";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
@@ -358,6 +359,7 @@ export default async function PrayerTimesPage({
       {/* ===== المحتوى التفاعلي ===== */}
       {gate.visible('k1') && (<>
       <PrayerTimesContent lang={l} />
+      <PushNotificationPrompt lang={l} />
 
       </>)}
       {/* ===== صفحات ذات صلة ===== */}

@@ -103,13 +103,15 @@ const ALLOW_MISSING_ORIGIN =
 
 const VAPID_PUBLIC_KEY =
   env("VAPID_PUBLIC_KEY") ||
-  env("NEXT_PUBLIC_VAPID_PUBLIC_KEY");
+  env("NEXT_PUBLIC_VAPID_PUBLIC_KEY") ||
+  env("WEB_PUSH_PUBLIC_KEY");
 
-const VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY");
+const VAPID_PRIVATE_KEY = env("VAPID_PRIVATE_KEY") || env("WEB_PUSH_PRIVATE_KEY");
 
 const VAPID_SUBJECT =
   env("VAPID_SUBJECT") ||
   env("NEXT_PUBLIC_VAPID_SUBJECT") ||
+  env("WEB_PUSH_SUBJECT") ||
   "mailto:admin@ismail-dawah.com";
 
 let vapidConfigured = false;
