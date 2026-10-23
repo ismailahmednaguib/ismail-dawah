@@ -4,6 +4,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import type { Lang } from '@/lib/i18n';
+import {
+  CalendarIcon,
+  EyeIcon,
+  SearchIcon,
+  iconMap,
+  type IconName,
+} from '@/lib/icons';
 
 interface SearchResult {
   id: string;
@@ -15,22 +22,22 @@ interface SearchResult {
   views?: number;
 }
 
-type FilterOption = { value: string; icon?: string; ar: string; en: string };
+type FilterOption = { value: string; icon?: IconName; ar: string; en: string };
 
 const TYPE_OPTIONS: FilterOption[] = [
   { value: '', ar: 'الكل', en: 'All' },
-  { value: 'quran', icon: '📖', ar: 'السور', en: 'Surahs' },
-  { value: 'article', icon: '📰', ar: 'مقالات', en: 'Articles' },
-  { value: 'lesson', icon: '📖', ar: 'دروس', en: 'Lessons' },
-  { value: 'course', icon: '🎓', ar: 'دورات', en: 'Courses' },
-  { value: 'book', icon: '📚', ar: 'كتب', en: 'Books' },
-  { value: 'fatwa', icon: '⚖️', ar: 'فتاوى', en: 'Fatwas' },
-  { value: 'khutbah', icon: '🕌', ar: 'خطب', en: 'Khutbahs' },
-  { value: 'audio', icon: '🎧', ar: 'صوتيات', en: 'Audio' },
-  { value: 'video', icon: '🎬', ar: 'فيديو', en: 'Video' },
-  { value: 'hadith', icon: '💬', ar: 'أحاديث', en: 'Hadith' },
-  { value: 'story', icon: '📜', ar: 'قصص', en: 'Stories' },
-  { value: 'research', icon: '🔬', ar: 'أبحاث', en: 'Research' },
+  { value: 'quran', icon: 'quran', ar: 'السور', en: 'Surahs' },
+  { value: 'article', icon: 'fileText', ar: 'مقالات', en: 'Articles' },
+  { value: 'lesson', icon: 'bookOpen', ar: 'دروس', en: 'Lessons' },
+  { value: 'course', icon: 'bookmark', ar: 'دورات', en: 'Courses' },
+  { value: 'book', icon: 'bookOpen', ar: 'كتب', en: 'Books' },
+  { value: 'fatwa', icon: 'shield', ar: 'فتاوى', en: 'Fatwas' },
+  { value: 'khutbah', icon: 'mosque', ar: 'خطب', en: 'Khutbahs' },
+  { value: 'audio', icon: 'headphones', ar: 'صوتيات', en: 'Audio' },
+  { value: 'video', icon: 'video', ar: 'فيديو', en: 'Video' },
+  { value: 'hadith', icon: 'helpCircle', ar: 'أحاديث', en: 'Hadith' },
+  { value: 'story', icon: 'bookOpen', ar: 'قصص', en: 'Stories' },
+  { value: 'research', icon: 'sparkles', ar: 'أبحاث', en: 'Research' },
 ];
 
 const AUDIENCE_OPTIONS: FilterOption[] = [
@@ -46,11 +53,11 @@ const AUDIENCE_OPTIONS: FilterOption[] = [
 
 const AGE_OPTIONS: FilterOption[] = [
   { value: '', ar: 'كل الأعمار', en: 'All ages' },
-  { value: 'kids', icon: '👶', ar: 'أطفال', en: 'Kids' },
-  { value: 'teens', icon: '🧑', ar: 'مراهقون', en: 'Teens' },
-  { value: 'youth', icon: '💪', ar: 'شباب', en: 'Youth' },
-  { value: 'adults', icon: '👔', ar: 'بالغون', en: 'Adults' },
-  { value: 'seniors', icon: '👴', ar: 'كبار السن', en: 'Seniors' },
+  { value: 'kids', icon: 'user', ar: 'أطفال', en: 'Kids' },
+  { value: 'teens', icon: 'user', ar: 'مراهقون', en: 'Teens' },
+  { value: 'youth', icon: 'user', ar: 'شباب', en: 'Youth' },
+  { value: 'adults', icon: 'user', ar: 'بالغون', en: 'Adults' },
+  { value: 'seniors', icon: 'user', ar: 'كبار السن', en: 'Seniors' },
 ];
 
 const LEVEL_OPTIONS: FilterOption[] = [
@@ -72,15 +79,15 @@ const MADHHAB_OPTIONS: FilterOption[] = [
   { value: 'jafari', ar: 'جعفري', en: 'Ja’fari' },
 ];
 
-const TYPE_ICONS: Record<string, string> = {
-  quran: '📖', quran_verse: '📖', article: '📰', lesson: '📖', course: '🎓',
-  book: '📚', fatwa: '⚖️', khutbah: '🕌', audio: '🎧', video: '🎬',
-  hadith: '💬', story: '📜', research: '🔬',
+const TYPE_ICONS: Record<string, IconName> = {
+  quran: 'quran', quran_verse: 'quran', article: 'fileText', lesson: 'bookOpen', course: 'bookmark',
+  book: 'bookOpen', fatwa: 'shield', khutbah: 'mosque', audio: 'headphones', video: 'video',
+  hadith: 'helpCircle', story: 'bookOpen', research: 'sparkles',
 };
 
 const COPY: Record<string, any> = {
   ar: {
-    placeholder: '🔍 ابحث في أسماء السور ومعانيها، الأحاديث، المقالات، الفتاوى، والدروس...',
+    placeholder: 'ابحث في أسماء السور ومعانيها، الأحاديث، المقالات، الفتاوى، والدروس...',
     type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى', madhhab: 'المذهب',
     results: (count: number) => (count > 0 ? count + ' نتيجة' : 'لا توجد نتائج'),
     noResults: (query: string) => 'لم نعثر على نتائج لـ "' + query + '"',
@@ -88,7 +95,7 @@ const COPY: Record<string, any> = {
     minQuery: 'اكتب كلمتين على الأقل لبدء البحث.', dateLocale: 'ar-EG',
   },
   en: {
-    placeholder: '🔍 Search surah names and meanings, hadith, articles, fatwas, and lessons...',
+    placeholder: 'Search surah names and meanings, hadith, articles, fatwas, and lessons...',
     type: 'Content type', audience: 'Audience', age: 'Age group', level: 'Level', madhhab: 'Madhhab',
     results: (count: number) => (count > 0 ? count + ' results' : 'No results'),
     noResults: (query: string) => 'No results found for "' + query + '"',
@@ -190,6 +197,9 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
     <div className="space-y-6">
       {/* شريط البحث */}
       <div className="relative">
+        <span className="pointer-events-none absolute top-1/2 -translate-y-1/2 text-slate-400 ltr:left-4 rtl:right-4" aria-hidden="true">
+          <SearchIcon />
+        </span>
         <input
           type="text"
           value={query}
@@ -198,7 +208,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
             setPage(1);
           }}
           placeholder={copy.placeholder}
-          className="w-full rounded-2xl border-2 border-slate-200 bg-white px-6 py-4 text-lg shadow-sm focus:border-primary-500 focus:outline-none dark:border-night-700 dark:bg-night-800"
+          className="w-full rounded-2xl border-2 border-slate-200 bg-white py-4 text-lg shadow-sm focus:border-primary-500 focus:outline-none ltr:pl-12 ltr:pr-6 rtl:pl-6 rtl:pr-12 dark:border-night-700 dark:bg-night-800"
           dir={lang === 'ar' ? 'rtl' : 'ltr'}
         />
         {loading && (
@@ -226,7 +236,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
                   : 'bg-slate-100 text-slate-600 hover:bg-primary-50 dark:bg-night-800 dark:text-slate-300 dark:hover:bg-night-700'
               }`}
             >
-              {option.icon ? `${option.icon} ` : ''}
+              {option.icon ? (() => { const Icon = iconMap[option.icon]; return <Icon className="me-1 inline-block align-text-bottom" size={15} />; })() : null}
               {lang === 'ar' ? option.ar : option.en}
               {(() => {
                 const count = option.value === '' ? allCount : facets[option.value] ?? 0;
@@ -253,7 +263,6 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
             >
               {filter.options.map((option) => (
                 <option key={option.value} value={option.value}>
-                  {option.icon ? `${option.icon} ` : ''}
                   {lang === 'ar' ? option.ar : option.en}
                 </option>
               ))}
@@ -275,7 +284,9 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
 
           {results.length === 0 && !loading && !error ? (
             <div className="py-12 text-center">
-              <p className="mb-3 text-4xl">🔍</p>
+              <div className="mb-3 flex justify-center text-slate-400" aria-hidden="true">
+                <SearchIcon size={36} />
+              </div>
               <p className="text-slate-500 dark:text-slate-400">{copy.noResults(query)}</p>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{copy.tryAgain}</p>
             </div>
@@ -292,7 +303,9 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
                   className="block rounded-2xl border border-slate-200 bg-white p-4 transition-all hover:border-gold-300 hover:shadow-md dark:border-night-700 dark:bg-night-800"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-2xl">{TYPE_ICONS[result.type] ?? '📄'}</span>
+                    <span className="text-primary-700 dark:text-primary-300" aria-hidden="true">
+                      {(() => { const Icon = iconMap[TYPE_ICONS[result.type] ?? 'file']; return <Icon size={24} />; })()}
+                    </span>
                     <div className="min-w-0 flex-1">
                       <h2 className="truncate font-bold text-primary-950 dark:text-white">{result.title}</h2>
                       {result.summary && (
@@ -302,9 +315,17 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
                       )}
                       <div className="mt-2 flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                         {result.published_at && (
-                          <span>📅 {new Date(result.published_at).toLocaleDateString(copy.dateLocale)}</span>
+                          <span className="inline-flex items-center gap-1">
+                            <CalendarIcon size={13} aria-hidden="true" />
+                            {new Date(result.published_at).toLocaleDateString(copy.dateLocale)}
+                          </span>
                         )}
-                        {result.views ? <span>👁️ {result.views}</span> : null}
+                        {result.views ? (
+                          <span className="inline-flex items-center gap-1">
+                            <EyeIcon size={13} aria-hidden="true" />
+                            {result.views}
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                   </div>
