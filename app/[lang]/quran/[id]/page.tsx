@@ -247,7 +247,7 @@ export default async function SurahPage({
   const reciterId: ReciterId = isReciterId(requestedReciter)
     ? requestedReciter
     : RECITERS[0].id;
-  const tafsirId: TafsirId | undefined = isTafsirId(requestedTafsir)
+  const tafsirId: TafsirId | undefined = l === "ar" && isTafsirId(requestedTafsir)
     ? requestedTafsir
     : undefined;
 
@@ -425,7 +425,7 @@ export default async function SurahPage({
             })}
           </div>
 
-          <div className="mt-5 border-t border-slate-100 pt-5 dark:border-night-700">
+          {isRTL && <div className="mt-5 border-t border-slate-100 pt-5 dark:border-night-700">
             <p className="mb-3 text-sm font-black text-slate-900 dark:text-white">
               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 18)}</span>
               {isRTL ? "التفسير" : "Tafsir"}
@@ -457,7 +457,7 @@ export default async function SurahPage({
                 </Link>
               ))}
             </div>
-          </div>
+          </div>}
         </div>
 
         </>)}
