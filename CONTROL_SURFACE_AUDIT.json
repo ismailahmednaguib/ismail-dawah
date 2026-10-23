@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-10-23T22:31:12.947Z",
+  "generated_at": "2026-10-23T23:32:08.433Z",
   "repository": "ismail-dawah",
   "commit": "local-working-tree",
   "summary": {
     "public_routes": 57,
     "admin_routes": 19,
-    "api_routes": 74,
+    "api_routes": 75,
     "settings_keys": 33,
-    "inventoried_elements": 6827,
+    "inventoried_elements": 6828,
     "unbound_static_elements": 0,
     "public_unbound_static_elements": 0,
     "status_counts": {
       "admin-ui": 961,
       "api-contract": 576,
-      "catalogued": 2946,
+      "catalogued": 2947,
       "curated-reference": 1634,
       "immutable-reference": 710
     }
@@ -723,6 +723,11 @@
       "route": "/api/search",
       "kind": "api",
       "file": "app/api/search/route.ts"
+    },
+    {
+      "route": "/api/site-icon",
+      "kind": "api",
+      "file": "app/api/site-icon/route.ts"
     },
     {
       "route": "/api/site-settings",
@@ -34743,6 +34748,22 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
+      "element_key": "text:9ed7927b975c",
+      "page": "/{lang}/fiqh",
+      "kind": "text",
+      "source": "code",
+      "source_file": "app/[lang]/fiqh/page.tsx",
+      "line": 104,
+      "value": "الرئيسية",
+      "admin_key": "content.fiqh",
+      "language": "ar|en",
+      "mode": "catalogued",
+      "permission": "settings.manage",
+      "test": "source override tests",
+      "status": "catalogued",
+      "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
+    },
+    {
       "element_key": "text:ed5fb96b2631",
       "page": null,
       "kind": "text",
@@ -66983,12 +67004,12 @@
       "reason": "shared UI component copy is source-controlled and covered by bilingual component tests"
     },
     {
-      "element_key": "text:3de58a82a069",
+      "element_key": "text:c0a8eed9c2a4",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 27,
+      "line": 28,
       "value": "مدير عام",
       "admin_key": null,
       "language": "system",
@@ -66999,12 +67020,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:a8bc77188e8f",
+      "element_key": "text:8003a29fbd23",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 28,
+      "line": 29,
       "value": "مدير",
       "admin_key": null,
       "language": "system",
@@ -67015,12 +67036,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:0ecd81192f51",
+      "element_key": "text:c7c0ac7b3cca",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 29,
+      "line": 30,
       "value": "محرر",
       "admin_key": null,
       "language": "system",
@@ -67031,12 +67052,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:49e4d562f1e6",
+      "element_key": "text:70b0d46638b5",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 30,
+      "line": 31,
       "value": "مراجع علمي",
       "admin_key": null,
       "language": "system",
@@ -67047,12 +67068,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:fe90fcd86b1a",
+      "element_key": "text:a900f7f9481f",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 31,
+      "line": 32,
       "value": "مترجم",
       "admin_key": null,
       "language": "system",
@@ -67063,12 +67084,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:114a03b1d642",
+      "element_key": "text:410831c3be90",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 32,
+      "line": 33,
       "value": "مساهم",
       "admin_key": null,
       "language": "system",
@@ -67079,12 +67100,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:51239686a5ce",
+      "element_key": "text:119796fb9d13",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 52,
+      "line": 55,
       "value": "لوحة المعلومات",
       "admin_key": null,
       "language": "system",
@@ -67095,12 +67116,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:dbb3886669e4",
+      "element_key": "text:a3fe7f4d9d8e",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 53,
+      "line": 56,
       "value": "التحكم الموحد",
       "admin_key": null,
       "language": "system",
@@ -67111,12 +67132,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:67991b6b0f0a",
+      "element_key": "text:b439e0f3b4ec",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 54,
+      "line": 57,
       "value": "المحتوى",
       "admin_key": null,
       "language": "system",
@@ -67127,12 +67148,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:51894231f5c2",
+      "element_key": "text:8b3f148da261",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 55,
+      "line": 58,
       "value": "التصنيفات",
       "admin_key": null,
       "language": "system",
@@ -67143,12 +67164,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:9d1b671a84b7",
+      "element_key": "text:2d4769e0cec2",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 56,
+      "line": 59,
       "value": "الترجمات",
       "admin_key": null,
       "language": "system",
@@ -67159,12 +67180,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:47a0b8f568c4",
+      "element_key": "text:c91ace30c144",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 57,
+      "line": 60,
       "value": "جودة المحتوى",
       "admin_key": null,
       "language": "system",
@@ -67175,12 +67196,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:a7601d0e52e1",
+      "element_key": "text:9cbf1ec670c9",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 58,
+      "line": 61,
       "value": "المراجعة العلمية",
       "admin_key": null,
       "language": "system",
@@ -67191,12 +67212,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:a4f91f3d187a",
+      "element_key": "text:e62678af966b",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 59,
+      "line": 62,
       "value": "التحليلات",
       "admin_key": null,
       "language": "system",
@@ -67207,12 +67228,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:23fbd06c8910",
+      "element_key": "text:fc56d096f010",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 60,
+      "line": 63,
       "value": "أسئلة الزوار",
       "admin_key": null,
       "language": "system",
@@ -67223,12 +67244,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:35e58455fe39",
+      "element_key": "text:e230e713677b",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 61,
+      "line": 64,
       "value": "الإشعارات",
       "admin_key": null,
       "language": "system",
@@ -67239,12 +67260,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:d76ae3a3a4d8",
+      "element_key": "text:bdf0e3c15421",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 62,
+      "line": 65,
       "value": "النشرة البريدية",
       "admin_key": null,
       "language": "system",
@@ -67255,12 +67276,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:0bfa9de541f1",
+      "element_key": "text:952a16cfcd51",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 63,
+      "line": 66,
       "value": "المستخدمون والأدوار",
       "admin_key": null,
       "language": "system",
@@ -67271,12 +67292,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:e38c7b51f583",
+      "element_key": "text:ebc2fd47ce17",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 64,
+      "line": 67,
       "value": "سجل التدقيق",
       "admin_key": null,
       "language": "system",
@@ -67287,12 +67308,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:635161f2f37b",
+      "element_key": "text:5edb913553dc",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 65,
+      "line": 68,
       "value": "الأمان",
       "admin_key": null,
       "language": "system",
@@ -67303,12 +67324,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:fc67414414e4",
+      "element_key": "text:4c8df6b26d43",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 66,
+      "line": 69,
       "value": "النسخ الاحتياطي",
       "admin_key": null,
       "language": "system",
@@ -67319,12 +67340,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:bdefdce02d79",
+      "element_key": "text:3634c79e53e3",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 67,
+      "line": 70,
       "value": "إعدادات المنصة",
       "admin_key": null,
       "language": "system",
@@ -67335,12 +67356,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:0146648c49bb",
+      "element_key": "text:d70d4d0d484e",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 98,
+      "line": 107,
       "value": "مدير",
       "admin_key": null,
       "language": "system",
@@ -67351,12 +67372,12 @@
       "reason": "administration interface copy"
     },
     {
-      "element_key": "text:17cf343adb34",
+      "element_key": "text:3dcd3b7ab9dc",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "components/admin/AdminSidebar.tsx",
-      "line": 104,
+      "line": 113,
       "value": "قائمة لوحة التحكم",
       "admin_key": null,
       "language": "system",

@@ -73,3 +73,7 @@ pnpm-debug.log*
 project-map.txt
 tree.txt
 .kilo/
+
+# ملفات اختبار محلية غير مخصصة للنشر
+/mail-dawah
+/public/perf-blank.html

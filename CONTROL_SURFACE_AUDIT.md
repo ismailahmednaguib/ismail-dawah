@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-10-23T22:31:12.947Z
+> تاريخ التوليد: 2026-10-23T23:32:08.433Z
 
 ## الملخص
 
 - المسارات العامة: **57**
 - مسارات الإدارة: **19**
-- واجهات API: **74**
+- واجهات API: **75**
 - مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **6827**
+- العناصر المفحوصة: **6828**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **961** · `api-contract` = **576** · `catalogued` = **2946** · `curated-reference` = **1634** · `immutable-reference` = **710**
+- توزيع الحالات: `admin-ui` = **961** · `api-contract` = **576** · `catalogued` = **2947** · `curated-reference` = **1634** · `immutable-reference` = **710**
 
 ## المسارات
 
@@ -158,6 +158,7 @@
 | api | `/api/questions/admin` | `app/api/questions/admin/route.ts` | يحتاج فحص metadata |
 | api | `/api/register` | `app/api/register/route.ts` | يحتاج فحص metadata |
 | api | `/api/search` | `app/api/search/route.ts` | يحتاج فحص metadata |
+| api | `/api/site-icon` | `app/api/site-icon/route.ts` | يحتاج فحص metadata |
 | api | `/api/site-settings` | `app/api/site-settings/route.ts` | يحتاج فحص metadata |
 | api | `/api/stats` | `app/api/stats/route.ts` | يحتاج فحص metadata |
 | api | `/api/stats/advanced` | `app/api/stats/advanced/route.ts` | يحتاج فحص metadata |
