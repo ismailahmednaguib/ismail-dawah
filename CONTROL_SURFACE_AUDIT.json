@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T20:48:31.249Z",
+  "generated_at": "2026-10-23T20:55:13.597Z",
   "repository": "ismail-dawah",
   "commit": "local-working-tree",
   "summary": {
@@ -42018,12 +42018,12 @@
       "reason": "public route shell or interactive state; no untracked editorial payload"
     },
     {
-      "element_key": "link:2c73d92a1c2d",
+      "element_key": "link:8acf678566ce",
       "page": "/{lang}",
       "kind": "link",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 731,
+      "line": 736,
       "value": "/api/download/android",
       "admin_key": null,
       "language": "ar|en",
@@ -42034,12 +42034,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:a90c7d60c388",
+      "element_key": "text:0d9fa32b5b53",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 127,
+      "line": 132,
       "value": "منصة دعوية شاملة",
       "admin_key": null,
       "language": "ar|en",
@@ -42050,12 +42050,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:85da2b93fed9",
+      "element_key": "text:6264faba90b2",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 128,
+      "line": 133,
       "value": "اكتشف الإسلام",
       "admin_key": null,
       "language": "ar|en",
@@ -42066,12 +42066,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:c1fb10303737",
+      "element_key": "text:c4cd628a585e",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 130,
+      "line": 135,
       "value": "منصة إسلامية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد.",
       "admin_key": null,
       "language": "ar|en",
@@ -42082,12 +42082,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:55dc3a365f54",
+      "element_key": "text:b92318de355c",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 131,
+      "line": 136,
       "value": "ابدأ رحلة العلم",
       "admin_key": null,
       "language": "ar|en",
@@ -42098,12 +42098,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:4a22b52929ce",
+      "element_key": "text:98d4bea2f1a3",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 132,
+      "line": 137,
       "value": "البث المباشر",
       "admin_key": null,
       "language": "ar|en",
@@ -42114,12 +42114,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:ee3b4224ec69",
+      "element_key": "text:8982691ddac2",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 133,
+      "line": 138,
       "value": "مادة منشورة",
       "admin_key": null,
       "language": "ar|en",
@@ -42130,12 +42130,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:ca38ece8fec5",
+      "element_key": "text:33b4d671487d",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 134,
+      "line": 139,
       "value": "لغات متاحة",
       "admin_key": null,
       "language": "ar|en",
@@ -42146,12 +42146,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:ba4bec0df6b8",
+      "element_key": "text:e35cfe277b84",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 135,
+      "line": 140,
       "value": "درس منشور",
       "admin_key": null,
       "language": "ar|en",
@@ -42162,12 +42162,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:34ea914a27a7",
+      "element_key": "text:2f2da8cd325b",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 136,
+      "line": 141,
       "value": "فتوى منشورة",
       "admin_key": null,
       "language": "ar|en",
@@ -42178,12 +42178,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:f8425255c3d9",
+      "element_key": "text:25d310ffb741",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 137,
+      "line": 142,
       "value": "تعلّم العلوم الشرعية",
       "admin_key": null,
       "language": "ar|en",
@@ -42194,12 +42194,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:9cc57aa61086",
+      "element_key": "text:75ec0921b3a3",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 138,
+      "line": 143,
       "value": "ابدأ بأساسيات الدين وتدرّج في طلب العلم الشرعي",
       "admin_key": null,
       "language": "ar|en",
@@ -42210,12 +42210,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:32093926e031",
+      "element_key": "text:478b833ff443",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 139,
+      "line": 144,
       "value": "العلوم والردود",
       "admin_key": null,
       "language": "ar|en",
@@ -42226,12 +42226,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:eb778850bc1c",
+      "element_key": "text:5ec426c2c049",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 140,
+      "line": 145,
       "value": "ردود على الشبهات وقضايا معاصرة بمنهج شرعي معتدل",
       "admin_key": null,
       "language": "ar|en",
@@ -42242,12 +42242,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:7c8945f8ae79",
+      "element_key": "text:68f1b5a3c44c",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 141,
+      "line": 146,
       "value": "الدعوة والتوعية",
       "admin_key": null,
       "language": "ar|en",
@@ -42258,12 +42258,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:5dbf363f6233",
+      "element_key": "text:6cf9eead21a3",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 142,
+      "line": 147,
       "value": "أدوات ومواد دعوية لنشر العلم الشرعي",
       "admin_key": null,
       "language": "ar|en",
@@ -42274,12 +42274,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:5b704a1eb5ce",
+      "element_key": "text:df8b16705ec1",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 143,
+      "line": 148,
       "value": "◈ لغير المسلمين",
       "admin_key": null,
       "language": "ar|en",
@@ -42290,12 +42290,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:02a5833bc425",
+      "element_key": "text:9be2e0be7440",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 144,
+      "line": 149,
       "value": "تبحث عن الحقيقة؟ ابدأ من هنا",
       "admin_key": null,
       "language": "ar|en",
@@ -42306,12 +42306,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:3641a6d4f99c",
+      "element_key": "text:1499f29cecd1",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 146,
+      "line": 151,
       "value": "تعريف مبسّط بالإسلام، وإجابات هادئة عن أكثر الأسئلة تكرارًا، وخطوات واضحة لمن يريد اعتناق الإسلام.",
       "admin_key": null,
       "language": "ar|en",
@@ -42322,12 +42322,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:afc7ac2a8d0e",
+      "element_key": "text:c82af56b921c",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 147,
+      "line": 152,
       "value": "تعريف بالإسلام",
       "admin_key": null,
       "language": "ar|en",
@@ -42338,12 +42338,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:2f0f4e4aeab0",
+      "element_key": "text:9f9f3194c144",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 148,
+      "line": 153,
       "value": "كيف أدخل الإسلام؟",
       "admin_key": null,
       "language": "ar|en",
@@ -42354,12 +42354,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:d646d68d0b62",
+      "element_key": "text:46c172c2ad56",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 149,
+      "line": 154,
       "value": "آية اليوم",
       "admin_key": null,
       "language": "ar|en",
@@ -42370,12 +42370,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:5e3db7c257b9",
+      "element_key": "text:0dd283b589c1",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 150,
+      "line": 155,
       "value": "تطبيق أندرويد",
       "admin_key": null,
       "language": "ar|en",
@@ -42386,12 +42386,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:ead663635622",
+      "element_key": "text:88380f91f921",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 151,
+      "line": 156,
       "value": "حمّل التطبيق الآن",
       "admin_key": null,
       "language": "ar|en",
@@ -42402,12 +42402,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:cb87cc5eb2e6",
+      "element_key": "text:43c978dc61ae",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 153,
+      "line": 158,
       "value": "افتح منصة اكتشف الإسلام كتطبيق مستقل على هاتفك الأندرويد بدون الحاجة لفتح المتصفح.",
       "admin_key": null,
       "language": "ar|en",
@@ -42418,12 +42418,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:044b00ff8e75",
+      "element_key": "text:6cfa9807a468",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 154,
+      "line": 159,
       "value": "تحميل APK مباشرة",
       "admin_key": null,
       "language": "ar|en",
@@ -42434,12 +42434,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:497fc5c607b5",
+      "element_key": "text:43637e0cb82d",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 155,
+      "line": 160,
       "value": "صفحة التحميل",
       "admin_key": null,
       "language": "ar|en",
@@ -42450,12 +42450,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:c3c6c9bdac16",
+      "element_key": "text:fbaf6304164c",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 156,
+      "line": 161,
       "value": "ابدأ رحلتك الإيمانية اليوم",
       "admin_key": null,
       "language": "ar|en",
@@ -42466,12 +42466,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:498d04a951bc",
+      "element_key": "text:850fc478ea9d",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 157,
+      "line": 162,
       "value": "أنشئ حسابك المجاني وتابع وردك وأذكارك وتعلّمك في مكان واحد.",
       "admin_key": null,
       "language": "ar|en",
@@ -42482,12 +42482,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:1b9f1fa055fb",
+      "element_key": "text:c0b15d3d897d",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 158,
+      "line": 163,
       "value": "إنشاء حساب مجاني",
       "admin_key": null,
       "language": "ar|en",
@@ -42498,12 +42498,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:3f1894d8cd00",
+      "element_key": "text:ef76af96a8d1",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 159,
+      "line": 164,
       "value": "تعرّف علينا",
       "admin_key": null,
       "language": "ar|en",
@@ -42514,12 +42514,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:07011c68bd7f",
+      "element_key": "text:0fafbe974659",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 162,
+      "line": 167,
       "value": "منصة إسلامية شاملة للقرآن، الأذكار، الفتاوى، مواقيت الصلاة، القبلة، وأدوات الدعوة. بالعربية والإنجليزية.",
       "admin_key": null,
       "language": "ar|en",
@@ -42530,12 +42530,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:d710139226e9",
+      "element_key": "text:70d1290eda03",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 163,
+      "line": 168,
       "value": "اختر مسارك",
       "admin_key": null,
       "language": "ar|en",
@@ -42546,12 +42546,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:ec6503163e1d",
+      "element_key": "text:06f8ed78b5a4",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 165,
+      "line": 170,
       "value": "ابدأ من الباب الأقرب إلى احتياجك، ثم انتقل تدريجيًا إلى ما يناسب رحلتك.",
       "admin_key": null,
       "language": "ar|en",
@@ -42562,12 +42562,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:03c4af5ee389",
+      "element_key": "text:175b163fe666",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 166,
+      "line": 171,
       "value": "مختارات المحرر",
       "admin_key": null,
       "language": "ar|en",
@@ -42578,12 +42578,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:9598358869a3",
+      "element_key": "text:8a317729f3c3",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 167,
+      "line": 172,
       "value": "مواد منتقاة بعناية لتبدأ منها رحلتك",
       "admin_key": null,
       "language": "ar|en",
@@ -42594,12 +42594,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:ba1fa3eabe7f",
+      "element_key": "text:323c308097f2",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 168,
+      "line": 173,
       "value": "أحدث ما نُشر",
       "admin_key": null,
       "language": "ar|en",
@@ -42610,12 +42610,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:c9cf34f06b48",
+      "element_key": "text:518f7b9659c9",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 169,
+      "line": 174,
       "value": "مختارات من الدروس والفتاوى والمقالات والأحاديث والأسئلة",
       "admin_key": null,
       "language": "ar|en",
@@ -42626,12 +42626,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:9010e3f05688",
+      "element_key": "text:74f625ba49d4",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 170,
+      "line": 175,
       "value": "أحدث الدروس",
       "admin_key": null,
       "language": "ar|en",
@@ -42642,12 +42642,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:5a42f1ee50b0",
+      "element_key": "text:f8da352a570f",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 171,
+      "line": 176,
       "value": "أحدث الفتاوى",
       "admin_key": null,
       "language": "ar|en",
@@ -42658,12 +42658,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:b2c6af4b982f",
+      "element_key": "text:a58d5771048f",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 172,
+      "line": 177,
       "value": "أحدث المقالات",
       "admin_key": null,
       "language": "ar|en",
@@ -42674,12 +42674,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:c1babd9e9ff5",
+      "element_key": "text:a0884df77526",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 173,
+      "line": 178,
       "value": "من الأحاديث",
       "admin_key": null,
       "language": "ar|en",
@@ -42690,12 +42690,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:68f058eed0e2",
+      "element_key": "text:a192049a20bc",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 174,
+      "line": 179,
       "value": "من الأسئلة الشائعة",
       "admin_key": null,
       "language": "ar|en",
@@ -42706,12 +42706,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:a65c88703ac6",
+      "element_key": "text:a5a607fb282a",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 175,
+      "line": 180,
       "value": "من الخطب",
       "admin_key": null,
       "language": "ar|en",
@@ -42722,12 +42722,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:3d557db9f520",
+      "element_key": "text:c6400246806a",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 176,
+      "line": 181,
       "value": "من السيرة والقصص",
       "admin_key": null,
       "language": "ar|en",
@@ -42738,12 +42738,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:5a0c3c126589",
+      "element_key": "text:ab7ed46e1109",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 177,
+      "line": 182,
       "value": "عرض الكل",
       "admin_key": null,
       "language": "ar|en",
@@ -42754,12 +42754,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:8973acb68372",
+      "element_key": "text:eba2cd4e90f1",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 178,
+      "line": 183,
       "value": "اقرأ المزيد",
       "admin_key": null,
       "language": "ar|en",
@@ -42770,12 +42770,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:5c942f55de64",
+      "element_key": "text:699503d75f2a",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 179,
+      "line": 184,
       "value": "أبواب الموقع",
       "admin_key": null,
       "language": "ar|en",
@@ -42786,12 +42786,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:3a99b33b310e",
+      "element_key": "text:650aad08bb2f",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 180,
+      "line": 185,
       "value": "كل ما تحتاجه في مكان واحد — اختر الباب الذي تريد أن تبدأ منه",
       "admin_key": null,
       "language": "ar|en",
@@ -42802,12 +42802,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:1a2d52c27bb7",
+      "element_key": "text:3f9205c2d780",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 181,
+      "line": 186,
       "value": "موضوعًا",
       "admin_key": null,
       "language": "ar|en",
@@ -42818,12 +42818,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:bffec54ebef2",
+      "element_key": "text:89cbf9c3d74f",
       "page": "/{lang}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/page.tsx",
-      "line": 182,
+      "line": 187,
       "value": "تصفّح القسم",
       "admin_key": null,
       "language": "ar|en",
