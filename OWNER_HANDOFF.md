@@ -74,4 +74,4 @@ npx vercel --prod
 - `npm run qa:rls -- --strict` متوقف فقط لأن جدول `admin_mfa` منفّذ لكنه فارغ حتى يسجّل المالك جهازه.
 - بوابة القرآن تعرض النص والتلاوة بأربعة قراء، وأصبح التفسير الميسر اختياريًا داخل صفحة السورة؛ لا يُطلب مصدر التفسير إلا عند اختياره.
 - `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). بعد ضبط `webpackBuildWorker: false` نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
-- آخر commit جاهز للرفع هو `e12bc58` (`build: run checks outside Next workers`) ويشمل commits الخطة السابقة وتحديث جرد السطح، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك.
+- آخر commit جاهز للرفع هو `90720da` (`build: scope worker workaround to Windows`) ويشمل commits الخطة السابقة وتحديث جرد السطح، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك.
