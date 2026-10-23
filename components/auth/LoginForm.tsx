@@ -5,6 +5,12 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
 import type { Lang } from "@/lib/i18n";
+import {
+  AlertIcon,
+  CheckCircleIcon,
+  LogInIcon,
+  UserPlusIcon,
+} from "@/lib/icons";
 
 // ============================================================
 // Settings
@@ -261,14 +267,14 @@ export default function LoginForm({ lang }: { lang: Lang }) {
 
       setMessage({
         type: "error",
-        text: `❌ ${errorMessage}`,
+        text: errorMessage,
       });
       if (mode === "register") resetTurnstile();
     } catch (error) {
       console.error("[LoginForm] submit error:", error);
       setMessage({
         type: "error",
-        text: `❌ ${t.connectionError}`,
+        text: t.connectionError,
       });
       if (mode === "register") resetTurnstile();
     } finally {
@@ -290,7 +296,10 @@ export default function LoginForm({ lang }: { lang: Lang }) {
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
             }`}
           >
-            🔐 {t.loginTitle}
+            <span className="inline-flex items-center justify-center gap-2">
+              <LogInIcon size={17} aria-hidden="true" />
+              {t.loginTitle}
+            </span>
           </button>
 
           {ALLOW_REGISTER ? (
@@ -303,7 +312,10 @@ export default function LoginForm({ lang }: { lang: Lang }) {
                   : "text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
               }`}
             >
-              ✨ {t.registerTitle}
+              <span className="inline-flex items-center justify-center gap-2">
+                <UserPlusIcon size={17} aria-hidden="true" />
+                {t.registerTitle}
+              </span>
             </button>
           ) : null}
         </div>
@@ -318,7 +330,14 @@ export default function LoginForm({ lang }: { lang: Lang }) {
             }`}
             aria-live="polite"
           >
-            {message.text}
+            <span className="inline-flex items-center gap-2">
+              {message.type === "success" ? (
+                <CheckCircleIcon size={18} aria-hidden="true" />
+              ) : (
+                <AlertIcon size={18} aria-hidden="true" />
+              )}
+              {message.text}
+            </span>
           </div>
         ) : null}
 
@@ -485,11 +504,13 @@ export default function LoginForm({ lang }: { lang: Lang }) {
               </span>
             ) : mode === "login" ? (
               <span className="inline-flex items-center gap-2">
-                🔐 {t.loginButton}
+                <LogInIcon size={20} aria-hidden="true" />
+                {t.loginButton}
               </span>
             ) : (
               <span className="inline-flex items-center gap-2">
-                ✨ {t.registerButton}
+                <UserPlusIcon size={20} aria-hidden="true" />
+                {t.registerButton}
               </span>
             )}
           </button>

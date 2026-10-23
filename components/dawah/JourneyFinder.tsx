@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Lang } from "@/lib/i18n";
+import { iconMap, type IconName } from "@/lib/icons";
 
 type Choice = {
   id: string;
-  icon: string;
+  icon: IconName;
   title: string;
   description: string;
 };
@@ -45,28 +46,28 @@ const COPY = {
 const OPTIONS = {
   ar: {
     focus: [
-      { id: "discover", icon: "🌙", title: "أريد التعرف على الإسلام", description: "مدخل هادئ ومختصر إلى الإسلام ورسالة الأنبياء." },
-      { id: "questions", icon: "❓", title: "لدي أسئلة أو مقارنات", description: "مواد موثقة للحوار والأسئلة الفكرية والدينية." },
-      { id: "atheism", icon: "💡", title: "أبحث عن إجابات فكرية", description: "أسئلة الوجود والمعنى والأخلاق والإلحاد." },
-      { id: "new-muslim", icon: "🤲", title: "أنا مسلم جديد", description: "خطوات عملية للبدء بثبات وطمأنينة." },
+      { id: "discover", icon: "crescent", title: "أريد التعرف على الإسلام", description: "مدخل هادئ ومختصر إلى الإسلام ورسالة الأنبياء." },
+      { id: "questions", icon: "helpCircle", title: "لدي أسئلة أو مقارنات", description: "مواد موثقة للحوار والأسئلة الفكرية والدينية." },
+      { id: "atheism", icon: "sparkles", title: "أبحث عن إجابات فكرية", description: "أسئلة الوجود والمعنى والأخلاق والإلحاد." },
+      { id: "new-muslim", icon: "duaHands", title: "أنا مسلم جديد", description: "خطوات عملية للبدء بثبات وطمأنينة." },
     ],
     format: [
-      { id: "short", icon: "⚡", title: "أريد بداية قصيرة", description: "صفحة تمهيدية وأهم الروابط فقط." },
-      { id: "deep", icon: "📚", title: "أريد القراءة بتوسع", description: "مكتبة موضوعية ومواد مترابطة للتعمق." },
-      { id: "daee", icon: "💬", title: "أفضل الحوار مع شخص", description: "إرسال سؤال إلى فريق التواصل والدعوة." },
+      { id: "short", icon: "arrowRight", title: "أريد بداية قصيرة", description: "صفحة تمهيدية وأهم الروابط فقط." },
+      { id: "deep", icon: "bookOpen", title: "أريد القراءة بتوسع", description: "مكتبة موضوعية ومواد مترابطة للتعمق." },
+      { id: "daee", icon: "mail", title: "أفضل الحوار مع شخص", description: "إرسال سؤال إلى فريق التواصل والدعوة." },
     ],
   },
   en: {
     focus: [
-      { id: "discover", icon: "🌙", title: "I want to learn about Islam", description: "A calm introduction to Islam and the message of the prophets." },
-      { id: "questions", icon: "❓", title: "I have questions or comparisons", description: "Sourced material for religious and intellectual dialogue." },
-      { id: "atheism", icon: "💡", title: "I am exploring big questions", description: "Questions of existence, meaning, ethics, and atheism." },
-      { id: "new-muslim", icon: "🤲", title: "I am a new Muslim", description: "Practical first steps with clarity and confidence." },
+      { id: "discover", icon: "crescent", title: "I want to learn about Islam", description: "A calm introduction to Islam and the message of the prophets." },
+      { id: "questions", icon: "helpCircle", title: "I have questions or comparisons", description: "Sourced material for religious and intellectual dialogue." },
+      { id: "atheism", icon: "sparkles", title: "I am exploring big questions", description: "Questions of existence, meaning, ethics, and atheism." },
+      { id: "new-muslim", icon: "duaHands", title: "I am a new Muslim", description: "Practical first steps with clarity and confidence." },
     ],
     format: [
-      { id: "short", icon: "⚡", title: "I want a short start", description: "One introduction page and the most useful links." },
-      { id: "deep", icon: "📚", title: "I want to read in depth", description: "A topic library with connected, sourced material." },
-      { id: "daee", icon: "💬", title: "I would rather speak to someone", description: "Send a question to the dawah and support team." },
+      { id: "short", icon: "arrowRight", title: "I want a short start", description: "One introduction page and the most useful links." },
+      { id: "deep", icon: "bookOpen", title: "I want to read in depth", description: "A topic library with connected, sourced material." },
+      { id: "daee", icon: "mail", title: "I would rather speak to someone", description: "Send a question to the dawah and support team." },
     ],
   },
 } as const;
@@ -118,7 +119,9 @@ export default function JourneyFinder({ lang }: Props) {
                 aria-pressed={selected === option.id}
               >
                 <span className="flex items-start gap-3">
-                  <span className="text-2xl" aria-hidden="true">{option.icon}</span>
+                  <span className="text-primary-700 dark:text-primary-300" aria-hidden="true">
+                    {(() => { const Icon = iconMap[option.icon]; return <Icon size={24} />; })()}
+                  </span>
                   <span>
                     <strong className="block text-base text-primary-950 dark:text-white">{option.title}</strong>
                     <span className="mt-1 block text-sm leading-6 text-slate-600 dark:text-slate-300">{option.description}</span>
@@ -134,7 +137,9 @@ export default function JourneyFinder({ lang }: Props) {
         </>
       ) : (
         <div className="text-center">
-          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50 text-3xl dark:bg-primary-900/40" aria-hidden="true">🧭</span>
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300" aria-hidden="true">
+            <span aria-hidden="true">{(() => { const Icon = iconMap.qibla; return <Icon size={32} />; })()}</span>
+          </span>
           <h2 className="mt-5 text-2xl font-black text-primary-950 dark:text-white">{copy.result}</h2>
           <p className="mx-auto mt-3 max-w-xl leading-7 text-slate-600 dark:text-slate-300">{copy.resultDescription}</p>
           {destination && <Link href={`/${lang}${destination.href}`} className="btn-primary mt-6 inline-flex">{lang === "ar" ? destination.ar : destination.en} ←</Link>}

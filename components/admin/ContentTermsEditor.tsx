@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { BookmarkIcon, SaveIcon, getIcon } from '@/lib/icons';
 
 interface Taxonomy {
   id: string;
@@ -81,7 +82,10 @@ export default function ContentTermsEditor({
     <section className="rounded-xl border border-stone-200 bg-white p-5">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
-          <h3 className="font-medium text-stone-700">🏷️ التصنيفات والوسوم</h3>
+          <h3 className="inline-flex items-center gap-2 font-medium text-stone-700">
+            <BookmarkIcon size={17} aria-hidden="true" />
+            التصنيفات والوسوم
+          </h3>
           <p className="mt-1 text-xs text-stone-500">استخدمها لتجميع القرآن والحديث والفقه والمكتبة.</p>
         </div>
         {canEdit && <Link href="/admin/taxonomies" className="text-xs text-primary-700 hover:underline">إدارة التصنيفات</Link>}
@@ -96,7 +100,12 @@ export default function ContentTermsEditor({
           {items.map((item) => (
             <label key={item.id} className="flex cursor-pointer items-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-sm hover:border-primary-300">
               <input type="checkbox" checked={selected.includes(item.id)} onChange={() => toggle(item.id)} disabled={!canEdit} className="accent-primary-700" />
-              <span>{item.icon || '🏷️'}</span>
+              <span className="text-primary-700" aria-hidden="true">
+                {(() => {
+                  const Icon = (item.icon ? getIcon(item.icon) : null) ?? BookmarkIcon;
+                  return <Icon size={17} />;
+                })()}
+              </span>
               <span>{item.name}</span>
             </label>
           ))}
@@ -106,7 +115,10 @@ export default function ContentTermsEditor({
       {canEdit && (
         <div className="mt-4 flex items-center gap-3">
           <button type="button" onClick={() => void save()} disabled={saving || loading} className="rounded-lg bg-primary-700 px-4 py-2 text-sm text-white disabled:opacity-50">
-            {saving ? 'جارٍ الحفظ...' : 'حفظ التصنيفات'}
+            <span className="inline-flex items-center gap-2">
+              <SaveIcon size={15} aria-hidden="true" />
+              {saving ? 'جارٍ الحفظ...' : 'حفظ التصنيفات'}
+            </span>
           </button>
           {message && <span className="text-sm text-primary-700">{message}</span>}
           {error && <span className="text-sm text-red-700">{error}</span>}
