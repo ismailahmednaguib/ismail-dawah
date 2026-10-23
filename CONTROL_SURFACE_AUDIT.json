@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T21:07:09.272Z",
+  "generated_at": "2026-10-23T22:31:12.947Z",
   "repository": "ismail-dawah",
   "commit": "local-working-tree",
   "summary": {
@@ -7,12 +7,12 @@
     "admin_routes": 19,
     "api_routes": 74,
     "settings_keys": 33,
-    "inventoried_elements": 6826,
+    "inventoried_elements": 6827,
     "unbound_static_elements": 0,
     "public_unbound_static_elements": 0,
     "status_counts": {
       "admin-ui": 961,
-      "api-contract": 575,
+      "api-contract": 576,
       "catalogued": 2946,
       "curated-reference": 1634,
       "immutable-reference": 710
@@ -6695,12 +6695,28 @@
       "reason": "server/API contract message"
     },
     {
-      "element_key": "text:89bfdd633173",
+      "element_key": "text:80ce141c383e",
       "page": "/api/admin/content/import",
       "kind": "text",
       "source": "code",
       "source_file": "app/api/admin/content/import/route.ts",
-      "line": 146,
+      "line": 147,
+      "value": "حجم ملف الاستيراد يتجاوز ${MAX_IMPORT_BYTES / (1024 * 1024)} ميجابايت.",
+      "admin_key": null,
+      "language": "system",
+      "mode": "api",
+      "permission": "server",
+      "test": "server contract tests",
+      "status": "api-contract",
+      "reason": "server/API contract message"
+    },
+    {
+      "element_key": "text:290f45391256",
+      "page": "/api/admin/content/import",
+      "kind": "text",
+      "source": "code",
+      "source_file": "app/api/admin/content/import/route.ts",
+      "line": 153,
       "value": "ملف JSON غير صالح.",
       "admin_key": null,
       "language": "system",
@@ -6711,12 +6727,12 @@
       "reason": "server/API contract message"
     },
     {
-      "element_key": "text:ec250f90302e",
+      "element_key": "text:28e74db17411",
       "page": "/api/admin/content/import",
       "kind": "text",
       "source": "code",
       "source_file": "app/api/admin/content/import/route.ts",
-      "line": 172,
+      "line": 179,
       "value": "فشل التحقق؛ لم تُطبَّق أي مادة.",
       "admin_key": null,
       "language": "system",
@@ -6727,12 +6743,12 @@
       "reason": "server/API contract message"
     },
     {
-      "element_key": "text:189924e1da3f",
+      "element_key": "text:bfb820356b29",
       "page": "/api/admin/content/import",
       "kind": "text",
       "source": "code",
       "source_file": "app/api/admin/content/import/route.ts",
-      "line": 199,
+      "line": 206,
       "value": "تم استيراد ${created.length} مادة كمسودة.",
       "admin_key": null,
       "language": "system",
@@ -6743,12 +6759,12 @@
       "reason": "server/API contract message"
     },
     {
-      "element_key": "text:c96f3a0433e6",
+      "element_key": "text:e0b31b73a068",
       "page": "/api/admin/content/import",
       "kind": "text",
       "source": "code",
       "source_file": "app/api/admin/content/import/route.ts",
-      "line": 200,
+      "line": 207,
       "value": "تم استيراد ${created.length} مادة، وتعذّر استيراد ${errors.length} مادة.",
       "admin_key": null,
       "language": "system",
