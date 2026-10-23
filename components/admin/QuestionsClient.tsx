@@ -343,14 +343,14 @@ export default function QuestionsClient() {
           {[1, 2, 3].map((item) => <div key={item} className="h-48 animate-pulse rounded-2xl bg-cream-100" />)}
         </div>
       ) : questions.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-cream-300 bg-white p-10 text-center shadow-sm">
+        <div className="admin-card border-dashed border-cream-300 p-10 text-center">
           <p className="text-lg font-black text-primary-950">لا توجد أسئلة في هذا القسم</p>
           <p className="mt-2 text-sm text-stone-500">عندما يرسل الزوار أسئلة جديدة ستظهر هنا مباشرة.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {questions.map((question) => (
-            <article key={question.id} className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm md:p-6">
+            <article key={question.id} className="admin-card p-5 md:p-6">
               <div className="flex flex-col justify-between gap-3 border-b border-cream-100 pb-4 md:flex-row md:items-start">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { AppRole } from "@/lib/types/content";
 import { can, highestRole } from "@/lib/admin/permissions";
+import { SITE_NAME, SITE_TAGLINE } from "@/lib/site";
 import type { IconComponent } from "@/lib/icons";
 import {
   BellIcon,
@@ -42,9 +43,11 @@ interface NavItem {
 export default function AdminSidebar({
   userName,
   roles,
+  siteName,
 }: {
   userName: string;
   roles: AppRole[];
+  siteName?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -69,25 +72,31 @@ export default function AdminSidebar({
 
   const role = highestRole(roles);
   const initials = userName.trim().slice(0, 1).toUpperCase() || "م";
+  const fullBrandName = siteName?.trim() || SITE_NAME;
+  const brandName = fullBrandName.split("–")[0]?.trim() || fullBrandName;
+  const brandNameEn = fullBrandName.split("–")[1]?.trim() || "Discover Islam";
 
   return (
-    <aside className="flex w-full shrink-0 flex-col bg-primary-950 text-white lg:min-h-screen lg:w-72">
-      <div className="flex items-center justify-between gap-4 border-b border-primary-800 px-4 py-4 md:px-5 lg:block lg:py-6">
-        <div className="flex items-center gap-3 lg:block">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gold-500 text-xl font-black text-primary-950 shadow-glow-gold lg:mb-4">
-            إ
-          </span>
-          <div>
-            <p className="font-black tracking-tight text-gold-200">منصة إسماعيل</p>
-            <p className="mt-0.5 text-xs text-primary-200">مركز إدارة المنصة</p>
+    <aside className="admin-sidebar flex w-full shrink-0 flex-col rounded-b-3xl text-white lg:sticky lg:top-0 lg:h-screen lg:min-h-screen lg:w-72 lg:rounded-none">
+      <div className="relative overflow-hidden border-b border-white/10 px-4 py-5 md:px-5 lg:py-7">
+        <div className="pointer-events-none absolute -left-12 -top-16 h-36 w-36 rounded-full bg-primary-500/20 blur-3xl" />
+        <div className="relative flex items-center justify-between gap-4 lg:block">
+          <div className="flex items-center gap-3 lg:block">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-400 to-primary-700 text-xl font-black text-white shadow-glow-primary lg:mb-4">
+              إ
+            </span>
+            <div>
+              <p className="font-black tracking-tight text-white">{brandName}</p>
+              <p className="mt-0.5 text-[11px] font-semibold text-primary-100">{brandNameEn} · {SITE_TAGLINE.ar}</p>
+            </div>
           </div>
+          <span className="hidden rounded-full border border-gold-300/30 bg-gold-300/10 px-2.5 py-1 text-[10px] font-bold text-gold-200 lg:inline-flex">
+            ADMIN
+          </span>
         </div>
-        <span className="hidden rounded-full border border-primary-700 bg-primary-900/60 px-2.5 py-1 text-[10px] font-bold text-primary-200 lg:inline-flex">
-          ADMIN
-        </span>
       </div>
 
-      <div className="border-b border-primary-800 px-4 py-4 md:px-5">
+      <div className="mx-3 my-4 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 md:px-4">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-700 text-sm font-black text-white ring-2 ring-primary-500/40">
             {initials}
@@ -101,7 +110,7 @@ export default function AdminSidebar({
         </div>
       </div>
 
-      <nav className="flex flex-1 gap-2 overflow-x-auto p-3 lg:block lg:space-y-1 lg:overflow-y-auto" aria-label="قائمة لوحة التحكم">
+      <nav className="flex flex-1 gap-2 overflow-x-auto px-3 pb-3 lg:block lg:space-y-1.5 lg:overflow-y-auto lg:px-4" aria-label="قائمة لوحة التحكم">
         {items
           .filter((item) => item.show)
           .map((item) => {
@@ -129,7 +138,7 @@ export default function AdminSidebar({
           })}
       </nav>
 
-      <div className="border-t border-primary-800 p-3">
+      <div className="mt-auto border-t border-white/10 p-3 lg:p-4">
         <button
           type="button"
           onClick={() => {

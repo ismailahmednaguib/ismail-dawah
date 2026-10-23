@@ -57,7 +57,7 @@ export default function NotificationsClient() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[1fr_0.75fr]">
-      <form onSubmit={sendNotification} className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm md:p-6">
+      <form onSubmit={sendNotification} className="admin-card p-5 md:p-6">
         <div className="grid gap-5">
           <label>
             <span className="mb-2 block text-sm font-black text-primary-900">عنوان الإشعار</span>

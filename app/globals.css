@@ -737,6 +737,55 @@ body.dark {
     border-bottom: 1px solid rgb(6 182 212 / 0.1);
   }
 
+  /* ---------- غلاف لوحة الإدارة: نفس روح الموقع ---------- */
+  .admin-shell {
+    background-color: #f8fafc;
+    background-image:
+      radial-gradient(circle at 8% 0%, rgb(6 182 212 / 0.08), transparent 28rem),
+      radial-gradient(circle at 92% 12%, rgb(212 175 55 / 0.08), transparent 24rem);
+  }
+
+  .dark .admin-shell,
+  body.dark .admin-shell {
+    background-color: var(--color-night-900);
+    background-image:
+      radial-gradient(circle at 8% 0%, rgb(6 182 212 / 0.12), transparent 28rem),
+      radial-gradient(circle at 92% 12%, rgb(212 175 55 / 0.08), transparent 24rem);
+  }
+
+  .admin-main {
+    min-height: 100vh;
+  }
+
+  .admin-sidebar {
+    background:
+      linear-gradient(180deg, rgb(8 51 68 / 0.98) 0%, rgb(10 22 40 / 0.99) 62%, #060d1a 100%);
+    box-shadow: 0 18px 50px -24px rgb(8 51 68 / 0.8);
+  }
+
+  .admin-card {
+    border: 1px solid rgb(207 250 254 / 0.72);
+    border-radius: 1.5rem;
+    background-color: #ffffff;
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .admin-card:hover {
+    border-color: var(--color-primary-200);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .dark .admin-card,
+  body.dark .admin-card {
+    border-color: rgb(7 89 133 / 0.5);
+    background-color: var(--color-night-800);
+  }
+
+  .admin-dashboard-hero {
+    background: linear-gradient(135deg, #083344 0%, #0e7490 58%, #06b6d4 100%);
+  }
+
   .dark .glass,
   body.dark .glass {
     background: rgb(10 22 40 / 0.85);

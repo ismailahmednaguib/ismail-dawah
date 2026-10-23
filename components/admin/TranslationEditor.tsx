@@ -107,7 +107,7 @@ export default function TranslationEditor({
   if (loading) {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 text-center">
+        <div className="admin-card p-8 text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary-600 border-t-transparent mx-auto mb-3" />
           <p className="text-stone-500">جارٍ التحميل...</p>
         </div>
@@ -117,7 +117,7 @@ export default function TranslationEditor({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-start justify-center p-4 overflow-y-auto">
-      <div className="bg-white dark:bg-gray-800 rounded-xl w-full max-w-6xl my-8 shadow-2xl">
+      <div className="admin-card my-8 w-full max-w-6xl shadow-2xl">
         {/* الرأس */}
         <div className="p-5 border-b border-stone-200 dark:border-gray-700 flex items-center justify-between">
           <div>

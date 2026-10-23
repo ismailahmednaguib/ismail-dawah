@@ -418,7 +418,7 @@ export default function ContentEditClient({
   return (
     <div className="max-w-4xl space-y-6">
       {/* بطاقة الحالة */}
-      <div className="bg-white rounded-xl border border-stone-200 p-5">
+      <div className="admin-card p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-bold text-primary-950">
@@ -480,7 +480,7 @@ export default function ContentEditClient({
 
       {/* جدولة النشر */}
       {canEdit && (content.status === 'draft' || content.status === 'scheduled') && (
-        <div className="rounded-xl border border-stone-200 bg-white p-5">
+        <div className="admin-card p-5">
           <h3 className="text-lg font-bold text-primary-950">جدولة النشر</h3>
 
           {content.status === 'scheduled' && content.scheduled_at && (

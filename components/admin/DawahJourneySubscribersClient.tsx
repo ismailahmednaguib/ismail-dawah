@@ -55,7 +55,7 @@ export default function DawahJourneySubscribersClient() {
   }
 
   return (
-    <section className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm">
+    <section className="admin-card p-5">
       <div className="mb-4">
         <h2 className="text-lg font-black text-primary-950">رحلة غير المسلمين — المشتركون</h2>
         <p className="mt-1 text-sm leading-6 text-stone-500">أوقف الاشتراك أو أعد المشترك إلى اليوم الأول. لا تُرسل الرسائل إلا إذا فُعّلت الرحلة وضُبطت خدمة البريد.</p>

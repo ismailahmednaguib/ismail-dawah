@@ -82,7 +82,7 @@ export default function UsersClient({ session }: { session: AdminSession }) {
 
   return (
     <div
-      className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 overflow-hidden"
+      className="admin-card overflow-hidden"
       data-current-user-id={session.userId}
     >
       {loading ? (

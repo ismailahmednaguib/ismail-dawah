@@ -95,7 +95,7 @@ export default function TaxonomyManager() {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={createTaxonomy} className="rounded-xl border border-stone-200 bg-white p-5">
+      <form onSubmit={createTaxonomy} className="admin-card p-5">
         <h2 className="mb-4 text-lg font-semibold text-primary-950">إضافة تصنيف</h2>
         <div className="grid gap-3 md:grid-cols-5">
           <input
@@ -135,7 +135,7 @@ export default function TaxonomyManager() {
 
       {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
 
-      <div className="rounded-xl border border-stone-200 bg-white p-5">
+      <div className="admin-card p-5">
         <h2 className="mb-4 text-lg font-semibold text-primary-950">التصنيفات العربية</h2>
         {loading ? (
           <p className="text-sm text-stone-500">جارٍ التحميل...</p>

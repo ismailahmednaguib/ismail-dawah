@@ -54,7 +54,7 @@ export default function AuditClient() {
   }, [load]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700">
+    <div className="admin-card overflow-hidden">
       {loading ? (
         <div className="p-12 text-center text-stone-400">جارٍ التحميل...</div>
       ) : logs.length === 0 ? (

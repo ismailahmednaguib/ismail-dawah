@@ -123,7 +123,7 @@ function StatCard({
   } as const;
 
   return (
-    <article className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-card">
+    <article className="admin-card p-5 transition hover:-translate-y-0.5">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm font-bold text-primary-800">{label}</p>
@@ -251,7 +251,7 @@ export default function AdminPanel({
 
   return (
     <div className="space-y-6 pb-8">
-      <section className="relative overflow-hidden rounded-3xl bg-primary-950 p-6 text-white shadow-card-lg md:p-8">
+      <section className="admin-dashboard-hero relative overflow-hidden rounded-3xl p-6 text-white shadow-card-lg md:p-8">
         <div className="absolute -left-16 -top-20 h-56 w-56 rounded-full bg-primary-700/30 blur-3xl" />
         <div className="absolute -bottom-24 right-10 h-64 w-64 rounded-full bg-gold-500/15 blur-3xl" />
 
@@ -313,7 +313,7 @@ export default function AdminPanel({
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <div className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm md:p-6">
+        <div className="admin-card p-5 md:p-6">
           <div className="mb-5 flex items-start justify-between gap-4">
             <div>
               <h2 className="text-lg font-black text-primary-950">توزيع المحتوى</h2>
@@ -349,7 +349,7 @@ export default function AdminPanel({
           )}
         </div>
 
-        <div className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm md:p-6">
+        <div className="admin-card p-5 md:p-6">
           <h2 className="text-lg font-black text-primary-950">مؤشرات المنصة</h2>
           <p className="mt-1 text-sm text-stone-500">بيانات مختصرة تساعدك في المتابعة</p>
           <div className="mt-5 space-y-3">
@@ -385,7 +385,7 @@ export default function AdminPanel({
             <Link
               key={action.href}
               href={action.href}
-              className="group rounded-2xl border border-cream-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary-300 hover:shadow-card"
+              className="admin-card group p-5 transition hover:-translate-y-1 hover:border-primary-300"
             >
               <span className={`flex h-11 w-11 items-center justify-center rounded-2xl text-2xl font-black transition group-hover:scale-105 ${action.tone === "gold" ? "bg-gold-100 text-gold-800" : "bg-primary-100 text-primary-800"}`}>
                 <action.icon size={21} aria-hidden="true" />
@@ -399,7 +399,7 @@ export default function AdminPanel({
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm">
+        <div className="admin-card p-5">
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-black text-primary-950">الصفحات الأكثر زيارة</h2>

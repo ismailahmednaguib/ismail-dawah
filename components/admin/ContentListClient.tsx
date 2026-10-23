@@ -65,7 +65,7 @@ export default function ContentListClient({ initialType = '' }: { initialType?: 
   }, [load]);
 
   return (
-    <div className="bg-white rounded-xl border border-stone-200 shadow-sm">
+    <div className="admin-card overflow-hidden">
       {/* شريط الفلاتر */}
       <div className="p-4 border-b border-stone-200 flex flex-wrap gap-3">
         <input

@@ -117,7 +117,7 @@ export default function ContentRevisions({
   }
 
   return (
-    <section className="rounded-xl border border-stone-200 bg-white p-5">
+    <section className="admin-card p-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="font-medium text-stone-700">🕘 سجل النسخ</h3>

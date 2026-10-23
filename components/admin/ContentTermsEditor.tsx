@@ -79,7 +79,7 @@ export default function ContentTermsEditor({
   };
 
   return (
-    <section className="rounded-xl border border-stone-200 bg-white p-5">
+    <section className="admin-card p-5">
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <h3 className="inline-flex items-center gap-2 font-medium text-stone-700">

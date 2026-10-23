@@ -91,7 +91,7 @@ export default function NewsletterSubscribersClient() {
       </div>
 
       {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{error}</p> : null}
-      <div className="rounded-2xl border border-cream-200 bg-white p-5 shadow-sm">
+      <div className="admin-card p-5">
         <div className="mb-5 flex items-center justify-between gap-3">
           <div><p className="text-sm font-bold text-primary-800">المشتركون المعروضون</p><strong className="mt-1 block text-3xl font-black text-primary-950">{activeCount}</strong></div>
           <span className="rounded-full bg-primary-50 px-3 py-1 text-xs font-bold text-primary-700">حتى 500 مشترك</span>

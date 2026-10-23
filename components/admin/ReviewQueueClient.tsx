@@ -122,7 +122,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
       {loading ? (
         <div className="text-center py-12 text-stone-400">جارٍ التحميل...</div>
       ) : items.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 p-12 text-center">
+        <div className="admin-card p-12 text-center">
           <CheckCircleIcon className="mx-auto mb-3 text-primary-600" size={38} aria-hidden="true" />
           <p className="text-stone-500 dark:text-gray-400">لا يوجد محتوى في طابور المراجعة</p>
         </div>
@@ -131,7 +131,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
           {items.map((item) => (
             <div
               key={item.id}
-              className={`bg-white dark:bg-gray-800 rounded-xl border-2 p-5 ${
+              className={`admin-card border-2 p-5 ${
                 item.is_sensitive
                   ? 'border-red-200 dark:border-red-900'
                   : 'border-stone-200 dark:border-gray-700'
@@ -206,7 +206,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
       {/* نافذة الملاحظات */}
       {notesDialog.show && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full shadow-2xl">
+          <div className="admin-card w-full max-w-lg rounded-3xl p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-primary-950 dark:text-gold mb-3">
               <span className="inline-flex items-center gap-1.5">
                 {notesDialog.action === 'approve' ? <CheckCircleIcon size={18} aria-hidden="true" /> : <AlertIcon size={18} aria-hidden="true" />}

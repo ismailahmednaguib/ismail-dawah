@@ -100,7 +100,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
     <div className="space-y-6">
       {/* الإحصائيات */}
       {stats && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 p-5">
+        <div className="admin-card p-5">
           <h3 className="font-bold text-primary-950 dark:text-gold mb-4">
             📊 إحصائيات الترجمات ({stats.total_content} محتوى منشور)
           </h3>
@@ -146,7 +146,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
       </div>
 
       {/* مصفوفة الترجمات */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 overflow-hidden">
+      <div className="admin-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
