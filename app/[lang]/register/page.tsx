@@ -7,9 +7,14 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import type { Lang } from "@/lib/i18n";
-
+
 import { usePageGate } from "@/components/PageGate";
+
+const TURNSTILE_REQUIRED = Boolean(
+  (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim()
+);
 // ============================================================
 // نصوص الواجهة
 // ============================================================
@@ -205,6 +210,13 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+
+  const resetTurnstile = () => {
+    setTurnstileToken(null);
+    setTurnstileResetKey((key) => key + 1);
+  };
 
   const passwordStrength = useMemo(() => calculatePasswordStrength(password), [password]);
 
@@ -242,13 +254,24 @@ export default function RegisterPage() {
       return;
     }
 
+    if (TURNSTILE_REQUIRED && !turnstileToken) {
+      setMsg({ type: "error", text: "❌ " + (isRTL ? "أكمل التحقق الأمني أولًا." : "Complete the security check first.") });
+      return;
+    }
+
     setLoading(true);
     try {
       const r = await fetch("/api/register", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, lang }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          lang,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
       const j = await r.json();
       if (j.ok) {
@@ -267,9 +290,11 @@ export default function RegisterPage() {
         setTimeout(() => router.push(target), 1800);
       } else {
         setMsg({ type: "error", text: "❌ " + (j.message || j.error || ui.errorMessage) });
+        resetTurnstile();
       }
     } catch {
       setMsg({ type: "error", text: "❌ " + ui.connectionError });
+      resetTurnstile();
     }
     setLoading(false);
   };
@@ -492,10 +517,19 @@ export default function RegisterPage() {
                   </div>
                 )}
 
+                <TurnstileWidget
+                  lang={L}
+                  onToken={setTurnstileToken}
+                  resetKey={turnstileResetKey}
+                  className="flex justify-center"
+                />
+
                 {/* زر التسجيل */}
                 <button
                   onClick={submit}
-                  disabled={loading}
+                  disabled={
+                    loading || (TURNSTILE_REQUIRED && !turnstileToken)
+                  }
                   className="w-full rounded-xl bg-gradient-to-r from-gold-500 to-gold-600 py-4 text-lg font-black text-white shadow-lg shadow-gold-500/25 transition-all hover:from-gold-600 hover:to-gold-700 disabled:cursor-wait disabled:opacity-70"
                 >
                   {loading ? (

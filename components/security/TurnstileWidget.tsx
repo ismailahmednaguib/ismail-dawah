@@ -22,13 +22,24 @@ type Props = {
   lang: "ar" | "en";
   onToken: (token: string | null) => void;
   className?: string;
+  /**
+   * قيمة تتغيّر بعد كل إرسال لتوليد تحقق جديد.
+   * رمز Turnstile يُستهلك مرة واحدة، فلا يُعاد استخدامه.
+   */
+  resetKey?: number;
 };
 
 const SITE_KEY = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim();
 
-export default function TurnstileWidget({ lang, onToken, className }: Props) {
+export default function TurnstileWidget({
+  lang,
+  onToken,
+  className,
+  resetKey = 0,
+}: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | null>(null);
+  const generationRef = useRef(0);
   const onTokenRef = useRef(onToken);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -37,6 +48,14 @@ export default function TurnstileWidget({ lang, onToken, className }: Props) {
     onTokenRef.current = onToken;
   }, [onToken]);
 
+  // عند تركيب عنصر جديد بعد تحميل السكربت مسبقًا (نموذجان في الصفحة نفسها،
+  // أو إعادة تركيب) لا يُستدعى onReady مرة أخرى. نلتقط الجاهزية مباشرة.
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.turnstile) {
+      setReady(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (!SITE_KEY || !ready || !containerRef.current || !window.turnstile) {
       return;
@@ -44,26 +63,42 @@ export default function TurnstileWidget({ lang, onToken, className }: Props) {
 
     const container = containerRef.current;
     container.replaceChildren();
+    setFailed(false);
+
+    const generation = generationRef.current + 1;
+    generationRef.current = generation;
+    const emitToken = (token: string | null) => {
+      if (generationRef.current === generation) {
+        onTokenRef.current(token);
+      }
+    };
 
     try {
       widgetIdRef.current = window.turnstile.render(container, {
         sitekey: SITE_KEY,
         language: lang === "ar" ? "ar" : "en",
         theme: "auto",
-        callback: (token: string) => onTokenRef.current(token),
-        "expired-callback": () => onTokenRef.current(null),
+        callback: (token: string) => emitToken(token),
+        "expired-callback": () => emitToken(null),
         "error-callback": () => {
-          setFailed(true);
-          onTokenRef.current(null);
+          if (generationRef.current === generation) {
+            setFailed(true);
+          }
+          emitToken(null);
         },
       });
     } catch (error) {
       console.error("[Turnstile] render error:", error);
       setFailed(true);
-      onTokenRef.current(null);
+      emitToken(null);
     }
 
     return () => {
+      // أي callback متأخر من ودجت قديم لا يملك حق تعديل الرمز الحالي.
+      if (generationRef.current === generation) {
+        generationRef.current += 1;
+      }
+
       const id = widgetIdRef.current;
       widgetIdRef.current = null;
 
@@ -75,7 +110,7 @@ export default function TurnstileWidget({ lang, onToken, className }: Props) {
         }
       }
     };
-  }, [lang, ready]);
+  }, [lang, ready, resetKey]);
 
   if (!SITE_KEY) {
     return null;
@@ -88,6 +123,7 @@ export default function TurnstileWidget({ lang, onToken, className }: Props) {
         src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
         strategy="afterInteractive"
         onReady={() => setReady(true)}
+        onLoad={() => setReady(true)}
         onError={() => setFailed(true)}
       />
 

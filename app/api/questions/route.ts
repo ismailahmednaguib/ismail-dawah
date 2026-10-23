@@ -943,6 +943,9 @@ export async function GET(req: NextRequest) {
 // ============================================================
 // POST /api/questions
 // ============================================================
+// Turnstile مؤجّل عن قصد: لا يوجد نموذج ويب عام للأسئلة يرسل رمزًا بعد.
+// إضافة التحقق هنا الآن تعطّل أي عميل قائم عند تفعيل المفتاحين. عند بناء
+// النموذج، استخدم getTurnstileToken/verifyTurnstile كما في /api/assistant.
 
 export async function POST(req: NextRequest) {
   if (!isAllowedMutationOrigin(req)) {

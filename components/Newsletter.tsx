@@ -17,7 +17,7 @@ export default function Newsletter({ lang }: NewsletterProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [turnstileKey, setTurnstileKey] = useState(0);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const turnstileRequired = Boolean(
     (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim()
   );
@@ -48,12 +48,12 @@ export default function Newsletter({ lang }: NewsletterProps) {
       } else {
         setStatus("error");
         setTurnstileToken(null);
-        setTurnstileKey((key) => key + 1);
+        setTurnstileResetKey((key) => key + 1);
       }
     } catch {
       setStatus("error");
       setTurnstileToken(null);
-      setTurnstileKey((key) => key + 1);
+      setTurnstileResetKey((key) => key + 1);
     }
   };
 
@@ -124,9 +124,9 @@ export default function Newsletter({ lang }: NewsletterProps) {
           </form>
 
           <TurnstileWidget
-            key={turnstileKey}
             lang={lang}
             onToken={setTurnstileToken}
+            resetKey={turnstileResetKey}
             className="mt-3"
           />
 

@@ -77,7 +77,13 @@ npm run check:links              # ٠ رابط مكسور
 - يُفعَّل فقط عند ضبط **المفتاحين معًا**: `NEXT_PUBLIC_TURNSTILE_SITE_KEY` و`TURNSTILE_SECRET_KEY`.
 - إن ضُبط السر وحده، يتجاوز الخادم التحقق مع تحذير في السجل بدل تعطيل النماذج (العميل لا يملك مفتاح الموقع).
 - CSP في `next.config.ts` يسمح `https://challenges.cloudflare.com` في `script-src` و`frame-src`.
-- الدعم الحالي: نموذج النشرة في `components/Newsletter.tsx` ونموذج تذييل الموقع في `components/Footer.tsx`. لإضافة نموذج آخر، استخدم `components/security/TurnstileWidget.tsx` و`lib/turnstile.ts`.
+- الدعم الحالي:
+  - النشرة في `components/Newsletter.tsx` وتذييل الموقع في `components/Footer.tsx`.
+  - التسجيل في `app/[lang]/register/page.tsx` وتبويب التسجيل في `components/auth/LoginForm.tsx`؛ التحقق الخادمي في `app/register/route.ts`.
+  - المساعد المقيّد في `components/assistant/ConstrainedAssistant.tsx`؛ التحقق الخادمي في `app/api/assistant/route.ts`.
+- رمز Turnstile **يُستهلك مرة واحدة**. مرّر `resetKey` إلى `TurnstileWidget` وأزده بعد كل إرسال (نجح أو فشل) عند الحاجة لتكرار المحاولة. المكوّن يعيد توليد التحقق دون إعادة تحميل السكربت، ويعمل مع أكثر من نموذج في الصفحة نفسها.
+- مسار `/api/questions` لم يُضف إليه التحقق بعد لأن الويب لا يملك نموذج أسئلة عامًّا؛ إضافته الآن تعطّل أي عميل موجود عند تفعيل المفتاحين. يُضاف مع بناء النموذج.
+- لإضافة نموذج آخر: استخدم `components/security/TurnstileWidget.tsx` و`lib/turnstile.ts`، ثم تحقق خادميًّا من `getTurnstileToken` + `verifyTurnstile`.
 
 ## ٥) النسخ الاحتياطي والاستعادة
 

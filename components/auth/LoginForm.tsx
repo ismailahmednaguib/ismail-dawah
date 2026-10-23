@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import type { Lang } from "@/lib/i18n";
 
 // ============================================================
@@ -13,6 +14,10 @@ import type { Lang } from "@/lib/i18n";
  * إذا لا تريد إتاحة التسجيل للزوار، اجعلها false.
  */
 const ALLOW_REGISTER = true;
+
+const TURNSTILE_REQUIRED = Boolean(
+  (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim()
+);
 
 // ============================================================
 // Types
@@ -135,6 +140,19 @@ export default function LoginForm({ lang }: { lang: Lang }) {
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<Message>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+
+  const resetTurnstile = () => {
+    setTurnstileToken(null);
+    setTurnstileResetKey((key) => key + 1);
+  };
+
+  const changeMode = (next: Mode) => {
+    if (next === mode) return;
+    resetTurnstile();
+    setMode(next);
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -163,6 +181,18 @@ export default function LoginForm({ lang }: { lang: Lang }) {
       return;
     }
 
+    if (mode === "register" && TURNSTILE_REQUIRED && !turnstileToken) {
+      setMessage({
+        type: "error",
+        text:
+          lang === "ar"
+            ? "أكمل التحقق الأمني أولًا."
+            : "Complete the security check first.",
+      });
+      setLoading(false);
+      return;
+    }
+
     const endpoint = mode === "login" ? "/api/login" : "/api/register";
 
     const body =
@@ -178,6 +208,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
             email: cleanEmail,
             password,
             lang,
+            ...(turnstileToken ? { turnstileToken } : {}),
           };
 
     try {
@@ -232,12 +263,14 @@ export default function LoginForm({ lang }: { lang: Lang }) {
         type: "error",
         text: `❌ ${errorMessage}`,
       });
+      if (mode === "register") resetTurnstile();
     } catch (error) {
       console.error("[LoginForm] submit error:", error);
       setMessage({
         type: "error",
         text: `❌ ${t.connectionError}`,
       });
+      if (mode === "register") resetTurnstile();
     } finally {
       setLoading(false);
     }
@@ -250,7 +283,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
         <div className="mb-6 flex gap-1 rounded-xl bg-slate-100 p-1 dark:bg-night-800">
           <button
             type="button"
-            onClick={() => setMode("login")}
+            onClick={() => changeMode("login")}
             className={`flex-1 rounded-lg py-3 text-sm font-bold transition-all ${
               mode === "login"
                 ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md"
@@ -263,7 +296,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
           {ALLOW_REGISTER ? (
             <button
               type="button"
-              onClick={() => setMode("register")}
+              onClick={() => changeMode("register")}
               className={`flex-1 rounded-lg py-3 text-sm font-bold transition-all ${
                 mode === "register"
                   ? "bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-md"
@@ -410,9 +443,21 @@ export default function LoginForm({ lang }: { lang: Lang }) {
             </p>
           )}
 
+          {mode === "register" && ALLOW_REGISTER ? (
+            <TurnstileWidget
+              lang={lang}
+              onToken={setTurnstileToken}
+              resetKey={turnstileResetKey}
+              className="flex justify-center"
+            />
+          ) : null}
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={
+              loading ||
+              (mode === "register" && TURNSTILE_REQUIRED && !turnstileToken)
+            }
             className={`w-full rounded-xl py-4 text-lg font-black text-white transition-all disabled:cursor-wait disabled:opacity-70 ${
               mode === "login"
                 ? "bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 shadow-lg shadow-primary-500/25"
@@ -456,7 +501,7 @@ export default function LoginForm({ lang }: { lang: Lang }) {
               {mode === "login" ? t.noAccount : t.hasAccount}{" "}
               <button
                 type="button"
-                onClick={() => setMode(mode === "login" ? "register" : "login")}
+                onClick={() => changeMode(mode === "login" ? "register" : "login")}
                 className="font-black text-primary-700 hover:text-primary-700 hover:underline dark:text-primary-300 dark:hover:text-primary-200"
               >
                 {mode === "login" ? t.registerNow : t.loginNow}

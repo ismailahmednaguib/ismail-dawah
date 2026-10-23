@@ -24,6 +24,7 @@ import {
   normalizeEmailVerificationConfig,
 } from "@/lib/email-verification-config";
 import { createEmailVerificationToken } from "@/lib/email-verification-token";
+import { getTurnstileToken, verifyTurnstile } from "@/lib/turnstile";
 import { getErrorMessage, isMissingTableError } from "@/lib/supabase-errors";
 
 // ============================================================
@@ -35,6 +36,7 @@ type RegisterBody = {
   email?: unknown;
   password?: unknown;
   lang?: unknown;
+  turnstileToken?: unknown;
 };
 
 type PublicUser = {
@@ -89,6 +91,11 @@ function isAnyMissingColumnError(error: unknown): boolean {
 function normalizeLang(value: unknown): "ar" | "en" {
   const lang = String(value || "").trim().toLowerCase();
   return lang === "en" ? "en" : "ar";
+}
+
+/** رسالة خادمية بلغة الواجهة، حتى لا يظهر نص عربي في صفحة إنجليزية. */
+function localized(lang: "ar" | "en", ar: string, en: string): string {
+  return lang === "en" ? en : ar;
 }
 
 function getRedirectForRole(role: Role, lang: "ar" | "en"): string {
@@ -240,37 +247,74 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let lang: "ar" | "en" = "ar";
+
   try {
     let body: RegisterBody;
 
     try {
       body = (await req.json()) as RegisterBody;
     } catch {
-      return badRequestResponse("صيغة الطلب غير صحيحة.");
+      return badRequestResponse(
+        localized(lang, "صيغة الطلب غير صحيحة.", "Invalid request body.")
+      );
     }
 
     const name = String(body.name || "").trim().slice(0, 120);
     const email = normalizeAuthEmail(body.email);
     const password =
       typeof body.password === "string" ? body.password : "";
-    const lang = normalizeLang(body.lang);
+    lang = normalizeLang(body.lang);
 
     if (!name) {
-      return badRequestResponse("الاسم مطلوب.");
+      return badRequestResponse(
+        localized(lang, "الاسم مطلوب.", "Name is required.")
+      );
     }
 
     if (!email || !password) {
-      return badRequestResponse("البريد الإلكتروني وكلمة المرور مطلوبان.");
+      return badRequestResponse(
+        localized(
+          lang,
+          "البريد الإلكتروني وكلمة المرور مطلوبان.",
+          "Email and password are required."
+        )
+      );
     }
 
     if (!isValidAuthEmail(email)) {
-      return badRequestResponse("صيغة البريد الإلكتروني غير صحيحة.");
+      return badRequestResponse(
+        localized(
+          lang,
+          "صيغة البريد الإلكتروني غير صحيحة.",
+          "Invalid email address."
+        )
+      );
     }
 
     const passwordCheck = validatePasswordStrength(password);
 
     if (!passwordCheck.ok) {
-      return badRequestResponse("كلمة المرور غير قوية بما يكفي.");
+      return badRequestResponse(
+        localized(
+          lang,
+          "كلمة المرور غير قوية بما يكفي.",
+          "Password is not strong enough."
+        )
+      );
+    }
+
+    const turnstile = await verifyTurnstile(
+      getTurnstileToken(body as Record<string, unknown>)
+    );
+    if (!turnstile.ok) {
+      return badRequestResponse(
+        localized(
+          lang,
+          "فشل التحقق الأمني. حاول مرة أخرى.",
+          "Security verification failed. Please try again."
+        )
+      );
     }
 
     let client: any;
@@ -279,7 +323,13 @@ export async function POST(req: NextRequest) {
       client = createAdminClient();
     } catch (error) {
       console.error("[Register] Supabase client error:", error);
-      return serverErrorResponse("الإعدادات الخادمية غير مكتملة.");
+      return serverErrorResponse(
+        localized(
+          lang,
+          "الإعدادات الخادمية غير مكتملة.",
+          "Server configuration is incomplete."
+        )
+      );
     }
 
     // --------------------------------------------------------
@@ -290,22 +340,46 @@ export async function POST(req: NextRequest) {
 
     if (adminExisting.error) {
       console.error("[Register] admin_users check error:", adminExisting.error);
-      return serverErrorResponse();
+      return serverErrorResponse(
+        localized(
+          lang,
+          "حدث خطأ في الخادم. حاول لاحقًا.",
+          "Server error. Please try again later."
+        )
+      );
     }
 
     if (adminExisting.data) {
-      return conflictResponse("هذا البريد الإلكتروني مستخدم بالفعل.");
+      return conflictResponse(
+        localized(
+          lang,
+          "هذا البريد الإلكتروني مستخدم بالفعل.",
+          "This email is already in use."
+        )
+      );
     }
 
     const userExisting = await queryRowByEmail(client, "users", email);
 
     if (userExisting.error) {
       console.error("[Register] users check error:", userExisting.error);
-      return serverErrorResponse();
+      return serverErrorResponse(
+        localized(
+          lang,
+          "حدث خطأ في الخادم. حاول لاحقًا.",
+          "Server error. Please try again later."
+        )
+      );
     }
 
     if (userExisting.data) {
-      return conflictResponse("هذا البريد الإلكتروني مسجل بالفعل.");
+      return conflictResponse(
+        localized(
+          lang,
+          "هذا البريد الإلكتروني مسجل بالفعل.",
+          "This email is already registered."
+        )
+      );
     }
 
     // --------------------------------------------------------
@@ -471,16 +545,26 @@ export async function POST(req: NextRequest) {
 
     if (tableMissing) {
       console.error("[Register] users table missing:", lastError);
-      return serverErrorResponse("جدول المستخدمين غير موجود.");
+      return serverErrorResponse(
+        localized(lang, "جدول المستخدمين غير موجود.", "Users table is missing.")
+      );
     }
 
     if (duplicate) {
-      return conflictResponse("هذا البريد الإلكتروني مسجل بالفعل.");
+      return conflictResponse(
+        localized(
+          lang,
+          "هذا البريد الإلكتروني مسجل بالفعل.",
+          "This email is already registered."
+        )
+      );
     }
 
     if (!insertSucceeded) {
       console.error("[Register] insert failed:", lastError);
-      return serverErrorResponse("تعذر إنشاء الحساب.");
+      return serverErrorResponse(
+        localized(lang, "تعذر إنشاء الحساب.", "Could not create the account.")
+      );
     }
 
     // --------------------------------------------------------
@@ -577,10 +661,22 @@ export async function POST(req: NextRequest) {
           },
       verificationSent,
       message: verificationSent
-        ? "تم إنشاء الحساب. أرسلنا رابط تفعيل إلى بريدك الإلكتروني."
+        ? localized(
+            lang,
+            "تم إنشاء الحساب. أرسلنا رابط تفعيل إلى بريدك الإلكتروني.",
+            "Account created. We sent a verification link to your email."
+          )
         : inserted?.id
-          ? "تم إنشاء الحساب وتسجيل الدخول."
-          : "تم إنشاء الحساب. يرجى تسجيل الدخول.",
+          ? localized(
+              lang,
+              "تم إنشاء الحساب وتسجيل الدخول.",
+              "Account created and signed in."
+            )
+          : localized(
+              lang,
+              "تم إنشاء الحساب. يرجى تسجيل الدخول.",
+              "Account created. Please sign in."
+            ),
     });
 
     if (inserted?.id) {
@@ -599,8 +695,11 @@ export async function POST(req: NextRequest) {
               redirect: `/${lang}/login`,
               user: publicUser(inserted, role),
               verificationSent,
-              message:
+              message: localized(
+                lang,
                 "تم إنشاء الحساب، لكن تعذر تسجيل الدخول تلقائيًا. سجّل دخولك يدويًا.",
+                "Account created, but automatic sign-in failed. Please sign in manually."
+              ),
             },
             { status: 201 }
           )
@@ -611,7 +710,13 @@ export async function POST(req: NextRequest) {
     return withSecurityHeaders(res);
   } catch (error) {
     console.error("[Register] unexpected error:", error);
-    return serverErrorResponse();
+    return serverErrorResponse(
+      localized(
+        lang,
+        "حدث خطأ في الخادم. حاول لاحقًا.",
+        "Server error. Please try again later."
+      )
+    );
   }
 }
 

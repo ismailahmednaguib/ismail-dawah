@@ -3,6 +3,7 @@ import { getSiteSettings } from '@/lib/content';
 import { askConstrainedAssistant } from '@/lib/assistant';
 import { normalizeAssistantConfig } from '@/lib/assistant-core';
 import { rateLimitGuard } from '@/lib/rate-limit';
+import { getTurnstileToken, verifyTurnstile } from '@/lib/turnstile';
 import type { Lang } from '@/lib/i18n';
 
 export const runtime = 'nodejs';
@@ -14,6 +15,7 @@ function messageFor(lang: Lang, code: string): string {
   const arabic = lang === 'ar';
   if (code === 'question_too_short') return arabic ? 'اكتب سؤالًا أوضح من حرفين.' : 'Please enter a question longer than two characters.';
   if (code === 'assistant_provider_missing') return arabic ? 'المساعد غير مهيأ حاليًا.' : 'The assistant provider is not configured yet.';
+  if (code === 'turnstile_failed') return arabic ? 'فشل التحقق الأمني. حاول مرة أخرى.' : 'Security verification failed. Please try again.';
   return arabic ? 'تعذر تشغيل المساعد حاليًا. حاول لاحقًا.' : 'The assistant is temporarily unavailable. Please try again later.';
 }
 
@@ -42,6 +44,16 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null) as { question?: unknown } | null;
   if (!body || typeof body.question !== 'string') {
     return NextResponse.json({ ok: false, error: messageFor(lang, 'question_too_short') }, { status: 400 });
+  }
+
+  const turnstile = await verifyTurnstile(
+    getTurnstileToken(body as Record<string, unknown>)
+  );
+  if (!turnstile.ok) {
+    return NextResponse.json(
+      { ok: false, error: messageFor(lang, 'turnstile_failed') },
+      { status: 400, headers: { 'Cache-Control': 'no-store' } }
+    );
   }
 
   try {

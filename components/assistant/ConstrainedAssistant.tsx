@@ -2,7 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import TurnstileWidget from '@/components/security/TurnstileWidget';
 import type { Lang } from '@/lib/i18n';
+
+const TURNSTILE_REQUIRED = Boolean(
+  (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '').trim()
+);
 
 type Source = {
   id: string;
@@ -43,12 +48,28 @@ export default function ConstrainedAssistant({ lang, enabled }: { lang: Lang; en
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
 
   if (!enabled) return null;
+
+  const resetTurnstile = () => {
+    setTurnstileToken(null);
+    setTurnstileResetKey((key) => key + 1);
+  };
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (question.trim().length < 2 || loading) return;
+
+    if (TURNSTILE_REQUIRED && !turnstileToken) {
+      setError(
+        lang === 'ar'
+          ? 'أكمل التحقق الأمني أولًا.'
+          : 'Complete the security check first.'
+      );
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -59,7 +80,10 @@ export default function ConstrainedAssistant({ lang, enabled }: { lang: Lang; en
       const response = await fetch(`/api/assistant?lang=${lang}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({
+          question,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
       const payload = await response.json().catch(() => ({})) as {
         ok?: boolean;
@@ -74,6 +98,9 @@ export default function ConstrainedAssistant({ lang, enabled }: { lang: Lang; en
       setError(submitError instanceof Error ? submitError.message : copy.error);
     } finally {
       setLoading(false);
+      // رمز Turnstile يُستهلك مرة واحدة؛ نطلبه من جديد حتى يستطيع الزائر
+      // متابعة الأسئلة بعد كل إجابة.
+      if (TURNSTILE_REQUIRED) resetTurnstile();
     }
   }
 
@@ -95,9 +122,15 @@ export default function ConstrainedAssistant({ lang, enabled }: { lang: Lang; en
               rows={3}
               className="input-islamic w-full resize-y"
             />
+            <TurnstileWidget
+              lang={lang}
+              onToken={setTurnstileToken}
+              resetKey={turnstileResetKey}
+              className="flex justify-center"
+            />
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="text-xs text-slate-500 dark:text-slate-400">{question.length}/500</span>
-              <button type="submit" disabled={loading || question.trim().length < 2} className="btn-primary disabled:cursor-not-allowed disabled:opacity-50">
+              <button type="submit" disabled={loading || question.trim().length < 2 || (TURNSTILE_REQUIRED && !turnstileToken)} className="btn-primary disabled:cursor-not-allowed disabled:opacity-50">
                 {loading ? copy.loading : copy.ask}
               </button>
             </div>

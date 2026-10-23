@@ -37,6 +37,29 @@ export function isTurnstileConfigured(): boolean {
   return Boolean(SECRET && SITE_KEY);
 }
 
+export type TurnstileGate =
+  | { action: "skip"; reason: "no_secret" | "no_site_key" }
+  | { action: "reject"; reason: "missing_token" }
+  | { action: "verify" };
+
+/**
+ * قرار التحقق قبل مخاطبة Cloudflare. منطق نقي قابل للاختبار:
+ * - بلا سر: تجاوز (لا يمكن التحقق أصلًا).
+ * - سر بلا مفتاح موقع: تجاوز مع تحذير (خطأ إعداد لا يجب أن يعطّل النماذج).
+ * - مفتاحان بلا رمز: رفض.
+ * - مفتاحان ورمز: تحقق.
+ */
+export function evaluateTurnstileGate(
+  secret: string,
+  siteKey: string,
+  token: string
+): TurnstileGate {
+  if (!secret.trim()) return { action: "skip", reason: "no_secret" };
+  if (!siteKey.trim()) return { action: "skip", reason: "no_site_key" };
+  if (!token) return { action: "reject", reason: "missing_token" };
+  return { action: "verify" };
+}
+
 /** يستخرج رمز Turnstile من جسم الطلب بأكثر من اسم شائع. */
 export function getTurnstileToken(
   body: Record<string, unknown> | null | undefined
@@ -66,23 +89,21 @@ export async function verifyTurnstile(
   token: string,
   timeoutMs = VERIFY_TIMEOUT_MS
 ): Promise<TurnstileVerification> {
-  if (!SECRET) {
-    return { ok: true, skipped: true, reason: "no_secret" };
-  }
+  const gate = evaluateTurnstileGate(SECRET, SITE_KEY, token);
 
-  if (!SITE_KEY) {
-    if (!warnedMissingSiteKey) {
+  if (gate.action === "skip") {
+    if (gate.reason === "no_site_key" && !warnedMissingSiteKey) {
       warnedMissingSiteKey = true;
       console.warn(
         "[Turnstile] TURNSTILE_SECRET_KEY مضبوط بلا NEXT_PUBLIC_TURNSTILE_SITE_KEY — تم تجاوز التحقق."
       );
     }
 
-    return { ok: true, skipped: true, reason: "no_site_key" };
+    return { ok: true, skipped: true, reason: gate.reason };
   }
 
-  if (!token) {
-    return { ok: false, skipped: false, reason: "missing_token" };
+  if (gate.action === "reject") {
+    return { ok: false, skipped: false, reason: gate.reason };
   }
 
   try {
