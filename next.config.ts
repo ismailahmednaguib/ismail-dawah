@@ -40,6 +40,11 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // بيئات Windows المقيدة قد تمنع Next من إنشاء Webpack worker (`spawn EPERM`).
+  // تعطيله لا يتجاوز فحوص النوع أو ESLint؛ يغيّر طريقة تشغيل التجميع فقط.
+  experimental: {
+    webpackBuildWorker: false,
+  },
   serverExternalPackages: ["nodemailer", "sharp"],
   // أخطاء TypeScript أو ESLint تُفشل البناء: لا تُنشر نسخة معطوبة صامتة.
   eslint: {

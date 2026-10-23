@@ -203,12 +203,11 @@ export async function generateMetadata({
   };
 }
 
-export function generateStaticParams() {
-  return SURAHS.flatMap((surah) => [
-    { lang: "ar", id: String(surah.number) },
-    { lang: "en", id: String(surah.number) },
-  ]);
-}
+// صفحات السور تُولَّد عند أول طلب وتُخزَّن عبر ISR بدل طلب مصدر القرآن
+// ٢٢٨ مرة أثناء `next build`. هذا يحافظ على كل الروابط وSEO، ويمنع تعليق
+// البناء المحلي أو فشل النشر إذا كان المصدر الخارجي غير متاح لحظيًا.
+export const dynamicParams = true;
+export const revalidate = 86400;
 
 // ============================================================
 // الصفحة
