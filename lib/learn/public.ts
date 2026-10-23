@@ -385,6 +385,96 @@ export async function getPublicBySlug(
 }
 
 // ============================================================
+// مختارات المحرر — عدة عناصر بمعرّفات (type + slug)
+// ============================================================
+
+export interface PublicPickKey {
+  type: string;
+  slug: string;
+}
+
+/**
+ * يجلب مواد منشورة محددة مع الحفاظ على ترتيب المختارات.
+ *
+ * لا يعيد الرجوع إلى العربية في الواجهة الإنجليزية: المادة التي
+ * لا تملك ترجمة باللغة المطلوبة تُحذف من النتيجة بدل عرض نص عربي
+ * داخل بطاقة إنجليزية. التصنيفات غير مطلوبة للبطاقات، لذلك لا
+ * نستعلم `content_terms` هنا.
+ */
+export async function getPublicPicks(
+  lang: string,
+  picks: ReadonlyArray<PublicPickKey>
+): Promise<PublicItem[]> {
+  if (picks.length === 0) return [];
+
+  const slugs = [...new Set(picks.map((pick) => pick.slug).filter(Boolean))];
+  if (slugs.length === 0) return [];
+
+  try {
+    const supabase = getClient();
+    const { data, error } = (await supabase
+      .from('content_translations')
+      .select(
+        `
+        id, lang, slug, title, summary, body,
+        content:content_id (
+          id, content_type, audience, levels, published_at, views, status, reviewer_id
+        )
+      `
+      )
+      .eq('lang', lang)
+      .in('slug', slugs)
+      .limit(MAX_LIMIT)) as { data: any; error: any };
+
+    if (error) {
+      console.error('[getPublicPicks]', error.message ?? error);
+      return [];
+    }
+
+    const byKey = new Map<string, any>();
+
+    for (const row of (data ?? []) as any[]) {
+      const content = Array.isArray(row.content) ? row.content[0] : row.content;
+      if (!content || content.status !== 'published') continue;
+      if (typeof row.slug !== 'string' || !row.slug) continue;
+      if (typeof row.title !== 'string' || !row.title.trim()) continue;
+
+      const key = `${content.content_type}:${row.slug}`;
+      if (!byKey.has(key)) byKey.set(key, { row, content });
+    }
+
+    const items: PublicItem[] = [];
+
+    for (const pick of picks) {
+      const match = byKey.get(`${pick.type}:${pick.slug}`);
+      if (!match) continue;
+
+      const { row, content } = match;
+      items.push({
+        id: content.id,
+        content_type: content.content_type,
+        slug: row.slug,
+        title: row.title,
+        summary: row.summary ?? null,
+        body: row.body ?? null,
+        published_at: content.published_at ?? null,
+        views: content.views ?? 0,
+        audience: content.audience ?? [],
+        levels: content.levels ?? [],
+        terms: [],
+        reviewer_id: content.reviewer_id ?? null,
+        isFallback: false,
+      });
+    }
+
+    return items;
+  } catch (error) {
+    console.error('[getPublicPicks]', error);
+    return [];
+  }
+}
+
+// ============================================================
 // التصنيفات
 // ============================================================
 

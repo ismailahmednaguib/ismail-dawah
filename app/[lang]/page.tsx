@@ -8,13 +8,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import LatestTabs from "@/components/home/LatestTabs";
+import EditorPicks from "@/components/home/EditorPicks";
 import NavIcon from "@/components/NavIcon";
 import PrayerWidget from "@/components/PrayerWidget";
 import { getSiteSettings } from "@/lib/content";
+import { parseEditorPicks } from "@/lib/home/editor-picks";
 import { readSettingText } from "@/lib/settings-text";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import { getPublicCounts, getPublicList } from "@/lib/learn/public";
+import { getPublicCounts, getPublicList, getPublicPicks } from "@/lib/learn/public";
 import {
   NAV_TREE,
   applyNavigationConfig,
@@ -98,6 +100,8 @@ type UiText = {
   metaDesc: string;
   pathsTitle: string;
   pathsSubtitle: string;
+  picksTitle: string;
+  picksSubtitle: string;
   latestTitle: string;
   latestSubtitle: string;
   latestLessons: string;
@@ -156,6 +160,8 @@ const UI: Record<string, UiText> = {
     pathsTitle: "اختر مسارك",
     pathsSubtitle:
       "ابدأ من الباب الأقرب إلى احتياجك، ثم انتقل تدريجيًا إلى ما يناسب رحلتك.",
+    picksTitle: "مختارات المحرر",
+    picksSubtitle: "مواد منتقاة بعناية لتبدأ منها رحلتك",
     latestTitle: "أحدث ما نُشر",
     latestSubtitle: "مختارات من الدروس والفتاوى والمقالات والأحاديث والأسئلة",
     latestLessons: "أحدث الدروس",
@@ -216,6 +222,8 @@ const UI: Record<string, UiText> = {
     pathsTitle: "Choose your path",
     pathsSubtitle:
       "Start with the path closest to your needs, then grow at your own pace.",
+    picksTitle: "Editor's Picks",
+    picksSubtitle: "Hand-picked selections to begin your journey",
     latestTitle: "Latest Published",
     latestSubtitle: "A selection of lessons, fatwas, articles, hadith, and FAQs",
     latestLessons: "Latest Lessons",
@@ -337,17 +345,31 @@ export default async function HomePage({
     .map((key) => navTree.find((node) => node.key === key))
     .filter((node): node is NavNode => Boolean(node));
 
-  const [counts, latestLessons, latestFatwas, latestArticles, latestHadith, latestDoubts, latestKhutab, latestStories] =
-    await Promise.all([
-      getPublicCounts(l),
-      getPublicList(l, "lesson", { limit: 3 }),
-      getPublicList(l, "fatwa", { limit: 3 }),
-      getPublicList(l, "article", { limit: 3 }),
-      getPublicList(l, "hadith", { limit: 3 }),
-      getPublicList(l, "faq", { limit: 3 }),
-      getPublicList(l, "khutbah", { limit: 3 }),
-      getPublicList(l, "story", { limit: 3 }),
-    ]);
+  const editorPicks = parseEditorPicks(settings.editorPicks);
+
+  const [
+    counts,
+    latestLessons,
+    latestFatwas,
+    latestArticles,
+    latestHadith,
+    latestDoubts,
+    latestKhutab,
+    latestStories,
+    editorPickItems,
+  ] = await Promise.all([
+    getPublicCounts(l),
+    getPublicList(l, "lesson", { limit: 3 }),
+    getPublicList(l, "fatwa", { limit: 3 }),
+    getPublicList(l, "article", { limit: 3 }),
+    getPublicList(l, "hadith", { limit: 3 }),
+    getPublicList(l, "faq", { limit: 3 }),
+    getPublicList(l, "khutbah", { limit: 3 }),
+    getPublicList(l, "story", { limit: 3 }),
+    editorPicks.length > 0
+      ? getPublicPicks(l, editorPicks)
+      : Promise.resolve([]),
+  ]);
 
   const websiteJsonLd = {
     "@context": "https://schema.org",
@@ -528,6 +550,18 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+      )}
+
+      {/* ============ مختارات المحرر ============ */}
+      {gate.visible('picks') && editorPickItems.length > 0 && (
+        <EditorPicks
+          items={editorPickItems}
+          lang={l}
+          title={gate.title('picks', ui.picksTitle, l)}
+          subtitle={ui.picksSubtitle}
+          viewAll={ui.viewAll}
+          href={`/${l}/learn`}
+        />
       )}
 
       {/* ============ أحدث ما نُشر ============ */}

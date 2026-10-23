@@ -19,6 +19,7 @@ test('الإعدادات المركّبة غير مرتبطة بلغة', () => {
     'sectionTitles',
     'hiddenPages',
     'navigation',
+    'editorPicks',
     'dawahJourney',
     'assistant',
     'emailVerification',

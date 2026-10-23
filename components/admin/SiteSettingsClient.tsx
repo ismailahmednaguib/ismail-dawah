@@ -23,6 +23,7 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   homeSubtitle: { ar: '', en: '' },
   homeCta1: { ar: 'ابدأ رحلة العلم', en: 'Start Learning' },
   homeCta2: { ar: 'البث المباشر', en: 'Live Stream' },
+  editorPicks: '',
   metaTitle: { ar: 'اكتشف الإسلام – Discover Islam', en: 'Discover Islam' },
   metaDescription: { ar: '', en: '' },
   bio: [],
@@ -386,6 +387,25 @@ export default function SiteSettingsClient() {
             <TextareaField label="الاهتمامات — كل سطر نقطة" value={listText(settings.interests)} onChange={(value) => setValue('interests', listValue(value))} />
           </div>
         </div>
+      </Section>
+
+      <Section
+        title="مختارات المحرر في الرئيسية"
+        description="حتى ٩ مواد تختارها يدويًّا لتظهر في قسم «مختارات المحرر» قبل «أحدث ما نُشر»."
+      >
+        <TextareaField
+          label="مادة في كل سطر بالصيغة type:slug"
+          value={text(settings.editorPicks)}
+          onChange={(value) => setValue('editorPicks', value)}
+          rows={7}
+          dir="ltr"
+          placeholder={'lesson:lesson-lessons-1\narticle:article-sabr\nfatwa:fatwa-zakat'}
+        />
+        <p className="mt-2 text-xs leading-6 text-stone-500">
+          الأنواع المتاحة: article · lesson · course · book · fatwa · khutbah · audio · video · hadith · duaa · story · research · faq.
+          انسخ المعرّف الظاهر أسفل عنوان المادة في «إدارة المحتوى» (بالصيغة type:slug). تظهر المواد بترتيب الأسطر، وتُخفى في الصفحة الإنجليزية إن لم تملك ترجمة إنجليزية.
+          يمكن إخفاء القسم كاملًا من تبويب «الأقسام والظهور».
+        </p>
       </Section>
 
       <Section title="تحسين الظهور والمشاركة" description="تحكم في عنوان ووصف الموقع عند ظهورهما في محركات البحث ووسائل المشاركة.">

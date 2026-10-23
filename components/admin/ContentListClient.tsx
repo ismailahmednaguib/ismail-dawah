@@ -127,7 +127,16 @@ export default function ContentListClient({ initialType = '' }: { initialType?: 
                   className="border-b border-stone-100 hover:bg-stone-50"
                 >
                   <td className="px-4 py-3 font-medium text-primary-950">
-                    {item.title ?? '(بدون عنوان)'}
+                    <div>{item.title ?? '(بدون عنوان)'}</div>
+                    {item.slug && (
+                      <code
+                        dir="ltr"
+                        className="mt-1 block select-all text-[10px] font-normal text-stone-400"
+                        title="انسخ هذا المعرّف إلى مختارات المحرر في الإعدادات"
+                      >
+                        {item.content_type}:{item.slug}
+                      </code>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-stone-600">
                     {TYPE_LABELS[item.content_type]}

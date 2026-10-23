@@ -10,6 +10,7 @@ export const NON_LOCALIZED_SETTING_KEYS = new Set([
   'sectionTitles',
   'hiddenPages',
   'navigation',
+  'editorPicks',
   'dawahJourney',
   'assistant',
   'playStoreUrl',

@@ -20,6 +20,7 @@ const TYPE_CONFIG: Record<string, ContentTypeConfig> = {
   audio: { icon: '🎧', ar: 'صوت', en: 'Audio', accent: 'bg-primary-500', badge: 'badge-primary' },
   video: { icon: '🎬', ar: 'فيديو', en: 'Video', accent: 'bg-primary-700', badge: 'badge-primary' },
   hadith: { icon: '💬', ar: 'حديث', en: 'Hadith', accent: 'bg-primary-700', badge: 'badge-primary' },
+  faq: { icon: '❓', ar: 'سؤال', en: 'FAQ', accent: 'bg-primary-700', badge: 'badge-primary' },
   duaa: { icon: '🤲', ar: 'دعاء', en: 'Duaa', accent: 'bg-gold-500', badge: 'badge-gold' },
   story: { icon: '📜', ar: 'قصة', en: 'Story', accent: 'bg-gold-600', badge: 'badge-gold' },
   research: { icon: '🔬', ar: 'بحث', en: 'Research', accent: 'bg-primary-800', badge: 'badge-primary' },
@@ -53,7 +54,9 @@ export default function ContentCard({
     badge: 'badge-primary' as const,
   };
   const isArabic = lang === 'ar';
-  const href = `/${lang}/learn/${type}/${slug}`;
+  // المعرّفات العربية قد تحتوي `؟` أو `%` أو مسافات؛ الترميز يمنع
+  // تفسيرها كجزء من الاستعلام أو كمرساة عند بناء رابط البطاقة.
+  const href = `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`;
   const date = published_at ? formatPublishDate(published_at, isArabic) : '';
 
   return (

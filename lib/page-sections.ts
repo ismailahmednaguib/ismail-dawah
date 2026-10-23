@@ -35,6 +35,7 @@ export const PAGES: PageTuple[] = [
       S("hero", "الترويسة", "Hero"),
       S("sections", "أبواب الموقع", "Site Sections"),
       S("verse", "آية اليوم", "Verse of the Day"),
+      S("picks", "مختارات المحرر", "Editor's Picks"),
       S("latest", "أحدث ما نُشر", "Latest Published"),
       S("newsletter", "النشرة البريدية", "Newsletter"),
       S("download", "تطبيق أندرويد", "Android App"),

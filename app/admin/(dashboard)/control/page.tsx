@@ -17,6 +17,7 @@ import {
 } from '@/lib/page-sections';
 import { flattenNav, type CustomNavNode } from '@/lib/navigation';
 import { legacyScheduleToText } from '@/lib/live-schedule';
+import { MAX_EDITOR_PICKS, parseEditorPicks } from '@/lib/home/editor-picks';
 
 type TabId =
   | 'dashboard'
@@ -275,6 +276,12 @@ const FIELDS: FieldDef[] = [
     en: true,
     help: 'كل درس في سطر: اليوم | الوقت | الموضوع | المكان. مثال: السبت | بعد العشاء | تفسير جزء عم | مسجد الرحمن. اترك لغة فارغة لإخفاء الجدول فيها.',
   },
+  {
+    key: 'editorPicks',
+    label: 'مختارات المحرر في الرئيسية (حتى ٩ مواد)',
+    type: 'textarea',
+    help: 'سطر لكل مادة بالصيغة type:slug، مثال: lesson:lesson-lessons-1. انسخ المعرّف الظاهر أسفل عنوان المادة في «إدارة المحتوى». الأنواع المتاحة: article, lesson, course, book, fatwa, khutbah, audio, video, hadith, duaa, story, research, faq. تظهر بالترتيب، وتُخفى تلقائيًّا في الإنجليزية إذا لم تملك المادة ترجمة إنجليزية.',
+  },
   { key: 'ogImage', label: 'صورة المشاركة (OG)', type: 'text' },
   { key: 'showPrayerBar', label: 'إظهار شريط مواقيت الصلاة', type: 'boolean' },
 ];
@@ -418,6 +425,7 @@ function SettingsTab() {
                   value={displayVal}
                   onChange={(e) => setField(f.key, e.target.value)}
                   rows={4}
+                  dir={f.key === 'editorPicks' ? 'ltr' : undefined}
                   className="input-islamic w-full text-sm"
                   placeholder={f.label}
                 />
@@ -429,6 +437,11 @@ function SettingsTab() {
                   className="input-islamic w-full text-sm"
                   placeholder={f.label}
                 />
+              )}
+              {f.key === 'editorPicks' && (
+                <p className="mt-2 text-[11px] font-bold text-primary-700">
+                  {parseEditorPicks(val).length} / {MAX_EDITOR_PICKS} مواد صالحة
+                </p>
               )}
             </div>
           );
