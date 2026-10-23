@@ -18,6 +18,16 @@ import type {
   PaginatedResult,
 } from '@/lib/types/content';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
+import { isMissingTableError } from '@/lib/supabase-errors';
+import {
+  MAX_CONTENT_REVISIONS,
+  buildContentRevisionSnapshot,
+  buildRevisionRestoreInput,
+  parseContentRevisionSnapshot,
+  pickRevisionTranslation,
+  type ContentRevisionReason,
+  type ContentRevisionSnapshot,
+} from '@/lib/content-revisions';
 
 export interface ContentListItem extends Content {
   title: string | null;
@@ -103,6 +113,244 @@ export async function getContentFull(contentId: string) {
   return data;
 }
 
+// =====================================================
+// سجل نسخ المحتوى (revisions)
+// =====================================================
+
+export class ContentRevisionUnavailableError extends Error {
+  constructor() {
+    super('سجل النسخ غير مفعّل بعد. نفّذ migration جدول content_revisions أولًا.');
+    this.name = 'ContentRevisionUnavailableError';
+  }
+}
+
+export interface ContentRevisionListItem {
+  id: string;
+  reason: string;
+  created_at: string;
+  created_by: string | null;
+  title: string | null;
+  content_type: string | null;
+  status: string | null;
+}
+
+/**
+ * يحفظ نسخة قبل التعديل. فشل السجل لا يمنع حفظ المحتوى نفسه:
+ * إن لم يُنفَّذ الجدول بعد يعود false وتُكمل العملية.
+ */
+export async function saveContentRevision(
+  contentId: string,
+  snapshot: ContentRevisionSnapshot,
+  userId: string,
+  reason: ContentRevisionReason = 'update'
+): Promise<boolean> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase.from('content_revisions').insert({
+      content_id: contentId,
+      snapshot,
+      created_by: userId,
+      reason,
+    });
+
+    if (error) {
+      if (!isMissingTableError(error)) {
+        console.error('Failed to save content revision:', error.message);
+      }
+      return false;
+    }
+
+    await pruneContentRevisions(contentId);
+    return true;
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      console.error('Content revision error:', error);
+    }
+    return false;
+  }
+}
+
+/** يبقي أحدث `MAX_CONTENT_REVISIONS` نسخة لكل مادة. */
+async function pruneContentRevisions(contentId: string): Promise<void> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('content_revisions')
+      .select('id')
+      .eq('content_id', contentId)
+      .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
+      .range(MAX_CONTENT_REVISIONS, MAX_CONTENT_REVISIONS + 99);
+
+    if (error) {
+      if (!isMissingTableError(error)) {
+        console.error('Failed to inspect old content revisions:', error.message);
+      }
+      return;
+    }
+
+    const staleIds = (data ?? []).map((row: { id: string }) => row.id);
+    if (!staleIds.length) return;
+
+    const { error: deleteError } = await supabase
+      .from('content_revisions')
+      .delete()
+      .in('id', staleIds);
+
+    if (deleteError && !isMissingTableError(deleteError)) {
+      console.error('Failed to prune content revisions:', deleteError.message);
+    }
+  } catch (error) {
+    if (!isMissingTableError(error)) {
+      console.error('Failed to prune content revisions:', error);
+    }
+  }
+}
+
+type RevisionRow = {
+  id: string;
+  reason?: string | null;
+  created_at?: string | null;
+  created_by?: string | null;
+  snapshot?: unknown;
+};
+
+type TranslationRow = {
+  id?: string;
+  lang?: string | null;
+};
+
+/** قائمة نسخ مادة (بلا النسخة الكاملة، حفاظًا على حجم الاستجابة). */
+export async function listContentRevisions(
+  contentId: string
+): Promise<{ enabled: boolean; data: ContentRevisionListItem[] }> {
+  const supabase = getSupabaseAdmin();
+  const { data, error } = await supabase
+    .from('content_revisions')
+    .select('id, reason, created_at, created_by, snapshot')
+    .eq('content_id', contentId)
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
+    .limit(MAX_CONTENT_REVISIONS);
+
+  if (error) {
+    if (isMissingTableError(error)) return { enabled: false, data: [] };
+    throw new Error(error.message);
+  }
+
+  return {
+    enabled: true,
+    data: (data ?? []).map((row: RevisionRow) => {
+      const snapshot = parseContentRevisionSnapshot(row.snapshot);
+      const translation = snapshot ? pickRevisionTranslation(snapshot) : null;
+      return {
+        id: String(row.id),
+        reason: typeof row.reason === 'string' ? row.reason : 'update',
+        created_at: String(row.created_at ?? ''),
+        created_by: typeof row.created_by === 'string' ? row.created_by : null,
+        title: translation?.title ?? null,
+        content_type: snapshot?.content.content_type ?? null,
+        status: snapshot?.content.status ?? null,
+      };
+    }),
+  };
+}
+
+/**
+ * استعادة نسخة: تحفظ الوضع الحالي أولًا (reason=restore)، ثم تعيد
+ * بيانات المحتوى والترجمة الأساسية عبر `updateContentDetails` حتى
+ * تمرّ على التحقق والتنقية وإعادة المحتوى الحسّاس للمراجعة.
+ */
+export async function restoreContentRevision(
+  contentId: string,
+  revisionId: string,
+  userId: string
+): Promise<{ success: true; revision_id: string; translation_id: string }> {
+  const supabase = getSupabaseAdmin();
+  const { data: revision, error } = await supabase
+    .from('content_revisions')
+    .select('id, snapshot, created_at')
+    .eq('id', revisionId)
+    .eq('content_id', contentId)
+    .maybeSingle();
+
+  if (error) {
+    if (isMissingTableError(error)) throw new ContentRevisionUnavailableError();
+    throw new Error(error.message);
+  }
+  if (!revision) throw new Error('النسخة المطلوبة غير موجودة');
+
+  const snapshot = parseContentRevisionSnapshot(revision.snapshot);
+  if (!snapshot) throw new Error('بيانات النسخة المحفوظة غير صالحة');
+
+  const current = await getContentFull(contentId);
+  if (!current) throw new Error('المحتوى غير موجود');
+
+  const plan = buildRevisionRestoreInput(snapshot);
+  if (!plan.translation) throw new Error('النسخة لا تحتوي ترجمة قابلة للاستعادة');
+
+  const translations: TranslationRow[] = Array.isArray(current.content_translations)
+    ? current.content_translations
+    : [];
+  const currentTranslation =
+    translations.find(
+      (item) =>
+        item.id === plan.translation?.id && item.lang === plan.translation?.lang
+    ) ?? translations.find((item) => item.lang === plan.translation?.lang);
+
+  if (!currentTranslation?.id) {
+    throw new Error('الترجمة المرتبطة بهذه النسخة لم تعد موجودة');
+  }
+
+  // فحص تعارض الرابط قبل أي كتابة، حتى لا يتغيّر صف المحتوى ثم تفشل الترجمة.
+  const { data: slugConflict, error: slugError } = await supabase
+    .from('content_translations')
+    .select('id')
+    .eq('lang', plan.translation.lang)
+    .eq('slug', plan.translation.slug)
+    .neq('id', currentTranslation.id)
+    .maybeSingle();
+
+  if (slugError) throw new Error(slugError.message);
+  if (slugConflict) {
+    throw new Error('لا يمكن استعادة الرابط القديم لأنه مستخدم حاليًا في ترجمة أخرى');
+  }
+
+  const input: UpdateContentInput = {
+    content_type: plan.content.content_type as ContentType,
+    audience: plan.content.audience as Audience[],
+    age_groups: plan.content.age_groups as AgeGroup[],
+    levels: plan.content.levels as EduLevel[],
+    madhhabs: plan.content.madhhabs as Madhhab[],
+    needs_scholar_review: plan.content.needs_scholar_review,
+    is_sensitive: plan.content.is_sensitive,
+    translation: {
+      id: currentTranslation.id,
+      title: plan.translation.title,
+      slug: plan.translation.slug,
+      summary: plan.translation.summary,
+      body: plan.translation.body,
+      meta_title: plan.translation.meta_title,
+      meta_description: plan.translation.meta_description,
+    },
+  };
+
+  await updateContentDetails(contentId, input, userId, { revisionReason: 'restore' });
+
+  await logAudit(userId, 'restore_revision', 'content', contentId, {
+    revision_id: revisionId,
+    revision_created_at: revision.created_at,
+    translation_id: currentTranslation.id,
+    translation_lang: currentTranslation.lang,
+  });
+
+  return {
+    success: true,
+    revision_id: revisionId,
+    translation_id: currentTranslation.id,
+  };
+}
+
 export interface UpdateContentInput {
   content_type?: ContentType;
   audience?: Audience[];
@@ -184,11 +432,51 @@ function normalizeText(value: unknown, maxLength: number, fieldName: string) {
   return value.trim().slice(0, maxLength);
 }
 
+function isMissingColumnError(error: unknown, column: string): boolean {
+  const code = String((error as { code?: unknown })?.code || '');
+  const message = String((error as { message?: unknown })?.message || '');
+  return (
+    code === '42703' ||
+    new RegExp(`column .*${column}.*does not exist`, 'i').test(message) ||
+    new RegExp(`Could not find the '${column}' column`, 'i').test(message)
+  );
+}
+
+/**
+ * تحديث صف الترجمة. إذا لم يكن عمود `reviewed_at` منفَّذًا بعد
+ * (migration قديمة) نعيد المحاولة بدونه بدل إفشال الحفظ.
+ */
+async function updateTranslationRecord(
+  translationId: string,
+  contentId: string,
+  update: Record<string, unknown>
+): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  let { error } = await supabase
+    .from('content_translations')
+    .update(update)
+    .eq('id', translationId)
+    .eq('content_id', contentId);
+
+  if (error && 'reviewed_at' in update && isMissingColumnError(error, 'reviewed_at')) {
+    const fallback = { ...update };
+    delete fallback.reviewed_at;
+    ({ error } = await supabase
+      .from('content_translations')
+      .update(fallback)
+      .eq('id', translationId)
+      .eq('content_id', contentId));
+  }
+
+  if (error) throw new Error(error.message);
+}
+
 /** تعديل بيانات المحتوى والترجمة مع إعادة المحتوى الحساس للمراجعة عند الحاجة. */
 export async function updateContentDetails(
   contentId: string,
   input: UpdateContentInput,
-  userId: string
+  userId: string,
+  options: { revisionReason?: ContentRevisionReason } = {}
 ) {
   const supabase = getSupabaseAdmin();
   const current = await getContentFull(contentId);
@@ -269,7 +557,16 @@ export async function updateContentDetails(
       translationUpdate.meta_description =
         normalizeText(translationInput.meta_description, 320, 'وصف SEO') || null;
     }
-    if (!Object.keys(translationUpdate).length) translationUpdate = null;
+
+    // أي تعديل على نص الترجمة أو بياناتها يلغي اعتمادها السابق؛
+    // لا يجوز أن يبقى نص معدّل موسومًا كمراجَع.
+    if (Object.keys(translationUpdate).length) {
+      translationUpdate.is_reviewed = false;
+      translationUpdate.reviewed_by = null;
+      translationUpdate.reviewed_at = null;
+    } else {
+      translationUpdate = null;
+    }
   }
 
   const nextContentType = (contentUpdate.content_type ?? current.content_type) as ContentType;
@@ -277,6 +574,14 @@ export async function updateContentDetails(
   const nextSensitive = input.is_sensitive ?? Boolean(current.is_sensitive);
   const requiresReview = Boolean(
     nextNeedsReview || nextSensitive || nextContentType === 'fatwa'
+  );
+
+  // نسخة ما قبل التعديل — تُحفظ قبل أي كتابة على المحتوى.
+  await saveContentRevision(
+    contentId,
+    buildContentRevisionSnapshot(current),
+    userId,
+    options.revisionReason ?? 'update'
   );
 
   const { data: updatedContent, error: contentError } = await supabase
@@ -288,12 +593,7 @@ export async function updateContentDetails(
   if (contentError) throw new Error(contentError.message);
 
   if (translationId && translationUpdate) {
-    const { error: translationError } = await supabase
-      .from('content_translations')
-      .update(translationUpdate)
-      .eq('id', translationId)
-      .eq('content_id', contentId);
-    if (translationError) throw new Error(translationError.message);
+    await updateTranslationRecord(translationId, contentId, translationUpdate);
   }
 
   await logAudit(

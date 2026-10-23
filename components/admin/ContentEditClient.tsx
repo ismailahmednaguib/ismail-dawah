@@ -7,6 +7,7 @@ import Link from 'next/link';
 import StatusBadge from '@/components/admin/StatusBadge';
 import ContentTermsEditor from '@/components/admin/ContentTermsEditor';
 import ContentMediaEditor from '@/components/admin/ContentMediaEditor';
+import ContentRevisions from '@/components/admin/ContentRevisions';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import type {
   AgeGroup,
@@ -45,6 +46,7 @@ type ContentReferenceSummary = {
 type EditableContent = {
   id: string;
   status: ContentStatus;
+  updated_at?: string;
   content_type?: ContentType;
   audience?: Audience[];
   age_groups?: AgeGroup[];
@@ -863,6 +865,12 @@ export default function ContentEditClient({
       </div>
 
       <ContentTermsEditor contentId={content.id} canEdit={canEdit} />
+
+      <ContentRevisions
+        key={content.updated_at ?? content.id}
+        contentId={content.id}
+        canRestore={canEdit}
+      />
 
       <Link
         href="/admin/content"

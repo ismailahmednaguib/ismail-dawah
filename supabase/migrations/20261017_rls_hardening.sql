@@ -34,6 +34,7 @@ declare
     'analytics_events',
     'site_settings',
     'review_queue',
+    'content_revisions',
     'newsletter_subscribers',
     'dawah_journey_subscribers',
     'dawah_request_assignments',
