@@ -11,18 +11,32 @@ import type {
   EduLevel,
   Madhhab,
 } from '@/lib/types/content';
+import type { IconComponent } from '@/lib/icons';
+import {
+  AlertIcon,
+  BookOpenIcon,
+  BookmarkIcon,
+  DuaHandsIcon,
+  FileTextIcon,
+  HelpCircleIcon,
+  InfoIcon,
+  MosqueIcon,
+  SaveIcon,
+  SearchIcon,
+  ShieldIcon,
+} from '@/lib/icons';
 
-const CONTENT_TYPES: { value: ContentType; label: string; icon: string }[] = [
-  { value: 'article', label: 'مقال', icon: '📰' },
-  { value: 'lesson', label: 'درس', icon: '📖' },
-  { value: 'book', label: 'كتاب', icon: '📚' },
-  { value: 'fatwa', label: 'فتوى', icon: '⚖️' },
-  { value: 'khutbah', label: 'خطبة', icon: '🕌' },
-  { value: 'course', label: 'دورة', icon: '🎓' },
-  { value: 'story', label: 'قصة', icon: '📜' },
-  { value: 'duaa', label: 'دعاء', icon: '🤲' },
-  { value: 'hadith', label: 'حديث', icon: '💬' },
-  { value: 'research', label: 'بحث', icon: '🔬' },
+const CONTENT_TYPES: { value: ContentType; label: string; icon: IconComponent }[] = [
+  { value: 'article', label: 'مقال', icon: FileTextIcon },
+  { value: 'lesson', label: 'درس', icon: BookOpenIcon },
+  { value: 'book', label: 'كتاب', icon: BookOpenIcon },
+  { value: 'fatwa', label: 'فتوى', icon: ShieldIcon },
+  { value: 'khutbah', label: 'خطبة', icon: MosqueIcon },
+  { value: 'course', label: 'دورة', icon: BookmarkIcon },
+  { value: 'story', label: 'قصة', icon: BookOpenIcon },
+  { value: 'duaa', label: 'دعاء', icon: DuaHandsIcon },
+  { value: 'hadith', label: 'حديث', icon: BookOpenIcon },
+  { value: 'research', label: 'بحث', icon: FileTextIcon },
 ];
 
 const AUDIENCES: { value: Audience; label: string }[] = [
@@ -150,7 +164,7 @@ export default function ContentForm() {
                   : 'border-primary-100 hover:border-primary-300 dark:border-night-700'
               }`}
             >
-              <div className="text-xl mb-1">{t.icon}</div>
+              <t.icon className="mx-auto mb-1 text-primary-700" size={22} aria-hidden="true" />
               {t.label}
             </button>
           ))}
@@ -207,7 +221,10 @@ export default function ContentForm() {
             className="input-islamic"
           />
           <p className="text-xs text-stone-400 mt-1">
-            💡 لاحقًا سنضيف محرر نصوص غني (TipTap) مع دعم RTL كامل
+            <span className="inline-flex items-center gap-1">
+              <InfoIcon size={14} aria-hidden="true" />
+              يمكنك إدخال النص المنسّق المسموح به، وسيُطبّق التنظيف قبل العرض العام.
+            </span>
           </p>
         </div>
       </div>
@@ -311,7 +328,10 @@ export default function ContentForm() {
             className="h-4 w-4 accent-gold-600"
           />
           <span className="text-sm text-gold-900 dark:text-gold-200">
-            🔍 يحتاج مراجعة علمية قبل النشر
+            <span className="inline-flex items-center gap-1.5">
+              <SearchIcon size={15} aria-hidden="true" />
+              يحتاج مراجعة علمية قبل النشر
+            </span>
           </span>
         </label>
         <label className="flex items-center gap-3 cursor-pointer">
@@ -322,7 +342,10 @@ export default function ContentForm() {
             className="w-4 h-4 accent-red-600"
           />
           <span className="text-sm text-red-800">
-            ⚠️ محتوى حساس (لا يُنشر إلا بموافقة مراجع علمي)
+            <span className="inline-flex items-center gap-1.5">
+              <AlertIcon size={15} aria-hidden="true" />
+              محتوى حساس (لا يُنشر إلا بموافقة مراجع علمي)
+            </span>
           </span>
         </label>
       </div>
@@ -340,7 +363,10 @@ export default function ContentForm() {
           disabled={saving}
           className="btn-primary disabled:opacity-50"
         >
-          {saving ? 'جارٍ الحفظ...' : '💾 حفظ كمسودة'}
+          <span className="inline-flex items-center gap-1.5">
+            <SaveIcon size={16} aria-hidden="true" />
+            {saving ? 'جارٍ الحفظ...' : 'حفظ كمسودة'}
+          </span>
         </button>
         <Link
           href="/admin/content"

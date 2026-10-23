@@ -113,14 +113,18 @@ test('كل صفحة تعرّف openGraph لها صورة مشاركة لغوية
     .filter((file) => {
       const content = readFileSync(file, 'utf8');
       if (!content.includes('openGraph')) return false;
-      return !content.includes('/og/og-') && !content.includes('generateSEO');
+      return (
+        !content.includes('/og/og-') &&
+        !content.includes('generateSEO') &&
+        !content.includes('/api/og')
+      );
     })
     .map((file) => file.slice(ROOT.length).replaceAll('\\', '/'));
 
   assert.deepEqual(
     offenders,
     [],
-    `صفحات تعرّف openGraph بلا صورة /og/og-<lang>.png أو generateSEO: ${offenders.join(', ')}`
+    `صفحات تعرّف openGraph بلا صورة ثابتة أو /api/og أو generateSEO: ${offenders.join(', ')}`
   );
 });
 

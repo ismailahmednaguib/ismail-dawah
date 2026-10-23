@@ -166,8 +166,35 @@ export default function PrayerWidget({ lang }: { lang: Lang }) {
   }, [ui.defaultLocation]);
 
   useEffect(() => {
-    const interval = window.setInterval(() => setNow(new Date()), 1000);
-    return () => window.clearInterval(interval);
+    // العدّاد المعروض بالدقائق فقط، فلا حاجة لتحديث كل ثانية.
+    // التحديث كل ٣٠ ثانية يقلّل عمل الخيط الرئيسي ويحافظ على دقة الدقيقة.
+    let interval: number | null = null;
+    const tick = () => setNow(new Date());
+    const start = () => {
+      if (interval === null) interval = window.setInterval(tick, 30_000);
+    };
+    const stop = () => {
+      if (interval !== null) {
+        window.clearInterval(interval);
+        interval = null;
+      }
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        tick();
+        start();
+      } else {
+        stop();
+      }
+    };
+
+    start();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
 
   useEffect(() => {

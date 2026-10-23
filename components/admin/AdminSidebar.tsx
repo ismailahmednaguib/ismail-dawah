@@ -4,6 +4,24 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { AppRole } from "@/lib/types/content";
 import { can, highestRole } from "@/lib/admin/permissions";
+import type { IconComponent } from "@/lib/icons";
+import {
+  BellIcon,
+  BookOpenIcon,
+  CheckCircleIcon,
+  DownloadIcon,
+  EditIcon,
+  FileTextIcon,
+  HelpCircleIcon,
+  HomeIcon,
+  LanguageIcon,
+  LogOutIcon,
+  MailIcon,
+  SettingsIcon,
+  ShieldIcon,
+  SparklesIcon,
+  UsersIcon,
+} from "@/lib/icons";
 
 const ROLE_LABELS: Record<AppRole, string> = {
   super_admin: "مدير عام",
@@ -17,7 +35,7 @@ const ROLE_LABELS: Record<AppRole, string> = {
 interface NavItem {
   href: string;
   label: string;
-  icon: string;
+  icon: IconComponent;
   show: boolean;
 }
 
@@ -31,22 +49,22 @@ export default function AdminSidebar({
   const pathname = usePathname();
   const router = useRouter();
   const items: NavItem[] = [
-    { href: "/admin", label: "لوحة المعلومات", icon: "▦", show: true },
-    { href: "/admin/control", label: "التحكم الموحد", icon: "⌘", show: true },
-    { href: "/admin/content", label: "المحتوى", icon: "✎", show: can(roles, "content.read") },
-    { href: "/admin/taxonomies", label: "التصنيفات", icon: "⌘", show: can(roles, "taxonomy.manage") },
-    { href: "/admin/translations", label: "الترجمات", icon: "文", show: can(roles, "content.read") },
-    { href: "/admin/quality", label: "جودة المحتوى", icon: "✦", show: can(roles, "content.read") },
-    { href: "/admin/review", label: "المراجعة العلمية", icon: "✓", show: can(roles, "review.approve") },
-    { href: "/admin/analytics", label: "التحليلات", icon: "▲", show: can(roles, "audit.read") },
-    { href: "/admin/questions", label: "أسئلة الزوار", icon: "?", show: can(roles, "questions.manage") },
-    { href: "/admin/notifications", label: "الإشعارات", icon: "♢", show: can(roles, "notifications.manage") },
-    { href: "/admin/newsletter", label: "النشرة البريدية", icon: "✉", show: can(roles, "notifications.manage") },
-    { href: "/admin/users", label: "المستخدمون والأدوار", icon: "♙", show: can(roles, "users.manage") },
-    { href: "/admin/audit", label: "سجل التدقيق", icon: "≡", show: can(roles, "audit.read") },
-    { href: "/admin/security", label: "الأمان", icon: "🛡", show: can(roles, "audit.read") },
-    { href: "/admin/backup", label: "النسخ الاحتياطي", icon: "⬇", show: can(roles, "settings.manage") },
-    { href: "/admin/settings", label: "إعدادات المنصة", icon: "⚙", show: can(roles, "settings.manage") },
+    { href: "/admin", label: "لوحة المعلومات", icon: HomeIcon, show: true },
+    { href: "/admin/control", label: "التحكم الموحد", icon: SettingsIcon, show: true },
+    { href: "/admin/content", label: "المحتوى", icon: EditIcon, show: can(roles, "content.read") },
+    { href: "/admin/taxonomies", label: "التصنيفات", icon: BookOpenIcon, show: can(roles, "taxonomy.manage") },
+    { href: "/admin/translations", label: "الترجمات", icon: LanguageIcon, show: can(roles, "content.read") },
+    { href: "/admin/quality", label: "جودة المحتوى", icon: SparklesIcon, show: can(roles, "content.read") },
+    { href: "/admin/review", label: "المراجعة العلمية", icon: CheckCircleIcon, show: can(roles, "review.approve") },
+    { href: "/admin/analytics", label: "التحليلات", icon: SparklesIcon, show: can(roles, "audit.read") },
+    { href: "/admin/questions", label: "أسئلة الزوار", icon: HelpCircleIcon, show: can(roles, "questions.manage") },
+    { href: "/admin/notifications", label: "الإشعارات", icon: BellIcon, show: can(roles, "notifications.manage") },
+    { href: "/admin/newsletter", label: "النشرة البريدية", icon: MailIcon, show: can(roles, "notifications.manage") },
+    { href: "/admin/users", label: "المستخدمون والأدوار", icon: UsersIcon, show: can(roles, "users.manage") },
+    { href: "/admin/audit", label: "سجل التدقيق", icon: FileTextIcon, show: can(roles, "audit.read") },
+    { href: "/admin/security", label: "الأمان", icon: ShieldIcon, show: can(roles, "audit.read") },
+    { href: "/admin/backup", label: "النسخ الاحتياطي", icon: DownloadIcon, show: can(roles, "settings.manage") },
+    { href: "/admin/settings", label: "إعدادات المنصة", icon: SettingsIcon, show: can(roles, "settings.manage") },
   ];
 
   const role = highestRole(roles);
@@ -103,7 +121,7 @@ export default function AdminSidebar({
                 }`}
               >
                 <span className={`flex h-7 w-7 items-center justify-center rounded-lg text-base ${active ? "bg-primary-950/10" : "bg-primary-900/70 group-hover:bg-primary-700"}`}>
-                  {item.icon}
+                  <item.icon size={16} aria-hidden="true" />
                 </span>
                 <span>{item.label}</span>
               </Link>
@@ -121,7 +139,9 @@ export default function AdminSidebar({
           }}
           className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-primary-100 transition hover:bg-red-950/60 hover:text-white"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-900/70">↪</span>
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-900/70">
+            <LogOutIcon size={16} aria-hidden="true" />
+          </span>
           <span>تسجيل الخروج</span>
         </button>
       </div>

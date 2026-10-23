@@ -3,6 +3,18 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import type { AdminSession } from '@/lib/admin/session';
+import type { IconComponent } from '@/lib/icons';
+import {
+  AlertIcon,
+  BookOpenIcon,
+  CheckCircleIcon,
+  ClockIcon,
+  DuaHandsIcon,
+  FileTextIcon,
+  MosqueIcon,
+  RefreshIcon,
+  ShieldIcon,
+} from '@/lib/icons';
 
 interface ReviewItem {
   id: string;
@@ -18,15 +30,15 @@ interface ReviewItem {
   needs_scholar_review?: boolean;
 }
 
-const TYPE_LABELS: Record<string, string> = {
-  article: '📰 مقال',
-  lesson: '📖 درس',
-  book: '📚 كتاب',
-  fatwa: '⚖️ فتوى',
-  khutbah: '🕌 خطبة',
-  hadith: '💬 حديث',
-  duaa: '🤲 دعاء',
-  research: '🔬 بحث',
+const TYPE_LABELS: Record<string, { label: string; icon: IconComponent }> = {
+  article: { label: 'مقال', icon: FileTextIcon },
+  lesson: { label: 'درس', icon: BookOpenIcon },
+  book: { label: 'كتاب', icon: BookOpenIcon },
+  fatwa: { label: 'فتوى', icon: ShieldIcon },
+  khutbah: { label: 'خطبة', icon: MosqueIcon },
+  hadith: { label: 'حديث', icon: BookOpenIcon },
+  duaa: { label: 'دعاء', icon: DuaHandsIcon },
+  research: { label: 'بحث', icon: FileTextIcon },
 };
 
 export default function ReviewQueueClient({ session }: { session: AdminSession }) {
@@ -72,7 +84,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
       setNotes('');
       load();
     } catch (err: any) {
-      alert('❌ ' + err.message);
+      alert(err.message);
     } finally {
       setActionLoading(null);
     }
@@ -92,7 +104,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
               : 'bg-white dark:bg-gray-800 text-stone-600 dark:text-gray-300 border border-stone-200 dark:border-gray-700'
           }`}
         >
-          ⏳ في الانتظار
+          <span className="inline-flex items-center gap-1.5"><ClockIcon size={15} aria-hidden="true" /> في الانتظار</span>
         </button>
         <button
           onClick={() => setFilter('all')}
@@ -102,7 +114,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
               : 'bg-white dark:bg-gray-800 text-stone-600 dark:text-gray-300 border border-stone-200 dark:border-gray-700'
           }`}
         >
-          📋 الكل
+          <span className="inline-flex items-center gap-1.5"><FileTextIcon size={15} aria-hidden="true" /> الكل</span>
         </button>
       </div>
 
@@ -111,7 +123,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
         <div className="text-center py-12 text-stone-400">جارٍ التحميل...</div>
       ) : items.length === 0 ? (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-stone-200 dark:border-gray-700 p-12 text-center">
-          <p className="text-4xl mb-3">✓</p>
+          <CheckCircleIcon className="mx-auto mb-3 text-primary-600" size={38} aria-hidden="true" />
           <p className="text-stone-500 dark:text-gray-400">لا يوجد محتوى في طابور المراجعة</p>
         </div>
       ) : (
@@ -130,7 +142,7 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                   <div className="flex items-center gap-2 mb-1">
                     {item.is_sensitive && (
                       <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
-                        ⚠️ حساس
+                        <span className="inline-flex items-center gap-1"><AlertIcon size={13} aria-hidden="true" /> حساس</span>
                       </span>
                     )}
                     <span
@@ -142,20 +154,27 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                           : 'bg-red-100 text-red-700'
                       }`}
                     >
-                      {item.status === 'pending' ? '⏳ في الانتظار' : item.status === 'approved' ? '✓ تمت الموافقة' : '🔄 يحتاج تعديلات'}
+                      <span className="inline-flex items-center gap-1.5">
+                        {item.status === 'pending' ? <ClockIcon size={13} aria-hidden="true" /> : item.status === 'approved' ? <CheckCircleIcon size={13} aria-hidden="true" /> : <RefreshIcon size={13} aria-hidden="true" />}
+                        {item.status === 'pending' ? 'في الانتظار' : item.status === 'approved' ? 'تمت الموافقة' : 'يحتاج تعديلات'}
+                      </span>
                     </span>
                   </div>
                   <h3 className="font-bold text-primary-950 dark:text-white">
                     {item.content_title ?? '(بدون عنوان)'}
                   </h3>
                   <p className="text-xs text-stone-500 dark:text-gray-400 mt-1">
-                    النوع: {TYPE_LABELS[item.content_type ?? ''] ?? item.content_type}
+                    النوع:{' '}
+                    {TYPE_LABELS[item.content_type ?? ''] ? (() => {
+                      const TypeIcon = TYPE_LABELS[item.content_type ?? ''].icon;
+                      return <span className="inline-flex items-center gap-1"><TypeIcon size={13} aria-hidden="true" />{TYPE_LABELS[item.content_type ?? ''].label}</span>;
+                    })() : item.content_type}
                     {' • '}
                     قُدِّم: {new Date(item.created_at).toLocaleDateString('ar-EG')}
                   </p>
                   {item.scholar_notes && (
                     <p className="text-sm text-stone-600 dark:text-gray-300 mt-2 bg-stone-50 dark:bg-gray-700 rounded p-2">
-                      💬 {item.scholar_notes}
+                      <span className="inline-flex items-start gap-1"><FileTextIcon className="mt-0.5 shrink-0" size={14} aria-hidden="true" /> {item.scholar_notes}</span>
                     </p>
                   )}
                 </div>
@@ -167,14 +186,14 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
                       disabled={actionLoading === item.id}
                       className="bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-800 transition disabled:opacity-50"
                     >
-              ✓ موافقة
+                      <span className="inline-flex items-center gap-1.5"><CheckCircleIcon size={15} aria-hidden="true" /> موافقة</span>
                     </button>
                     <button
                       onClick={() => setNotesDialog({ show: true, itemId: item.id, action: 'reject' })}
                       disabled={actionLoading === item.id}
                       className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition disabled:opacity-50"
                     >
-                      ❌ طلب تعديلات
+                      <span className="inline-flex items-center gap-1.5"><AlertIcon size={15} aria-hidden="true" /> طلب تعديلات</span>
                     </button>
                   </div>
                 )}
@@ -189,7 +208,10 @@ export default function ReviewQueueClient({ session }: { session: AdminSession }
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-lg w-full shadow-2xl">
             <h3 className="text-lg font-bold text-primary-950 dark:text-gold mb-3">
-              {notesDialog.action === 'approve' ? '✓ الموافقة على المحتوى' : '❌ طلب تعديلات'}
+              <span className="inline-flex items-center gap-1.5">
+                {notesDialog.action === 'approve' ? <CheckCircleIcon size={18} aria-hidden="true" /> : <AlertIcon size={18} aria-hidden="true" />}
+                {notesDialog.action === 'approve' ? 'الموافقة على المحتوى' : 'طلب تعديلات'}
+              </span>
             </h3>
             <textarea
               value={notes}

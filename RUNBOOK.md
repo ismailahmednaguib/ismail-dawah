@@ -326,6 +326,15 @@ npm run fix:citations -- --commit     # كتابة
 
 ## ٨) حالة migrations الإنتاج
 
+للتأكد من حالة الهجرات المؤثرة في التشغيل دون أي تعديل على قاعدة البيانات:
+
+```bash
+npm run qa:migrations
+npm run qa:migrations -- --strict
+```
+
+الأمر الأول تقرير read-only، والثاني يفشل إذا كانت هجرة مطلوبة معلّقة.
+
 هذه ملفات تُنفَّذ **يدويًّا** في SQL Editor بلوحة Supabase (لا يوجد مسار آلي لها). راجع الحالة قبل أي نشر يعتمد عليها:
 
 | الملف | ما يفعله | الأثر إن لم يُنفَّذ |
@@ -333,15 +342,15 @@ npm run fix:citations -- --commit     # كتابة
 | `20261017_rls_hardening.sql` | ✅ **الأثر مطبَّق** (تحقق ٢٢ أكتوبر ٢٠٢٦) — `qa:rls` = ٠ جدول خاص مكشوف، وكل الجداول العامة متاحة. راجع SQL Editor للتأكد من تنفيذ الملف نفسه لا إصلاحًا مكافئًا | — |
 | `20261017_security_and_review.sql` | ✅ **مُنفَّذة** (تحقق ٢٢ أكتوبر ٢٠٢٦) — جدول `rate_limits` + دالة `consume_rate_limit` الذرّية + `content_translations.reviewed_at` | — |
 | `20261016_content_review_metadata.sql` | ✅ **مُنفَّذة** (تحقق ٢٢ أكتوبر ٢٠٢٦) — عمود `content.reviewed_at` + فهرسه | — |
-| `20261016_dawah_journey.sql` | ⏳ **معلّقة** — جدول اشتراكات رحلة البريد غير موجود (تحقق ٢٢ أكتوبر ٢٠٢٦) | نموذج الرحلة يتوقف بأمان حتى تُنفَّذ الهجرة |
-| `20261016_dawah_assignments.sql` | ⏳ **معلّقة** — جدول توزيع طلبات الحوار غير موجود (تحقق ٢٢ أكتوبر ٢٠٢٦) | يظهر تنبيه migration في لوحة الأسئلة حتى تُنفَّذ |
+| `20261016_dawah_journey.sql` | ✅ **مُنفَّذة** — جدول اشتراكات رحلة البريد ظاهر في فحص `qa:migrations` | — |
+| `20261016_dawah_assignments.sql` | ✅ **مُنفَّذة** — جدول توزيع طلبات الحوار ظاهر في فحص `qa:migrations` | — |
 | `20261018_public_content_read_repair.sql` | ✅ **مُنفَّذة** — يعيد قراءة `content` · `content_translations` · `content_references` للزائر، ويحذف السياسات القديمة التي تفحص `user_roles` | — |
 | `20261020_email_verification.sql` | ✅ **مُنفَّذة** (تحقق ٢٢ أكتوبر ٢٠٢٦) — أعمدة تفعيل البريد في `users` + فهرس الرمز | — |
 | `20261021_password_reset.sql` | ✅ **مُنفَّذة** (تحقق ٢٢ أكتوبر ٢٠٢٦) — أعمدة رمز استعادة كلمة المرور + فهرس الرمز | — |
 | `20261023_content_revisions.sql` | ✅ **مُنفَّذة** (تحقق ٢٣ أكتوبر ٢٠٢٦) — `content_revisions` يظهر محجوبًا في `qa:rls` | — |
-| `20261024_push_subscriptions.sql` | ⏳ **معلّقة** — جدول اشتراكات Web Push الخاص (RLS + سحب صلاحيات) | إرسال الإشعارات يعيد «جدول اشتراكات الإشعارات غير موجود» |
-| `20261025_backup_bucket.sql` | ⏳ **معلّقة** — حاوية `backups` الخاصة في Storage | زر النسخة اليدوية والـ cron يعيدان «الحاوية غير موجودة» |
-| `20261026_scheduled_publishing.sql` | ⏳ **معلّقة** — قيمة `scheduled` في `content_status` + عمود `content.scheduled_at` | أزرار الجدولة تعيد رسالة migration واضحة؛ النشر الكسول يتجاهل الجدولة بهدوء |
+| `20261024_push_subscriptions.sql` | ✅ **مُنفَّذة** — الجدول الخاص ظاهر ومحجوب في `qa:rls` | — |
+| `20261025_backup_bucket.sql` | ✅ **مُنفَّذة** — حاوية `backups` الخاصة موجودة وغير عامة، وتحققها `qa:migrations --strict` | — |
+| `20261026_scheduled_publishing.sql` | ✅ **مُنفَّذة** — قيمة `scheduled` وعمود `content.scheduled_at` ظاهران في `qa:migrations` | — |
 
 المساعد المقيّد لا يحتاج جدولًا جديدًا: يقرأ المحتوى المنشور فقط، ويظل مغلقًا حتى ضبط `AI_ASSISTANT_API_KEY` و`AI_ASSISTANT_ENDPOINT` وتفعيله من `/admin/settings`.
 

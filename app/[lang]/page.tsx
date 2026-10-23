@@ -8,9 +8,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import LatestTabs from "@/components/home/LatestTabs";
+import ContentCard from "@/components/learn/ContentCard";
 import EditorPicks from "@/components/home/EditorPicks";
 import NavIcon from "@/components/NavIcon";
-import PrayerWidget from "@/components/PrayerWidget";
+import PrayerWidgetLazy from "@/components/PrayerWidgetLazy";
 import { getSiteSettings } from "@/lib/content";
 import { parseEditorPicks } from "@/lib/home/editor-picks";
 import { readSettingText } from "@/lib/settings-text";
@@ -387,6 +388,53 @@ export default async function HomePage({
     },
   };
 
+  // صفوف «أحدث ما نُشر» — تُبنى مرة واحدة وتُرشَّح من الأنواع الفارغة،
+  // وتُرسل بطاقاتها إلى الخادم كعقد ثابتة داخل LatestTabs.
+  const latestRows = [
+    {
+      key: "lesson",
+      title: ui.latestLessons,
+      href: `/${l}/learn?type=lesson`,
+      items: latestLessons,
+    },
+    {
+      key: "fatwa",
+      title: ui.latestFatwas,
+      href: `/${l}/fatwa`,
+      items: latestFatwas,
+    },
+    {
+      key: "article",
+      title: ui.latestArticles,
+      href: `/${l}/articles`,
+      items: latestArticles,
+    },
+    {
+      key: "hadith",
+      title: ui.latestHadith,
+      href: `/${l}/hadith`,
+      items: latestHadith,
+    },
+    {
+      key: "faq",
+      title: ui.latestDoubts,
+      href: `/${l}/faq`,
+      items: latestDoubts,
+    },
+    {
+      key: "khutbah",
+      title: ui.latestKhutab,
+      href: `/${l}/khutab`,
+      items: latestKhutab,
+    },
+    {
+      key: "story",
+      title: ui.latestStories,
+      href: `/${l}/learn?type=story`,
+      items: latestStories,
+    },
+  ].filter((row) => row.items.length > 0);
+
   return (
     <main id="main-content" tabIndex={-1}
       dir={isRTL ? "rtl" : "ltr"}
@@ -489,7 +537,7 @@ export default async function HomePage({
       </section>
       )}
 
-      {settingFlag(settings, "showPrayerBar", true) && <PrayerWidget lang={l} />}
+      {settingFlag(settings, "showPrayerBar", true) && <PrayerWidgetLazy lang={l} />}
 
       {/* ============ أبواب الموقع ============ */}
       {gate.visible('sections') && topGroups.length > 0 && (
@@ -565,14 +613,7 @@ export default async function HomePage({
       )}
 
       {/* ============ أحدث ما نُشر ============ */}
-      {gate.visible('latest') && latestLessons.length +
-        latestFatwas.length +
-        latestArticles.length +
-        latestHadith.length +
-        latestDoubts.length +
-        latestKhutab.length +
-        latestStories.length >
-        0 && (
+      {gate.visible('latest') && latestRows.length > 0 && (
         <section className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
           <div className="container-page">
             <div className="mb-10 text-center">
@@ -596,52 +637,52 @@ export default async function HomePage({
 
             <LatestTabs
               lang={l}
-              viewAll={ui.viewAll}
-              rows={[
-                {
-                  key: "lesson",
-                  title: ui.latestLessons,
-                  href: `/${l}/learn?type=lesson`,
-                  items: latestLessons,
-                },
-                {
-                  key: "fatwa",
-                  title: ui.latestFatwas,
-                  href: `/${l}/fatwa`,
-                  items: latestFatwas,
-                },
-                {
-                  key: "article",
-                  title: ui.latestArticles,
-                  href: `/${l}/articles`,
-                  items: latestArticles,
-                },
-                {
-                  key: "hadith",
-                  title: ui.latestHadith,
-                  href: `/${l}/hadith`,
-                  items: latestHadith,
-                },
-                {
-                  key: "faq",
-                  title: ui.latestDoubts,
-                  href: `/${l}/faq`,
-                  items: latestDoubts,
-                },
-                {
-                  key: "khutbah",
-                  title: ui.latestKhutab,
-                  href: `/${l}/khutab`,
-                  items: latestKhutab,
-                },
-                {
-                  key: "story",
-                  title: ui.latestStories,
-                  href: `/${l}/learn?type=story`,
-                  items: latestStories,
-                },
-              ]}
-            />
+              tabs={latestRows.map(({ key, title }) => ({ key, title }))}
+            >
+              {latestRows.map((row, index) => (
+                <div
+                  key={row.key}
+                  role="tabpanel"
+                  id={`latest-panel-${row.key}`}
+                  aria-labelledby={`latest-tab-${row.key}`}
+                  data-latest-panel={row.key}
+                  hidden={index > 0}
+                >
+                  <div className="mb-5 flex items-center justify-between gap-3">
+                    <h3
+                      className="text-xl font-black text-slate-900 dark:text-white md:text-2xl"
+                      style={{ fontFamily: "var(--font-amiri)" }}
+                    >
+                      {row.title}
+                    </h3>
+                    <Link
+                      href={row.href}
+                      className="shrink-0 text-sm font-bold text-primary-700 transition-colors hover:text-primary-500 dark:text-primary-300"
+                    >
+                      {ui.viewAll}
+                      <span aria-hidden="true" className="mx-1">
+                        {isRTL ? "←" : "→"}
+                      </span>
+                    </Link>
+                  </div>
+
+                  <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                    {row.items.map((item) => (
+                      <ContentCard
+                        key={item.id}
+                        lang={l}
+                        type={item.content_type}
+                        slug={item.slug}
+                        title={item.title}
+                        summary={item.summary}
+                        published_at={item.published_at}
+                        isFallback={item.isFallback}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </LatestTabs>
           </div>
         </section>
       )}

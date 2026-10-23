@@ -73,6 +73,9 @@ export default function Footer({
       : SITE_NAME_EN;
 
   useEffect(() => {
+    // الصفحة مرّرت الإعدادات من الخادم → لا طلب شبكة ولا إعادة رسم للفوتر.
+    if (settings) return;
+
     let cancelled = false;
 
     void fetch('/api/site-settings', { cache: 'no-store' })
@@ -90,7 +93,7 @@ export default function Footer({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [settings]);
 
   const socialLinks: Array<[string, string]> = ([
     ["Facebook", effectiveSettings?.facebookUrl],

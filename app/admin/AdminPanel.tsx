@@ -2,6 +2,21 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { IconComponent } from "@/lib/icons";
+import {
+  AlertIcon,
+  BellIcon,
+  CheckCircleIcon,
+  EyeIcon,
+  FileTextIcon,
+  HelpCircleIcon,
+  MailIcon,
+  PlusIcon,
+  RefreshIcon,
+  SettingsIcon,
+  SparklesIcon,
+  UsersIcon,
+} from "@/lib/icons";
 
 type ContentStats = Record<string, number>;
 
@@ -55,28 +70,28 @@ const CONTENT_LABELS: Record<string, string> = {
 const QUICK_ACTIONS = [
   {
     href: "/admin/content/new",
-    icon: "＋",
+    icon: PlusIcon,
     title: "إضافة محتوى",
     description: "أنشئ درسًا أو مقالًا أو مادة جديدة",
     tone: "gold",
   },
   {
     href: "/admin/content",
-    icon: "▤",
+    icon: FileTextIcon,
     title: "إدارة المحتوى",
     description: "راجع المواد وعدّل حالتها ونشرها",
     tone: "primary",
   },
   {
     href: "/admin/review",
-    icon: "⌁",
+    icon: CheckCircleIcon,
     title: "المراجعة العلمية",
     description: "تابع المحتوى الذي ينتظر الاعتماد",
     tone: "primary",
   },
   {
     href: "/admin/users",
-    icon: "♙",
+    icon: UsersIcon,
     title: "ترقية مستخدم",
     description: "امنح مستخدمًا دور مدير من صفحة الأدوار",
     tone: "gold",
@@ -96,10 +111,11 @@ function StatCard({
 }: {
   label: string;
   value: number | undefined;
-  icon: string;
+  icon: IconComponent;
   hint: string;
   accent: "primary" | "gold" | "dark";
 }) {
+  const StatIcon = icon;
   const accentClasses = {
     primary: "bg-primary-50 text-primary-700 border-primary-100",
     gold: "bg-gold-50 text-gold-700 border-gold-200",
@@ -120,7 +136,7 @@ function StatCard({
           className={`flex h-11 w-11 items-center justify-center rounded-2xl border text-xl ${accentClasses[accent]}`}
           aria-hidden="true"
         >
-          {icon}
+          <StatIcon size={21} aria-hidden="true" />
         </span>
       </div>
     </article>
@@ -208,14 +224,14 @@ export default function AdminPanel({
       ? [
           {
             href: "/admin/notifications",
-            icon: "♢",
+            icon: BellIcon,
             title: "إرسال إشعار",
             description: "نبّه المشتركين بآخر التحديثات",
             tone: "primary" as const,
           },
           {
             href: "/admin/newsletter",
-            icon: "✉",
+            icon: MailIcon,
             title: "مشتركو النشرة",
             description: "راجع القائمة وأدر حالات الاشتراك",
             tone: "primary" as const,
@@ -225,7 +241,7 @@ export default function AdminPanel({
     ...(canManageSettings
       ? [{
           href: "/admin/settings",
-          icon: "⚙",
+          icon: SettingsIcon,
           title: "إعدادات المنصة",
           description: "تحكم في الهوية والتواصل والبث والعرض",
           tone: "primary" as const,
@@ -259,7 +275,7 @@ export default function AdminPanel({
             disabled={refreshing || loading}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white transition hover:bg-white/20 disabled:cursor-wait disabled:opacity-60"
           >
-            <span className={refreshing ? "animate-spin" : ""}>↻</span>
+            <RefreshIcon size={16} className={refreshing ? "animate-spin" : ""} aria-hidden="true" />
             {refreshing ? "جارٍ التحديث" : "تحديث البيانات"}
           </button>
         </div>
@@ -267,7 +283,7 @@ export default function AdminPanel({
 
       {!databaseReady ? (
         <div className="flex items-start gap-3 rounded-2xl border border-gold-200 bg-gold-50 p-4 text-sm text-gold-900">
-          <span className="text-xl" aria-hidden="true">⚠</span>
+          <AlertIcon className="mt-0.5 shrink-0" size={20} aria-hidden="true" />
           <div>
             <p className="font-black">قاعدة البيانات غير متصلة بالكامل</p>
             <p className="mt-1 leading-6">أضف متغيرات Supabase وشغّل migrations حتى تظهر بيانات المستخدمين والمحتوى.</p>
@@ -285,15 +301,15 @@ export default function AdminPanel({
       ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="ملخص الإحصائيات">
-        <StatCard label="إجمالي المحتوى" value={totalContent} icon="▦" hint="كل المواد المنشورة والمضافة" accent="primary" />
-        <StatCard label="المستخدمون" value={stats.users?.total} icon="♙" hint="الحسابات المسجلة في المنصة" accent="gold" />
+        <StatCard label="إجمالي المحتوى" value={totalContent} icon={FileTextIcon} hint="كل المواد المنشورة والمضافة" accent="primary" />
+        <StatCard label="المستخدمون" value={stats.users?.total} icon={UsersIcon} hint="الحسابات المسجلة في المنصة" accent="gold" />
         <Link href="/admin/questions" className="block rounded-2xl transition hover:-translate-y-0.5 hover:shadow-card">
-          <StatCard label="أسئلة معلقة" value={stats.questions?.pending} icon="?" hint="تحتاج ردًا أو متابعة" accent="dark" />
+          <StatCard label="أسئلة معلقة" value={stats.questions?.pending} icon={HelpCircleIcon} hint="تحتاج ردًا أو متابعة" accent="dark" />
         </Link>
         <Link href="/admin/review" className="block rounded-2xl transition hover:-translate-y-0.5 hover:shadow-card">
-          <StatCard label="مراجعات معلقة" value={stats.review?.pending} icon="✓" hint="تنتظر اعتماد المراجع" accent="primary" />
+          <StatCard label="مراجعات معلقة" value={stats.review?.pending} icon={CheckCircleIcon} hint="تنتظر اعتماد المراجع" accent="primary" />
         </Link>
-        <StatCard label="زيارات اليوم" value={advanced.todayViews} icon="◉" hint="حسب سجل زيارات الموقع" accent="primary" />
+        <StatCard label="زيارات اليوم" value={advanced.todayViews} icon={EyeIcon} hint="حسب سجل زيارات الموقع" accent="primary" />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
@@ -372,7 +388,7 @@ export default function AdminPanel({
               className="group rounded-2xl border border-cream-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary-300 hover:shadow-card"
             >
               <span className={`flex h-11 w-11 items-center justify-center rounded-2xl text-2xl font-black transition group-hover:scale-105 ${action.tone === "gold" ? "bg-gold-100 text-gold-800" : "bg-primary-100 text-primary-800"}`}>
-                {action.icon}
+                <action.icon size={21} aria-hidden="true" />
               </span>
               <h3 className="mt-4 font-black text-primary-950">{action.title}</h3>
               <p className="mt-1 text-sm leading-6 text-stone-500">{action.description}</p>
@@ -408,7 +424,9 @@ export default function AdminPanel({
 
         <div className="rounded-2xl border border-primary-800 bg-primary-950 p-5 text-white shadow-sm">
           <div className="flex items-start gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-500/20 text-xl text-gold-300">✦</span>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-500/20 text-gold-300">
+              <SparklesIcon size={20} aria-hidden="true" />
+            </span>
             <div>
               <h2 className="font-black text-gold-200">خطوة إدارية مهمة</h2>
               <p className="mt-2 text-sm leading-7 text-primary-100">

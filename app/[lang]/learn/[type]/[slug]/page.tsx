@@ -3,7 +3,7 @@ import { getContentWithFallback } from '@/lib/learn/queries';
 import ReferenceDisplay from '@/components/learn/ReferenceDisplay';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -55,18 +55,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const siteUrl = (
     process.env.NEXT_PUBLIC_SITE_URL || 'https://ismailahmednaguib.vercel.app'
   ).replace(/\/+$/, '');
+  const canonicalSlug = content.canonicalSlug ?? slug;
   const encodedType = encodeURIComponent(type);
-  const encodedSlug = encodeURIComponent(slug);
+  const encodedSlug = encodeURIComponent(canonicalSlug);
   const path = `/${lang}/learn/${encodedType}/${encodedSlug}`;
   const title = content.translation.title;
   const description = content.translation.summary?.slice(0, 160) ?? '';
   const media = (content.media ?? []) as MediaSummary[];
   const imageUrl = media.find((item) => item.type === 'image' && item.url)?.url;
+  const dynamicOgImage = `${siteUrl}/api/og?lang=${encodeURIComponent(lang)}&type=${encodeURIComponent(type)}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}`;
   const ogImage = imageUrl
     ? /^https?:\/\//i.test(imageUrl)
       ? imageUrl
       : `${siteUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`
-    : `${siteUrl}/og/og-${lang}.png`;
+    : dynamicOgImage;
 
   return {
     title,
@@ -113,6 +115,11 @@ export default async function LearnContentPage({ params }: PageProps) {
   const content = await getContentWithFallback(lang, type, slug);
 
   if (!content) notFound();
+
+  const canonicalSlug = content.canonicalSlug ?? slug;
+  if (canonicalSlug !== slug) {
+    permanentRedirect(`/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(canonicalSlug)}`);
+  }
 
   const t = content.translation;
   const safeBody = sanitizeRichTextHtml(t.body);

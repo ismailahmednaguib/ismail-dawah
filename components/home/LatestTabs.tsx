@@ -3,37 +3,53 @@
 // ============================================================
 // أحدث المحتوى — تبويبات بدل سبع قوائم متتابعة.
 // تقلل طول الرئيسية وتُبقي كل الأنواع على بُعد نقرة واحدة.
+//
+// الملاحظة الأدائية: البطاقات تُرسم على الخادم وتُمرَّر كـ children،
+// فلا تُضمَّن في حزمة العميل ولا تُهيَّأ (hydrate) مع كل بطاقة.
+// هذا المكوّن يدير التبويبات وإظهار/إخفاء الألواح فقط.
 // ============================================================
 
-import { useMemo, useState, type KeyboardEvent } from "react";
-import Link from "next/link";
-import ContentCard from "@/components/learn/ContentCard";
-import type { PublicItem } from "@/lib/learn/public";
-import type { Lang } from "@/lib/i18n";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
 
 export type LatestTab = {
   key: string;
   title: string;
-  href: string;
-  items: PublicItem[];
 };
 
 export default function LatestTabs({
-  rows,
+  tabs,
   lang,
-  viewAll,
+  children,
 }: {
-  rows: LatestTab[];
-  lang: Lang;
-  viewAll: string;
+  tabs: LatestTab[];
+  lang: "ar" | "en";
+  children: ReactNode;
 }) {
-  const available = useMemo(() => rows.filter((row) => row.items.length > 0), [rows]);
-  const [active, setActive] = useState(() => available[0]?.key ?? "");
-  const current = available.find((row) => row.key === active) ?? available[0];
-
-  if (!current) return null;
-
+  const [active, setActive] = useState(() => tabs[0]?.key ?? "");
+  const panelsRef = useRef<HTMLDivElement>(null);
   const isRTL = lang === "ar";
+  const currentKey = tabs.some((tab) => tab.key === active)
+    ? active
+    : tabs[0]?.key ?? "";
+
+  // لا نُعيد رسم الألواح (وهي عقد خادم) عند تبديل التبويب؛
+  // نُحدّث خاصية hidden مباشرة، فيبقى DOM كما رسمه الخادم.
+  useEffect(() => {
+    const root = panelsRef.current;
+    if (!root) return;
+
+    root.querySelectorAll<HTMLElement>("[data-latest-panel]").forEach((panel) => {
+      panel.hidden = panel.dataset.latestPanel !== currentKey;
+    });
+  }, [currentKey]);
+
+  if (tabs.length === 0) return null;
 
   function focusTab(key: string) {
     setActive(key);
@@ -43,26 +59,26 @@ export default function LatestTabs({
   }
 
   function handleTabListKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    const index = available.findIndex((row) => row.key === current.key);
+    const index = tabs.findIndex((tab) => tab.key === currentKey);
 
     if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
       event.preventDefault();
       const forward =
         event.key === "ArrowRight" ? (isRTL ? -1 : 1) : isRTL ? 1 : -1;
-      const next = available[(index + forward + available.length) % available.length];
+      const next = tabs[(index + forward + tabs.length) % tabs.length];
       if (next) focusTab(next.key);
       return;
     }
 
     if (event.key === "Home") {
       event.preventDefault();
-      if (available[0]) focusTab(available[0].key);
+      if (tabs[0]) focusTab(tabs[0].key);
       return;
     }
 
     if (event.key === "End") {
       event.preventDefault();
-      const last = available[available.length - 1];
+      const last = tabs[tabs.length - 1];
       if (last) focusTab(last.key);
     }
   }
@@ -76,77 +92,31 @@ export default function LatestTabs({
         onKeyDown={handleTabListKeyDown}
         className="mb-6 flex flex-wrap justify-center gap-2"
       >
-        {available.map((row) => {
-          const selected = row.key === current.key;
+        {tabs.map((tab) => {
+          const selected = tab.key === currentKey;
           return (
             <button
-              key={row.key}
+              key={tab.key}
               type="button"
               role="tab"
-              id={`latest-tab-${row.key}`}
+              id={`latest-tab-${tab.key}`}
               aria-selected={selected}
-              aria-controls={`latest-panel-${row.key}`}
+              aria-controls={`latest-panel-${tab.key}`}
               tabIndex={selected ? 0 : -1}
-              onClick={() => setActive(row.key)}
+              onClick={() => setActive(tab.key)}
               className={`rounded-full border px-4 py-2 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
                 selected
                   ? "border-primary-700 bg-primary-700 text-white shadow-sm dark:border-primary-500 dark:bg-primary-700"
                   : "border-black/10 bg-white/70 text-slate-700 hover:border-primary-400 hover:text-primary-700 dark:border-white/15 dark:bg-night-800/70 dark:text-slate-200 dark:hover:text-primary-200"
               }`}
             >
-              {row.title}
+              {tab.title}
             </button>
           );
         })}
       </div>
 
-      {available.map((row) => {
-        const selected = row.key === current.key;
-
-        return (
-          <div
-            key={row.key}
-            role="tabpanel"
-            id={`latest-panel-${row.key}`}
-            aria-labelledby={`latest-tab-${row.key}`}
-            data-latest-panel="true"
-            hidden={!selected}
-          >
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <h3
-                className="text-xl font-black text-slate-900 dark:text-white md:text-2xl"
-                style={{ fontFamily: "var(--font-amiri)" }}
-              >
-                {row.title}
-              </h3>
-              <Link
-                href={row.href}
-                className="shrink-0 text-sm font-bold text-primary-700 transition-colors hover:text-primary-500 dark:text-primary-300"
-              >
-                {viewAll}
-                <span aria-hidden="true" className="mx-1">
-                  {isRTL ? "←" : "→"}
-                </span>
-              </Link>
-            </div>
-
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {row.items.map((item) => (
-                <ContentCard
-                  key={item.id}
-                  lang={lang}
-                  type={item.content_type}
-                  slug={item.slug}
-                  title={item.title}
-                  summary={item.summary}
-                  published_at={item.published_at}
-                  isFallback={item.isFallback}
-                />
-              ))}
-            </div>
-          </div>
-        );
-      })}
+      <div ref={panelsRef}>{children}</div>
     </div>
   );
 }

@@ -1,9 +1,22 @@
 import Link from 'next/link';
 
 import { formatPublishDate } from '@/lib/date-format';
+import type { IconComponent } from '@/lib/icons';
+import {
+  BookOpenIcon,
+  BookmarkIcon,
+  DuaHandsIcon,
+  FileTextIcon,
+  GlobeIcon,
+  HeadphonesIcon,
+  HelpCircleIcon,
+  MosqueIcon,
+  ShieldIcon,
+  VideoIcon,
+} from '@/lib/icons';
 
 type ContentTypeConfig = {
-  icon: string;
+  icon: IconComponent;
   ar: string;
   en: string;
   accent: string;
@@ -11,19 +24,19 @@ type ContentTypeConfig = {
 };
 
 const TYPE_CONFIG: Record<string, ContentTypeConfig> = {
-  article: { icon: '📰', ar: 'مقال', en: 'Article', accent: 'bg-primary-500', badge: 'badge-primary' },
-  lesson: { icon: '📖', ar: 'درس', en: 'Lesson', accent: 'bg-primary-700', badge: 'badge-primary' },
-  course: { icon: '🎓', ar: 'دورة', en: 'Course', accent: 'bg-gold-500', badge: 'badge-gold' },
-  book: { icon: '📚', ar: 'كتاب', en: 'Book', accent: 'bg-gold-600', badge: 'badge-gold' },
-  fatwa: { icon: '⚖️', ar: 'فتوى', en: 'Fatwa', accent: 'bg-primary-700', badge: 'badge-primary' },
-  khutbah: { icon: '🕌', ar: 'خطبة', en: 'Khutbah', accent: 'bg-primary-800', badge: 'badge-primary' },
-  audio: { icon: '🎧', ar: 'صوت', en: 'Audio', accent: 'bg-primary-500', badge: 'badge-primary' },
-  video: { icon: '🎬', ar: 'فيديو', en: 'Video', accent: 'bg-primary-700', badge: 'badge-primary' },
-  hadith: { icon: '💬', ar: 'حديث', en: 'Hadith', accent: 'bg-primary-700', badge: 'badge-primary' },
-  faq: { icon: '❓', ar: 'سؤال', en: 'FAQ', accent: 'bg-primary-700', badge: 'badge-primary' },
-  duaa: { icon: '🤲', ar: 'دعاء', en: 'Duaa', accent: 'bg-gold-500', badge: 'badge-gold' },
-  story: { icon: '📜', ar: 'قصة', en: 'Story', accent: 'bg-gold-600', badge: 'badge-gold' },
-  research: { icon: '🔬', ar: 'بحث', en: 'Research', accent: 'bg-primary-800', badge: 'badge-primary' },
+  article: { icon: FileTextIcon, ar: 'مقال', en: 'Article', accent: 'bg-primary-500', badge: 'badge-primary' },
+  lesson: { icon: BookOpenIcon, ar: 'درس', en: 'Lesson', accent: 'bg-primary-700', badge: 'badge-primary' },
+  course: { icon: BookmarkIcon, ar: 'دورة', en: 'Course', accent: 'bg-gold-500', badge: 'badge-gold' },
+  book: { icon: BookOpenIcon, ar: 'كتاب', en: 'Book', accent: 'bg-gold-600', badge: 'badge-gold' },
+  fatwa: { icon: ShieldIcon, ar: 'فتوى', en: 'Fatwa', accent: 'bg-primary-700', badge: 'badge-primary' },
+  khutbah: { icon: MosqueIcon, ar: 'خطبة', en: 'Khutbah', accent: 'bg-primary-800', badge: 'badge-primary' },
+  audio: { icon: HeadphonesIcon, ar: 'صوت', en: 'Audio', accent: 'bg-primary-500', badge: 'badge-primary' },
+  video: { icon: VideoIcon, ar: 'فيديو', en: 'Video', accent: 'bg-primary-700', badge: 'badge-primary' },
+  hadith: { icon: BookOpenIcon, ar: 'حديث', en: 'Hadith', accent: 'bg-primary-700', badge: 'badge-primary' },
+  faq: { icon: HelpCircleIcon, ar: 'سؤال', en: 'FAQ', accent: 'bg-primary-700', badge: 'badge-primary' },
+  duaa: { icon: DuaHandsIcon, ar: 'دعاء', en: 'Duaa', accent: 'bg-gold-500', badge: 'badge-gold' },
+  story: { icon: BookOpenIcon, ar: 'قصة', en: 'Story', accent: 'bg-gold-600', badge: 'badge-gold' },
+  research: { icon: FileTextIcon, ar: 'بحث', en: 'Research', accent: 'bg-primary-800', badge: 'badge-primary' },
 };
 
 interface ContentCardProps {
@@ -47,12 +60,13 @@ export default function ContentCard({
   isFallback = false,
 }: ContentCardProps) {
   const config = TYPE_CONFIG[type] ?? {
-    icon: '📄',
+    icon: FileTextIcon,
     ar: 'محتوى',
     en: 'Content',
     accent: 'bg-primary-500',
     badge: 'badge-primary' as const,
   };
+  const TypeIcon = config.icon;
   const isArabic = lang === 'ar';
   // المعرّفات العربية قد تحتوي `؟` أو `%` أو مسافات؛ الترميز يمنع
   // تفسيرها كجزء من الاستعلام أو كمرساة عند بناء رابط البطاقة.
@@ -68,8 +82,8 @@ export default function ContentCard({
 
       <div className="p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
-          <span className={config.badge}>
-            <span aria-hidden="true">{config.icon}</span>
+          <span className={`${config.badge} inline-flex items-center gap-1.5`}>
+            <TypeIcon size={15} aria-hidden="true" />
             {isArabic ? config.ar : config.en}
           </span>
           {date && (
@@ -93,7 +107,8 @@ export default function ContentCard({
             className="mb-2 inline-flex items-center gap-1 rounded-full bg-gold-100 px-2.5 py-0.5 text-[11px] font-bold text-gold-800 dark:bg-gold-900/30 dark:text-gold-300"
             title={isArabic ? "لا توجد ترجمة كاملة لهذا المحتوى" : "No full translation for this content"}
           >
-            🌐 {isArabic ? "ترجمة ناقصة" : "Arabic only"}
+            <GlobeIcon size={13} aria-hidden="true" />
+            {isArabic ? "ترجمة ناقصة" : "Arabic only"}
           </span>
         )}
 

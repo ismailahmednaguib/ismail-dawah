@@ -161,6 +161,10 @@ export default function Header({
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
+    // الصفحة مرّرت الإعدادات من الخادم (مثل الرئيسية) → لا حاجة لطلب شبكة
+    // ولا لإعادة رسم الهيدر بعد التحميل.
+    if (settings) return;
+
     let cancelled = false;
 
     void fetch('/api/site-settings', { cache: 'no-store' })
@@ -178,7 +182,7 @@ export default function Header({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [settings]);
 
   // الهيدر شفاف فوق خلفية داكنة → نستخدم ألوان فاتحة
   const onDark = overHero && !scrolled && !mobileOpen;

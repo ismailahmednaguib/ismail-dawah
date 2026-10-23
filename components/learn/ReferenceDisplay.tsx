@@ -1,6 +1,12 @@
 // components/learn/ReferenceDisplay.tsx
 import type { Lang } from '@/lib/i18n';
 import {
+  BookOpenIcon,
+  FileTextIcon,
+  QuranIcon,
+  ShieldCheckIcon,
+} from '@/lib/icons';
+import {
   hadithBookLabel,
   hadithGradeKey,
   hadithGradeLabel,
@@ -64,7 +70,7 @@ export default function ReferenceDisplay({
   return (
     <div className="mt-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-xl p-6">
       <h3 className="text-lg font-bold text-amber-900 dark:text-amber-300 mb-4 flex items-center gap-2">
-        <span>📚</span>
+        <BookOpenIcon size={20} aria-hidden="true" />
         {copy.title}
       </h3>
 
@@ -82,7 +88,7 @@ export default function ReferenceDisplay({
             <li key={ref.id} className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-amber-100 dark:border-amber-900">
               {ref.kind === 'quran' && (
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">📖</span>
+                  <QuranIcon size={20} className="mt-0.5 shrink-0 text-primary-700" aria-hidden="true" />
                   <div>
                     <p className="font-bold text-primary-900 dark:text-primary-300">
                       {copy.quran}
@@ -91,13 +97,13 @@ export default function ReferenceDisplay({
                       {quranReferenceLabel(ref.surah ?? 0, ref.ayah_from, ref.ayah_to, lang)}
                     </p>
                   </div>
-                  {ref.verified && <span className="ms-auto text-primary-700 text-xs">✓ {copy.verified}</span>}
+                  {ref.verified && <span className="ms-auto inline-flex items-center gap-1 text-primary-700 text-xs"><ShieldCheckIcon size={14} aria-hidden="true" /> {copy.verified}</span>}
                 </div>
               )}
 
               {ref.kind === 'hadith' && (
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">💬</span>
+                  <FileTextIcon size={20} className="mt-0.5 shrink-0 text-primary-700" aria-hidden="true" />
                   <div className="flex-1">
                     <p className="font-bold text-primary-900 dark:text-primary-300">
                       {bookLabel || copy.hadith}
@@ -114,13 +120,13 @@ export default function ReferenceDisplay({
                       </span>
                     )}
                   </div>
-                  {ref.verified && <span className="text-primary-700 text-xs">✓ {copy.verified}</span>}
+                  {ref.verified && <span className="inline-flex items-center gap-1 text-primary-700 text-xs"><ShieldCheckIcon size={14} aria-hidden="true" /> {copy.verified}</span>}
                 </div>
               )}
 
               {(ref.kind === 'scholar_quote' || ref.kind === 'book') && (
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">📕</span>
+                  <BookOpenIcon size={20} className="mt-0.5 shrink-0 text-primary-700" aria-hidden="true" />
                   <div>
                     <p className="font-bold text-primary-900 dark:text-primary-300">
                       {scholar || bookTitle || copy.reference}
@@ -136,7 +142,7 @@ export default function ReferenceDisplay({
 
               {!['quran', 'hadith', 'scholar_quote', 'book'].includes(ref.kind) && (
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">📚</span>
+                  <FileTextIcon size={20} className="mt-0.5 shrink-0 text-primary-700" aria-hidden="true" />
                   <div>
                     <p className="font-bold text-primary-900 dark:text-primary-300">
                       {scholar || bookTitle || copy.reference}

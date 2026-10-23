@@ -2,6 +2,7 @@
 import 'server-only';
 import { createClient } from '@supabase/supabase-js';
 import { mergeTermTranslations, type TermLike } from './terms';
+import { legacySlugCandidates } from './legacy-slugs';
 import type {
   ContentType,
   Audience,
@@ -319,7 +320,7 @@ export async function getContentBySlug(
  * جلب المحتوى مع الترجمة المناسبة للغة الزائر
  * إذا لم تتوفر ترجمة، يعرض اللغة الأصلية مع تنويه
  */
-export async function getContentWithFallback(
+async function getContentWithFallbackForSlug(
   lang: string,
   type: string,
   slug: string
@@ -373,6 +374,28 @@ export async function getContentWithFallback(
       media: fallback.content.content_media ?? [],
       terms: await localizeTerms(supabase, rawTerms, lang),
     };
+  }
+
+  return null;
+}
+
+/**
+ * Resolve a content URL without guessing. Legacy candidates are accepted only
+ * when the normal published-content lookup confirms the same content type.
+ */
+export async function getContentWithFallback(
+  lang: string,
+  type: string,
+  slug: string
+): Promise<any> {
+  for (const candidate of legacySlugCandidates(type, slug)) {
+    const content = await getContentWithFallbackForSlug(lang, type, candidate);
+    if (content) {
+      return {
+        ...content,
+        canonicalSlug: candidate,
+      };
+    }
   }
 
   return null;

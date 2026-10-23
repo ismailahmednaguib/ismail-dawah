@@ -7,6 +7,16 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero } from "@/components/ui";
+import type { IconComponent } from "@/lib/icons";
+import {
+  BookOpenIcon,
+  FileTextIcon,
+  HelpCircleIcon,
+  MosqueIcon,
+  ShieldIcon,
+  SparklesIcon,
+} from "@/lib/icons";
+import { SITE_NAME, SITE_NAME_EN, SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-static";
 
@@ -17,7 +27,7 @@ const COPY: Record<string, {
   overviewTitle: string;
   featuredTitle: string;
   sourceLabel: string;
-  categories: Array<{ id: string; icon: string; title: string; desc: string; href: string }>;
+  categories: Array<{ id: string; icon: IconComponent; title: string; desc: string; href: string }>;
   featured: Array<{ id: string; question: string; answer: string; source: string }>;
 }> = {
   ar: {
@@ -28,12 +38,12 @@ const COPY: Record<string, {
     featuredTitle: "الردود المميزة",
     sourceLabel: "المصدر:",
     categories: [
-      { id: "quran", icon: "📖", title: "الشبهات حول القرآن", desc: "الرد على ما يُثار حول القرآن الكريم من تأويلات وشبهات.", href: "/ar/doubts" },
-      { id: "hadith", icon: "💬", title: "الشبهات حول السنة", desc: "الرد على الشبهات المتعلقة بالحديث الشريف وسنة النبي ﷺ.", href: "/ar/doubts" },
-      { id: "aqeedah", icon: "🕌", title: "الشبهات حول العقيدة", desc: "الرد على الشبهات المتعلقة بالتوحيد، والأسماء والصفات، والقدر.", href: "/ar/doubts" },
-      { id: "women", icon: "👩", title: "الشبهات حول المرأة", desc: "الرد على ما يُثار حول مكانة المرأة وحقوقها في الإسلام.", href: "/ar/women-fatwas" },
-      { id: "jihad", icon: "🛡️", title: "الشبهات حول الجهاد", desc: "الرد على الشبهات المتعلقة بالجهاد والقتال والحرب والسلم.", href: "/ar/doubts" },
-      { id: "science", icon: "🔬", title: "الشبهات حول العلم والدين", desc: "الرد على الادعاءات بعدم توافق العلم مع الدين.", href: "/ar/doubts" },
+      { id: "quran", icon: BookOpenIcon, title: "الشبهات حول القرآن", desc: "الرد على ما يُثار حول القرآن الكريم من تأويلات وشبهات.", href: "/doubts" },
+      { id: "hadith", icon: FileTextIcon, title: "الشبهات حول السنة", desc: "الرد على الشبهات المتعلقة بالحديث الشريف وسنة النبي ﷺ.", href: "/doubts" },
+      { id: "aqeedah", icon: MosqueIcon, title: "الشبهات حول العقيدة", desc: "الرد على الشبهات المتعلقة بالتوحيد، والأسماء والصفات، والقدر.", href: "/doubts" },
+      { id: "women", icon: ShieldIcon, title: "الشبهات حول المرأة", desc: "الرد على ما يُثار حول مكانة المرأة وحقوقها في الإسلام.", href: "/women-fatwas" },
+      { id: "jihad", icon: ShieldIcon, title: "الشبهات حول الجهاد", desc: "الرد على الشبهات المتعلقة بالجهاد والقتال والحرب والسلم.", href: "/doubts" },
+      { id: "science", icon: SparklesIcon, title: "الشبهات حول العلم والدين", desc: "الرد على الادعاءات بعدم توافق العلم مع الدين.", href: "/doubts" },
     ],
     featured: [
       {
@@ -58,12 +68,12 @@ const COPY: Record<string, {
     featuredTitle: "Featured responses",
     sourceLabel: "Source:",
     categories: [
-      { id: "quran", icon: "📖", title: "Doubts About the Quran", desc: "Responding to allegations and doubts raised about the Holy Quran.", href: "/en/doubts" },
-      { id: "hadith", icon: "💬", title: "Doubts About the Sunnah", desc: "Responding to doubts related to the Holy Hadith and the Sunnah of the Prophet ﷺ.", href: "/en/doubts" },
-      { id: "aqeedah", icon: "🕌", title: "Doubts About Creed", desc: "Responding to doubts related to monotheism, the names and attributes of Allah, and predestination.", href: "/en/doubts" },
-      { id: "women", icon: "👩", title: "Doubts About Women", desc: "Responding to allegations about the status and rights of women in Islam.", href: "/en/women-fatwas" },
-      { id: "jihad", icon: "🛡️", title: "Doubts About Jihad", desc: "Responding to doubts related to jihad, fighting, war and peace.", href: "/en/doubts" },
-      { id: "science", icon: "🔬", title: "Doubts About Science and Religion", desc: "Responding to claims of incompatibility between science and religion.", href: "/en/doubts" },
+      { id: "quran", icon: BookOpenIcon, title: "Doubts About the Quran", desc: "Responding to allegations and doubts raised about the Holy Quran.", href: "/doubts" },
+      { id: "hadith", icon: FileTextIcon, title: "Doubts About the Sunnah", desc: "Responding to doubts related to the Holy Hadith and the Sunnah of the Prophet ﷺ.", href: "/doubts" },
+      { id: "aqeedah", icon: MosqueIcon, title: "Doubts About Creed", desc: "Responding to doubts related to monotheism, the names and attributes of Allah, and predestination.", href: "/doubts" },
+      { id: "women", icon: ShieldIcon, title: "Doubts About Women", desc: "Responding to allegations about the status and rights of women in Islam.", href: "/women-fatwas" },
+      { id: "jihad", icon: ShieldIcon, title: "Doubts About Jihad", desc: "Responding to doubts related to jihad, fighting, war and peace.", href: "/doubts" },
+      { id: "science", icon: SparklesIcon, title: "Doubts About Science and Religion", desc: "Responding to claims of incompatibility between science and religion.", href: "/doubts" },
     ],
     featured: [
       {
@@ -93,7 +103,7 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
       <Header lang={L} />
       <main id="main-content" tabIndex={-1} dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
         <PageHero
-          icon="🛡️"
+          icon={<ShieldIcon size={28} aria-hidden="true" />}
           badge={L === "ar" ? "مركز الردود" : "Responses Center"}
           title={c.title}
           subtitle={c.subtitle}
@@ -114,11 +124,11 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
               {c.categories.map((cat) => (
                 <Link
                   key={cat.id}
-                  href={cat.href}
+                  href={`/${L}${cat.href}`}
                   className="group rounded-2xl border border-cream-200 bg-white p-5 shadow-sm hover:border-primary-300 hover:shadow-card transition"
                 >
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 text-xl group-hover:bg-primary-100 group-hover:text-primary-800 transition">
-                    {cat.icon}
+                    <cat.icon size={24} aria-hidden="true" />
                   </span>
                   <h3 className="mt-4 font-bold text-primary-950">{cat.title}</h3>
                   <p className="mt-1 text-sm text-stone-500">{cat.desc}</p>
@@ -136,7 +146,7 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
                 <div key={item.id} className="rounded-2xl border border-cream-200 bg-white p-6 shadow-sm">
                   <div className="flex items-start gap-3 mb-4">
                     <span className="flex shrink-0 items-center justify-center rounded-full bg-red-100 text-red-700 text-xs font-black w-6 h-6">
-                      ❓
+                      <HelpCircleIcon size={14} aria-hidden="true" />
                     </span>
                     <p className="font-bold text-primary-900">{item.question}</p>
                   </div>
@@ -164,17 +174,35 @@ export async function generateMetadata({
   const { lang } = await params;
   const L = isValidLang(lang) ? (lang as Lang) : "ar";
   const c = COPY[L] ?? COPY.en;
+  const siteUrl = SITE_URL;
+  const pageUrl = `${siteUrl}/${L}/responses`;
+  const ogImage = `${siteUrl}/og/og-${L}.png`;
 
   return {
     title: c.title,
     description: c.intro,
     alternates: {
-      canonical: `/${L}/responses`,
+      canonical: pageUrl,
       languages: {
-        ar: "/ar/responses",
-        en: "/en/responses",
-        "x-default": "/ar/responses",
+        ar: `${siteUrl}/ar/responses`,
+        en: `${siteUrl}/en/responses`,
+        "x-default": `${siteUrl}/ar/responses`,
       },
+    },
+    openGraph: {
+      title: c.title,
+      description: c.intro,
+      type: "website",
+      url: pageUrl,
+      siteName: L === "ar" ? SITE_NAME : SITE_NAME_EN,
+      locale: L === "ar" ? "ar_EG" : "en_US",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: c.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: c.title,
+      description: c.intro,
+      images: [ogImage],
     },
   };
 }

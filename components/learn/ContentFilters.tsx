@@ -9,25 +9,26 @@ import {
 } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { Lang } from '@/lib/i18n';
+import { CloseIcon, SearchIcon } from '@/lib/icons';
 
 type FilterOption = { value: string; ar: string; en: string };
 
 const CONTENT_TYPES: FilterOption[] = [
   { value: '', ar: 'الكل', en: 'All' },
-  { value: 'article', ar: '📰 مقالات', en: '📰 Articles' },
-  { value: 'lesson', ar: '📖 دروس', en: '📖 Lessons' },
-  { value: 'course', ar: '🎓 دورات', en: '🎓 Courses' },
-  { value: 'book', ar: '📚 كتب', en: '📚 Books' },
-  { value: 'fatwa', ar: '⚖️ فتاوى', en: '⚖️ Fatwas' },
-  { value: 'khutbah', ar: '🕌 خطب', en: '🕌 Khutbahs' },
-  { value: 'audio', ar: '🎧 صوتيات', en: '🎧 Audio' },
-  { value: 'video', ar: '🎬 فيديو', en: '🎬 Video' },
-  { value: 'hadith', ar: '💬 أحاديث', en: '💬 Hadith' },
-  { value: 'duaa', ar: '🤲 أدعية', en: '🤲 Duaa' },
-  { value: 'story', ar: '📜 قصص', en: '📜 Stories' },
-  { value: 'research', ar: '🔬 أبحاث', en: '🔬 Research' },
-  { value: 'faq', ar: '❓ أسئلة شائعة', en: '❓ FAQ' },
-  { value: 'event', ar: '📅 فعاليات', en: '📅 Events' },
+  { value: 'article', ar: 'مقالات', en: 'Articles' },
+  { value: 'lesson', ar: 'دروس', en: 'Lessons' },
+  { value: 'course', ar: 'دورات', en: 'Courses' },
+  { value: 'book', ar: 'كتب', en: 'Books' },
+  { value: 'fatwa', ar: 'فتاوى', en: 'Fatwas' },
+  { value: 'khutbah', ar: 'خطب', en: 'Khutbahs' },
+  { value: 'audio', ar: 'صوتيات', en: 'Audio' },
+  { value: 'video', ar: 'فيديو', en: 'Video' },
+  { value: 'hadith', ar: 'أحاديث', en: 'Hadith' },
+  { value: 'duaa', ar: 'أدعية', en: 'Duaa' },
+  { value: 'story', ar: 'قصص', en: 'Stories' },
+  { value: 'research', ar: 'أبحاث', en: 'Research' },
+  { value: 'faq', ar: 'أسئلة شائعة', en: 'FAQ' },
+  { value: 'event', ar: 'فعاليات', en: 'Events' },
 ];
 
 const AUDIENCES: FilterOption[] = [
@@ -43,11 +44,11 @@ const AUDIENCES: FilterOption[] = [
 
 const AGE_GROUPS: FilterOption[] = [
   { value: '', ar: 'الكل', en: 'All' },
-  { value: 'kids', ar: '👶 أطفال', en: '👶 Kids' },
-  { value: 'teens', ar: '🧑 مراهقون', en: '🧑 Teens' },
-  { value: 'youth', ar: '💪 شباب', en: '💪 Youth' },
-  { value: 'adults', ar: '👔 بالغون', en: '👔 Adults' },
-  { value: 'seniors', ar: '👴 كبار السن', en: '👴 Seniors' },
+  { value: 'kids', ar: 'أطفال', en: 'Kids' },
+  { value: 'teens', ar: 'مراهقون', en: 'Teens' },
+  { value: 'youth', ar: 'شباب', en: 'Youth' },
+  { value: 'adults', ar: 'بالغون', en: 'Adults' },
+  { value: 'seniors', ar: 'كبار السن', en: 'Seniors' },
 ];
 
 const LEVELS: FilterOption[] = [
@@ -161,19 +162,22 @@ export default function ContentFilters({ lang }: { lang: Lang }) {
   return (
     <div className="card p-5">
       <form onSubmit={handleSearch} className="mb-5 flex flex-col gap-2 sm:flex-row">
-        <input
-          type="search"
-          value={searchText}
-          onChange={(event) => setSearchText(event.target.value)}
-          placeholder={
-            currentLang === 'ar'
-              ? '🔍 ابحث في المكتبة الإسلامية...'
-              : '🔍 Search the Islamic library...'
-          }
-          className="input-islamic flex-1 py-2.5"
-          dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-          aria-label={currentLang === 'ar' ? 'البحث في المكتبة' : 'Search library'}
-        />
+        <div className="relative flex-1">
+          <SearchIcon className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-primary-500" size={18} aria-hidden="true" />
+          <input
+            type="search"
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            placeholder={
+              currentLang === 'ar'
+                ? 'ابحث في المكتبة الإسلامية...'
+                : 'Search the Islamic library...'
+            }
+            className="input-islamic w-full py-2.5 ps-10"
+            dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
+            aria-label={currentLang === 'ar' ? 'البحث في المكتبة' : 'Search library'}
+          />
+        </div>
         <button type="submit" className="btn-primary whitespace-nowrap">
           {currentLang === 'ar' ? 'بحث' : 'Search'}
         </button>
@@ -189,7 +193,10 @@ export default function ContentFilters({ lang }: { lang: Lang }) {
 
       {hasFilters && (
         <button type="button" onClick={clearAll} className="btn-ghost mt-3 px-0 text-primary-700 dark:text-primary-300">
-          {currentLang === 'ar' ? '✕ مسح جميع الفلاتر' : '✕ Clear all filters'}
+          <span className="inline-flex items-center gap-1.5">
+            <CloseIcon size={15} aria-hidden="true" />
+            {currentLang === 'ar' ? 'مسح جميع الفلاتر' : 'Clear all filters'}
+          </span>
         </button>
       )}
     </div>
