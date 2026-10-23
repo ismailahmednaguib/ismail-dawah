@@ -81,8 +81,11 @@ npm run check:links              # ٠ رابط مكسور
   - النشرة في `components/Newsletter.tsx` وتذييل الموقع في `components/Footer.tsx`.
   - التسجيل في `app/[lang]/register/page.tsx` وتبويب التسجيل في `components/auth/LoginForm.tsx`؛ التحقق الخادمي في `app/register/route.ts`.
   - المساعد المقيّد في `components/assistant/ConstrainedAssistant.tsx`؛ التحقق الخادمي في `app/api/assistant/route.ts`.
+  - نموذج «أسئلتي» في صفحة الحساب `components/account/QuestionsCard.tsx`؛ يرسل `web: true` مع الرمز إلى `app/api/questions/route.ts`.
 - رمز Turnstile **يُستهلك مرة واحدة**. مرّر `resetKey` إلى `TurnstileWidget` وأزده بعد كل إرسال (نجح أو فشل) عند الحاجة لتكرار المحاولة. المكوّن يعيد توليد التحقق دون إعادة تحميل السكربت، ويعمل مع أكثر من نموذج في الصفحة نفسها.
-- مسار `/api/questions` لم يُضف إليه التحقق بعد لأن الويب لا يملك نموذج أسئلة عامًّا؛ إضافته الآن تعطّل أي عميل موجود عند تفعيل المفتاحين. يُضاف مع بناء النموذج.
+- `/api/questions` يتحقق من Turnstile **فقط** عندما يصل الطلب من نموذج الويب بـ`web: true` (انظر `lib/questions/web.ts`). هذا يُبقي عملاء API الموثوقين الذين لا يعرضون الودجت يعملون بالمصادقة وحدود المعدل، ويمنع كسرهم عند تفعيل المفتاحين. لا ترسل `web: true` من عميل لا يملك رمزًا عند تفعيل المفتاحين.
+- مفتاح `questions.enabled` في «إعدادات المنصة» (`/admin/settings`) يتحكم في إظهار بطاقة «أسئلتي» وفي قبول طلبات الويب الجديدة؛ الافتراضي مفعّل. تعطيله لا يحذف الأسئلة السابقة، ويبقى بالإدارة الرد عليها من قسم الأسئلة.
+- النموذج نفسه متاح للمستخدم المسجّل فقط، لأن `/api/questions` يتطلب جلسة مستخدم.
 - لإضافة نموذج آخر: استخدم `components/security/TurnstileWidget.tsx` و`lib/turnstile.ts`، ثم تحقق خادميًّا من `getTurnstileToken` + `verifyTurnstile`.
 
 ## ٥) النسخ الاحتياطي والاستعادة

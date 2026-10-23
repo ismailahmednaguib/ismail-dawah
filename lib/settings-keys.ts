@@ -17,6 +17,7 @@ export const NON_LOCALIZED_SETTING_KEYS = new Set([
   'emailVerification',
   'passwordReset',
   'passwordChange',
+  'questions',
   'showPrayerBar',
   'publicApiEnabled',
 ]);

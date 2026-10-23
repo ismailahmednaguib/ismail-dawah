@@ -11,10 +11,15 @@ import Footer from "@/components/Footer";
 import { createAdminClient, getServerUser } from "@/lib/auth";
 import EmailVerificationBanner from "@/components/auth/EmailVerificationBanner";
 import ChangePasswordCard from "@/components/auth/ChangePasswordCard";
+import QuestionsCard from "@/components/account/QuestionsCard";
 import {
   PASSWORD_CHANGE_SETTING_KEY,
   normalizePasswordChangeConfig,
 } from "@/lib/password-change-config";
+import {
+  QUESTIONS_SETTING_KEY,
+  normalizeQuestionsConfig,
+} from "@/lib/questions/config";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -265,6 +270,9 @@ export default async function AccountPage({
   const progressSummary = user ? await getProgressSummary(user.id) : null;
   const passwordChangeEnabled = normalizePasswordChangeConfig(
     (__pageSettings as Record<string, unknown>)[PASSWORD_CHANGE_SETTING_KEY]
+  ).enabled;
+  const questionsEnabled = normalizeQuestionsConfig(
+    (__pageSettings as Record<string, unknown>)[QUESTIONS_SETTING_KEY]
   ).enabled;
 
   let showVerificationBanner = false;
@@ -552,6 +560,10 @@ export default async function AccountPage({
 
         {user && passwordChangeEnabled && (
           <ChangePasswordCard lang={l} />
+        )}
+
+        {user && user.role === "user" && questionsEnabled && (
+          <QuestionsCard lang={l} />
         )}
 
         </>)}

@@ -6,6 +6,7 @@ import { DEFAULT_ASSISTANT_CONFIG } from '@/lib/assistant-core';
 import { DEFAULT_EMAIL_VERIFICATION_CONFIG } from '@/lib/email-verification-config';
 import { DEFAULT_PASSWORD_RESET_CONFIG } from '@/lib/password-reset-config';
 import { DEFAULT_PASSWORD_CHANGE_CONFIG } from '@/lib/password-change-config';
+import { DEFAULT_QUESTIONS_CONFIG } from '@/lib/questions/config';
 import EmailTestCard from '@/components/admin/EmailTestCard';
 import { legacyScheduleToText } from '@/lib/live-schedule';
 
@@ -51,6 +52,7 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   emailVerification: DEFAULT_EMAIL_VERIFICATION_CONFIG,
   passwordReset: DEFAULT_PASSWORD_RESET_CONFIG,
   passwordChange: DEFAULT_PASSWORD_CHANGE_CONFIG,
+  questions: DEFAULT_QUESTIONS_CONFIG,
   publicApiEnabled: false,
   dawahJourney: DEFAULT_DAWAH_JOURNEY_CONFIG,
   assistant: DEFAULT_ASSISTANT_CONFIG,
@@ -555,6 +557,23 @@ export default function SiteSettingsClient() {
       </Section>
 
       <EmailTestCard />
+
+      <Section title="أسئلة المستخدمين" description="يتحكم في بطاقة «أسئلتي» داخل صفحة الحساب. الإرسال يتطلب تسجيل الدخول، ويبقى خاضعًا لحدود المعدل والمراجعة من لوحة الأسئلة.">
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/60 p-4">
+          <input
+            type="checkbox"
+            checked={Boolean(settings.questions?.enabled ?? DEFAULT_QUESTIONS_CONFIG.enabled)}
+            onChange={(event) => setValue('questions', { enabled: event.target.checked })}
+            className="mt-1 h-4 w-4 accent-primary-700"
+          />
+          <span>
+            <span className="block text-sm font-black text-primary-950">إظهار نموذج «أسئلتي» للمستخدم المسجّل</span>
+            <span className="mt-1 block text-xs leading-6 text-stone-500">
+              تعطيله يخفي البطاقة ويمنع طلبات الويب الجديدة. تبقى الأسئلة السابقة محفوظة، ويمكن للإدارة الرد عليها من قسم الأسئلة.
+            </span>
+          </span>
+        </label>
+      </Section>
 
       <Section title="رحلة غير المسلم البريدية" description="فعّل رحلة اختيارية من سبعة أيام وعدّل رسائلها. لن تُرسل أي رسالة ما لم تفعّلها وتضبط مزود البريد في بيئة الخادم.">
         <div className="space-y-5">

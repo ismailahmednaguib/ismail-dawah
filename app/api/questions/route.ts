@@ -7,6 +7,13 @@ import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import { rateLimitGuard } from "@/lib/rate-limit";
 import { isAllowedMutationOrigin } from "@/lib/security/origin";
+import { getTurnstileToken, verifyTurnstile } from "@/lib/turnstile";
+import { isWebQuestionRequest } from "@/lib/questions/web";
+import {
+  QUESTIONS_SETTING_KEY,
+  normalizeQuestionsConfig,
+} from "@/lib/questions/config";
+import { getSiteSettings } from "@/lib/content";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -943,9 +950,10 @@ export async function GET(req: NextRequest) {
 // ============================================================
 // POST /api/questions
 // ============================================================
-// Turnstile مؤجّل عن قصد: لا يوجد نموذج ويب عام للأسئلة يرسل رمزًا بعد.
-// إضافة التحقق هنا الآن تعطّل أي عميل قائم عند تفعيل المفتاحين. عند بناء
-// النموذج، استخدم getTurnstileToken/verifyTurnstile كما في /api/assistant.
+// نموذج «أسئلتي» في صفحة الحساب يرسل `web: true` مع رمز Turnstile.
+// نتحقق فقط من طلبات الويب حتى لا نعطّل عملاء API الموثوقين الذين لا
+// يستطيعون عرض الودجت؛ يبقون محميين بالمصادقة وحدود المعدل.
+// ونحترم `questions.enabled` من إعدادات المنصة لهذه الطلبات.
 
 export async function POST(req: NextRequest) {
   if (!isAllowedMutationOrigin(req)) {
@@ -1107,7 +1115,36 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 8) Insert
+    // 8) إعداد الأسئلة وTurnstile لطلبات الويب فقط
+    if (isWebQuestionRequest(payload)) {
+      const questionsConfig = normalizeQuestionsConfig(
+        (await getSiteSettings())[QUESTIONS_SETTING_KEY]
+      );
+
+      if (!questionsConfig.enabled) {
+        return jsonResponse(
+          {
+            ok: false,
+            error: "إرسال الأسئلة غير مفعّل حاليًا.",
+          },
+          503
+        );
+      }
+
+      const turnstile = await verifyTurnstile(getTurnstileToken(payload));
+
+      if (!turnstile.ok) {
+        return jsonResponse(
+          {
+            ok: false,
+            error: "فشل التحقق الأمني. حاول مرة أخرى.",
+          },
+          400
+        );
+      }
+    }
+
+    // 9) Insert
     const { data, error } = await insertQuestion(
       supabase,
       candidate.userId,
