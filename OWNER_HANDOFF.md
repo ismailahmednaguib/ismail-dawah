@@ -73,4 +73,4 @@ npx vercel --prod
 - `npm run qa:review:strict` متوقف فقط لأن ٢٠ فتوى منشورة تنتظر مراجعًا علميًا معتمدًا.
 - `npm run qa:rls -- --strict` متوقف فقط لأن جدول `admin_mfa` منفّذ لكنه فارغ حتى يسجّل المالك جهازه.
 - `npm run typecheck` يمرّ محليًا. `npm run build` ينجح في مرحلة التجميع، ثم يعيد `spawn EPERM` من Windows أثناء lint/typecheck؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
-- commits الجاهزة للرفع محفوظة حتى `5ec46cb`، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك. آخر محاولة `git push origin main` وصلت إلى GitHub ثم توقفت لأن جلسة Windows لم توفر اسم المستخدم/الاعتماد.
+- commit الجاهز للرفع هو `f385260` (`feat: finish roadmap platform delivery`)، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك. آخر محاولة `git push origin main` وصلت إلى GitHub ثم توقفت لأن جلسة Windows لم توفر اسم المستخدم/الاعتماد.
