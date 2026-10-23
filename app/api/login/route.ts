@@ -14,6 +14,7 @@ import {
 } from "@/lib/auth";
 import { isOwnerEmail } from "@/lib/admin/owner";
 import { rateLimitGuard } from "@/lib/rate-limit";
+import { getAdminMfaStatus, setAdminMfaPendingCookie } from "@/lib/admin/mfa";
 
 // ============================================================
 // Types
@@ -348,6 +349,29 @@ export async function POST(req: NextRequest) {
         return unauthorizedResponse();
       }
 
+      const mfa = await getAdminMfaStatus(String(adminRow.id));
+      if (mfa.enabled) {
+        const res = NextResponse.json({
+          ok: false,
+          error: "mfa_required",
+          mfaRequired: true,
+          role: "admin",
+        });
+
+        try {
+          setAdminMfaPendingCookie(
+            res,
+            String(adminRow.id),
+            String(adminRow.email || email)
+          );
+        } catch (error) {
+          console.error("[Login] set MFA pending cookie error:", error);
+          return serverErrorResponse("تعذر بدء التحقق الثنائي.");
+        }
+
+        return withSecurityHeaders(res);
+      }
+
       const res = NextResponse.json({
         ok: true,
         role: "admin",
@@ -403,6 +427,31 @@ export async function POST(req: NextRequest) {
     }
 
     const role: Role = isOwnerEmail(email) ? "admin" : getRowRole(userRow);
+
+    if (role === "admin") {
+      const mfa = await getAdminMfaStatus(String(userRow.id));
+      if (mfa.enabled) {
+        const res = NextResponse.json({
+          ok: false,
+          error: "mfa_required",
+          mfaRequired: true,
+          role: "admin",
+        });
+
+        try {
+          setAdminMfaPendingCookie(
+            res,
+            String(userRow.id),
+            String(userRow.email || email)
+          );
+        } catch (error) {
+          console.error("[Login] set MFA pending cookie error:", error);
+          return serverErrorResponse("تعذر بدء التحقق الثنائي.");
+        }
+
+        return withSecurityHeaders(res);
+      }
+    }
 
     const res = NextResponse.json({
       ok: true,

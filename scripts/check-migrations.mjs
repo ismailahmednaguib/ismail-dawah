@@ -52,6 +52,11 @@ const checks = [
     query: 'content?select=scheduled_at&limit=1',
     migration: '20261026_scheduled_publishing.sql',
   },
+  {
+    name: 'admin_mfa',
+    query: 'admin_mfa?select=admin_id&limit=1',
+    migration: '20261027_admin_mfa.sql',
+  },
 ];
 
 const storageChecks = [

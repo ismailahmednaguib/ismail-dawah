@@ -8,6 +8,7 @@ import type { Lang } from "@/lib/i18n";
 import {
   AlertIcon,
   CheckCircleIcon,
+  KeyIcon,
   LogInIcon,
   UserPlusIcon,
 } from "@/lib/icons";
@@ -64,6 +65,11 @@ type Labels = {
   termsAgree: string;
   termsLink: string;
   privacyLink: string;
+  mfaTitle: string;
+  mfaHint: string;
+  mfaCode: string;
+  mfaButton: string;
+  mfaBack: string;
 };
 
 // ============================================================
@@ -99,6 +105,11 @@ const LABELS: Record<string, Labels> = {
     termsAgree: "بالتسجيل، أنت توافق على",
     termsLink: "الشروط والأحكام",
     privacyLink: "سياسة الخصوصية",
+    mfaTitle: "التحقق الثنائي",
+    mfaHint: "أدخل الرمز المكوّن من ٦ أرقام من تطبيق Authenticator لإكمال دخول الأدمن.",
+    mfaCode: "رمز التحقق",
+    mfaButton: "تأكيد الدخول",
+    mfaBack: "العودة لتسجيل الدخول",
   },
   en: {
     loginTitle: "Sign In",
@@ -128,6 +139,11 @@ const LABELS: Record<string, Labels> = {
     termsAgree: "By registering, you agree to our",
     termsLink: "Terms & Conditions",
     privacyLink: "Privacy Policy",
+    mfaTitle: "Two-factor verification",
+    mfaHint: "Enter the 6-digit code from your authenticator app to finish admin sign-in.",
+    mfaCode: "Verification code",
+    mfaButton: "Verify sign-in",
+    mfaBack: "Back to sign in",
   },
 };
 
@@ -146,6 +162,8 @@ export default function LoginForm({ lang }: { lang: Lang }) {
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<Message>(null);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileResetKey, setTurnstileResetKey] = useState(0);
 
@@ -229,6 +247,15 @@ export default function LoginForm({ lang }: { lang: Lang }) {
 
       const data = await res.json().catch(() => ({}));
 
+      if (data.mfaRequired) {
+        setMfaRequired(true);
+        setMessage({
+          type: "success",
+          text: lang === "ar" ? "تم التحقق من كلمة المرور. أكمل الرمز الثاني." : "Password accepted. Enter the second-factor code.",
+        });
+        return;
+      }
+
       if (res.ok && data.ok) {
         const redirect =
           data.redirect ||
@@ -280,6 +307,45 @@ export default function LoginForm({ lang }: { lang: Lang }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMfaSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (mfaCode.length !== 6 || loading) return;
+
+    setLoading(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/mfa/verify", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: mfaCode, lang }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.ok) {
+        setMessage({
+          type: "error",
+          text: data.message || (lang === "ar" ? "رمز التحقق غير صحيح." : "The verification code is invalid."),
+        });
+        return;
+      }
+
+      setMessage({ type: "success", text: `${t.success} ${t.redirecting}` });
+      window.setTimeout(() => {
+        window.location.href = data.redirect || "/admin";
+      }, 300);
+    } catch {
+      setMessage({ type: "error", text: t.connectionError });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetMfa = () => {
+    setMfaRequired(false);
+    setMfaCode("");
+    setMessage(null);
   };
 
   return (
@@ -341,6 +407,37 @@ export default function LoginForm({ lang }: { lang: Lang }) {
           </div>
         ) : null}
 
+        {mfaRequired ? (
+          <form onSubmit={handleMfaSubmit} className="space-y-5">
+            <div className="rounded-2xl bg-primary-50 p-5 text-center dark:bg-primary-950/20">
+              <KeyIcon className="mx-auto mb-3 text-primary-700 dark:text-primary-300" size={30} aria-hidden="true" />
+              <h2 className="text-lg font-black text-slate-900 dark:text-white">{t.mfaTitle}</h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{t.mfaHint}</p>
+            </div>
+            <div>
+              <label htmlFor="admin-mfa-login-code" className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">{t.mfaCode}</label>
+              <input
+                id="admin-mfa-login-code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                autoFocus
+                required
+                maxLength={6}
+                pattern="[0-9]{6}"
+                value={mfaCode}
+                onChange={(event) => setMfaCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="input-islamic w-full text-center text-2xl tracking-[0.35em]"
+                placeholder="000000"
+                dir="ltr"
+              />
+            </div>
+            <button type="submit" disabled={loading || mfaCode.length !== 6} className="btn-primary w-full py-4 text-lg font-black disabled:cursor-wait disabled:opacity-70">
+              {loading ? t.loading : t.mfaButton}
+            </button>
+            <button type="button" onClick={resetMfa} className="w-full text-sm font-bold text-primary-700 hover:underline dark:text-primary-300">{t.mfaBack}</button>
+          </form>
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "register" && ALLOW_REGISTER ? (
             <div>
@@ -515,8 +612,9 @@ export default function LoginForm({ lang }: { lang: Lang }) {
             )}
           </button>
         </form>
+        )}
 
-        {ALLOW_REGISTER ? (
+        {ALLOW_REGISTER && !mfaRequired ? (
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-600 dark:text-slate-300">
               {mode === "login" ? t.noAccount : t.hasAccount}{" "}

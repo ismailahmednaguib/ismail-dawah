@@ -57,6 +57,7 @@ const PRIVATE_TABLES = [
   'media_library',
   'rate_limits',
   'push_subscriptions',
+  'admin_mfa',
 ];
 
 /** جداول عامة بطبيعتها — يجب أن تبقى مقروءة للمفتاح العام. */

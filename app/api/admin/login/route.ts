@@ -12,6 +12,7 @@ import {
   randomUUID,
 } from "node:crypto";
 import { verifyPassword } from "@/lib/auth";
+import { getAdminMfaStatus, setAdminMfaPendingCookie } from "@/lib/admin/mfa";
 
 // ============================================================
 // Types
@@ -923,6 +924,26 @@ export async function POST(req: Request) {
         },
         { status: 401 }
       );
+    }
+
+    // المسار القديم يُبقى للتوافق فقط، لكنه يجب ألّا يتجاوز التحقق الثنائي.
+    const mfa = await getAdminMfaStatus(String(user.id));
+    if (mfa.enabled) {
+      const res = jsonResponse(
+        {
+          ok: false,
+          error: "mfa_required",
+          mfaRequired: true,
+          role: "admin",
+        },
+        { status: 200 }
+      );
+      setAdminMfaPendingCookie(
+        res,
+        String(user.id),
+        String(user.email || email)
+      );
+      return res;
     }
 
     // 12) Best-effort upgrade legacy SHA-256 to PBKDF2

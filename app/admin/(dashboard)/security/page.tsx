@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { getAdminSession } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
 import SecurityPanel from './security-panel';
+import MfaPanel from './mfa-panel';
 
 export const metadata: Metadata = {
   title: 'الأمان | لوحة التحكم',
@@ -92,6 +93,7 @@ const PRIVATE_TABLES = [
   'media_library',
   'rate_limits',
   'push_subscriptions',
+  'admin_mfa',
 ] as const;
 
 type RlsState = 'leaking' | 'open' | 'blocked' | 'missing' | 'error';
@@ -185,6 +187,8 @@ export default async function SecurityPage() {
       </section>
 
       <SecurityPanel />
+
+      <MfaPanel />
 
       <section className="card overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-black/5 p-4 dark:border-white/10">

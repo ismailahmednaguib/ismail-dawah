@@ -43,6 +43,7 @@ npm run check:links              # ٠ رابط مكسور
 
 > إن فشل `tsc` بخطأ في `.next/types` بعد حذف مسار: احذف `.next` وأعد البناء.
 > `npm audit` الكامل قد يعرض تحذيرات في أدوات التطوير (`eslint`/`fast-glob`) لا تُشحن للإنتاج؛ المرجع هو `npm audit --omit=dev`.
+> نسخة Next.js المثبّتة حاليًا `15.5.28`؛ لا تعُد إلى `15.5.27` لأنها ضمن نطاق ثغرات أكتوبر ٢٠٢٦. راجع `npm audit --omit=dev` بعد كل تحديث.
 > `overrides` في `package.json` تثبّت `postcss` و`postcss-selector-parser` على إصدارين مسدَّدين لثغرات البناء.
 > لا تُمرّر مخرجات السكربتات الطويلة عبر `Select-Object -First N` — فهي تُنهي العملية
 > قبل اكتمالها. اكتب المخرجات في ملف ثم اقرأه.
@@ -53,7 +54,7 @@ npm run check:links              # ٠ رابط مكسور
 2. **اقرأ السجل**: مخرجات `npm start`، وسجل الخادم على Vercel (Functions).
 3. **مصادر الأعطال الشائعة** (بالترتيب):
    - جدول أو عمود ناقص في Supabase → نفّذ الـ migration المعلّقة من `supabase/migrations/`.
-   - أسرار أو إعدادات بيئة ناقصة (`NEXT_PUBLIC_SUPABASE_URL` · `SUPABASE_SERVICE_KEY` · `APP_SESSION_SECRET` · `USER_SESSION_SECRET` · `ADMIN_SESSION_SECRET` · `CSRF_REQUIRE_ORIGIN=true`).
+   - أسرار أو إعدادات بيئة ناقصة (`NEXT_PUBLIC_SUPABASE_URL` · `SUPABASE_SERVICE_KEY` · `APP_SESSION_SECRET` · `USER_SESSION_SECRET` · `ADMIN_SESSION_SECRET` · `ADMIN_MFA_ENCRYPTION_KEY` عند تفعيل التحقق الثنائي · `CSRF_REQUIRE_ORIGIN=true`).
    - تخزين مؤقّت قديم → احذف `.next` وأعد البناء.
 4. **الرجوع للخلف**: `git revert <commit>` ثم أعد النشر. لا تُعد كتابة التاريخ.
 
@@ -351,6 +352,7 @@ npm run qa:migrations -- --strict
 | `20261024_push_subscriptions.sql` | ✅ **مُنفَّذة** — الجدول الخاص ظاهر ومحجوب في `qa:rls` | — |
 | `20261025_backup_bucket.sql` | ✅ **مُنفَّذة** — حاوية `backups` الخاصة موجودة وغير عامة، وتحققها `qa:migrations --strict` | — |
 | `20261026_scheduled_publishing.sql` | ✅ **مُنفَّذة** — قيمة `scheduled` وعمود `content.scheduled_at` ظاهران في `qa:migrations` | — |
+| `20261027_admin_mfa.sql` | ⏳ **تطبيق يدوي مطلوب قبل تفعيل 2FA** — جدول خاص لسر TOTP المشفّر. بعد التنفيذ اضبط `ADMIN_MFA_ENCRYPTION_KEY` في Vercel وافتح `/admin/security` لإتمام التسجيل | من دونها يظهر مركز الأمان أن migration معلّقة، ولا يمكن تفعيل التحقق الثنائي |
 
 المساعد المقيّد لا يحتاج جدولًا جديدًا: يقرأ المحتوى المنشور فقط، ويظل مغلقًا حتى ضبط `AI_ASSISTANT_API_KEY` و`AI_ASSISTANT_ENDPOINT` وتفعيله من `/admin/settings`.
 
