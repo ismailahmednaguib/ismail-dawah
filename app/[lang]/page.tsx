@@ -1,18 +1,15 @@
 // app/[lang]/page.tsx
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, languages, type Lang } from "@/lib/i18n";
 import { getVerseOfTheDay } from "@/lib/verse";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Newsletter from "@/components/Newsletter";
-import LatestTabs from "@/components/home/LatestTabs";
 import ContentCard from "@/components/learn/ContentCard";
 import EditorPicks from "@/components/home/EditorPicks";
 import NavIcon from "@/components/NavIcon";
-import PrayerWidgetLazy from "@/components/PrayerWidgetLazy";
 import { getSiteSettings } from "@/lib/content";
 import { parseEditorPicks } from "@/lib/home/editor-picks";
 import { readSettingText } from "@/lib/settings-text";
@@ -27,6 +24,14 @@ import {
   type NavNode,
 } from "@/lib/navigation";
 import { renderDesignIcon } from "@/components/ui";
+
+// المكوّنات التفاعلية غير الحرجة تُقسَّم إلى حزم منفصلة. تظل SSR مفعّلة،
+// لذلك يبقى المحتوى ظاهرًا في HTML الأولي، بينما لا ينافس كودها الهيرو على
+// الخيط الرئيسي أثناء الإقلاع الأول للصفحة.
+const Footer = dynamic(() => import("@/components/Footer"));
+const Newsletter = dynamic(() => import("@/components/Newsletter"));
+const LatestTabs = dynamic(() => import("@/components/home/LatestTabs"));
+const PrayerWidgetLazy = dynamic(() => import("@/components/PrayerWidgetLazy"));
 
 // نستخدم ISR قصيرًا بدل force-dynamic: صفحات الرئيسية تُخزَّن في الحافة،
 // وتعديلات الإعدادات تُحدَّث فورًا عبر revalidatePath من مسار الإدارة.
