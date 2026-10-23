@@ -73,5 +73,15 @@ npx vercel --prod
 - `npm run qa:review:strict` متوقف فقط لأن ٢٠ فتوى منشورة تنتظر مراجعًا علميًا معتمدًا.
 - `npm run qa:rls -- --strict` متوقف فقط لأن جدول `admin_mfa` منفّذ لكنه فارغ حتى يسجّل المالك جهازه.
 - بوابة القرآن تعرض النص والتلاوة بأربعة قراء، وأصبح التفسير الميسر اختياريًا داخل صفحة السورة؛ لا يُطلب مصدر التفسير إلا عند اختياره.
+- الصفحة الرئيسية تفصل حزم `Footer` و`Newsletter` و`LatestTabs` وودجت الصلاة عبر `next/dynamic` مع إبقاء SSR؛ أعد قياس TBT/Lighthouse بعد نشر النسخة على Vercel.
 - `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). يُعطَّل `webpackBuildWorker` على Windows فقط؛ نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
-- سلسلة commits المحلية للخطة جاهزة للرفع، ويعرض `git log -1 --oneline` آخر commit قبل التنفيذ؛ الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك.
+- سلسلة commits المحلية للخطة جاهزة للرفع، وآخرها حاليًا `4de4b25 docs: refresh control surface audit`. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
+- الرفع الخارجي لم يُنفَّذ من هذه البيئة؛ بعد تسجيل الدخول إلى حساب GitHub الصحيح شغّل من PowerShell:
+
+```powershell
+$meta='C:\Users\ismail\Documents\Codex\2026-10-23\new-chat\publish-meta-20261023-a'
+$project='D:\ismail-dawah'
+git --git-dir=$meta --work-tree=$project push origin main
+```
+
+- بعد الرفع، يجب التحقق من نجاح Vercel ثم تشغيل `npm run qa:review:strict` و`npm run qa:rls -- --strict` بعد إكمال البنود الخارجية، وفحص `/ar` و`/en` و`/admin/control` يدويًا.
