@@ -6,6 +6,7 @@ import type { AdminSession } from '@/lib/admin/session';
 import type { ContentTranslationMatrix, TranslationStats, LanguageCode } from '@/lib/translations/types';
 import { LANGUAGES } from '@/lib/translations/types';
 import TranslationEditor from '@/components/admin/TranslationEditor';
+import { renderDesignIcon } from '@/components/ui';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: string; className: string }> = {
   not_started: { label: 'لم تبدأ', icon: '⬜', className: 'bg-stone-100 text-stone-500' },
@@ -124,7 +125,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                   </p>
                   {langStats.machine_translated > 0 && (
                     <p className="text-xs text-orange-600 mt-1">
-                      🤖 {langStats.machine_translated} ترجمة آلية
+                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🤖", 14)}</span>{langStats.machine_translated} ترجمة آلية
                     </p>
                   )}
                 </div>
@@ -139,7 +140,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
         <input
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          placeholder="🔍 ابحث عن محتوى..."
+          placeholder="ابحث عن محتوى..."
           className="flex-1 border border-stone-300 dark:border-gray-600 rounded-lg px-4 py-2 text-sm bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary-500 focus:outline-none"
         />
       </div>
@@ -198,7 +199,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                         <td key={lang.code} className="px-3 py-3 text-center">
                           {isOriginal ? (
                             <span className="inline-block text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full">
-                              🏠 الأصل
+                              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🏠", 14)}</span>الأصل
                             </span>
                           ) : t?.exists ? (
                             <button
@@ -210,7 +211,7 @@ export default function TranslationsClient({ session }: { session: AdminSession 
                               className={`inline-block text-xs px-2 py-1 rounded-full ${statusCfg.className} hover:opacity-80 transition`}
                               title={t.title}
                             >
-                              {statusCfg.icon} {statusCfg.label}
+                              {renderDesignIcon(statusCfg.icon, 14)} {statusCfg.label}
                             </button>
                           ) : (
                             <button

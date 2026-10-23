@@ -5,10 +5,11 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, Callout } from "@/components/ui";
+import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
 import type { Fraction } from "@/lib/calculators/fraction";
 import {
   calculateInheritance,
@@ -487,7 +488,9 @@ export default async function InheritancePage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "inheritance", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "inheritance", l);
+  if (!gate.pageVisible) return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "inheritance", l)} />;
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -573,7 +576,7 @@ export default async function InheritancePage({
 
       <PageHero
         icon="📜"
-        badge={isRTL ? "📜 الفرائض" : "📜 Faraid"}
+         badge={isRTL ? "الفرائض" : "Faraid"}
         title={ui.title}
         subtitle={ui.description}
         crumbs={[
@@ -934,7 +937,7 @@ export default async function InheritancePage({
                   className="mb-5 text-xl font-black text-slate-900 dark:text-white"
                   style={{ fontFamily: "var(--font-amiri)" }}
                 >
-                  ⚠️ {ui.warningsTitle}
+                  <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 18)}</span>{ui.warningsTitle}
                 </h2>
 
                 <ul className="space-y-3">
@@ -1087,7 +1090,7 @@ export default async function InheritancePage({
               </div>
             ) : (
               <div className="card p-12 text-center">
-                <div className="mb-4 text-5xl">📭</div>
+                <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</div>
 
                 <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
                   {ui.noHeirs}
@@ -1104,12 +1107,12 @@ export default async function InheritancePage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/zakat`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">💰</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("💰", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.zakatPage}
@@ -1133,7 +1136,7 @@ export default async function InheritancePage({
             </Link>
 
             <Link href={`/${l}/hajj-guide`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕋</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🕋", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.hajjPage}
@@ -1145,7 +1148,7 @@ export default async function InheritancePage({
             </Link>
 
             <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("mail", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.contactPage}
@@ -1164,7 +1167,7 @@ export default async function InheritancePage({
             className="mb-6 text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📌 {ui.noteTitle}
+             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📌", 22)}</span>{ui.noteTitle}
           </h2>
 
           <ul className="space-y-4">
@@ -1222,7 +1225,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

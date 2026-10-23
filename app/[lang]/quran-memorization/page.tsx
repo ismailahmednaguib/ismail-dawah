@@ -6,10 +6,12 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import { SURAHS } from "@/lib/data";
 
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import MemorizationPlan from "./MemorizationPlan";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
@@ -222,7 +224,9 @@ export default async function QuranMemorizationPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "quran-memorization", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "quran-memorization", l);
+  if (!gate.pageVisible) return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "quran-memorization", l)} />;
   const ui = UI[l];
   const isRTL = l === "ar";
   const totalAyahs = SURAHS.reduce((sum, surah) => sum + surah.ayahs, 0);
@@ -364,7 +368,7 @@ export default async function QuranMemorizationPage({
                 «{ui.hadith}»
               </p>
               <p className="text-xs text-primary-700 dark:text-primary-400">
-                📜 {ui.hadithSource}
+                 <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>{ui.hadithSource}
               </p>
             </div>
           </div>
@@ -407,10 +411,10 @@ export default async function QuranMemorizationPage({
               className="section-title mb-0"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🌟 {ui.virtuesTitle}
+               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🌟", 20)}</span>{ui.virtuesTitle}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
           </div>
 
@@ -459,7 +463,7 @@ export default async function QuranMemorizationPage({
               className="mb-6 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              📚 {ui.tipsTitle}
+               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 20)}</span>{ui.tipsTitle}
             </h2>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -479,12 +483,12 @@ export default async function QuranMemorizationPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📖", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.quranPage}
@@ -496,7 +500,7 @@ export default async function QuranMemorizationPage({
             </Link>
 
             <Link href={`/${l}/adhkar`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🤲</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🤲", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.adhkarPage}
@@ -508,7 +512,7 @@ export default async function QuranMemorizationPage({
             </Link>
 
             <Link href={`/${l}/daily-wird`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📅</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📅", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.dailyWirdPage}
@@ -520,7 +524,7 @@ export default async function QuranMemorizationPage({
             </Link>
 
             <Link href={`/${l}/fields/tafsir`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🔍</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🔍", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.tafsirPage}
@@ -539,7 +543,7 @@ export default async function QuranMemorizationPage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -599,7 +603,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
@@ -640,7 +644,7 @@ function VirtueCard({
     >
       <div className="mb-4 flex items-center gap-3">
         <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-3xl shadow-sm dark:bg-night-800">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
         <h3
           className={`text-lg font-black ${titleColor}`}

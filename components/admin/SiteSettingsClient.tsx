@@ -9,6 +9,10 @@ import { DEFAULT_PASSWORD_CHANGE_CONFIG } from '@/lib/password-change-config';
 import { DEFAULT_QUESTIONS_CONFIG } from '@/lib/questions/config';
 import EmailTestCard from '@/components/admin/EmailTestCard';
 import { legacyScheduleToText } from '@/lib/live-schedule';
+import { DEFAULT_PRAYER_TOOL_SETTINGS, PRAYER_METHOD_IDS } from '@/lib/prayer-settings';
+import { DEFAULT_TOOL_SETTINGS, type ToolKey } from '@/lib/tool-settings';
+import { DEFAULT_THEME_SETTINGS, normalizeThemeSettings } from '@/lib/theme-settings';
+import ManagedRedirectsEditor from '@/components/admin/ManagedRedirectsEditor';
 
 type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
@@ -48,6 +52,8 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   meetingTime: { ar: '', en: '' },
   meetingPlace: { ar: '', en: '' },
   showPrayerBar: false,
+  prayerTools: DEFAULT_PRAYER_TOOL_SETTINGS,
+  tools: DEFAULT_TOOL_SETTINGS,
   playStoreUrl: '',
   emailVerification: DEFAULT_EMAIL_VERIFICATION_CONFIG,
   passwordReset: DEFAULT_PASSWORD_RESET_CONFIG,
@@ -56,6 +62,8 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   publicApiEnabled: false,
   dawahJourney: DEFAULT_DAWAH_JOURNEY_CONFIG,
   assistant: DEFAULT_ASSISTANT_CONFIG,
+  theme: DEFAULT_THEME_SETTINGS,
+  redirects: [],
 };
 
 function text(value: unknown): string {
@@ -265,6 +273,21 @@ export default function SiteSettingsClient() {
     });
   };
 
+  const setTool = (key: ToolKey, patch: Record<string, unknown>) => {
+    setSettings((current) => ({
+      ...current,
+      tools: {
+        ...DEFAULT_TOOL_SETTINGS,
+        ...(current.tools && typeof current.tools === 'object' ? current.tools : {}),
+        [key]: {
+          ...DEFAULT_TOOL_SETTINGS[key],
+          ...(current.tools?.[key] && typeof current.tools[key] === 'object' ? current.tools[key] : {}),
+          ...patch,
+        },
+      },
+    }));
+  };
+
   const save = async () => {
     setSaving(true);
     setMessage(null);
@@ -274,7 +297,7 @@ export default function SiteSettingsClient() {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings }),
+        body: JSON.stringify({ settings: { ...settings, theme: normalizeThemeSettings(settings.theme) } }),
       });
       const data = await response.json().catch(() => ({}));
 
@@ -305,6 +328,7 @@ export default function SiteSettingsClient() {
   const brandName = text(settings.ownerName).trim();
   const metaTitleAr = text(settings.metaTitle?.ar).trim();
   const brandMismatch = Boolean(brandName && (!metaTitleAr || brandName !== metaTitleAr));
+  const themeSettings = normalizeThemeSettings(settings.theme);
 
   return (
     <div className="space-y-6 pb-8">
@@ -366,6 +390,52 @@ export default function SiteSettingsClient() {
         ) : null}
       </Section>
 
+      <Section title="الهوية البصرية المشتركة" description="يُطبّق اللون الأساسي والذهبي على الموقع ولوحة الإدارة من مصدر واحد. استخدم ألوانًا واضحة ذات تباين جيد.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div>
+            <span className="mb-2 block text-sm font-bold text-primary-950">اللون الأساسي</span>
+            <div className="flex items-end gap-3">
+              <input
+                type="color"
+                value={themeSettings.primaryColor}
+                onChange={(event) => setValue('theme', { ...DEFAULT_THEME_SETTINGS, ...(settings.theme || {}), primaryColor: event.target.value })}
+                className="h-12 w-16 cursor-pointer rounded-lg border border-cream-200 bg-white p-1"
+                aria-label="اختيار اللون الأساسي"
+              />
+              <input
+                value={themeSettings.primaryColor}
+                onChange={(event) => setValue('theme', { ...DEFAULT_THEME_SETTINGS, ...(settings.theme || {}), primaryColor: event.target.value })}
+                className="input-islamic w-full"
+                dir="ltr"
+                placeholder="#0e7490"
+                aria-label="قيمة اللون الأساسي"
+              />
+            </div>
+          </div>
+          <div>
+            <span className="mb-2 block text-sm font-bold text-primary-950">اللون الذهبي/التمييز</span>
+            <div className="flex items-end gap-3">
+              <input
+                type="color"
+                value={themeSettings.goldColor}
+                onChange={(event) => setValue('theme', { ...DEFAULT_THEME_SETTINGS, ...(settings.theme || {}), goldColor: event.target.value })}
+                className="h-12 w-16 cursor-pointer rounded-lg border border-cream-200 bg-white p-1"
+                aria-label="اختيار اللون الذهبي"
+              />
+              <input
+                value={themeSettings.goldColor}
+                onChange={(event) => setValue('theme', { ...DEFAULT_THEME_SETTINGS, ...(settings.theme || {}), goldColor: event.target.value })}
+                className="input-islamic w-full"
+                dir="ltr"
+                placeholder="#d4af37"
+                aria-label="قيمة اللون الذهبي"
+              />
+            </div>
+          </div>
+        </div>
+        <p className="mt-4 text-xs leading-6 text-stone-500">تُشتق درجات اللون تلقائيًا، مع بقاء قيم CSS الافتراضية كخطة احتياط عند تعذر قراءة الإعداد.</p>
+      </Section>
+
       <Section title="الصفحة الرئيسية" description="تحكم في الرسالة التي يراها الزائر أولًا.">
         <div className="space-y-4">
           <InputField label="العنوان التمهيدي" value={text(settings.homeKicker)} onChange={(value) => setLocalized('homeKicker', 'ar', value)} />
@@ -425,6 +495,13 @@ export default function SiteSettingsClient() {
             </div>
           ))}
         </div>
+      </Section>
+
+      <Section title="الروابط والتحويلات 301" description="أدر الروابط القديمة بعد تغيير المسارات. التحويلات داخلية فقط وتُطبّق من الخادم مع منع الحلقات والوجهات الخارجية.">
+        <ManagedRedirectsEditor
+          value={settings.redirects}
+          onChange={(value) => setValue('redirects', value)}
+        />
       </Section>
 
       <Section title="التواصل والاعتمادات" description="بيانات التواصل والعبارات التعريفية الخاصة بصاحب المنصة.">
@@ -665,6 +742,100 @@ export default function SiteSettingsClient() {
             <span className="mt-1 block text-xs leading-6 text-stone-500">فعّله إذا أردت ظهور الشريط في واجهة الموقع.</span>
           </span>
         </label>
+      </Section>
+
+      <Section title="إعدادات أداة مواقيت الصلاة" description="تتحكم هذه القيم في الإعداد الافتراضي للزائر فقط؛ يظل اختيار موقعه وإعداداته الشخصية منفصلًا ومحفوظًا على جهازه.">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block">
+            <span className="mb-2 block text-sm font-bold text-primary-950">طريقة الحساب الافتراضية</span>
+            <select
+              value={String(settings.prayerTools?.defaultMethod ?? DEFAULT_PRAYER_TOOL_SETTINGS.defaultMethod)}
+              onChange={(event) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultMethod: Number(event.target.value) })}
+              className="input-islamic w-full"
+            >
+              {PRAYER_METHOD_IDS.map((method) => (
+                <option key={method} value={method}>
+                  {method === 5 ? 'الهيئة المصرية العامة للمساحة' : `طريقة رقم ${method}`}
+                </option>
+              ))}
+            </select>
+          </label>
+          <InputField label="المدينة الافتراضية — العربية" value={text(settings.prayerTools?.defaultCityAr) || DEFAULT_PRAYER_TOOL_SETTINGS.defaultCityAr} onChange={(value) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultCityAr: value })} />
+          <InputField label="Default city — English" value={text(settings.prayerTools?.defaultCityEn) || DEFAULT_PRAYER_TOOL_SETTINGS.defaultCityEn} onChange={(value) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultCityEn: value })} dir="ltr" />
+          <InputField label="خط العرض الافتراضي" value={String(settings.prayerTools?.defaultLatitude ?? DEFAULT_PRAYER_TOOL_SETTINGS.defaultLatitude)} onChange={(value) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultLatitude: Number(value) })} dir="ltr" />
+          <InputField label="خط الطول الافتراضي" value={String(settings.prayerTools?.defaultLongitude ?? DEFAULT_PRAYER_TOOL_SETTINGS.defaultLongitude)} onChange={(value) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultLongitude: Number(value) })} dir="ltr" />
+          <InputField label="التنبيه قبل الصلاة بالدقائق" value={String(settings.prayerTools?.defaultNotifyBefore ?? DEFAULT_PRAYER_TOOL_SETTINGS.defaultNotifyBefore)} onChange={(value) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultNotifyBefore: Number(value) })} dir="ltr" />
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
+            <input type="checkbox" checked={Boolean(settings.prayerTools?.defaultSoundEnabled ?? DEFAULT_PRAYER_TOOL_SETTINGS.defaultSoundEnabled)} onChange={(event) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultSoundEnabled: event.target.checked })} className="mt-1 h-4 w-4 accent-primary-700" />
+            <span><span className="block text-sm font-black text-primary-950">التنبيه الصوتي افتراضيًا</span><span className="mt-1 block text-xs text-stone-500">يمكن للزائر تغييره من إعداداته المحلية.</span></span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
+            <input type="checkbox" checked={Boolean(settings.prayerTools?.defaultAdhanEnabled ?? DEFAULT_PRAYER_TOOL_SETTINGS.defaultAdhanEnabled)} onChange={(event) => setValue('prayerTools', { ...DEFAULT_PRAYER_TOOL_SETTINGS, ...(settings.prayerTools || {}), defaultAdhanEnabled: event.target.checked })} className="mt-1 h-4 w-4 accent-primary-700" />
+            <span><span className="block text-sm font-black text-primary-950">الأذان افتراضيًا</span><span className="mt-1 block text-xs text-stone-500">لا يُجبر الزائر، ويظل اختياريًا من جهازه.</span></span>
+          </label>
+        </div>
+      </Section>
+
+      <Section title="الأدوات الإسلامية ومصادرها" description="تحكم في تشغيل الأدوات ومصدر بياناتها ورسالة البديل عند تعذر المصدر. لا تغيّر هذه الإعدادات النصوص المرجعية أو منطق الحسابات الحساسة.">
+        <div className="space-y-4">
+          {(Object.keys(DEFAULT_TOOL_SETTINGS) as ToolKey[]).map((key) => {
+            const defaults = DEFAULT_TOOL_SETTINGS[key];
+            const current = settings.tools?.[key] && typeof settings.tools[key] === 'object'
+              ? { ...defaults, ...settings.tools[key] }
+              : defaults;
+            const labels: Record<ToolKey, string> = {
+              quran: 'القرآن الكريم ومصادره',
+              prayer: 'مواقيت الصلاة',
+              qibla: 'القبلة',
+              adhkar: 'الأذكار',
+              tasbih: 'المسبحة',
+              zakat: 'الزكاة',
+              inheritance: 'الميراث',
+              calendar: 'التقويم الهجري',
+              memorization: 'خطة حفظ القرآن',
+              dailyWird: 'الورد اليومي',
+            };
+            return (
+              <div key={key} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+                <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+                  <div>
+                    <h3 className="font-black text-primary-950">{labels[key]}</h3>
+                    <p className="mt-1 text-xs text-stone-500">المصدر الحالي: {current.sourceLabel}</p>
+                  </div>
+                  <label className="flex items-center gap-2 text-sm font-bold text-primary-800">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(current.enabled)}
+                      onChange={(event) => setTool(key, { enabled: event.target.checked })}
+                      className="h-4 w-4 accent-primary-700"
+                    />
+                    الأداة مفعّلة
+                  </label>
+                </div>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <label className="block">
+                    <span className="mb-2 block text-sm font-bold text-primary-950">نوع المصدر</span>
+                    <select
+                      value={current.sourceMode}
+                      onChange={(event) => setTool(key, { sourceMode: event.target.value })}
+                      className="input-islamic w-full"
+                    >
+                      <option value="local">بيانات محلية</option>
+                      <option value="external">خدمة خارجية</option>
+                      <option value="device">الجهاز / الموقع</option>
+                      <option value="manual">إدخال يدوي</option>
+                    </select>
+                  </label>
+                  <InputField label="وصف المصدر" value={String(current.sourceLabel || '')} onChange={(value) => setTool(key, { sourceLabel: value })} />
+                  <TextareaField label="رسالة البديل — العربية" value={String(current.fallbackMessageAr || '')} onChange={(value) => setTool(key, { fallbackMessageAr: value })} rows={2} />
+                  <TextareaField label="Fallback message — English" value={String(current.fallbackMessageEn || '')} onChange={(value) => setTool(key, { fallbackMessageEn: value })} rows={2} dir="ltr" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </Section>
 
       <div className="sticky bottom-4 z-10 flex justify-end">

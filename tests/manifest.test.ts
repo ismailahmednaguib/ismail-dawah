@@ -36,3 +36,15 @@ test('بيان التثبيت: أيقونات maskable وany موجودة', () =
   assert.ok(purposes?.includes('any'));
   assert.ok(purposes?.includes('maskable'));
 });
+
+test('بيان التثبيت: لون التطبيق يأخذ الهوية البصرية المركزية', () => {
+  const manifest = buildManifest('ar', { primaryColor: '#123456', goldColor: '#abcdef' }, {
+    name: { ar: 'منصة تجريبية', en: 'Test Platform' },
+    shortName: { ar: 'تجريبية', en: 'Test' },
+    description: { ar: 'وصف مخصص', en: 'Custom description' },
+  });
+  assert.equal(manifest.theme_color, '#123456');
+  assert.equal(manifest.name, 'منصة تجريبية');
+  assert.equal(manifest.short_name, 'تجريبية');
+  assert.equal(manifest.description, 'وصف مخصص');
+});

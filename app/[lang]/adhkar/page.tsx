@@ -5,10 +5,11 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, Callout } from "@/components/ui";
+import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
 import AdhkarContent from "./adhkar-content";
 
 // ============================================================
@@ -142,7 +143,9 @@ export default async function AdhkarPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "adhkar", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "adhkar", l);
+  if (!gate.pageVisible) return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "adhkar", l)} />;
   const m = META[l];
   const isRTL = l === "ar";
 
@@ -220,7 +223,7 @@ export default async function AdhkarPage({
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                📿
+                {renderDesignIcon("📿", 24)}
               </span>
             </div>
             <p className="text-xl font-black text-primary-700 dark:text-primary-300">
@@ -234,7 +237,7 @@ export default async function AdhkarPage({
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                ✨
+                {renderDesignIcon("✨", 24)}
               </span>
             </div>
             <p className="text-xl font-black text-primary-700 dark:text-primary-300">
@@ -296,7 +299,7 @@ function FeatureCard({
 
       <div className="mb-3 flex items-center gap-3">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
         <h2
           className="text-base font-black text-slate-900 dark:text-white"

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { renderDesignIcon } from "@/components/ui";
 
 interface IslamicCardProps {
   title: string;
@@ -30,7 +31,7 @@ export default function IslamicCard({
               : "bg-gold-100 dark:bg-gold-700/20"
           }`}
         >
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </div>
       )}
 

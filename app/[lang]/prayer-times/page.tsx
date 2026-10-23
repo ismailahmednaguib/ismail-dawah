@@ -4,13 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import PushNotificationPrompt from "@/components/PushNotificationPrompt";
 import PrayerTimesContent from "./prayer-times-content";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import { normalizePrayerToolSettings } from "@/lib/prayer-settings";
 
 // ============================================================
 // نصوص الواجهة
@@ -185,7 +188,10 @@ export default async function PrayerTimesPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "prayer-times", l);
+  const prayerToolSettings = normalizePrayerToolSettings((__pageSettings as Record<string, unknown>).prayerTools);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "prayer-times", l);
+  if (!gate.pageVisible) return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "prayer-times", l)} />;
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -278,7 +284,7 @@ export default async function PrayerTimesPage({
             </div>
 
             <span className="badge-primary mb-5">
-              🕐 {isRTL ? "مواقيت دقيقة" : "Accurate Times"}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕐", 18)}</span>{isRTL ? "مواقيت دقيقة" : "Accurate Times"}
             </span>
 
             <h1
@@ -358,7 +364,7 @@ export default async function PrayerTimesPage({
       </>)}
       {/* ===== المحتوى التفاعلي ===== */}
       {gate.visible('k1') && (<>
-      <PrayerTimesContent lang={l} />
+      <PrayerTimesContent lang={l} toolSettings={prayerToolSettings} />
       <PushNotificationPrompt lang={l} />
 
       </>)}
@@ -370,7 +376,7 @@ export default async function PrayerTimesPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -379,7 +385,7 @@ export default async function PrayerTimesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🕌
+                {renderDesignIcon("🕌", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -396,7 +402,7 @@ export default async function PrayerTimesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🧭
+                {renderDesignIcon("🧭", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -413,7 +419,7 @@ export default async function PrayerTimesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🤲
+                {renderDesignIcon("🤲", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -430,7 +436,7 @@ export default async function PrayerTimesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📖
+                {renderDesignIcon("📖", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -473,7 +479,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-base font-black ${colorClasses[color]}`}>{label}</p>
@@ -498,7 +504,7 @@ function FeatureCard({
     <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-5 dark:border-night-700 dark:bg-night-800/40">
       <div className="mb-3 flex items-center gap-3">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
         <h3
           className="text-base font-black text-slate-900 dark:text-white"

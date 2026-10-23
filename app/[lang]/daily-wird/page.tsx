@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout } from "@/components/ui";
@@ -272,7 +273,9 @@ export default async function DailyWirdPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "daily-wird", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "daily-wird", l);
+  if (!gate.pageVisible) return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "daily-wird", l)} />;
   const ui = META_UI[l];
   const isRTL = l === "ar";
   const totalTasks = DAYS.flatMap((d) => d.tasks).length;

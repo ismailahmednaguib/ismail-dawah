@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import CopyLinkButton from "@/components/download/CopyLinkButton";
 import { resolvePlayStoreUrl } from "@/lib/store";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import { renderDesignIcon } from "@/components/ui";
 
 export const dynamic = "force-static";
 
@@ -416,7 +417,7 @@ export default async function DownloadPage({
 
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-5 flex flex-wrap items-center justify-center gap-3">
-              <span className="badge-primary">📱 {ui.androidApp}</span>
+              <span className="badge-primary"><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📱", 16)}</span>{ui.androidApp}</span>
               <span className="badge-gold">🧪 {ui.betaNotice}</span>
             </div>
 
@@ -557,7 +558,7 @@ export default async function DownloadPage({
           <div className="md:col-span-1">
             <div className="card flex h-full flex-col p-6">
               <h2 className="mb-4 text-center text-lg font-black text-slate-900 dark:text-white">
-                📱 {ui.scanToDownload}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📱", 18)}</span>{ui.scanToDownload}
               </h2>
 
               {/* QR Code */}
@@ -581,7 +582,7 @@ export default async function DownloadPage({
                   rel="noopener noreferrer"
                   className="block w-full rounded-xl bg-slate-100 px-4 py-3 text-center text-xs font-semibold text-slate-700 transition-all hover:bg-slate-200 dark:bg-night-800 dark:text-slate-300 dark:hover:bg-night-700"
                 >
-                  🔗 {ui.directLink}
+                  <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 18)}</span>{ui.directLink}
                 </a>
               </div>
             </div>
@@ -596,7 +597,7 @@ export default async function DownloadPage({
             className="mb-8 text-center text-3xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🛠️ {ui.installationSteps}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🛠️", 22)}</span>{ui.installationSteps}
           </h2>
 
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -635,7 +636,7 @@ export default async function DownloadPage({
             className="mb-8 text-center text-3xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            ✨ {ui.features}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 22)}</span>{ui.features}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -656,7 +657,7 @@ export default async function DownloadPage({
             className="mb-5 text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📌 {ui.noteTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📌", 22)}</span>{ui.noteTitle}
           </h2>
 
           <ul className="space-y-3">
@@ -740,7 +741,7 @@ function InfoCard({
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 dark:border-night-700 dark:bg-night-800/50">
       <div className="mb-2 flex items-center gap-2">
-        <span className="text-lg">{icon}</span>
+        <span aria-hidden="true">{renderDesignIcon(icon, 20)}</span>
         <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
           {label}
         </p>
@@ -769,7 +770,7 @@ function StepCard({
 
       <div className="mb-4 flex items-center gap-3">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500 font-black text-gray-900 shadow-lg">
           {step}
@@ -796,7 +797,7 @@ function FeatureCard({
   return (
     <div className="card card-interactive flex items-center gap-4 p-5">
       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-        {icon}
+        {renderDesignIcon(icon, 28)}
       </span>
       <p className="font-bold text-slate-900 dark:text-white">{title}</p>
     </div>

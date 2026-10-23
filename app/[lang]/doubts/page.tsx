@@ -9,7 +9,7 @@ import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero } from "@/components/ui";
+import { PageHero, renderDesignIcon } from "@/components/ui";
 import { getPublicList, type PublicItem } from "@/lib/learn/public";
 
 export const dynamic = "force-dynamic";
@@ -495,7 +495,7 @@ export default async function DoubtsPage({
                 href={`#${section.id}`}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
               >
-                <span>{section.icon}</span>
+                <span aria-hidden="true">{renderDesignIcon(section.icon, 20)}</span>
                 <span>{isRTL ? section.title.ar : section.title.en}</span>
               </a>
             ))}
@@ -519,7 +519,7 @@ export default async function DoubtsPage({
             </h2>
 
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
           </div>
 
@@ -534,7 +534,7 @@ export default async function DoubtsPage({
 
                 <div className="mb-5 flex items-start gap-4">
                   <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                    {section.icon}
+                    {renderDesignIcon(section.icon, 30)}
                   </span>
 
                   <div className="min-w-0">
@@ -577,7 +577,7 @@ export default async function DoubtsPage({
             </h2>
 
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
 
             <p className="section-subtitle mx-auto max-w-2xl">
@@ -667,7 +667,7 @@ export default async function DoubtsPage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -712,7 +712,7 @@ export default async function DoubtsPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📬
+                {renderDesignIcon("mail", 24)}
               </span>
 
               <div className="min-w-0">
@@ -742,7 +742,7 @@ export default async function DoubtsPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🧠
+                {renderDesignIcon("🧠", 24)}
               </span>
 
               <div className="min-w-0">
@@ -757,7 +757,7 @@ export default async function DoubtsPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ✍️
+                {renderDesignIcon("✍️", 24)}
               </span>
 
               <div className="min-w-0">

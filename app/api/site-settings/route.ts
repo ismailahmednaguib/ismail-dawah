@@ -15,6 +15,8 @@ const PUBLIC_KEYS = new Set([
   'pageSections', 'sectionTitles', 'hiddenPages',
   // هيكل التنقّل (يقرأه الهيدر والفوتر ليعكس إعدادات اللوحة)
   'navigation',
+  'theme',
+  'redirects',
 ]);
 
 function publicSettings(settings: Record<string, any>) {

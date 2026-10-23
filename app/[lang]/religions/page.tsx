@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { PageHero } from '@/components/ui';
+import { PageHero, renderDesignIcon } from '@/components/ui';
 import { getPublicList } from '@/lib/learn/public';
 import { getSiteSettings } from '@/lib/content';
 import { isValidLang, type Lang } from '@/lib/i18n';
@@ -102,7 +102,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
             <div className="gradient-primary absolute inset-x-0 top-0 h-1.5" />
             <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
               <div>
-                <span className="badge-gold">✦ {copy.methodology}</span>
+                <span className="badge-gold"><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✦", 16)}</span>{copy.methodology}</span>
                 <h2 id="religions-methodology-title" className="mt-4 text-2xl font-black text-primary-950 dark:text-white">{copy.methodology}</h2>
                 <p className="mt-3 leading-8 text-slate-600 dark:text-slate-300">{copy.methodologyIntro}</p>
                 <Link href={`/${currentLang}/religions/methodology`} className="btn-primary mt-5 inline-flex">{copy.explore} ←</Link>
@@ -130,7 +130,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
               {RELIGION_ENTRIES.map((entry, index) => (
                 <Link key={entry.slug} href={`/${currentLang}/religions/${entry.slug}`} className="card card-interactive group p-6">
                   <div className="flex items-start justify-between gap-4">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-3xl dark:bg-primary-900/40">{entry.icon}</span>
+                    <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 dark:bg-primary-900/40" aria-hidden="true">{renderDesignIcon(entry.icon, 30)}</span>
                     {counts[index] > 0 ? (
                       <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-bold text-primary-800 dark:bg-primary-900/50 dark:text-primary-200">
                         {counts[index]} {copy.materials}
@@ -158,7 +158,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
             <div className="grid gap-4 md:grid-cols-3">
               {RELIGION_RESOURCES.map((resource) => (
                 <Link key={resource.slug} href={`/${currentLang}/religions/resources/${resource.slug}`} className="card card-interactive p-5">
-                  <span className="text-3xl" aria-hidden="true">{resource.icon}</span>
+                  <span aria-hidden="true">{renderDesignIcon(resource.icon, 30)}</span>
                   <h3 className="mt-3 font-black text-primary-950 dark:text-white">{localized(resource.title, currentLang)}</h3>
                   <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{localized(resource.summary, currentLang)}</p>
                 </Link>

@@ -3,7 +3,7 @@
 // نُبقي كارت الصلاة ظاهرًا في HTML الأولي، ونؤجل كود الودجت وطلب المواقيت
 // إلى وقت خمول المتصفح حتى لا ينافس الهيرو والمحتوى الأولي على الخيط الرئيسي.
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import type { Lang } from "@/lib/i18n";
 
 const UI = {
@@ -95,7 +95,7 @@ function PrayerWidgetPlaceholder({ lang }: { lang: Lang }) {
   );
 }
 
-export default function PrayerWidgetLazy({ lang }: { lang: Lang }) {
+export default function PrayerWidgetLazy({ lang, style }: { lang: Lang; style?: CSSProperties }) {
   const [Widget, setWidget] = useState<PrayerWidgetComponent | null>(null);
 
   useEffect(() => {
@@ -125,5 +125,5 @@ export default function PrayerWidgetLazy({ lang }: { lang: Lang }) {
     };
   }, []);
 
-  return Widget ? <Widget lang={lang} /> : <PrayerWidgetPlaceholder lang={lang} />;
+  return Widget ? <div style={style}><Widget lang={lang} /></div> : <div style={style}><PrayerWidgetPlaceholder lang={lang} /></div>;
 }

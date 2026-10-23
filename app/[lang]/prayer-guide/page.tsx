@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -546,7 +547,7 @@ export default async function PrayerGuidePage({
               </span>
             </div>
 
-            <span className="badge-primary mb-5">🕌 {ui.introTitle}</span>
+            <span className="badge-primary mb-5"><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕌", 16)}</span>{ui.introTitle}</span>
 
             <h1
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
@@ -568,7 +569,7 @@ export default async function PrayerGuidePage({
                 «{ui.hadith}»
               </p>
               <p className="text-xs text-gold-600 dark:text-gold-400">
-                📜 {ui.hadithSource}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>{ui.hadithSource}
               </p>
             </div>
           </div>
@@ -593,10 +594,10 @@ export default async function PrayerGuidePage({
               className="section-title mb-0"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🕐 {ui.fivePrayersTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕐", 18)}</span>{ui.fivePrayersTitle}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">
               {ui.fivePrayersSubtitle}
@@ -613,7 +614,7 @@ export default async function PrayerGuidePage({
 
                 <div className="mb-3 flex items-center gap-3">
                   <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-3xl dark:bg-primary-900/40">
-                    {p.icon}
+                    {renderDesignIcon(p.icon, 28)}
                   </span>
                   <div>
                     <h3
@@ -665,7 +666,7 @@ export default async function PrayerGuidePage({
               📋 {ui.stepsTitle}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">
               {ui.stepsSubtitle}
@@ -684,7 +685,7 @@ export default async function PrayerGuidePage({
                 <div className="relative">
                   <div className="mb-4 flex items-start gap-4">
                     <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/20 text-3xl backdrop-blur-sm">
-                      {s.icon}
+                      {renderDesignIcon(s.icon, 28)}
                     </div>
 
                     <div className="flex-1">
@@ -740,7 +741,7 @@ export default async function PrayerGuidePage({
               ✓ {ui.conditionsTitle}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
           </div>
 
@@ -751,7 +752,7 @@ export default async function PrayerGuidePage({
                 className="mb-4 text-xl font-black text-primary-700 dark:text-gold-300"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
-                🕋 {ui.beforePrayer}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕋", 18)}</span>{ui.beforePrayer}
               </h3>
 
               <ul className="space-y-2">
@@ -774,7 +775,7 @@ export default async function PrayerGuidePage({
                 className="mb-4 text-xl font-black text-primary-700 dark:text-gold-300"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
-                ⚠️ {ui.nullifiers}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 18)}</span>{ui.nullifiers}
               </h3>
 
               <ul className="space-y-2">
@@ -818,12 +819,12 @@ export default async function PrayerGuidePage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${L}/prayer-times`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕐</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🕐", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.prayerTimesPage}
@@ -835,7 +836,7 @@ export default async function PrayerGuidePage({
             </Link>
 
             <Link href={`/${L}/qibla`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🧭</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🧭", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.qiblaPage}
@@ -847,7 +848,7 @@ export default async function PrayerGuidePage({
             </Link>
 
             <Link href={`/${L}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📖", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.quranPage}
@@ -859,7 +860,7 @@ export default async function PrayerGuidePage({
             </Link>
 
             <Link href={`/${L}/adhkar`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🤲</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🤲", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.adhkarPage}
@@ -878,7 +879,7 @@ export default async function PrayerGuidePage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -938,7 +939,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

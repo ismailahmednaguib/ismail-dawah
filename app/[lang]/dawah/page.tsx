@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero } from "@/components/ui";
+import { PageHero, renderDesignIcon } from "@/components/ui";
 
 export const dynamic = "force-static";
 
@@ -96,7 +96,7 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
                   className="group rounded-2xl border border-cream-200 bg-white p-5 shadow-sm hover:border-primary-300 hover:shadow-card transition"
                 >
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 text-xl group-hover:bg-primary-100 group-hover:text-primary-800 transition">
-                    {s.icon}
+                    {renderDesignIcon(s.icon, 26)}
                   </span>
                   <h3 className="mt-4 font-bold text-primary-950">{s.title}</h3>
                   <p className="mt-1 text-sm text-stone-500">{s.desc}</p>

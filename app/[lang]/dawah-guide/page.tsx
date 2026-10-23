@@ -8,7 +8,7 @@ import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, Callout } from "@/components/ui";
+import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ============================================================
@@ -792,7 +792,7 @@ export default async function DawahGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.principlesTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.principlesDesc}</p>
           </div>
@@ -804,7 +804,7 @@ export default async function DawahGuidePage({
 
                 <div className="mb-5 flex items-start gap-4">
                   <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                    {principle.icon}
+                    {renderDesignIcon(principle.icon, 30)}
                   </span>
 
                   <div className="min-w-0">
@@ -847,7 +847,7 @@ export default async function DawahGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.stepsTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.stepsDesc}</p>
           </div>
@@ -926,7 +926,7 @@ export default async function DawahGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.skillsTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.skillsDesc}</p>
           </div>
@@ -936,7 +936,7 @@ export default async function DawahGuidePage({
               <article key={skill.id} className="card p-6 md:p-7">
                 <div className="mb-5 flex items-start gap-4">
                   <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                    {skill.icon}
+                    {renderDesignIcon(skill.icon, 30)}
                   </span>
 
                   <div className="min-w-0">
@@ -979,7 +979,7 @@ export default async function DawahGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.mistakesTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.mistakesDesc}</p>
           </div>
@@ -989,7 +989,7 @@ export default async function DawahGuidePage({
               <article key={mistake.id} className="card border-red-200 p-6 md:p-7 dark:border-red-900/30">
                 <div className="mb-5 flex items-start gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-xl dark:bg-red-900/30">
-                    ⚠️
+                    {renderDesignIcon("⚠️", 24)}
                   </span>
 
                   <h3
@@ -1031,7 +1031,7 @@ export default async function DawahGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.checklistTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.checklistDesc}</p>
           </div>
@@ -1058,7 +1058,7 @@ export default async function DawahGuidePage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -1095,12 +1095,12 @@ export default async function DawahGuidePage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/atheism-response`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🧠</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🧠", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.atheismPage}
@@ -1124,7 +1124,7 @@ export default async function DawahGuidePage({
             </Link>
 
             <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("✍️", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.articlesPage}
@@ -1136,7 +1136,7 @@ export default async function DawahGuidePage({
             </Link>
 
             <Link href={`/${l}/fields`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📚</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📚", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.fieldsPage}
@@ -1177,7 +1177,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
@@ -1198,7 +1198,7 @@ function QuickNavLink({ href, icon, label }: { href: string; icon: string; label
       href={href}
       className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
     >
-      <span>{icon}</span>
+      <span aria-hidden="true">{renderDesignIcon(icon, 20)}</span>
       <span>{label}</span>
     </a>
   );

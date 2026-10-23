@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Lang } from "@/lib/i18n";
+import { renderDesignIcon } from "@/components/ui";
 
 // ============================================================
 // الأنواع
@@ -427,7 +428,7 @@ export default function DailyWirdClient({
                     <span className="relative inline-flex h-3 w-3 rounded-full bg-gold-500" />
                   </span>
                 )}
-                <span>{dayPercent === 100 ? "✓" : day.icon}</span>
+                <span aria-hidden="true">{dayPercent === 100 ? renderDesignIcon("✓", 18) : renderDesignIcon(day.icon, 22)}</span>
                 <span>{isRTL ? day.ar : day.en}</span>
                 {dayCompleted > 0 && dayPercent < 100 && (
                   <span className={`rounded-full px-2 py-0.5 text-xs font-black ${
@@ -456,7 +457,7 @@ export default function DailyWirdClient({
         {/* ===== لا توجد نتائج ===== */}
         {filteredDays.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mb-4 text-5xl">📭</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</div>
             <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {UI.noResults}
             </h3>
@@ -488,7 +489,7 @@ export default function DailyWirdClient({
                   <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="flex items-start gap-4">
                       <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                        {dayPercent === 100 ? "✓" : day.icon}
+                        {dayPercent === 100 ? renderDesignIcon("✓", 24) : renderDesignIcon(day.icon, 30)}
                       </span>
 
                       <div>
@@ -578,7 +579,7 @@ export default function DailyWirdClient({
                                     : "text-slate-800 dark:text-slate-100"
                                 }`}
                               >
-                                <span>{task.icon}</span>
+                                <span aria-hidden="true">{renderDesignIcon(task.icon, 20)}</span>
                                 <span>{isRTL ? task.ar : task.en}</span>
                               </span>
                             </span>
@@ -669,7 +670,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>

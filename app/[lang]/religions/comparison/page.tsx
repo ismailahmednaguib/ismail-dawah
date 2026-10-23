@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { PageHero } from '@/components/ui';
+import { PageHero, renderDesignIcon } from '@/components/ui';
 import { getSiteSettings } from '@/lib/content';
 import { getPublicList } from '@/lib/learn/public';
 import { isValidLang, type Lang } from '@/lib/i18n';
@@ -61,7 +61,7 @@ export default async function ReligionsComparisonPage({ params }: { params: Prom
               <thead className="bg-primary-950 text-white">
                 <tr>
                   <th className="p-4 text-right">{isArabic ? 'المحور' : 'Dimension'}</th>
-                  {RELIGION_ENTRIES.map((entry, index) => <th key={entry.slug} className="p-4 text-right">{entry.icon} {localized(entry.title, current)}<span className="mt-1 block text-xs font-normal text-primary-200">{counts[index]} {isArabic ? 'مادة' : 'materials'}</span></th>)}
+                  {RELIGION_ENTRIES.map((entry, index) => <th key={entry.slug} className="p-4 text-right"><span className="inline-flex items-center gap-1.5" aria-hidden="true">{renderDesignIcon(entry.icon, 18)} {localized(entry.title, current)}</span><span className="mt-1 block text-xs font-normal text-primary-200">{counts[index]} {isArabic ? 'مادة' : 'materials'}</span></th>)}
                 </tr>
               </thead>
               <tbody>

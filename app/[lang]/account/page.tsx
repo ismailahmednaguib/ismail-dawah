@@ -12,6 +12,7 @@ import { createAdminClient, getServerUser } from "@/lib/auth";
 import EmailVerificationBanner from "@/components/auth/EmailVerificationBanner";
 import ChangePasswordCard from "@/components/auth/ChangePasswordCard";
 import QuestionsCard from "@/components/account/QuestionsCard";
+import { renderDesignIcon } from "@/components/ui";
 import {
   PASSWORD_CHANGE_SETTING_KEY,
   normalizePasswordChangeConfig,
@@ -438,7 +439,7 @@ export default async function AccountPage({
 
             <div className="mb-5 flex items-start gap-4">
               <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-                ✨
+                {renderDesignIcon("✨", 24)}
               </span>
 
               <div className="min-w-0">
@@ -578,7 +579,7 @@ export default async function AccountPage({
               💎 {ui.whyTitle}
             </h2>
             <div className="islamic-divider my-3">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.whyDesc}</p>
           </div>
@@ -620,10 +621,10 @@ export default async function AccountPage({
               className="mb-3 text-3xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🛠️ {ui.howTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🛠️", 22)}</span>{ui.howTitle}
             </h2>
             <div className="islamic-divider my-3">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.howDesc}</p>
           </div>
@@ -676,7 +677,7 @@ export default async function AccountPage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -761,7 +762,7 @@ function BenefitCard({
       <div className="gradient-primary absolute inset-x-0 top-0 h-1" />
 
       <span className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-        {icon}
+        {renderDesignIcon(icon, 28)}
       </span>
 
       <h3
@@ -795,7 +796,7 @@ function StepCard({
 
       <div className="mb-4 flex items-center gap-3">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 26)}
         </span>
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gold-500 font-black text-white shadow-lg">
           {step}

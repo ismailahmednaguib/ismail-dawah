@@ -4,6 +4,7 @@
 // ============================================================
 
 import type { ReactNode } from "react";
+import { renderDesignIcon } from "@/components/ui";
 
 const PATHS: Record<string, ReactNode> = {
   quran: (
@@ -62,7 +63,7 @@ export default function NavIcon({
   if (!icon) {
     return (
       <span aria-hidden="true" className="text-3xl leading-none">
-        {fallback}
+        {renderDesignIcon(fallback ?? "", 28)}
       </span>
     );
   }

@@ -1,5 +1,6 @@
 "use client";
 
+import { renderDesignIcon } from "@/components/ui";
 
 interface Tab {
   id: string;
@@ -41,7 +42,7 @@ export default function FieldTabs({
               }
             `}
           >
-            {tab.icon && <span className="text-base">{tab.icon}</span>}
+            {tab.icon && <span className="text-base">{renderDesignIcon(tab.icon, 18)}</span>}
             <span>{tab.label}</span>
             {tab.count !== undefined && (
               <span
@@ -82,7 +83,7 @@ export default function FieldTabs({
                 }
               `}
             >
-              {tab.icon && <span>{tab.icon}</span>}
+              {tab.icon && <span>{renderDesignIcon(tab.icon, 18)}</span>}
               <span>{tab.label}</span>
               {tab.count !== undefined && (
                 <span className="rounded-full bg-primary-100 px-2 py-0.5 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
@@ -119,7 +120,7 @@ export default function FieldTabs({
         >
           {tab.icon && (
             <span className={`text-2xl ${activeTab === tab.id ? "scale-110" : ""} transition-transform`}>
-              {tab.icon}
+              {renderDesignIcon(tab.icon, 26)}
             </span>
           )}
           <span className="text-sm font-semibold">{tab.label}</span>

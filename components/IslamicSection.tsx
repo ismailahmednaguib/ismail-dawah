@@ -1,4 +1,5 @@
 import React from "react";
+import { renderDesignIcon } from "@/components/ui";
 
 interface IslamicSectionProps {
   title: string;
@@ -43,7 +44,7 @@ export default function IslamicSection({
           
           {/* الفاصل الزخرفي الإسلامي */}
           <div className="islamic-divider my-0">
-            <span className="text-xl text-gold-500">✦</span>
+            <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
           </div>
           
           {subtitle && (

@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { t, type Lang } from "@/lib/i18n";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
+import { renderDesignIcon } from "@/components/ui";
 
 type NewsletterProps = {
   lang: Lang;
@@ -75,10 +76,10 @@ export default function Newsletter({ lang }: NewsletterProps) {
               aria-hidden="true"
               className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl"
               style={{
-                background: "linear-gradient(135deg, #06b6d4, #0e7490)",
+                background: "linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700))",
               }}
             >
-              📬
+              {renderDesignIcon("mail", 24)}
             </span>
             <h2
               className="text-2xl font-bold text-slate-900 dark:text-white"

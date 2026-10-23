@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -463,7 +464,7 @@ export default async function YouthIssuesPage({
                 «{ui.hadith}»
               </p>
               <p className="text-xs text-primary-700 dark:text-primary-400">
-                📜 {ui.hadithSource}
+                 <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>{ui.hadithSource}
               </p>
             </div>
           </div>
@@ -489,7 +490,7 @@ export default async function YouthIssuesPage({
               className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🌟 {ui.introTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🌟", 22)}</span>{ui.introTitle}
             </h2>
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.introDesc}
@@ -509,7 +510,7 @@ export default async function YouthIssuesPage({
               💡 {ui.issuesTitle}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">
               {ui.issuesSubtitle}
@@ -529,7 +530,7 @@ export default async function YouthIssuesPage({
                 <div className="relative">
                   {/* العنوان */}
                   <div className="mb-5 text-center">
-                    <span className="mb-3 inline-block text-5xl">{issue.icon}</span>
+                    <span className="mb-3 inline-flex" aria-hidden="true">{renderDesignIcon(issue.icon, 44)}</span>
                     <h3
                       className="text-xl font-black"
                       style={{ fontFamily: "var(--font-amiri)" }}
@@ -541,7 +542,7 @@ export default async function YouthIssuesPage({
                   {/* المشكلة */}
                   <div className="mb-3 rounded-xl bg-white/10 p-4 backdrop-blur-sm">
                     <h4 className="mb-2 text-sm font-black text-white/90">
-                      ⚠️ {ui.problem}
+                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 16)}</span>{ui.problem}
                     </h4>
                     <p className="text-sm leading-relaxed text-white/90">
                       {issue.problem[L]}
@@ -561,7 +562,7 @@ export default async function YouthIssuesPage({
                   {/* الدليل القرآني */}
                   <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
                     <p className="mb-1 text-[10px] font-black text-white/80">
-                      📖 {ui.quranicEvidence}
+                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 16)}</span>{ui.quranicEvidence}
                     </p>
                     <p
                       className="text-center text-base font-black"
@@ -586,7 +587,7 @@ export default async function YouthIssuesPage({
         <div className="card relative mb-10 overflow-hidden border-2 border-gold-300 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 p-8 text-center md:p-12 dark:border-gold-700 dark:from-primary-950/30 dark:via-gray-900 dark:to-gold-950/30">
           <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
 
-          <span className="mb-4 inline-block text-5xl">💬</span>
+          <span aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("💬", 48)}</span>
 
           <h2
             className="mb-4 text-2xl font-black text-slate-900 md:text-3xl dark:text-white"
@@ -608,7 +609,7 @@ export default async function YouthIssuesPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -617,7 +618,7 @@ export default async function YouthIssuesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ✍️
+                {renderDesignIcon("✍️", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -651,7 +652,7 @@ export default async function YouthIssuesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🧠
+                {renderDesignIcon("🧠", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -668,7 +669,7 @@ export default async function YouthIssuesPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📬
+                {renderDesignIcon("mail", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -688,7 +689,7 @@ export default async function YouthIssuesPage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -744,7 +745,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import TurnstileWidget from '@/components/security/TurnstileWidget';
 import type { Lang } from '@/lib/i18n';
+import { renderDesignIcon } from '@/components/ui';
 
 const TURNSTILE_REQUIRED = Boolean(
   (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '').trim()
@@ -107,7 +108,7 @@ export default function ConstrainedAssistant({ lang, enabled }: { lang: Lang; en
   return (
     <section className="card border-primary-200 bg-primary-50/60 p-6 dark:border-night-700 dark:bg-night-800" aria-labelledby="assistant-title">
       <div className="flex items-start gap-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-700 text-2xl text-white" aria-hidden="true">✦</span>
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-700 text-2xl text-white" aria-hidden="true">{renderDesignIcon("✦", 24)}</span>
         <div className="min-w-0 flex-1">
           <h2 id="assistant-title" className="text-xl font-black text-primary-950 dark:text-white">{copy.title}</h2>
           <p className="mt-2 text-sm leading-7 text-slate-700 dark:text-slate-200">{copy.description}</p>

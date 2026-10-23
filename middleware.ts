@@ -2,11 +2,30 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { preferredLanguageFromHeader } from './lib/i18n/config';
+import { resolveManagedRedirect } from './lib/managed-redirects';
 
 const ENABLED_LANGUAGES = ['ar', 'en'];
 const DEFAULT_LANGUAGE = 'ar';
 
-export function middleware(request: NextRequest) {
+async function resolveRedirectFromPublicSettings(request: NextRequest) {
+  try {
+    const settingsUrl = new URL('/api/site-settings', request.url);
+    const response = await fetch(settingsUrl, {
+      headers: { accept: 'application/json' },
+      cache: 'force-cache',
+    });
+    if (!response.ok) return null;
+    const payload = (await response.json()) as { settings?: { redirects?: unknown } };
+    return resolveManagedRedirect(
+      `${request.nextUrl.pathname}${request.nextUrl.search}`,
+      payload.settings?.redirects
+    );
+  } catch {
+    return null;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // تجاهل الملفات الثابتة و API
@@ -21,6 +40,14 @@ export function middleware(request: NextRequest) {
     pathname === '/manifest.webmanifest'
   ) {
     return NextResponse.next();
+  }
+
+  const managedRedirect = await resolveRedirectFromPublicSettings(request);
+  if (managedRedirect) {
+    const destination = new URL(managedRedirect.destination, request.url);
+    if (destination.pathname !== pathname || destination.search !== request.nextUrl.search) {
+      return NextResponse.redirect(destination, managedRedirect.statusCode);
+    }
   }
 
   // التحقق من وجود لغة في الرابط

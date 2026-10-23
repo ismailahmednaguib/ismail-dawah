@@ -6,6 +6,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { renderDesignIcon } from "@/components/ui";
 
 type State =
   | "idle"
@@ -233,7 +234,7 @@ export default function ResetPasswordClient({
         <div className={`rounded-2xl border p-5 ${blockedState.tone}`} role="alert">
           <div className="flex items-start gap-3">
             <span className="text-2xl leading-none" aria-hidden="true">
-              {blockedState.icon}
+              {renderDesignIcon(blockedState.icon, 24)}
             </span>
             <div>
               <h2 className="text-xl font-black leading-relaxed">{blockedState.title}</h2>
@@ -307,7 +308,7 @@ export default function ResetPasswordClient({
           />
           {confirm && password !== confirm && (
             <p className="mt-1 text-xs font-bold text-red-700 dark:text-red-400">
-              ⚠️ {copy.mismatch}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 16)}</span>{copy.mismatch}
             </p>
           )}
         </div>

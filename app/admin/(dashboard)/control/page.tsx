@@ -8,10 +8,11 @@
 
 import { useCallback, useEffect, useMemo, useState, type DragEvent } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
   PAGES,
   mergeSectionsConfig,
+  mergeSectionOrder,
   mergeTitlesConfig,
   mergePagesVisibility,
 } from '@/lib/page-sections';
@@ -19,10 +20,25 @@ import { flattenNav, type CustomNavNode } from '@/lib/navigation';
 import { legacyScheduleToText } from '@/lib/live-schedule';
 import { MAX_EDITOR_PICKS, parseEditorPicks } from '@/lib/home/editor-picks';
 import { findMissingEnglishFields } from '@/lib/settings-coverage';
+import { getIcon, type IconName } from '@/lib/icons';
+import { renderDesignIcon } from '@/components/ui';
+import { DEFAULT_THEME_SETTINGS, normalizeThemeSettings } from '@/lib/theme-settings';
+import ManagedRedirectsEditor from '@/components/admin/ManagedRedirectsEditor';
+import {
+  UnifiedAuditTab,
+  UnifiedNotificationsTab,
+  UnifiedMediaTab,
+  UnifiedQuestionsTab,
+  UnifiedTranslationsTab,
+  UnifiedToolsTab,
+  UnifiedUsersTab,
+} from '@/components/admin/UnifiedControlExtensions';
 
 type TabId =
   | 'dashboard'
   | 'settings'
+  | 'tools'
+  | 'media'
   | 'navigation'
   | 'sections'
   | 'content'
@@ -37,22 +53,24 @@ type TabId =
 interface TabItem {
   id: TabId;
   label: string;
-  icon: string;
+  icon: IconName;
 }
 
 const TABS: TabItem[] = [
-  { id: 'dashboard', label: 'لوحة المعلومات', icon: '▦' },
-  { id: 'settings', label: 'إعدادات المنصة', icon: '⚙' },
-  { id: 'navigation', label: 'القوائم والتنقّل', icon: '🧭' },
-  { id: 'sections', label: 'الأقسام والظهور', icon: '👁' },
-  { id: 'content', label: 'إدارة المحتوى', icon: '✎' },
-  { id: 'taxonomies', label: 'التصنيفات', icon: '⌘' },
-  { id: 'translations', label: 'الترجمات', icon: '文' },
-  { id: 'review', label: 'المراجعة العلمية', icon: '✓' },
-  { id: 'questions', label: 'أسئلة الزوار', icon: '?' },
-  { id: 'notifications', label: 'الإشعارات والنشرة', icon: '♢' },
-  { id: 'users', label: 'المستخدمون والأدوار', icon: '♙' },
-  { id: 'audit', label: 'سجل التدقيق', icon: '≡' },
+  { id: 'dashboard', label: 'لوحة المعلومات', icon: 'target' },
+  { id: 'settings', label: 'إعدادات المنصة', icon: 'settings' },
+  { id: 'tools', label: 'الأدوات الإسلامية', icon: 'prayerRug' },
+  { id: 'media', label: 'مكتبة الوسائط', icon: 'folder' },
+  { id: 'navigation', label: 'القوائم والتنقّل', icon: 'qibla' },
+  { id: 'sections', label: 'الأقسام والظهور', icon: 'eye' },
+  { id: 'content', label: 'إدارة المحتوى', icon: 'edit' },
+  { id: 'taxonomies', label: 'التصنيفات', icon: 'folder' },
+  { id: 'translations', label: 'الترجمات', icon: 'language' },
+  { id: 'review', label: 'المراجعة العلمية', icon: 'shieldCheck' },
+  { id: 'questions', label: 'أسئلة الزوار', icon: 'helpCircle' },
+  { id: 'notifications', label: 'الإشعارات والنشرة', icon: 'bell' },
+  { id: 'users', label: 'المستخدمون والأدوار', icon: 'users' },
+  { id: 'audit', label: 'سجل التدقيق', icon: 'fileText' },
 ];
 
 function apiFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
@@ -351,6 +369,7 @@ function SettingsTab() {
     [missingEnglish]
   );
   const hasLoaded = Object.keys(settings).length > 0;
+  const themeSettings = normalizeThemeSettings(settings.theme);
 
   return (
     <div className="space-y-6">
@@ -405,6 +424,47 @@ function SettingsTab() {
           كل الحقول الإنجليزية مكتملة.
         </div>
       )}
+      <section className="rounded-2xl border border-cream-200 bg-white p-4 shadow-sm">
+        <h2 className="text-base font-black text-primary-950">الهوية البصرية المشتركة</h2>
+        <p className="mt-1 text-xs leading-6 text-stone-500">يُطبّق اللونان على الموقع ولوحة الإدارة من نفس الإعداد، مع اشتقاق درجات متناسقة تلقائيًا.</p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {([
+            ['primaryColor', 'اللون الأساسي', '#0e7490'],
+            ['goldColor', 'اللون الذهبي/التمييز', '#d4af37'],
+          ] as const).map(([key, label, fallback]) => {
+            const value = themeSettings[key] || fallback;
+            return (
+              <div key={key}>
+                <span className="mb-2 block text-xs font-bold text-primary-700">{label}</span>
+                <div className="flex items-end gap-3">
+                  <input
+                    type="color"
+                    value={value}
+                    onChange={(event) => setField('theme', { ...DEFAULT_THEME_SETTINGS, ...themeSettings, [key]: event.target.value })}
+                    className="h-11 w-14 cursor-pointer rounded-lg border border-cream-200 bg-white p-1"
+                    aria-label={label}
+                  />
+                  <input
+                    value={value}
+                    onChange={(event) => setField('theme', { ...DEFAULT_THEME_SETTINGS, ...themeSettings, [key]: event.target.value })}
+                    className="input-islamic w-full text-sm"
+                    dir="ltr"
+                    placeholder={fallback}
+                    aria-label={`قيمة ${label}`}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      <section className="rounded-2xl border border-cream-200 bg-white p-4 shadow-sm">
+        <h2 className="text-base font-black text-primary-950">الروابط والتحويلات 301</h2>
+        <p className="mt-1 text-xs leading-6 text-stone-500">تحويلات داخلية دائمة للروابط القديمة، مع فحص الوجهات ومنع التكرار والحلقات.</p>
+        <div className="mt-4">
+          <ManagedRedirectsEditor value={settings.redirects} onChange={(value) => setField('redirects', value)} />
+        </div>
+      </section>
       <div className="grid gap-4 lg:grid-cols-3">
         {FIELDS.map((f) => {
           const val = settings[f.key];
@@ -545,6 +605,7 @@ function SectionsTab() {
   }, [load]);
 
   const sections = useMemo(() => mergeSectionsConfig(settings.pageSections), [settings.pageSections]);
+  const sectionOrder = useMemo(() => mergeSectionOrder(settings.sectionOrder), [settings.sectionOrder]);
   const titles = useMemo(() => mergeTitlesConfig(settings.sectionTitles), [settings.sectionTitles]);
   const pages = useMemo(() => mergePagesVisibility(settings.hiddenPages), [settings.hiddenPages]);
 
@@ -602,6 +663,19 @@ function SectionsTab() {
     },
     []
   );
+
+  const moveSection = useCallback((pageKey: string, secKey: string, direction: -1 | 1) => {
+    if (pageKey !== 'home') return;
+    setSettings((prev) => {
+      const current = mergeSectionOrder(prev.sectionOrder);
+      const next = [...current.home];
+      const index = next.indexOf(secKey);
+      const target = index + direction;
+      if (index < 0 || target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return { ...prev, sectionOrder: { ...current, home: next } };
+    });
+  }, []);
 
   const save = useCallback(async () => {
     setSaving(true);
@@ -720,7 +794,14 @@ function SectionsTab() {
 
               {isOpen && (
                 <div className="divide-y divide-cream-100 border-t border-cream-100">
-                  {pageSections.map(([secKey, secAr, secEn]) => {
+                   {(() => {
+                     const orderedSections = pageKey === 'home'
+                       ? sectionOrder.home
+                           .map((secKey) => pageSections.find(([key]) => key === secKey))
+                           .filter((item): item is (typeof pageSections)[number] => Boolean(item))
+                       : pageSections;
+
+                     return orderedSections.map(([secKey, secAr, secEn], sectionIndex) => {
                     const isVisible = sections[pageKey]?.[secKey] !== false;
                     const titleAr = titles[pageKey]?.[secKey]?.ar ?? '';
                     const titleEn = titles[pageKey]?.[secKey]?.en ?? '';
@@ -766,9 +847,36 @@ function SectionsTab() {
                             dir="ltr"
                           />
                         </div>
+
+                        {pageKey === 'home' && (
+                          <div className="flex items-center gap-2 md:col-span-2">
+                            <button
+                              type="button"
+                              onClick={() => moveSection(pageKey, secKey, -1)}
+                              disabled={sectionIndex === 0}
+                              className="rounded-lg border border-cream-200 bg-white px-2.5 py-1 text-xs font-black text-primary-700 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-30"
+                              aria-label={`رفع قسم ${secAr}`}
+                              title="رفع القسم"
+                            >
+                              ▲
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveSection(pageKey, secKey, 1)}
+                              disabled={sectionIndex === orderedSections.length - 1}
+                              className="rounded-lg border border-cream-200 bg-white px-2.5 py-1 text-xs font-black text-primary-700 hover:bg-primary-50 disabled:cursor-not-allowed disabled:opacity-30"
+                              aria-label={`خفض قسم ${secAr}`}
+                              title="خفض القسم"
+                            >
+                              ▼
+                            </button>
+                            <span className="text-[11px] font-bold text-stone-400">ترتيب الرئيسية</span>
+                          </div>
+                        )}
                       </div>
                     );
-                  })}
+                     });
+                   })()}
                 </div>
               )}
             </div>
@@ -1116,7 +1224,7 @@ function NavigationTab() {
               onChange={() => toggleVisible(node.key)}
               className="rounded text-primary-700 focus:ring-primary-500"
             />
-            <span className="text-lg" aria-hidden="true">{node.icon}</span>
+            <span className="text-lg" aria-hidden="true">{renderDesignIcon(node.icon, 20)}</span>
             <span>
               <span className={`block text-sm font-bold ${isVisible ? 'text-primary-900' : 'text-stone-400 line-through'}`}>
                 {cfg.ar?.trim() || node.ar}
@@ -1359,7 +1467,7 @@ function NavigationTab() {
                   className="flex flex-1 items-center justify-between gap-3"
                 >
                   <span className="flex items-center gap-2 text-start">
-                    <span className="text-xl" aria-hidden="true">{root.icon}</span>
+                    <span className="text-xl" aria-hidden="true">{renderDesignIcon(root.icon, 22)}</span>
                     <span>
                       <span className={`block font-black ${isVisible ? 'text-primary-950' : 'text-stone-400 line-through'}`}>
                         {cfg.ar?.trim() || root.ar}
@@ -1456,12 +1564,14 @@ function ContentTab() {
   const [items, setItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>('');
+  const [search, setSearch] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
       const url = new URL('/api/admin/content', location.origin);
       if (filterType) url.searchParams.set('type', filterType);
+      if (search.trim()) url.searchParams.set('search', search.trim());
       const res = await apiFetch(url.toString(), { cache: 'no-store' }).then(handleResponse);
       setItems(res.data ?? []);
     } catch (e) {
@@ -1469,11 +1579,11 @@ function ContentTab() {
     } finally {
       setLoading(false);
     }
-  }, [filterType]);
+  }, [filterType, search]);
 
   useEffect(() => {
     void load();
-  }, [load, filterType]);
+  }, [load]);
 
   const updateStatus = useCallback(async (id: string, status: string) => {
     try {
@@ -1495,7 +1605,7 @@ function ContentTab() {
     } catch (e: any) {
       alert(e.message || 'فشل الحذف');
     }
-  }, []);
+  }, [load]);
 
   const types = useMemo(() => [...new Set(items.map((i) => i.content_type))], [items]);
 
@@ -1515,6 +1625,13 @@ function ContentTab() {
       </div>
 
       <div className="flex flex-wrap gap-2">
+        <input
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          placeholder="ابحث بعنوان المادة…"
+          className="input-islamic min-w-56 flex-1"
+          aria-label="البحث في المحتوى"
+        />
         <button
           onClick={() => setFilterType('')}
           className={`px-3 py-1.5 rounded-lg text-sm font-bold transition ${!filterType ? 'bg-primary-100 text-primary-800' : 'bg-cream-100 text-stone-600'}`}
@@ -1580,8 +1697,15 @@ function ContentTab() {
                         className="p-2 rounded-lg text-sm font-bold transition text-primary-700 hover:bg-primary-50"
                         title={item.status === 'published' ? 'أرشفة' : 'نشر'}
                       >
-                        {item.status === 'published' ? '📦' : '📢'}
+                        {renderDesignIcon(item.status === 'published' ? '📦' : '📢', 18)}
                       </button>
+                      <Link
+                        href={`/admin/content/${encodeURIComponent(item.id)}`}
+                        className="rounded-lg p-2 text-sm font-bold text-primary-700 transition hover:bg-primary-50"
+                        title="تعديل المحتوى"
+                      >
+                        تعديل
+                      </Link>
                       <button
                         onClick={() => removeItem(item.id)}
                         className="p-2 rounded-lg text-sm font-bold transition text-red-700 hover:bg-red-50"
@@ -1756,24 +1880,6 @@ function TaxonomiesTab() {
 }
 
 // ============================================================
-// تبويب الترجمات (موجز)
-// ============================================================
-
-function TranslationsTab() {
-  return (
-    <div className="space-y-6">
-      <SectionHeader
-        title="إدارة الترجمات"
-        subtitle="تعديل النصوص المترجمة لكل صفحة ومحتوى"
-      />
-      <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-12 text-center text-sm text-stone-500">
-        يمكن إدارة الترجمات من خلال تعديل محتوى كل عنصر بشكل فردي، أو عبر صفحة الترجمات في اللوحة الجانبية.
-      </div>
-    </div>
-  );
-}
-
-// ============================================================
 // تبويب المراجعة العلمية
 // ============================================================
 
@@ -1879,45 +1985,36 @@ function ReviewTab() {
 }
 
 // ============================================================
-// تبويبات موجزة (تُربط بالصفحات الفرعية القائمة)
-// ============================================================
-
-function SimpleTab({ title, subtitle }: { title: string; subtitle: string }) {
-  return (
-    <div className="space-y-6">
-      <SectionHeader title={title} subtitle={subtitle} />
-      <div className="rounded-2xl border border-dashed border-cream-300 bg-cream-50 p-12 text-center text-sm text-stone-500">
-        تُدار هذه الأقسام عبر الصفحة المقابلة في القائمة الجانبية للوحة التحكم.
-      </div>
-    </div>
-  );
-}
-
-// ============================================================
 // المكون الرئيسي
 // ============================================================
 
 const TAB_COMPONENTS: Record<TabId, () => React.ReactElement> = {
   dashboard: DashboardTab,
   settings: SettingsTab,
+  tools: UnifiedToolsTab,
+  media: UnifiedMediaTab,
   navigation: NavigationTab,
   sections: SectionsTab,
   content: ContentTab,
   taxonomies: TaxonomiesTab,
-  translations: TranslationsTab,
+  translations: UnifiedTranslationsTab,
   review: ReviewTab,
-  questions: () => <SimpleTab title="أسئلة الزوار" subtitle="إدارة واستجابة لأسئلة الزوار من خلال النموذج على الموقع" />,
-  notifications: () => <SimpleTab title="الإشعارات والنشرة البريدية" subtitle="إرسال إشعارات للمشتركين وإدارة قائمة النشرة" />,
-  users: () => <SimpleTab title="المستخدمون والأدوار" subtitle="إدارة الحسابات وترقية الأدوار" />,
-  audit: () => <SimpleTab title="سجل التدقيق" subtitle="سجل كل التغييرات التي جرت على المنصة ومن قام بها" />,
+  questions: UnifiedQuestionsTab,
+  notifications: UnifiedNotificationsTab,
+  users: UnifiedUsersTab,
+  audit: UnifiedAuditTab,
 };
 
 export default function AdminControlPanel() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
 
-  const initialTab = TABS.find((t) => pathname === `/admin/control?tab=${t.id}`)?.id ?? 'dashboard';
+  const requestedTab = searchParams.get('tab');
+  const initialTab = pathname === '/admin/control' && TABS.some((tab) => tab.id === requestedTab)
+    ? requestedTab as TabId
+    : 'dashboard';
 
   useEffect(() => {
     setActiveTab(initialTab);
@@ -1945,6 +2042,7 @@ export default function AdminControlPanel() {
       <div className="flex gap-1 overflow-x-auto pb-2 mb-6">
         {TABS.map((tab) => {
           const active = activeTab === tab.id;
+          const TabIcon = getIcon(tab.icon);
           return (
             <button
               key={tab.id}
@@ -1954,7 +2052,7 @@ export default function AdminControlPanel() {
               }}
               className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-bold transition ${active ? 'bg-primary-700 text-white shadow-lg' : 'bg-cream-100 text-primary-800 hover:bg-primary-50'}`}
             >
-              <span>{tab.icon}</span>
+              {TabIcon ? <TabIcon size={16} aria-hidden="true" /> : null}
               <span>{tab.label}</span>
             </button>
           );

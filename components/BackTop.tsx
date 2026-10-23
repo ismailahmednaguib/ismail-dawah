@@ -38,7 +38,7 @@ export default function BackTop() {
       aria-label="العودة للأعلى"
       className="fixed bottom-6 end-6 z-50 flex h-14 w-14 cursor-pointer items-center justify-center rounded-full shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 animate-fade-in"
       style={{
-        background: "linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)",
+        background: "linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-700) 100%)",
         boxShadow: "0 8px 30px -6px rgba(6, 182, 212, 0.5)",
       }}
     >
@@ -60,7 +60,7 @@ export default function BackTop() {
           cy="20"
           r="18"
           fill="none"
-          stroke="#d4af37"
+          stroke="var(--color-gold-500)"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeDasharray={circumference}

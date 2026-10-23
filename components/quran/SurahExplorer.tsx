@@ -8,6 +8,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { renderDesignIcon } from "@/components/ui";
 
 export type SurahItem = {
   number: number;
@@ -231,7 +232,7 @@ export default function SurahExplorer({
 
           <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4 text-xs font-bold text-slate-500 dark:border-night-700 dark:text-slate-400">
             <span className="inline-flex items-center gap-1.5">
-              📚 {labels.totalSurahs}:
+              <span aria-hidden="true" className="inline-flex align-middle">{renderDesignIcon("📚", 16)}</span> {labels.totalSurahs}:
               <span className="text-slate-800 dark:text-slate-100">
                 {formatNumber(counts.all, lang)}
               </span>
@@ -257,7 +258,7 @@ export default function SurahExplorer({
         (filtered.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="mb-4 text-5xl" aria-hidden="true">
-              📭
+              {renderDesignIcon("📭", 48)}
             </div>
             <h3 className="mb-2 text-xl font-black text-slate-800 dark:text-white">
               {labels.noResults}

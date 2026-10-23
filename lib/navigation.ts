@@ -188,6 +188,7 @@ export const NAV_TREE: NavNode[] = [
     n("contact", "تواصل معنا", "Contact Us", "✉️", "/contact"),
     n("faq", "الأسئلة الشائعة", "FAQ", "❓", "/faq"),
     n("privacy-terms", "الخصوصية والشروط", "Privacy & Terms", "📄", "/privacy"),
+    n("terms", "الشروط والأحكام", "Terms of Use", "📄", "/terms"),
     n("download-app", "تحميل التطبيق", "Download App", "📥", "/download"),
   ], { desc: { ar: "تعرّف على الشيخ والمنصة، وتواصل معنا، وأسئلة شائعة", en: "About the sheikh, contact us and the FAQ" } }),
 

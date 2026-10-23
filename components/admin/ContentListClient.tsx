@@ -74,7 +74,7 @@ export default function ContentListClient({ initialType = '' }: { initialType?: 
             setSearch(e.target.value);
             setPage(1);
           }}
-          placeholder="🔍 ابحث بالعنوان..."
+          placeholder="ابحث بالعنوان..."
           className="flex-1 min-w-[200px] border border-stone-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <select

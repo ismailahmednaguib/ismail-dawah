@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import TopBar from "@/components/TopBar";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
 import type { Lang } from "@/lib/i18n";
@@ -334,7 +335,7 @@ export default function RegisterPage() {
               </div>
 
               <span className="badge-gold mb-3">
-                ✨ {isRTL ? "انضم إلينا" : "Join Us"}
+                 <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 18)}</span>{isRTL ? "انضم إلينا" : "Join Us"}
               </span>
 
               <h1
@@ -487,7 +488,7 @@ export default function RegisterPage() {
                   />
                   {confirmPassword && password !== confirmPassword && (
                     <p className="mt-1 text-xs font-bold text-red-700 dark:text-red-400">
-                      ⚠️ {ui.passwordMismatch}
+                       <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 14)}</span>{ui.passwordMismatch}
                     </p>
                   )}
                 </div>
@@ -541,7 +542,7 @@ export default function RegisterPage() {
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-2">
-                      ✨ {ui.registerButton}
+                       <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 16)}</span>{ui.registerButton}
                     </span>
                   )}
                 </button>
@@ -567,7 +568,7 @@ export default function RegisterPage() {
                   className="mb-5 text-xl font-black text-slate-900 dark:text-white"
                   style={{ fontFamily: "var(--font-amiri)" }}
                 >
-                  🌟 {ui.benefitsTitle}
+                   <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🌟", 18)}</span>{ui.benefitsTitle}
                 </h2>
                 <ul className="space-y-3">
                   {[ui.benefit1, ui.benefit2, ui.benefit3, ui.benefit4, ui.benefit5].map(
@@ -615,7 +616,7 @@ export default function RegisterPage() {
               className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🔗 {ui.relatedTitle}
+               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
             </h2>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -656,7 +657,7 @@ export default function RegisterPage() {
               </Link>
 
               <Link href={`/${L}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("mail", 24)}</span>
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.contactPage}

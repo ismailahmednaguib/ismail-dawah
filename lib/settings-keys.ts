@@ -8,6 +8,7 @@
 export const NON_LOCALIZED_SETTING_KEYS = new Set([
   'pageSections',
   'sectionTitles',
+  'sectionOrder',
   'hiddenPages',
   'navigation',
   'editorPicks',
@@ -19,6 +20,10 @@ export const NON_LOCALIZED_SETTING_KEYS = new Set([
   'passwordChange',
   'questions',
   'showPrayerBar',
+  'prayerTools',
+  'tools',
+  'theme',
+  'redirects',
   'publicApiEnabled',
 ]);
 

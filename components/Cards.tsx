@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
+import { renderDesignIcon } from "@/components/ui";
 
 // ===== كارت أساسي =====
 interface BasicCardProps {
@@ -51,7 +52,7 @@ export function IconCard({
       <div
         className={`flex h-14 w-14 items-center justify-center rounded-2xl text-2xl mb-4 transition-transform duration-300 group-hover:scale-110 ${colorClasses[color]} ${className}`}
       >
-        {icon}
+        {renderDesignIcon(icon, 28)}
       </div>
       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2 group-hover:text-primary-700 dark:group-hover:text-primary-300 transition-colors">
         {title}
@@ -98,7 +99,7 @@ export function ListCard({ title, items, color = "teal", className = "" }: ListC
                 href={item.href}
                 className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 hover:text-primary-700 dark:hover:text-primary-300 transition-colors group"
               >
-                {item.icon && <span>{item.icon}</span>}
+                {item.icon && <span>{renderDesignIcon(item.icon, 18)}</span>}
                 <span className="group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform">
                   {item.label}
                 </span>
@@ -113,7 +114,7 @@ export function ListCard({ title, items, color = "teal", className = "" }: ListC
               </Link>
             ) : (
               <span className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
-                {item.icon && <span>{item.icon}</span>}
+                {item.icon && <span>{renderDesignIcon(item.icon, 18)}</span>}
                 {item.label}
               </span>
             )}
@@ -147,7 +148,7 @@ export function FeatureCard({
       <div className="flex items-start justify-between mb-4">
         {icon && (
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/40 text-2xl transition-transform duration-300 group-hover:scale-110">
-            {icon}
+            {renderDesignIcon(icon, 28)}
           </div>
         )}
         {badge && (
@@ -195,7 +196,7 @@ interface StatCardProps {
 export function StatCard({ value, label, icon, color = "teal", className = "" }: StatCardProps) {
   return (
     <div className={`card p-6 text-center ${className}`}>
-      {icon && <div className="text-3xl mb-2">{icon}</div>}
+      {icon && <div className="mb-2">{renderDesignIcon(icon, 30)}</div>}
       <div
         className={`text-3xl font-black mb-1 ${
           color === "teal" ? "text-primary-700 dark:text-primary-400" : "text-gold-600 dark:text-gold-400"

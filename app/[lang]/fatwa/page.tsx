@@ -8,7 +8,7 @@ import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, Callout } from "@/components/ui";
+import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
 import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
@@ -552,7 +552,7 @@ export default async function FatwaPage({
           {(q || category !== "all") && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <span className="badge-primary">
-                {ui.category}: {activeCategory.icon}{" "}
+                {ui.category}: {renderDesignIcon(activeCategory.icon, 16)}{" "}
                 {l === "ar" ? activeCategory.ar : activeCategory.en}
               </span>
 
@@ -607,7 +607,7 @@ export default async function FatwaPage({
                       : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
                   }`}
                 >
-                  <span>{item.icon}</span>
+                  <span aria-hidden="true">{renderDesignIcon(item.icon, 20)}</span>
                   <span>{l === "ar" ? item.ar : item.en}</span>
                   {item.id !== "all" && count > 0 && (
                     <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
@@ -654,10 +654,10 @@ export default async function FatwaPage({
                     <summary className="flex cursor-pointer list-none flex-col p-6 [&::-webkit-details-marker]:hidden">
                       <div className="mb-4 flex items-center justify-between">
                         <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-3 py-1 text-xs font-bold text-white`}>
-                          {icon} {cat}
+                          {renderDesignIcon(icon, 16)} {cat}
                         </span>
                         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-night-800">
-                          {icon}
+                          {renderDesignIcon(icon, 28)}
                         </span>
                       </div>
 
@@ -699,7 +699,7 @@ export default async function FatwaPage({
                       </p>
                       {fatwa.source && (
                         <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                          📚 {ui.source}: {fatwa.source}
+                          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 16)}</span>{ui.source}: {fatwa.source}
                         </p>
                       )}
                       {fatwa.reviewed && (
@@ -795,7 +795,7 @@ export default async function FatwaPage({
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-2">
                         <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-2.5 py-0.5 text-xs font-bold text-white`}>
-                          {icon} {cat}
+                          {renderDesignIcon(icon, 16)} {cat}
                         </span>
                       </div>
 
@@ -835,7 +835,7 @@ export default async function FatwaPage({
 
                     {fatwa.source && (
                       <p className="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                        📚 {ui.source}: {fatwa.source}
+                        <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 16)}</span>{ui.source}: {fatwa.source}
                       </p>
                     )}
 
@@ -866,12 +866,12 @@ export default async function FatwaPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("mail", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.contactPage}
@@ -895,7 +895,7 @@ export default async function FatwaPage({
             </Link>
 
             <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("✍️", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.articlesPage}
@@ -926,7 +926,7 @@ export default async function FatwaPage({
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 dark:border-gold-800/40 dark:bg-gold-950/20">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              ⚠️
+              {renderDesignIcon("⚠️", 24)}
             </span>
 
             <div>
@@ -972,7 +972,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

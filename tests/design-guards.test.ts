@@ -79,6 +79,12 @@ test('كل درجة لون مستخدمة في الكود معرّفة في @the
   );
 });
 
+test('نظام الأيقونات يقبل الاسم الرسمي والإيموجي القديم', () => {
+  const source = readFileSync(join(ROOT, 'components', 'ui', 'index.tsx'), 'utf8');
+  assert.match(source, /iconMap/);
+  assert.match(source, /hasOwnProperty\.call\(iconMap, value\)/);
+});
+
 test('صور OG موجودة وبمقاس 1200×630', () => {
   for (const lang of ['ar', 'en']) {
     const file = join(ROOT, 'public', 'og', `og-${lang}.png`);

@@ -4,14 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, t, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
 import { SURAHS, getSurahByNumber, toArabicNumeral } from "@/lib/data";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import BookmarkButton from "@/components/BookmarkButton";
 import SurahPlayer from "./SurahPlayer";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import { renderDesignIcon } from "@/components/ui";
 
 // ===== إعدادات القرآن من AlQuran Cloud =====
 const ARABIC_EDITION = "quran-uthmani";
@@ -196,7 +198,11 @@ export default async function SurahPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "quran-surah", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "quran-surah", l);
+  if (!gate.pageVisible) {
+    return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "quran-surah", l)} />;
+  }
   const isRTL = l === "ar";
 
   const surahNumber = Number(id);
@@ -366,7 +372,7 @@ export default async function SurahPage({
         {gate.visible('k1') && (<>
         <div className="card mb-8 p-5">
           <p className="mb-3 text-sm font-black text-slate-900 dark:text-white">
-            🎤 {isRTL ? "اختر القارئ" : "Choose Reciter"}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🎤", 18)}</span>{isRTL ? "اختر القارئ" : "Choose Reciter"}
           </p>
           <div className="flex flex-wrap gap-2">
             {RECITERS.map((r) => {
@@ -418,7 +424,7 @@ export default async function SurahPage({
         {/* ===== خطأ التحميل ===== */}
         {fetchError && (
           <div className="card mt-8 border-red-200 p-8 text-center dark:border-red-900/40">
-            <div className="mb-4 text-5xl">⚠️</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("⚠️", 48)}</div>
             <h2 className="mb-2 text-xl font-bold text-red-700 dark:text-red-300">
               {isRTL ? "تعذر تحميل الآيات" : "Unable to load ayahs"}
             </h2>

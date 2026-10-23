@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { renderDesignIcon } from "@/components/ui";
 
 interface PageHeroProps {
   title: string;
@@ -11,8 +12,8 @@ interface PageHeroProps {
 }
 
 const GRADIENTS = {
-  teal: "linear-gradient(135deg, #083344 0%, #0e7490 55%, #06b6d4 100%)",
-  gold: "linear-gradient(135deg, #78350f 0%, #a16207 55%, #d4af37 100%)",
+  teal: "linear-gradient(135deg, var(--color-primary-950) 0%, var(--color-primary-700) 55%, var(--color-primary-500) 100%)",
+  gold: "linear-gradient(135deg, var(--color-gold-950) 0%, var(--color-gold-700) 55%, var(--color-gold-500) 100%)",
   night: "linear-gradient(135deg, #020617 0%, #0a1628 55%, #1e3a5f 100%)",
 };
 
@@ -35,7 +36,7 @@ export default function PageHero({
         className="absolute inset-0 opacity-10"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 20% 30%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 70%, #d4af37 1.5px, transparent 1.5px)",
+            "radial-gradient(circle at 20% 30%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 70%, var(--color-gold-500) 1.5px, transparent 1.5px)",
           backgroundSize: "60px 60px, 90px 90px",
         }}
       />
@@ -71,7 +72,7 @@ export default function PageHero({
           {/* الأيقونة */}
           {icon && (
             <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 text-4xl backdrop-blur-sm">
-              {icon}
+              {renderDesignIcon(icon, 32)}
             </span>
           )}
 

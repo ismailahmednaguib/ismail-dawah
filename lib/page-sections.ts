@@ -6,9 +6,11 @@
 //   pageSections  -> { [pageKey]: { [sectionKey]: boolean } }
 //   sectionTitles -> { [pageKey]: { [sectionKey]: { ar, en } } }
 //   hiddenPages   -> { [pageKey]: boolean }
+//   sectionOrder  -> { [pageKey]: string[] } (مطبّق حاليًا على الرئيسية)
 // ============================================================
 
 import type { Lang } from "./i18n";
+import { normalizeToolSettings, type ToolKey, type ToolSettings } from "./tool-settings.ts";
 
 export type SectionTuple = [key: string, ar: string, en: string];
 export type PageTuple = [
@@ -725,10 +727,25 @@ export const PAGES: PageTuple[] = [
 export type SectionsConfig = Record<string, Record<string, boolean>>;
 export type TitlesConfig = Record<string, Record<string, { ar?: string; en?: string }>>;
 export type PagesVisibilityConfig = Record<string, boolean>;
+export type SectionOrderConfig = Record<string, string[]>;
 
 const PAGE_INDEX: Record<string, PageTuple> = Object.fromEntries(
   PAGES.map((page) => [page[0], page])
 );
+
+const TOOL_BY_PAGE: Record<string, ToolKey> = {
+  quran: "quran",
+  "quran-surah": "quran",
+  "prayer-times": "prayer",
+  qibla: "qibla",
+  adhkar: "adhkar",
+  tasbih: "tasbih",
+  zakat: "zakat",
+  inheritance: "inheritance",
+  calendar: "calendar",
+  "quran-memorization": "memorization",
+  "daily-wird": "dailyWird",
+};
 
 export function getPageDef(key: string): PageTuple | undefined {
   return PAGE_INDEX[key];
@@ -747,6 +764,31 @@ export function defaultSectionsConfig(): SectionsConfig {
 export function defaultPagesVisibility(): PagesVisibilityConfig {
   const out: PagesVisibilityConfig = {};
   for (const [key] of PAGES) out[key] = true;
+  return out;
+}
+
+export function defaultSectionOrder(): SectionOrderConfig {
+  const out: SectionOrderConfig = {};
+  for (const [key, , , , sections] of PAGES) {
+    out[key] = sections.map(([sectionKey]) => sectionKey);
+  }
+  return out;
+}
+
+/** يحافظ على ترتيب آمن معروف ويضيف أي قسم جديد في نهايته. */
+export function mergeSectionOrder(stored: unknown): SectionOrderConfig {
+  const out = defaultSectionOrder();
+  if (!stored || typeof stored !== 'object' || Array.isArray(stored)) return out;
+  const record = stored as Record<string, unknown>;
+  for (const [key, , , , sections] of PAGES) {
+    const allowed = new Set(sections.map(([sectionKey]) => sectionKey));
+    const requested = record[key];
+    if (!Array.isArray(requested)) continue;
+    const ordered = requested.filter(
+      (sectionKey): sectionKey is string => typeof sectionKey === 'string' && allowed.has(sectionKey),
+    );
+    out[key] = [...new Set(ordered), ...out[key].filter((sectionKey) => !ordered.includes(sectionKey))];
+  }
   return out;
 }
 
@@ -814,6 +856,8 @@ export type PageControls = {
   sections: SectionsConfig;
   titles: TitlesConfig;
   pages: PagesVisibilityConfig;
+  sectionOrder: SectionOrderConfig;
+  tools: ToolSettings;
 };
 
 export function buildPageControls(settings: Record<string, unknown>): PageControls {
@@ -821,6 +865,8 @@ export function buildPageControls(settings: Record<string, unknown>): PageContro
     sections: mergeSectionsConfig(unwrapLocalized(settings?.pageSections)),
     titles: mergeTitlesConfig(unwrapLocalized(settings?.sectionTitles)),
     pages: mergePagesVisibility(unwrapLocalized(settings?.hiddenPages)),
+    sectionOrder: mergeSectionOrder(unwrapLocalized(settings?.sectionOrder)),
+    tools: normalizeToolSettings(unwrapLocalized(settings?.tools)),
   };
 }
 
@@ -850,9 +896,11 @@ export function pageGate(controls: PageControls, pageKey: string, lang: Lang): S
   const pageSections = controls.sections[pageKey] || {};
   const pageTitles = controls.titles[pageKey] || {};
   const pagesVisibility = controls.pages[pageKey] !== false;
+  const toolKey = TOOL_BY_PAGE[pageKey];
+  const toolVisibility = !toolKey || controls.tools[toolKey].enabled;
 
   return {
-    pageVisible: pagesVisibility,
+    pageVisible: pagesVisibility && toolVisibility,
     visible: (sectionKey: string) => pageSections[sectionKey] !== false,
     title: (sectionKey: string, fallback: string, l: Lang) => {
       const override = pageTitles[sectionKey];
@@ -862,4 +910,12 @@ export function pageGate(controls: PageControls, pageKey: string, lang: Lang): S
       return fallback;
     },
   };
+}
+
+/** رسالة البديل التي يضبطها مدير المنصة عند تعطيل أداة أو تعذر مصدرها. */
+export function toolFallbackMessage(controls: PageControls, pageKey: string, lang: Lang): string {
+  const key = TOOL_BY_PAGE[pageKey];
+  if (!key) return lang === 'en' ? 'This page is temporarily unavailable.' : 'هذه الصفحة غير متاحة مؤقتًا.';
+  const tool = controls.tools[key];
+  return lang === 'en' ? tool.fallbackMessageEn : tool.fallbackMessageAr;
 }

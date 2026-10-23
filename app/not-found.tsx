@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { renderDesignIcon } from "@/components/ui";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -98,7 +99,7 @@ export default function NotFound() {
           className="mx-auto mb-8 inline-flex h-24 w-24 items-center justify-center rounded-full border border-gold-400/30 bg-gold-500/15 text-6xl shadow-xl"
           aria-hidden="true"
         >
-          🕌
+          {renderDesignIcon("🕌", 48)}
         </div>
 
         {/* رقم 404 */}
@@ -146,7 +147,7 @@ export default function NotFound() {
             href={t.homeHref}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-gold-500 px-8 py-3 font-bold text-gray-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-gold-400 hover:shadow-xl"
           >
-            <span aria-hidden="true">{t.homeIcon}</span>
+            <span aria-hidden="true">{renderDesignIcon(t.homeIcon, 18)}</span>
             <span>{t.home}</span>
           </Link>
 
@@ -154,7 +155,7 @@ export default function NotFound() {
             href={t.searchHref}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-8 py-3 font-bold text-white backdrop-blur transition hover:bg-white/20"
           >
-            <span aria-hidden="true">{t.searchIcon}</span>
+            <span aria-hidden="true">{renderDesignIcon(t.searchIcon, 18)}</span>
             <span>{t.search}</span>
           </Link>
         </div>

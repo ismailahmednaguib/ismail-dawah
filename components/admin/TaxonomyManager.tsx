@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { renderDesignIcon } from '@/components/ui';
 
 interface Taxonomy {
   id: string;
@@ -145,7 +146,7 @@ export default function TaxonomyManager() {
             {items.map((item) => (
               <div key={item.id} className="rounded-lg border border-stone-200 p-3">
                 <div className="flex items-center gap-2">
-                  <span>{item.icon || '🏷️'}</span>
+                  <span aria-hidden="true">{renderDesignIcon(item.icon || '🏷️', 20)}</span>
                   <strong className="text-stone-800">{item.name}</strong>
                 </div>
                 <p className="mt-1 text-xs text-stone-500" dir="ltr">{item.kind} · {item.slug}</p>

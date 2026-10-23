@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { renderDesignIcon } from '@/components/ui';
 
 interface AuditRow {
   id: number;
@@ -15,14 +16,19 @@ interface AuditRow {
 }
 
 const ACTION_LABELS: Record<string, string> = {
-  create: '➕ إنشاء',
-  update: '✏️ تعديل',
-  delete: '🗑️ حذف',
-  publish: '📢 نشر',
-  approve: '✓ موافقة',
-  reject: '❌ رفض',
-  update_roles: '👥 تعديل أدوار',
-  update_status: '🔄 تغيير حالة',
+  create: 'إنشاء',
+  update: 'تعديل',
+  delete: 'حذف',
+  publish: 'نشر',
+  approve: 'موافقة',
+  reject: 'رفض',
+  update_roles: 'تعديل أدوار',
+  update_status: 'تغيير حالة',
+};
+
+const ACTION_ICONS: Record<string, string> = {
+  create: 'plus', update: 'edit', delete: 'trash', publish: 'send',
+  approve: 'checkCircle', reject: 'x', update_roles: 'users', update_status: 'refresh',
 };
 
 export default function AuditClient() {
@@ -58,7 +64,7 @@ export default function AuditClient() {
           {logs.map((log) => (
             <div key={log.id} className="p-4 flex items-start gap-4">
               <div className="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-lg shrink-0">
-                {ACTION_LABELS[log.action]?.split(' ')[0] ?? '📝'}
+                {renderDesignIcon(ACTION_ICONS[log.action] ?? 'fileText', 20)}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-primary-950 dark:text-white">

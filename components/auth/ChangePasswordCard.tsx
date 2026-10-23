@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { renderDesignIcon } from "@/components/ui";
 
 type State = "idle" | "saving" | "success" | "error";
 
@@ -258,7 +259,7 @@ export default function ChangePasswordCard({ lang }: { lang: "ar" | "en" }) {
             />
             {confirm && newPassword !== confirm && (
               <p className="mt-1 text-xs font-bold text-red-700 dark:text-red-400">
-                ⚠️ {copy.mismatch}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 14)}</span>{copy.mismatch}
               </p>
             )}
           </div>

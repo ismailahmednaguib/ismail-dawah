@@ -7,6 +7,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TopBar from "@/components/TopBar";
+import { renderDesignIcon } from "@/components/ui";
 import { languages, type Lang } from "@/lib/i18n";
 
 
@@ -553,7 +554,7 @@ export default function WomenFatwasPage() {
                     : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
                 }`}
               >
-                <span>{icon}</span>
+                <span aria-hidden="true">{renderDesignIcon(icon, 20)}</span>
                 <span>{cat[L]}</span>
                 <span
                   className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
@@ -577,7 +578,7 @@ export default function WomenFatwasPage() {
             className="text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📜 {filtered.length} {ui.fatwaLabel}
+             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 18)}</span>{filtered.length} {ui.fatwaLabel}
           </h2>
           <span className="text-sm text-slate-500 dark:text-slate-400">
             💡 {ui.clickHint}
@@ -607,7 +608,7 @@ export default function WomenFatwasPage() {
         {!loading &&
           (filtered.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mb-4 text-5xl">🔍</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("🔍", 48)}</div>
             <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
             </h3>
@@ -645,7 +646,7 @@ export default function WomenFatwasPage() {
                     <div
                       className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${f.gradient} text-2xl text-white shadow-md`}
                     >
-                      {f.icon}
+                      {renderDesignIcon(f.icon, 28)}
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -694,7 +695,7 @@ export default function WomenFatwasPage() {
                       {f.verse && (
                         <div className="mb-3 rounded-2xl border-r-4 border-gold-500 bg-gold-50/60 p-4 dark:border-gold-400 dark:bg-gold-950/20 rtl:border-l-4 rtl:border-r-0">
                           <p className="mb-1 text-xs font-black text-gold-700 dark:text-gold-300">
-                            📖 {ui.verse}
+                            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 16)}</span>{ui.verse}
                           </p>
                           <p
                             className="text-lg font-black text-slate-900 dark:text-white"
@@ -715,7 +716,7 @@ export default function WomenFatwasPage() {
                       {f.hadith && (
                         <div className="rounded-2xl border-r-4 border-primary-500 bg-primary-50 p-4 dark:border-primary-400 dark:bg-primary-950/20 rtl:border-l-4 rtl:border-r-0">
                           <p className="mb-1 text-xs font-black text-primary-700 dark:text-primary-300">
-                            🌙 {ui.hadith}
+                            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🌙", 16)}</span>{ui.hadith}
                           </p>
                           <p
                             className="text-base font-black text-slate-900 dark:text-white"
@@ -726,7 +727,7 @@ export default function WomenFatwasPage() {
                           </p>
                           {f.hadithSource && (
                             <p className="mt-1 text-xs text-primary-700 dark:text-primary-400">
-                              📜 {f.hadithSource[L]}
+                              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>{f.hadithSource[L]}
                             </p>
                           )}
                         </div>
@@ -746,7 +747,7 @@ export default function WomenFatwasPage() {
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -772,7 +773,7 @@ export default function WomenFatwasPage() {
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ✍️
+                {renderDesignIcon("✍️", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -806,7 +807,7 @@ export default function WomenFatwasPage() {
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📚
+                {renderDesignIcon("📚", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -826,7 +827,7 @@ export default function WomenFatwasPage() {
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              ⚠️
+              {renderDesignIcon("⚠️", 24)}
             </span>
 
             <div>
@@ -886,7 +887,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
@@ -918,7 +919,7 @@ function WhyCard({
         <span
           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${color} text-2xl text-white shadow-md`}
         >
-          {icon}
+          {renderDesignIcon(icon, 26)}
         </span>
         <h3
           className="text-base font-black text-slate-900 dark:text-white"

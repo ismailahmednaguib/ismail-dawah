@@ -11,7 +11,7 @@ import { handleContactForm } from "@/lib/email";
 import { CONTACT_INFO, SITE_NAME, SITE_NAME_EN, SOCIAL_LINKS, getContactLocation } from "@/lib/site";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, Callout } from "@/components/ui";
+import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
 
 // ============================================================
 // الأنواع
@@ -357,13 +357,13 @@ export default async function ContactPage({
       : ui.errorGeneric;
 
   const socials = [
-    { key: "whatsapp", href: contactWhatsApp ? `https://wa.me/${onlyDigits(contactWhatsApp)}` : SOCIAL_LINKS.whatsapp, icon: "💬", ar: "واتساب", en: "WhatsApp" },
-    { key: "telegram", href: settingText("telegramUrl") || SOCIAL_LINKS.telegram, icon: "✈️", ar: "تيليجرام", en: "Telegram" },
-    { key: "facebook", href: settingText("facebookUrl") || SOCIAL_LINKS.facebook, icon: "📘", ar: "فيسبوك", en: "Facebook" },
-    { key: "twitter", href: settingText("twitterUrl") || SOCIAL_LINKS.twitter, icon: "🐦", ar: "إكس", en: "X" },
-    { key: "instagram", href: settingText("instagramUrl") || SOCIAL_LINKS.instagram, icon: "📸", ar: "إنستغرام", en: "Instagram" },
-    { key: "youtube", href: settingText("youtubeUrl") || SOCIAL_LINKS.youtube, icon: "▶️", ar: "يوتيوب", en: "YouTube" },
-    { key: "tiktok", href: SOCIAL_LINKS.tiktok, icon: "🎵", ar: "تيك توك", en: "TikTok" },
+    { key: "whatsapp", href: contactWhatsApp ? `https://wa.me/${onlyDigits(contactWhatsApp)}` : SOCIAL_LINKS.whatsapp, icon: "whatsapp", ar: "واتساب", en: "WhatsApp" },
+    { key: "telegram", href: settingText("telegramUrl") || SOCIAL_LINKS.telegram, icon: "telegram", ar: "تيليجرام", en: "Telegram" },
+    { key: "facebook", href: settingText("facebookUrl") || SOCIAL_LINKS.facebook, icon: "facebook", ar: "فيسبوك", en: "Facebook" },
+    { key: "twitter", href: settingText("twitterUrl") || SOCIAL_LINKS.twitter, icon: "twitter", ar: "إكس", en: "X" },
+    { key: "instagram", href: settingText("instagramUrl") || SOCIAL_LINKS.instagram, icon: "instagram", ar: "إنستغرام", en: "Instagram" },
+    { key: "youtube", href: settingText("youtubeUrl") || SOCIAL_LINKS.youtube, icon: "youtube", ar: "يوتيوب", en: "YouTube" },
+    { key: "tiktok", href: SOCIAL_LINKS.tiktok, icon: "tiktok", ar: "تيك توك", en: "TikTok" },
   ].filter((social) => !isPlaceholderLink(social.href));
 
   const whatsappNumber = onlyDigits(contactWhatsApp);
@@ -457,7 +457,7 @@ export default async function ContactPage({
                     : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
                 }`}
               >
-                {status === "sent" ? "✓" : "⚠️"}
+                {status === "sent" ? "✓" : renderDesignIcon("⚠️", 20)}
               </span>
 
               <div>
@@ -533,7 +533,7 @@ export default async function ContactPage({
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                📅
+                {renderDesignIcon("📅", 24)}
               </span>
             </div>
             <p className="text-sm font-black text-primary-700 dark:text-primary-300">
@@ -709,7 +709,7 @@ export default async function ContactPage({
                     className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:hover:border-primary-900/40 dark:hover:bg-primary-950/20"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                      💬
+                      {renderDesignIcon("💬", 24)}
                     </span>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
@@ -743,7 +743,7 @@ export default async function ContactPage({
 
                 <div className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 dark:border-night-700">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-100 text-xl dark:bg-gold-900/30">
-                    📍
+                    {renderDesignIcon("📍", 24)}
                   </span>
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
@@ -776,7 +776,9 @@ export default async function ContactPage({
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 rounded-xl border border-slate-100 p-3 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:text-slate-200 dark:hover:border-primary-800 dark:hover:bg-night-800"
                     >
-                      <span className="text-xl">{social.icon}</span>
+                      <span className="inline-flex h-7 w-7 items-center justify-center text-primary-700 dark:text-primary-300" aria-hidden="true">
+                        {renderDesignIcon(social.icon, 22)}
+                      </span>
                       <span>{isRTL ? social.ar : social.en}</span>
                     </a>
                   ))}
@@ -822,7 +824,7 @@ export default async function ContactPage({
                   className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-4 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:text-slate-200 dark:hover:border-primary-800 dark:hover:bg-night-800"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="text-xl">📅</span>
+                    <span aria-hidden="true" className="inline-flex">{renderDesignIcon("📅", 20)}</span>
                     {ui.quickWird}
                   </span>
                   <svg
@@ -874,7 +876,7 @@ export default async function ContactPage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.faqTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
           </div>
 

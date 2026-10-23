@@ -7,6 +7,8 @@ import SkipLink from "@/components/SkipLink";
 import SWRegister from "@/components/SWRegister";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import { SITE_NAME as BRAND_NAME, SITE_AUTHOR } from "@/lib/site";
+import { getSiteSettings } from "@/lib/content";
+import { themeCssVariables } from "@/lib/theme-settings";
 
 // ============================================================
 // Site constants
@@ -173,38 +175,38 @@ export const metadata: Metadata = {
 // Viewport
 // ============================================================
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
-  colorScheme: "light dark",
-  viewportFit: "cover",
+export async function generateViewport(): Promise<Viewport> {
+  const settings = await getSiteSettings();
+  const variables = themeCssVariables(settings.theme);
 
-  themeColor: [
-    {
-      media: "(prefers-color-scheme: light)",
-      color: "#0e7490",
-    },
-    {
-      media: "(prefers-color-scheme: dark)",
-      color: "#0a1628",
-    },
-  ],
-};
+  return {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    colorScheme: "light dark",
+    viewportFit: "cover",
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: variables["--color-primary-600"] },
+      { media: "(prefers-color-scheme: dark)", color: variables["--color-primary-950"] },
+    ],
+  };
+}
 
 // ============================================================
 // Root Layout
 // ============================================================
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSiteSettings();
   return (
     <html
       lang="ar"
       dir="rtl"
+      style={themeCssVariables(settings.theme) as React.CSSProperties}
       suppressHydrationWarning
     >
       <body

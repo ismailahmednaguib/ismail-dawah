@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { readSettingText } from "@/lib/settings-text";
 import {
@@ -487,7 +488,10 @@ export default async function LivePage({
               </span>
             </div>
 
-            <span className="badge-primary mb-5">📡 {isRTL ? "بث مباشر" : "Live Stream"}</span>
+            <span className="badge-primary mb-5">
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📡", 16)}</span>
+              {isRTL ? "بث مباشر" : "Live Stream"}
+            </span>
 
             <h1
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
@@ -545,7 +549,7 @@ export default async function LivePage({
 
             <div className="relative text-center">
               <div className="mb-4 flex justify-center">
-                <span className="text-6xl">📡</span>
+                <span aria-hidden="true" className="inline-flex">{renderDesignIcon("📡", 48)}</span>
               </div>
 
               <h2
@@ -570,7 +574,7 @@ export default async function LivePage({
           </div>
         ) : (
           <div className="card mb-10 border-amber-200 bg-amber-50/60 p-8 text-center dark:border-amber-900/40 dark:bg-amber-950/20">
-            <div className="mb-4 text-5xl">📡</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📡", 48)}</div>
             <h2
               className="mb-2 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
@@ -592,10 +596,11 @@ export default async function LivePage({
               className="section-title mb-0"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🕌 {ui.weeklyMeeting}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕌", 22)}</span>
+              {ui.weeklyMeeting}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">
               {ui.weeklyMeetingDesc}
@@ -662,7 +667,7 @@ export default async function LivePage({
               🗓️ {ui.weeklySchedule}
             </h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">
               {ui.weeklyScheduleDesc}
@@ -671,7 +676,7 @@ export default async function LivePage({
 
           {schedule.length === 0 ? (
             <div className="card p-10 text-center">
-              <div className="mb-3 text-4xl">📭</div>
+              <div aria-hidden="true" className="mb-3 inline-flex">{renderDesignIcon("📭", 36)}</div>
               <p className="text-slate-500 dark:text-slate-400">
                 {scheduleOnlyArabic ? ui.scheduleOnlyArabic : ui.noSchedule}
               </p>
@@ -687,7 +692,7 @@ export default async function LivePage({
 
                   <div className="mb-3 flex items-center gap-3">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                      {s.icon}
+                      {renderDesignIcon(s.icon, 24)}
                     </span>
                     <div>
                       <p
@@ -698,7 +703,8 @@ export default async function LivePage({
                       </p>
                       {s.time[L] && (
                         <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-                          🕐 {s.time[L]}
+                          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕐", 16)}</span>
+                          {s.time[L]}
                         </p>
                       )}
                     </div>
@@ -713,7 +719,8 @@ export default async function LivePage({
 
                   {s.place[L] && (
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      📍 {s.place[L]}
+                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📍", 16)}</span>
+                      {s.place[L]}
                     </p>
                   )}
                 </article>
@@ -735,7 +742,8 @@ export default async function LivePage({
             «{ui.hadith}»
           </p>
           <p className="text-sm text-gold-700 dark:text-gold-400">
-            📜 {ui.hadithSource}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>
+            {ui.hadithSource}
           </p>
         </div>
 
@@ -747,12 +755,13 @@ export default async function LivePage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>
+            {ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${L}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📖", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.quranPage}
@@ -764,7 +773,7 @@ export default async function LivePage({
             </Link>
 
             <Link href={`/${L}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("✍️", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.articlesPage}
@@ -776,7 +785,7 @@ export default async function LivePage({
             </Link>
 
             <Link href={`/${L}/khutab`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🎤</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🎤", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.khutabPage}
@@ -788,7 +797,7 @@ export default async function LivePage({
             </Link>
 
             <Link href={`/${L}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("mail", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.contactPage}
@@ -807,7 +816,7 @@ export default async function LivePage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              <span aria-hidden="true">{renderDesignIcon("📌", 24)}</span>
             </span>
 
             <div>
@@ -865,7 +874,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       {isLive ? (
@@ -910,7 +919,7 @@ function InfoCard({
     <div className="text-center">
       <div className="mb-3 flex justify-center">
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-gold-100 text-3xl dark:bg-gold-900/40">
-          {icon}
+          {renderDesignIcon(icon, 26)}
         </span>
       </div>
       <p className="mb-1 text-xs font-bold text-slate-500 dark:text-slate-400">

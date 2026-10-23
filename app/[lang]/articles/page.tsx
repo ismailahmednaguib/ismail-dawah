@@ -8,7 +8,7 @@ import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero } from "@/components/ui";
+import { PageHero, renderDesignIcon } from "@/components/ui";
 import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
@@ -493,7 +493,7 @@ export default async function ArticlesPage({
       {gate.visible('k0') && (
         <PageHero
           icon="✍️"
-          badge={isRTL ? "✍️ مقالات مختارة" : "✍️ Selected Articles"}
+          badge={isRTL ? "مقالات مختارة" : "Selected Articles"}
           title={ui.title}
           subtitle={ui.description}
           crumbs={[
@@ -538,7 +538,7 @@ export default async function ArticlesPage({
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                ✨
+                {renderDesignIcon("✨", 24)}
               </span>
             </div>
             <p className="text-xl font-black text-primary-700 dark:text-primary-300">
@@ -650,8 +650,8 @@ export default async function ArticlesPage({
           {(q || category !== "all") && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
               {category !== "all" && (
-                <span className="badge-primary">
-                  {activeCategory.icon} {isRTL ? activeCategory.ar : activeCategory.en}
+                <span className="badge-primary inline-flex items-center gap-1.5">
+                  {renderDesignIcon(activeCategory.icon, 16)} {isRTL ? activeCategory.ar : activeCategory.en}
                 </span>
               )}
               {q && <span className="badge-gold">&quot;{q}&quot;</span>}
@@ -699,7 +699,7 @@ export default async function ArticlesPage({
                       : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
                   }`}
                 >
-                  <span>{item.icon}</span>
+                  <span aria-hidden="true">{renderDesignIcon(item.icon, 20)}</span>
                   <span>{isRTL ? item.ar : item.en}</span>
                 </Link>
               );
@@ -726,7 +726,7 @@ export default async function ArticlesPage({
         {gate.visible('k6') && (<>
         {filteredArticles.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mb-4 text-5xl">📭</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</div>
             <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
             </h2>
@@ -869,7 +869,7 @@ export default async function ArticlesPage({
             className="mb-5 text-xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📌 {ui.noteTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📌", 22)}</span>{ui.noteTitle}
           </h2>
           <ul className="space-y-3">
             {[ui.note1, ui.note2, ui.note3].map((note, index) => (
@@ -893,7 +893,7 @@ export default async function ArticlesPage({
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📬</span>
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("mail", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.contact}
@@ -917,7 +917,7 @@ export default async function ArticlesPage({
               </div>
             </Link>
             <Link href={`/${l}/hajj-guide`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕋</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🕋", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.hajjGuide}
@@ -958,10 +958,10 @@ function FeaturedArticleCard({
       <summary className="flex cursor-pointer list-none flex-col p-6 [&::-webkit-details-marker]:hidden">
         <div className="mb-4 flex items-center justify-between">
           <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-3 py-1 text-xs font-bold text-white`}>
-            {article.icon} {categoryLabel(article.categoryId, lang)}
+            {renderDesignIcon(article.icon, 16)} {categoryLabel(article.categoryId, lang)}
           </span>
           <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-night-800">
-            {article.icon}
+            {renderDesignIcon(article.icon, 28)}
           </span>
         </div>
 
@@ -1075,7 +1075,7 @@ function ArticleCard({
         </div>
 
         <span className="mt-1 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {article.icon}
+          {renderDesignIcon(article.icon, 28)}
         </span>
       </summary>
 

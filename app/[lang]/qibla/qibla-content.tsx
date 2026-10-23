@@ -10,6 +10,7 @@ import {
 } from "react";
 import { toArabicNumeral } from "@/lib/data";
 import type { Lang } from "@/lib/i18n";
+import { renderDesignIcon } from "@/components/ui";
 
 const STORAGE_KEY = "dawah_qibla_location_v1";
 
@@ -681,7 +682,7 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
 
                 {/* الكعبة في المنتصف */}
                 <div className="absolute left-1/2 top-1/2 z-20 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-900 to-slate-700 text-3xl shadow-lg">
-                  🕋
+                  {renderDesignIcon("🕋", 34)}
                 </div>
 
                 {/* المركز */}
@@ -729,7 +730,7 @@ export default function QiblaContent({ lang }: { lang: Lang }) {
               {/* تعليمات البوصلة */}
               <div className="card border-primary-200 bg-primary-50/50 p-5 dark:border-primary-800/40 dark:bg-primary-950/20">
                 <p className="mb-2 text-sm font-bold text-primary-700 dark:text-primary-300">
-                  🧭 {ui.compassHint}
+                  <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🧭", 18)}</span>{ui.compassHint}
                 </p>
 
                 {compassSupported === false ? (

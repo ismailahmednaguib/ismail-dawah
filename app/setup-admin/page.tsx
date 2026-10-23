@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
+import { renderDesignIcon } from "@/components/ui";
 
 // ============================================================
 // Types
@@ -461,7 +462,7 @@ export default function SetupAdminPage() {
     return (
       <Shell tone="orange">
         <h1 className="mb-3 text-center text-3xl font-bold text-primary-800">
-          ⚠️ تعذر تحميل صفحة الإعداد
+          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 24)}</span>تعذر تحميل صفحة الإعداد
         </h1>
         <p className="mb-6 text-center text-sm text-gray-600">
           {status.message || "حدث خطأ غير متوقع."}

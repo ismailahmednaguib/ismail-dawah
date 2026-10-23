@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import TopBar from "@/components/TopBar";
 import type { Lang } from "@/lib/i18n";
 import type { PublicItem } from "@/lib/learn/public";
@@ -338,7 +339,7 @@ export default function KhutabPage() {
               </span>
             </div>
 
-            <span className="badge-gold mb-5">🎤 {ui.serviceTitle}</span>
+            <span className="badge-gold mb-5"><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🎤", 16)}</span>{ui.serviceTitle}</span>
 
             <h1
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-5xl dark:text-white"
@@ -393,7 +394,7 @@ export default function KhutabPage() {
                       : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700"
                   }`}
                 >
-                  <span>📚</span>
+                  <span aria-hidden="true" className="inline-flex">{renderDesignIcon("📚", 18)}</span>
                   <span>{ui.allCategory}</span>
                   <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
                     filter === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 dark:bg-night-700 dark:text-slate-300"
@@ -418,7 +419,7 @@ export default function KhutabPage() {
                           : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700"
                       }`}
                     >
-                      <span>{icon}</span>
+                      <span aria-hidden="true">{renderDesignIcon(icon, 20)}</span>
                       <span>{category}</span>
                       <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
                         isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 dark:bg-night-700 dark:text-slate-300"
@@ -437,7 +438,7 @@ export default function KhutabPage() {
                 className="text-2xl font-black text-slate-900 dark:text-white"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
-                📜 {filteredKhutab.length} {ui.khutabCount}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 18)}</span>{filteredKhutab.length} {ui.khutabCount}
               </h2>
               <span className="text-sm text-slate-500 dark:text-slate-400">
                 💡 {ui.selectHint}
@@ -447,7 +448,7 @@ export default function KhutabPage() {
             {/* ===== قائمة الخطب ===== */}
             {filteredKhutab.length === 0 ? (
               <div className="card p-12 text-center">
-                <div className="mb-4 text-5xl">📭</div>
+                <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</div>
                 <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
                   {isRTL ? "لا توجد خطب" : "No khutbahs"}
                 </h3>
@@ -464,7 +465,7 @@ export default function KhutabPage() {
 
                     <div className="relative">
                       <div className="mb-4 flex items-start justify-between gap-3">
-                        <span className="text-4xl drop-shadow-lg">{khutbah.icon}</span>
+                        <span className="inline-flex drop-shadow-lg" aria-hidden="true">{renderDesignIcon(khutbah.icon, 40)}</span>
                         <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-black backdrop-blur-sm">
                           {khutbah.categoryIcon} {khutbah.category[L]}
                         </span>
@@ -550,7 +551,7 @@ export default function KhutabPage() {
             <div className="mb-8 border-b-2 border-gold-200 pb-8 text-center dark:border-gold-800">
               <div className="mb-4 flex justify-center">
                 <span className={`flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br ${selectedKhutbah.gradient} text-4xl text-white shadow-xl`}>
-                  {selectedKhutbah.icon}
+                  {renderDesignIcon(selectedKhutbah.icon, 30)}
                 </span>
               </div>
 
@@ -593,7 +594,7 @@ export default function KhutabPage() {
                   ﴿{selectedKhutbah.verse.ar}﴾
                 </p>
                 <p className="mt-2 text-xs font-bold text-gold-700 dark:text-gold-300">
-                  📖 {selectedKhutbah.verseSource[L]}
+                  <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 16)}</span>{selectedKhutbah.verseSource[L]}
                 </p>
               </div>
             </div>
@@ -633,7 +634,7 @@ export default function KhutabPage() {
             <div className={`mb-8 rounded-2xl bg-gradient-to-br ${selectedKhutbah.gradient} p-6 text-white shadow-lg`}>
               <div className="mb-3 flex items-center gap-2">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 text-sm backdrop-blur-sm">
-                  🤲
+                  {renderDesignIcon("🤲", 24)}
                 </span>
                 <h3
                   className="text-xl font-black"
@@ -708,7 +709,7 @@ export default function KhutabPage() {
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -725,7 +726,7 @@ export default function KhutabPage() {
             </Link>
 
             <Link href={`/${L}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("✍️", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.articlesPage}
@@ -749,7 +750,7 @@ export default function KhutabPage() {
             </Link>
 
             <Link href={`/${L}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📖", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.quranPage}
@@ -768,7 +769,7 @@ export default function KhutabPage() {
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -821,7 +822,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

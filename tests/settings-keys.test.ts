@@ -18,6 +18,7 @@ test('الإعدادات المركّبة غير مرتبطة بلغة', () => {
     'pageSections',
     'sectionTitles',
     'hiddenPages',
+    'sectionOrder',
     'navigation',
     'editorPicks',
     'dawahJourney',

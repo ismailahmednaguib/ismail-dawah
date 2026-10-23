@@ -13,6 +13,7 @@ import { isValidLang, type Lang } from '@/lib/i18n';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import { decodeParam } from '@/lib/params';
 import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
+import { renderDesignIcon } from '@/components/ui';
 
 /**
  * الصور المخزَّنة في Supabase قابلة للتحسين عبر next/image؛ أما الروابط الخارجية
@@ -228,7 +229,7 @@ export default async function LearnContentPage({ params }: PageProps) {
           {/* معلومات إضافية */}
           <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-gray-400">
             {content.published_at && (
-              <span>📅 {new Date(content.published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
+              <span><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📅", 16)}</span>{new Date(content.published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
             )}
             {content.views > 0 && (
               <span>
@@ -256,7 +257,7 @@ export default async function LearnContentPage({ params }: PageProps) {
                 key={term.id}
                 className="px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
               >
-                {term.icon} {term.name}
+                {renderDesignIcon(term.icon, 16)} {term.name}
               </span>
             ))}
           </div>

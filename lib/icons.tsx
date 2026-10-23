@@ -194,6 +194,31 @@ export const SparklesIcon = createIcon(
   </>
 );
 
+export const ScaleIcon = createIcon(
+  "ScaleIcon",
+  <>
+    <path d="M12 3v17" />
+    <path d="M5 6h14" />
+    <path d="M5 6 2.5 12a3 3 0 0 0 5 0L5 6Z" />
+    <path d="m19 6 2.5 6a3 3 0 0 1-5 0L19 6Z" />
+    <path d="M8 21h8" />
+  </>
+);
+
+export const TargetIcon = createIcon(
+  "TargetIcon",
+  <>
+    <circle cx="12" cy="12" r="9" />
+    <circle cx="12" cy="12" r="5" />
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+  </>
+);
+
+export const FolderIcon = createIcon(
+  "FolderIcon",
+  <path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6Z" />
+);
+
 // ============================================================
 // 🧭 أيقونات التنقل
 // ============================================================
@@ -896,6 +921,9 @@ const iconDefinitions = {
   crescent: CrescentMoonIcon,
   star: StarIcon,
   sparkles: SparklesIcon,
+  scale: ScaleIcon,
+  target: TargetIcon,
+  folder: FolderIcon,
 
   // تنقل
   home: HomeIcon,

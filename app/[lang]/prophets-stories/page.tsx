@@ -9,6 +9,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ============================================================
@@ -814,7 +815,7 @@ export default async function ProphetsStoriesPage({
             </div>
 
             <span className="badge-primary mb-5">
-              📚 {isRTL ? "عبر ودروس" : "Lessons and Wisdom"}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 18)}</span>{isRTL ? "عبر ودروس" : "Lessons and Wisdom"}
             </span>
 
             <h1
@@ -960,7 +961,7 @@ export default async function ProphetsStoriesPage({
                 href={`#${prophet.id}`}
                 className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
               >
-                <span>{prophet.icon}</span>
+                <span aria-hidden="true">{renderDesignIcon(prophet.icon, 28)}</span>
                 <span>{l === "ar" ? prophet.ar.name : prophet.en.name}</span>
               </a>
             ))}
@@ -975,7 +976,7 @@ export default async function ProphetsStoriesPage({
             className="text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            📖 {ui.allProphets}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 18)}</span>{ui.allProphets}
           </h2>
           <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">
             {ui.results}:{" "}
@@ -995,7 +996,7 @@ export default async function ProphetsStoriesPage({
           <div className="card p-12 text-center">
             <div className="mb-6 flex justify-center">
               <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100 text-5xl dark:bg-night-800">
-                🔍
+                {renderDesignIcon("🔍", 48)}
               </span>
             </div>
             <h3 className="mb-2 text-2xl font-black text-slate-900 dark:text-white">
@@ -1023,7 +1024,7 @@ export default async function ProphetsStoriesPage({
 
                   <div className="flex items-start gap-4">
                     <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${prophet.gradient} text-2xl text-white shadow-lg`}>
-                      {prophet.icon}
+                      {renderDesignIcon(prophet.icon, 28)}
                     </span>
 
                     <div className="min-w-0 flex-1">
@@ -1079,7 +1080,7 @@ export default async function ProphetsStoriesPage({
                           className="mb-3 text-base font-black text-slate-900 dark:text-white"
                           style={{ fontFamily: "var(--font-amiri)" }}
                         >
-                          📖 {ui.storyTitle}
+                          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 18)}</span>{ui.storyTitle}
                         </h3>
 
                         <div className="space-y-3">
@@ -1148,12 +1149,12 @@ export default async function ProphetsStoriesPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/quran`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📖</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📖", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.quranPage}
@@ -1165,7 +1166,7 @@ export default async function ProphetsStoriesPage({
             </Link>
 
             <Link href={`/${l}/fields/tafsir`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🔍</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🔍", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.tafsirPage}
@@ -1177,7 +1178,7 @@ export default async function ProphetsStoriesPage({
             </Link>
 
             <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">✍️</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("✍️", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.articlesPage}
@@ -1207,7 +1208,7 @@ export default async function ProphetsStoriesPage({
         {gate.visible('k7') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
           <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-            📌 {ui.note}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📌", 18)}</span>{ui.note}
           </p>
         </div>
         </>)}
@@ -1242,7 +1243,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { t, type Lang } from "@/lib/i18n";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import TurnstileWidget from "@/components/security/TurnstileWidget";
+import { renderDesignIcon } from "@/components/ui";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 import {
   NAV_TREE,
@@ -175,11 +176,6 @@ export default function Footer({
     })
     .filter((col) => col.links.length > 0);
 
-  const aboutText = t(lang, "about");
-  const contactText = t(lang, "contact");
-  const privacyText = t(lang, "privacy");
-  const termsText = t(lang, "terms");
-
   // إخفاء روابط الصفحات المخفية من لوحة التحكم.
   const hiddenPages = mergePagesVisibility(
     (effectiveSettings as Record<string, unknown> | null)?.hiddenPages
@@ -190,6 +186,18 @@ export default function Footer({
       links: col.links.filter((link) => !isHrefHidden(hiddenPages, link.href)),
     }))
     .filter((col) => col.links.length > 0);
+
+  // روابط الشريط السفلي تأتي من شجرة التنقّل نفسها حتى يستطيع المدير تعديل
+  // الاسم والوجهة والظهور من لوحة «القوائم والتنقّل» دون تعديل الشفرة.
+  const legalKeys = new Set(["about-sheikh", "contact", "privacy-terms", "terms"]);
+  const footerLinks = (navTree.find((node) => node.key === "about")?.children ?? [])
+    .filter((node) => legalKeys.has(node.key))
+    .map((node) => ({
+      key: node.key,
+      href: `/${lang}${navHref(node)}`,
+      label: navLabel(node, lang),
+    }))
+    .filter((link) => !isHrefHidden(hiddenPages, link.href));
 
   const successMsg = isRTL
     ? "تم الاشتراك بنجاح! شكرًا لك."
@@ -204,7 +212,7 @@ export default function Footer({
       className={`${flushTop ? "" : "mt-24"} text-white`}
       style={{
         background:
-          "linear-gradient(160deg, #083344 0%, #0e7490 60%, #083344 130%)",
+          "linear-gradient(160deg, var(--color-primary-950) 0%, var(--color-primary-700) 60%, var(--color-primary-950) 130%)",
       }}
     >
       {/* ===== النشرة البريدية ===== */}
@@ -218,10 +226,10 @@ export default function Footer({
                     aria-hidden="true"
                     className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-lg"
                     style={{
-                      background: "linear-gradient(135deg, #06b6d4, #0e7490)",
+                      background: "linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700))",
                     }}
                   >
-                    📬
+                    {renderDesignIcon("mail", 24)}
                   </span>
                   <h2
                     className="text-2xl font-bold"
@@ -305,7 +313,7 @@ export default function Footer({
                 aria-hidden="true"
                 className="flex h-11 w-11 items-center justify-center rounded-2xl shadow-lg"
                 style={{
-                  background: "linear-gradient(135deg, #06b6d4, #0e7490)",
+                  background: "linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700))",
                 }}
               >
                 <svg
@@ -317,7 +325,7 @@ export default function Footer({
                   focusable="false"
                 >
                   <path d="M12 3a9 9 0 1 0 9 9c0-1.5-.4-3-1.2-4.2A7 7 0 0 1 12 3z" />
-                  <circle cx="17" cy="6" r="1.5" fill="#d4af37" />
+                  <circle cx="17" cy="6" r="1.5" fill="var(--color-gold-500)" />
                 </svg>
               </span>
               <span className="text-xl font-bold">{brandName}</span>
@@ -331,8 +339,8 @@ export default function Footer({
             <div className="flex gap-3">
               <Link
                 href={`/${lang}/about`}
-                aria-label={aboutText}
-                title={aboutText}
+                aria-label={isRTL ? "عن المنصة" : "About"}
+                title={isRTL ? "عن المنصة" : "About"}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition-all hover:bg-white/20"
               >
                 <svg
@@ -351,8 +359,8 @@ export default function Footer({
               </Link>
               <Link
                 href={`/${lang}/contact`}
-                aria-label={contactText}
-                title={contactText}
+                aria-label={isRTL ? "تواصل معنا" : "Contact us"}
+                title={isRTL ? "تواصل معنا" : "Contact us"}
                 className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 transition-all hover:bg-white/20"
               >
                 <svg
@@ -390,7 +398,7 @@ export default function Footer({
 
           {visibleColumns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <h3 className="mb-4 font-bold" style={{ color: "#d4af37" }}>
+              <h3 className="mb-4 font-bold" style={{ color: "var(--color-gold-500)" }}>
                 {col.title}
               </h3>
               <ul className="flex flex-col gap-2.5">
@@ -439,30 +447,16 @@ export default function Footer({
             {t(lang, "footer_copyright")}
           </p>
           <div className="flex flex-wrap justify-center gap-5">
-            <Link
-              href={`/${lang}/about`}
-              className="transition-colors hover:text-primary-300"
-            >
-              {aboutText}
-            </Link>
-            <Link
-              href={`/${lang}/contact`}
-              className="transition-colors hover:text-primary-300"
-            >
-              {contactText}
-            </Link>
-            <Link
-              href={`/${lang}/privacy`}
-              className="transition-colors hover:text-primary-300"
-            >
-              {privacyText}
-            </Link>
-            <Link
-              href={`/${lang}/terms`}
-              className="transition-colors hover:text-primary-300"
-            >
-              {termsText}
-            </Link>
+            {(footerLinks.length > 0 ? footerLinks : [
+              { key: "about", href: `/${lang}/about`, label: isRTL ? "عن المنصة" : "About" },
+              { key: "contact", href: `/${lang}/contact`, label: isRTL ? "تواصل معنا" : "Contact us" },
+              { key: "privacy", href: `/${lang}/privacy`, label: isRTL ? "الخصوصية" : "Privacy" },
+              { key: "terms", href: `/${lang}/terms`, label: isRTL ? "الشروط" : "Terms" },
+            ]).map((link) => (
+              <Link key={link.key} href={link.href} className="transition-colors hover:text-primary-300">
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

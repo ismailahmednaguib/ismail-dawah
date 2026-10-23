@@ -14,6 +14,7 @@ import {
   type QuestionView,
 } from "@/lib/questions/client";
 import type { Lang } from "@/lib/i18n";
+import { renderDesignIcon } from "@/components/ui";
 
 const MIN_QUESTION_LENGTH = 10;
 const MAX_QUESTION_LENGTH = 2_000;
@@ -221,7 +222,7 @@ export default function QuestionsCard({ lang }: { lang: Lang }) {
 
         <div className="flex items-start gap-4">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-            💬
+            {renderDesignIcon("💬", 24)}
           </span>
           <div className="min-w-0">
             <h2

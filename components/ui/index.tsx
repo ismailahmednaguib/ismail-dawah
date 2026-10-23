@@ -8,6 +8,126 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Lang } from "@/lib/i18n";
+import { Icon, iconMap, type IconName } from "@/lib/icons";
+
+const ICON_ALIASES: Record<string, IconName> = {
+  "📖": "quran",
+  "📚": "bookOpen",
+  "🕌": "mosque",
+  "⚖️": "scale",
+  "⚖": "scale",
+  "🔔": "bell",
+  "💡": "sparkles",
+  "✨": "sparkles",
+  "✦": "sparkles",
+  "🔗": "link",
+  "📍": "mapPin",
+  "🎯": "target",
+  "🧭": "qibla",
+  "🤲": "duaHands",
+  "📿": "tasbih",
+  "🕋": "kaaba",
+  "🕐": "clock",
+  "⏱️": "clock",
+  "🛠️": "settings",
+  "⚙️": "settings",
+  "⚙": "settings",
+  "📅": "calendar",
+  "🌙": "crescent",
+  "❤️": "heart",
+  "🛡️": "shieldCheck",
+  "🔒": "lock",
+  "🔐": "lock",
+  "❓": "helpCircle",
+  "ℹ️": "info",
+  "✓": "checkCircle",
+  "🚫": "shield",
+  "⏹️": "stop",
+  "📜": "fileText",
+  "🧾": "fileText",
+  "✍️": "edit",
+  "📱": "download",
+  "▶️": "play",
+  "🎧": "headphones",
+  "🗂️": "folder",
+  "🏠": "home",
+  "🗺️": "mapPin",
+  "🆕": "sparkles",
+  "📭": "mail",
+  "🍪": "info",
+  "🧒": "user",
+  "👥": "users",
+  "🏛️": "globe",
+  "🏡": "home",
+  "🧳": "folder",
+  "🔥": "sparkles",
+  "👑": "star",
+  "✂️": "settings",
+  "⛺": "folder",
+  "🏜️": "mapPin",
+  "🪨": "target",
+  "🐑": "heart",
+  "💈": "settings",
+  "🚢": "globe",
+  "🌊": "globe",
+  "🐋": "globe",
+  "🎮": "play",
+  "💭": "helpCircle",
+  "🎭": "sparkles",
+  "💔": "heart",
+  "🎉": "sparkles",
+  "👋": "user",
+  "⚔️": "scale",
+  "📢": "send",
+  "📡": "live",
+  "🔬": "search",
+  "🧮": "scale",
+  "📥": "download",
+  "👤": "user",
+  "🌟": "star",
+  "🌅": "sun",
+  "🌄": "sun",
+  "🌌": "star",
+  "💰": "scale",
+  "🧠": "sparkles",
+  "🗄️": "folder",
+  "🔍": "search",
+  "◈": "globe",
+  "📄": "fileText",
+  "📕": "bookOpen",
+  "🎓": "target",
+  "✉️": "mail",
+  "📬": "mail",
+  "💬": "helpCircle",
+  "🕊️": "heart",
+  "💧": "info",
+  "💝": "heart",
+  "👨‍👩‍👧‍👦": "users",
+  "🔁": "refresh",
+  "🔂": "rotateCw",
+  "🏃": "target",
+  "✝️": "sparkles",
+  "👩": "user",
+  "🤝": "users",
+  "⬜": "check",
+  "🤖": "sparkles",
+  "📊": "sort",
+  "🏷️": "bookmark",
+  "📌": "bookmark",
+  "⏳": "clock",
+  "⬇️": "download",
+  "⚠️": "alert",
+  "➕": "plus",
+};
+
+export function renderDesignIcon(icon: ReactNode, size = 24): ReactNode {
+  if (typeof icon !== "string") return icon;
+  const value = icon.trim();
+  const iconName = ICON_ALIASES[value] ?? (
+    Object.prototype.hasOwnProperty.call(iconMap, value) ? value as IconName : undefined
+  );
+  return iconName ? <Icon name={iconName} size={size} /> : icon;
+}
 
 // ------------------------------------------------------------
 // Breadcrumbs — فتات الخبز
@@ -76,7 +196,7 @@ export function PageHero({
               aria-hidden="true"
               className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-4xl shadow-sm ring-1 ring-primary-100 dark:bg-white/10 dark:ring-primary-900/40"
             >
-              {icon}
+              {renderDesignIcon(icon, 30)}
             </span>
           )}
           <div className="min-w-0 flex-1">
@@ -121,7 +241,7 @@ export function SectionHeader({
   align = "center",
   action,
 }: {
-  icon?: string;
+  icon?: ReactNode;
   title: string;
   subtitle?: string;
   align?: "center" | "start";
@@ -132,11 +252,11 @@ export function SectionHeader({
     <div className={`mb-9 ${isCenter ? "text-center" : "flex flex-wrap items-end justify-between gap-4"}`}>
       <div className={isCenter ? "" : "min-w-0"}>
         <h2 className="section-title mb-0" style={{ fontFamily: "var(--font-amiri)" }}>
-          {icon ? `${icon} ` : ""}
+          {icon ? <span className="me-1 inline-flex align-middle" aria-hidden="true">{renderDesignIcon(icon, 22)}</span> : null}
           {title}
         </h2>
         <div className={`islamic-divider my-0 ${isCenter ? "mx-auto" : ""}`} aria-hidden="true">
-          <span className="text-xl text-gold-500">✦</span>
+          <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
         </div>
         {subtitle && <p className={`section-subtitle ${isCenter ? "mx-auto max-w-2xl" : "max-w-2xl"}`}>{subtitle}</p>}
       </div>
@@ -214,7 +334,7 @@ export function InfoCard({
       <div className="mb-3 flex items-start gap-3">
         {icon && (
           <span aria-hidden="true" className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${iconBg} text-3xl shadow-sm`}>
-            {icon}
+            {renderDesignIcon(icon, 28)}
           </span>
         )}
         <div className="min-w-0 flex-1">
@@ -265,7 +385,7 @@ export function EmptyState({
   actionHref,
   actionLabel,
 }: {
-  icon?: string;
+  icon?: ReactNode;
   title: string;
   desc?: string;
   actionHref?: string;
@@ -274,7 +394,7 @@ export function EmptyState({
   return (
     <div className="card flex flex-col items-center justify-center gap-3 p-12 text-center">
       <span aria-hidden="true" className="text-5xl">
-        {icon}
+        {renderDesignIcon(icon, 34)}
       </span>
       <h3 className="text-lg font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-amiri)" }}>
         {title}
@@ -305,7 +425,7 @@ export function Callout({
   children,
   tone = "gold",
 }: {
-  icon?: string;
+  icon?: ReactNode;
   title?: string;
   children: ReactNode;
   tone?: "primary" | "gold" | "warning";
@@ -314,7 +434,7 @@ export function Callout({
     <div className={`rounded-2xl border-2 p-5 md:p-6 ${CALLOUT_TONES[tone]}`}>
       <div className="flex items-start gap-4">
         <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-xl dark:bg-white/10">
-          {icon}
+          {renderDesignIcon(icon, 22)}
         </span>
         <div className="min-w-0 flex-1">
           {title && (
@@ -340,7 +460,7 @@ export function RelatedGrid({
   lang = "ar",
 }: {
   title: string;
-  items: Array<{ href: string; icon?: string; title: string; desc?: string }>;
+  items: Array<{ href: string; icon?: ReactNode; title: string; desc?: string }>;
   cols?: 2 | 3 | 4;
   lang?: Lang;
 }) {

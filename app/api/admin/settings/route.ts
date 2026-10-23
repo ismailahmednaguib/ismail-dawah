@@ -5,6 +5,8 @@ import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { invalidateContentCache } from '@/lib/content';
 import { PAGES } from '@/lib/page-sections';
 import { NON_LOCALIZED_SETTING_KEYS, isNonLocalizedSetting } from '@/lib/settings-keys';
+import { normalizeToolSettings } from '@/lib/tool-settings';
+import { validateManagedRedirects } from '@/lib/managed-redirects';
 import { revalidatePath } from 'next/cache';
 
 export const runtime = 'nodejs';
@@ -176,7 +178,24 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'بيانات الإعدادات غير صحيحة.' }, { status: 400 });
     }
 
-    const cleanSettings = sanitizeSettings(body.settings);
+    const sanitizedSettings = sanitizeSettings(body.settings);
+    let cleanSettings = isRecord(sanitizedSettings)
+      ? {
+          ...sanitizedSettings,
+          tools: normalizeToolSettings(sanitizedSettings.tools),
+        }
+      : sanitizedSettings;
+
+    if (isRecord(cleanSettings) && 'redirects' in cleanSettings) {
+      const redirectValidation = validateManagedRedirects(cleanSettings.redirects);
+      if (redirectValidation.errors.length > 0) {
+        return NextResponse.json(
+          { error: redirectValidation.errors[0], details: redirectValidation.errors },
+          { status: 400 }
+        );
+      }
+      cleanSettings = { ...cleanSettings, redirects: redirectValidation.redirects };
+    }
     const serializedSettings = JSON.stringify(cleanSettings);
 
     if (Buffer.byteLength(serializedSettings, 'utf8') > MAX_SETTINGS_BYTES) {

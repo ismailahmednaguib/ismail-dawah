@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero } from "@/components/ui";
+import { PageHero, renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 import { usePageGate } from "@/components/PageGate";
@@ -549,7 +549,7 @@ export default function BookmarksPage() {
                         : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
                     }`}
                   >
-                    <span>{icon}</span>
+                    <span aria-hidden="true">{renderDesignIcon(icon, 20)}</span>
                     <span>{categoryLabel(category, lang)}</span>
                     {category !== "all" && (
                       <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-black">
@@ -664,7 +664,7 @@ export default function BookmarksPage() {
           <div className="card p-12 text-center">
             <div className="mb-6 flex justify-center">
               <span className="flex h-24 w-24 items-center justify-center rounded-3xl bg-slate-100 text-5xl dark:bg-night-800">
-                {searchQuery ? "🔍" : "📭"}
+                {renderDesignIcon(searchQuery ? "🔍" : "📭", 48)}
               </span>
             </div>
 
@@ -713,7 +713,7 @@ export default function BookmarksPage() {
 
                   <div className="mb-4 flex flex-wrap items-center gap-2">
                     <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-3 py-1 text-xs font-bold text-white`}>
-                      {icon} {categoryLabel(bookmark.category, lang)}
+                      {renderDesignIcon(icon, 16)} {categoryLabel(bookmark.category, lang)}
                     </span>
 
                     <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
@@ -777,7 +777,7 @@ export default function BookmarksPage() {
         <div className="card mt-8 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -835,7 +835,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>

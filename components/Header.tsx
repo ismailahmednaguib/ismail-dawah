@@ -423,7 +423,7 @@ export default function Header({
           >
             <span
               className="flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg"
-              style={{ background: "linear-gradient(135deg,#06b6d4,#0e7490)" }}
+              style={{ background: "linear-gradient(135deg,var(--color-primary-500),var(--color-primary-700))" }}
             >
               <svg
                 width="24"
@@ -434,7 +434,7 @@ export default function Header({
                 focusable="false"
               >
                 <path d="M12 3a9 9 0 1 0 9 9c0-1.5-.4-3-1.2-4.2A7 7 0 0 1 12 3z" />
-                <circle cx="17" cy="6" r="1.5" fill="#d4af37" />
+                <circle cx="17" cy="6" r="1.5" fill="var(--color-gold-500)" />
               </svg>
             </span>
 

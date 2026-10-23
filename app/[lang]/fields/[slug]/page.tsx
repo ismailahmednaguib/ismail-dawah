@@ -17,7 +17,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ContentCard from "@/components/learn/ContentCard";
-import { PageHero, SectionHeader, CardGrid, InfoCard, EmptyState } from "@/components/ui";
+import { PageHero, SectionHeader, CardGrid, InfoCard, EmptyState, renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -316,7 +316,7 @@ export default async function FieldPage({
                 className="card card-interactive group flex items-center gap-4 p-5"
               >
                 <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(prevField)} text-2xl text-white shadow-md`}>
-                  {prevField.icon ?? "📖"}
+                  {renderDesignIcon(prevField.icon ?? "📖", 24)}
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold text-slate-500 dark:text-slate-400">← {ui.prevField}</p>
@@ -335,7 +335,7 @@ export default async function FieldPage({
                   <p className="truncate font-black text-slate-900 dark:text-white">{nextField.name}</p>
                 </div>
                 <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${fieldColor(nextField)} text-2xl text-white shadow-md`}>
-                  {nextField.icon ?? "📖"}
+                  {renderDesignIcon(nextField.icon ?? "📖", 24)}
                 </span>
               </Link>
             )}

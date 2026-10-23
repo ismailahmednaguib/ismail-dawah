@@ -6,6 +6,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { readSettingText } from "@/lib/settings-text";
 import { SITE_NAME, SITE_NAME_EN, SITE_AUTHOR, SITE_AUTHOR_EN } from "@/lib/site";
+import { themeCssVariables } from "@/lib/theme-settings";
 
 // نُخفّف قراءة الإعدادات: تُقرأ مرة واحدة لكل طلب وتُستخدم في generateMetadata
 // وفي عرض JSON-LD معًا.
@@ -140,7 +141,7 @@ export async function generateMetadata({
       "apple-mobile-web-app-title": siteName,
       "application-name": siteName,
       "msapplication-TileColor": "#0e7490",
-      "theme-color": "#0e7490",
+      "theme-color": themeCssVariables(settings.theme)["--color-primary-600"],
     },
   };
 }
@@ -149,11 +150,13 @@ export async function generateMetadata({
 // Viewport ديناميكي
 // ============================================================
 
-export function generateViewport() {
+export async function generateViewport() {
+  const settings = await getCachedSettings();
+  const variables = themeCssVariables(settings.theme);
   return {
     themeColor: [
-      { media: "(prefers-color-scheme: light)", color: "#0e7490" },
-      { media: "(prefers-color-scheme: dark)", color: "#083344" },
+      { media: "(prefers-color-scheme: light)", color: variables["--color-primary-600"] },
+      { media: "(prefers-color-scheme: dark)", color: variables["--color-primary-950"] },
     ],
     width: "device-width",
     initialScale: 1,
@@ -237,6 +240,7 @@ export default async function LangLayout({
       lang={l}
       dir={isRTL ? "rtl" : "ltr"}
       className="min-h-screen bg-cream-dark dark:bg-gray-900"
+      style={themeCssVariables(settings.theme) as React.CSSProperties}
     >
       {/* ===== JSON-LD Schema ===== */}
       <script

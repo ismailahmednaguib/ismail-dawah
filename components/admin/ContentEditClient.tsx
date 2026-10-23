@@ -8,6 +8,7 @@ import StatusBadge from '@/components/admin/StatusBadge';
 import ContentTermsEditor from '@/components/admin/ContentTermsEditor';
 import ContentMediaEditor from '@/components/admin/ContentMediaEditor';
 import ContentRevisions from '@/components/admin/ContentRevisions';
+import { renderDesignIcon } from '@/components/ui';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import type {
   AgeGroup,
@@ -822,7 +823,7 @@ export default function ContentEditClient({
       {/* مراجع شرعية */}
       <div className="card">
         <h3 className="font-medium text-stone-700 mb-3">
-          📚 التوثيق الشرعي ({references.length})
+          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 18)}</span>التوثيق الشرعي ({references.length})
         </h3>
 
         {canEdit && (
@@ -972,7 +973,7 @@ export default function ContentEditClient({
             {references.map((ref) => (
               <li key={ref.id} className="flex items-center gap-2">
                 <span>
-                  {ref.kind === 'quran' ? '📖' : ref.kind === 'hadith' ? '💬' : '📚'}
+                  {renderDesignIcon(ref.kind === 'quran' ? '📖' : ref.kind === 'hadith' ? '💬' : '📚', 16)}
                 </span>
                 <span className="text-stone-700">
                   {ref.kind === 'quran'

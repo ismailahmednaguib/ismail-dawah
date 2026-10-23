@@ -7,6 +7,7 @@ import ContentCard from '@/components/learn/ContentCard';
 import { getPublishedContent } from '@/lib/learn/queries';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import type { Madhhab } from '@/lib/types/content';
+import { renderDesignIcon } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -119,7 +120,7 @@ export default async function FiqhPage({ params, searchParams }: PageProps) {
           </form>
 
           <div className="mx-auto mt-5 max-w-3xl rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3 text-sm text-primary-900 shadow-sm dark:border-primary-900/50 dark:bg-primary-950/30 dark:text-primary-100">
-            🧭 {copy.notice}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🧭", 18)}</span>{copy.notice}
           </div>
 
           <div className="card mt-8 p-4">
@@ -148,7 +149,7 @@ export default async function FiqhPage({ params, searchParams }: PageProps) {
               </div>
             ) : (
               <div className="card border-dashed px-6 py-16 text-center">
-                <p className="mb-4 text-5xl">📭</p>
+                <p aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</p>
                 <h2 className="text-xl font-semibold text-slate-700 dark:text-white">{copy.emptyTitle}</h2>
                 <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{copy.emptyHint}</p>
               </div>

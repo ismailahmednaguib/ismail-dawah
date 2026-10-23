@@ -10,14 +10,14 @@ import {
 } from "react";
 import { PRAYERS, toArabicNumeral } from "@/lib/data";
 import type { Lang } from "@/lib/i18n";
+import { renderDesignIcon } from "@/components/ui";
+import {
+  DEFAULT_PRAYER_TOOL_SETTINGS,
+  type PrayerToolSettings,
+} from "@/lib/prayer-settings";
 
 const STORAGE_KEY = "dawah_prayer_location_v2";
 const SETTINGS_KEY = "dawah_prayer_settings_v1";
-
-const DEFAULT_COORDINATES = {
-  latitude: 30.0444,
-  longitude: 31.2357,
-};
 
 // طرق الحساب المتاحة
 const CALCULATION_METHODS = [
@@ -218,21 +218,21 @@ function todayString(): string {
   return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
 }
 
-function defaultLocation(lang: Lang): LocationState {
+function defaultLocation(lang: Lang, toolSettings: PrayerToolSettings): LocationState {
   return {
-    latitude: DEFAULT_COORDINATES.latitude,
-    longitude: DEFAULT_COORDINATES.longitude,
-    label: lang === "ar" ? "القاهرة، مصر" : "Cairo, Egypt",
+    latitude: toolSettings.defaultLatitude,
+    longitude: toolSettings.defaultLongitude,
+    label: lang === "ar" ? toolSettings.defaultCityAr : toolSettings.defaultCityEn,
     source: "default",
   };
 }
 
-function defaultSettings(): PrayerSettings {
+function defaultSettings(toolSettings: PrayerToolSettings): PrayerSettings {
   return {
-    method: 5,
-    soundEnabled: true,
-    adhanEnabled: false,
-    notifyBefore: 10,
+    method: toolSettings.defaultMethod,
+    soundEnabled: toolSettings.defaultSoundEnabled,
+    adhanEnabled: toolSettings.defaultAdhanEnabled,
+    notifyBefore: toolSettings.defaultNotifyBefore,
   };
 }
 
@@ -348,12 +348,18 @@ function playBeep() {
   }
 }
 
-export default function PrayerTimesContent({ lang }: { lang: Lang }) {
+export default function PrayerTimesContent({
+  lang,
+  toolSettings = DEFAULT_PRAYER_TOOL_SETTINGS,
+}: {
+  lang: Lang;
+  toolSettings?: PrayerToolSettings;
+}) {
   const ui = UI[lang] || UI.ar;
   const isRTL = lang === "ar";
 
-  const [location, setLocation] = useState<LocationState>(() => defaultLocation(lang));
-  const [settings, setSettings] = useState<PrayerSettings>(() => defaultSettings());
+  const [location, setLocation] = useState<LocationState>(() => defaultLocation(lang, toolSettings));
+  const [settings, setSettings] = useState<PrayerSettings>(() => defaultSettings(toolSettings));
   const [timings, setTimings] = useState<Timings | null>(null);
   const [hijriDate, setHijriDate] = useState<string | null>(null);
   const [gregorianDate, setGregorianDate] = useState<string | null>(null);
@@ -390,7 +396,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
           setLocation({
             latitude: parsed.latitude,
             longitude: parsed.longitude,
-            label: typeof parsed.label === "string" && parsed.label.trim() ? parsed.label : defaultLocation(lang).label,
+            label: typeof parsed.label === "string" && parsed.label.trim() ? parsed.label : defaultLocation(lang, toolSettings).label,
             source,
           });
           setLatInput(String(parsed.latitude));
@@ -402,7 +408,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
       const settingsRaw = localStorage.getItem(SETTINGS_KEY);
       if (settingsRaw) {
         const parsed = JSON.parse(settingsRaw) as Partial<PrayerSettings>;
-        setSettings({ ...defaultSettings(), ...parsed });
+        setSettings({ ...defaultSettings(toolSettings), ...parsed });
       }
     } catch {
       // تجاهل
@@ -721,7 +727,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
         {settingsOpen && (
           <div className="mt-6 rounded-2xl border border-gold-200 bg-gold-50/50 p-5 dark:border-gold-900/30 dark:bg-gold-950/20">
             <h3 className="mb-4 text-lg font-black text-slate-900 dark:text-white">
-              ⚙️ {ui.settings}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚙️", 18)}</span>{ui.settings}
             </h3>
 
             <div className="space-y-4">
@@ -768,7 +774,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
                   />
                   <div>
                     <p className="text-sm font-bold text-slate-900 dark:text-white">
-                      🕌 {ui.adhanAlert}
+                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕌", 18)}</span>{ui.adhanAlert}
                     </p>
                   </div>
                 </label>
@@ -804,7 +810,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
       {/* ===== حالة الخطأ ===== */}
       {error && !timings && (
         <div className="card mb-8 border-red-200 p-8 text-center dark:border-red-900/40">
-          <div className="mb-4 text-5xl">⚠️</div>
+          <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("⚠️", 48)}</div>
           <h2 className="mb-2 text-xl font-bold text-red-700 dark:text-red-300">
             {ui.errorLoad}
           </h2>
@@ -876,7 +882,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
               </p>
 
               <p className="mt-2 text-sm text-primary-100">
-                🕐 {ui.currentTime}: {formatDisplayTime(
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕐", 18)}</span>{ui.currentTime}: {formatDisplayTime(
                   `${pad(now.getHours())}:${pad(now.getMinutes())}`,
                   lang
                 )}
@@ -939,7 +945,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
             </h2>
             {now && (
               <span className="rounded-full bg-primary-100 px-3 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
-                🕐 {ui.timeNow}: {formatDisplayTime(
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕐", 18)}</span>{ui.timeNow}: {formatDisplayTime(
                   `${pad(now.getHours())}:${pad(now.getMinutes())}`,
                   lang
                 )}
@@ -979,7 +985,7 @@ export default function PrayerTimesContent({ lang }: { lang: Lang }) {
                             : "bg-primary-100 dark:bg-primary-900/40"
                         }`}
                       >
-                        {prayer.icon}
+                        {renderDesignIcon(prayer.icon, 22)}
                       </span>
                       <div>
                         <h3 className="text-lg font-bold text-slate-900 dark:text-white">

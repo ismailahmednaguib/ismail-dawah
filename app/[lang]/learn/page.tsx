@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { isValidLang, type Lang } from '@/lib/i18n';
-import { PageHero } from '@/components/ui';
+import { PageHero, renderDesignIcon } from '@/components/ui';
 import type { AgeGroup, Audience, ContentType, EduLevel, Madhhab } from '@/lib/types/content';
 
 const COPY: Record<string, any> = {
@@ -122,7 +122,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
                 href={`/${lang}/learn?audience=${track.value}`}
                 className="card-interactive p-4"
               >
-                <span className="text-2xl" aria-hidden="true">{track.icon}</span>
+                <span aria-hidden="true">{renderDesignIcon(track.icon, 26)}</span>
                 <h3 className="mt-2 font-bold text-primary-950 dark:text-white">{track.title}</h3>
                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{track.text}</p>
               </Link>
@@ -154,7 +154,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
           </div>
         ) : (
           <div className="text-center py-16">
-            <p className="text-5xl mb-4">📭</p>
+            <p aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</p>
             <p className="text-xl text-slate-500 dark:text-slate-400">
               {copy.emptyTitle}
             </p>

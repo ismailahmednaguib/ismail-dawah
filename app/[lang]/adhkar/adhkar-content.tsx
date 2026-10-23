@@ -11,6 +11,7 @@ import {
 } from "react";
 import { ADHKAR, dhikrSourceText, dhikrVirtueText, toArabicNumeral, type Dhikr } from "@/lib/data";
 import type { Lang } from "@/lib/i18n";
+import { renderDesignIcon } from "@/components/ui";
 
 const STORAGE_KEY = "dawah_adhkar_progress_v1";
 const SETTINGS_KEY = "dawah_adhkar_settings_v1";
@@ -621,7 +622,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
               onClick={() => setShowSettings(!showSettings)}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-200"
             >
-              ⚙️ {ui.settings}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚙️", 18)}</span>{ui.settings}
             </button>
           </div>
 
@@ -734,7 +735,7 @@ export default function AdhkarContent({ lang }: { lang: Lang }) {
               )}
 
               <span className="text-lg">
-                {isCatDone ? "✓" : category.icon}
+                {isCatDone ? renderDesignIcon("✓", 18) : renderDesignIcon(category.icon, 20)}
               </span>
               <span>
                 {lang === "ar" ? category.arabicTitle : category.englishTitle}

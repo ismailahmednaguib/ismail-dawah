@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 // ============================================================
@@ -1014,7 +1015,7 @@ export default async function HajjGuidePage({
             </div>
 
             <span className="badge-gold mb-5">
-              🕋 {isRTL ? "مناسك الحج والعمرة" : "Hajj & Umrah Rites"}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕋", 22)}</span>{isRTL ? "مناسك الحج والعمرة" : "Hajj & Umrah Rites"}
             </span>
 
             <h1
@@ -1063,7 +1064,7 @@ export default async function HajjGuidePage({
               className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🌙 {ui.introTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🌙", 22)}</span>{ui.introTitle}
             </h2>
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.introDesc}
@@ -1081,16 +1082,16 @@ export default async function HajjGuidePage({
 
           <div className="flex flex-wrap gap-3">
             <a href="#hajj" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              🕋 {ui.hajjTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕋", 22)}</span>{ui.hajjTitle}
             </a>
             <a href="#umrah" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               🧳 {ui.umrahTitle}
             </a>
             <a href="#duas" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              🤲 {ui.duasTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🤲", 22)}</span>{ui.duasTitle}
             </a>
             <a href="#mistakes" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              ⚠️ {ui.mistakesTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("⚠️", 22)}</span>{ui.mistakesTitle}
             </a>
             <a href="#checklist" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               ✓ {ui.checklistTitle}
@@ -1105,7 +1106,7 @@ export default async function HajjGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.hajjTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.hajjDesc}</p>
           </div>
@@ -1123,7 +1124,7 @@ export default async function HajjGuidePage({
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
                     <div className="flex min-w-0 items-start gap-4">
                       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                        {step.icon}
+                        {renderDesignIcon(step.icon, 30)}
                       </span>
 
                       <div className="min-w-0">
@@ -1195,7 +1196,7 @@ export default async function HajjGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.umrahTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.umrahDesc}</p>
           </div>
@@ -1213,7 +1214,7 @@ export default async function HajjGuidePage({
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
                     <div className="flex min-w-0 items-start gap-4">
                       <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                        {step.icon}
+                        {renderDesignIcon(step.icon, 30)}
                       </span>
 
                       <div className="min-w-0">
@@ -1265,7 +1266,7 @@ export default async function HajjGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.duasTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.duasDesc}</p>
           </div>
@@ -1325,7 +1326,7 @@ export default async function HajjGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.mistakesTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.mistakesDesc}</p>
           </div>
@@ -1338,7 +1339,7 @@ export default async function HajjGuidePage({
               >
                 <div className="mb-4 flex items-start gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-100 text-xl dark:bg-red-900/30">
-                    ⚠️
+                    {renderDesignIcon("⚠️", 22)}
                   </span>
 
                   <h3 className="text-lg font-black leading-relaxed text-slate-900 dark:text-white">
@@ -1361,7 +1362,7 @@ export default async function HajjGuidePage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.checklistTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.checklistDesc}</p>
           </div>
@@ -1391,7 +1392,7 @@ export default async function HajjGuidePage({
 
             <div className="card p-6 md:p-7">
               <h3 className="mb-5 text-xl font-black text-slate-900 dark:text-white">
-                🕋 {ui.duringRites}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🕋", 22)}</span>{ui.duringRites}
               </h3>
 
               <ul className="space-y-3">
@@ -1421,12 +1422,12 @@ export default async function HajjGuidePage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link href={`/${l}/calendar`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">📅</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("📅", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.calendarPage}
@@ -1438,7 +1439,7 @@ export default async function HajjGuidePage({
             </Link>
 
             <Link href={`/${l}/prayer-times`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕐</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🕐", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.prayerPage}
@@ -1450,7 +1451,7 @@ export default async function HajjGuidePage({
             </Link>
 
             <Link href={`/${l}/qibla`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🧭</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🧭", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.qiblaPage}
@@ -1481,7 +1482,7 @@ export default async function HajjGuidePage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -1541,7 +1542,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

@@ -1,5 +1,6 @@
 // app/[lang]/page.tsx
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, languages, type Lang } from "@/lib/i18n";
@@ -16,7 +17,7 @@ import { getSiteSettings } from "@/lib/content";
 import { parseEditorPicks } from "@/lib/home/editor-picks";
 import { readSettingText } from "@/lib/settings-text";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, mergeSectionOrder, pageGate } from "@/lib/page-sections";
 import { getPublicCounts, getPublicList, getPublicPicks } from "@/lib/learn/public";
 import {
   NAV_TREE,
@@ -25,6 +26,7 @@ import {
   navLabel,
   type NavNode,
 } from "@/lib/navigation";
+import { renderDesignIcon } from "@/components/ui";
 
 // نستخدم ISR قصيرًا بدل force-dynamic: صفحات الرئيسية تُخزَّن في الحافة،
 // وتعديلات الإعدادات تُحدَّث فورًا عبر revalidatePath من مسار الإدارة.
@@ -122,7 +124,7 @@ type UiText = {
 
 const UI: Record<string, UiText> = {
   ar: {
-    badge: "✨ منصة دعوية شاملة",
+    badge: "منصة دعوية شاملة",
     title: "اكتشف الإسلام",
     subtitle:
       "منصة إسلامية شاملة تجمع القرآن الكريم، والأذكار، والفتاوى، وقصص الأنبياء، ومواقيت الصلاة، واتجاه القبلة، وأدوات الدعوة في مكان واحد.",
@@ -145,7 +147,7 @@ const UI: Record<string, UiText> = {
     portalCta1: "تعريف بالإسلام",
     portalCta2: "كيف أدخل الإسلام؟",
     verseLabel: "آية اليوم",
-    downloadBadge: "📱 تطبيق أندرويد",
+    downloadBadge: "تطبيق أندرويد",
     downloadTitle: "حمّل التطبيق الآن",
     downloadDesc:
       "افتح منصة اكتشف الإسلام كتطبيق مستقل على هاتفك الأندرويد بدون الحاجة لفتح المتصفح.",
@@ -180,7 +182,7 @@ const UI: Record<string, UiText> = {
     sectionsExplore: "تصفّح القسم",
   },
   en: {
-    badge: "✨ Comprehensive Dawah Platform",
+    badge: "Comprehensive Dawah Platform",
     title: "Discover Islam",
     subtitle:
       "A comprehensive Islamic platform that brings together the Holy Quran, adhkar, fatwas, prophets' stories, prayer times, Qibla direction, and dawah tools in one place.",
@@ -206,7 +208,7 @@ const UI: Record<string, UiText> = {
     portalCta1: "Introduction to Islam",
     portalCta2: "How to embrace Islam",
     verseLabel: "Verse of the Day",
-    downloadBadge: "📱 Android App",
+    downloadBadge: "Android App",
     downloadTitle: "Download the App Now",
     downloadDesc:
       "Open the Discover Islam platform as a standalone app on your Android phone without needing a browser.",
@@ -321,6 +323,10 @@ export default async function HomePage({
   const settings = await getSiteSettings();
   const baseUi = UI[l];
   const gate = pageGate(buildPageControls(settings as Record<string, unknown>), "home", l);
+  const homeSectionOrder = mergeSectionOrder(settings.sectionOrder).home;
+  const homeSectionStyle = (key: string): CSSProperties => ({
+    order: key === "hero" ? 1 : homeSectionOrder.indexOf(key) + 3,
+  });
   const ui: UiText = {
     ...baseUi,
     badge: settingText(settings, "homeKicker", l, baseUi.badge),
@@ -447,9 +453,11 @@ export default async function HomePage({
 
       <Header lang={l} overHero settings={settings} />
 
+      <div className="flex flex-col">
+
       {/* ============ Hero Section ============ */}
       {gate.visible('hero') && (
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-20 text-white md:py-28">
+      <section style={homeSectionStyle("hero")} className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-20 text-white md:py-28">
         <div
           aria-hidden="true"
           className="absolute inset-0 opacity-10"
@@ -471,7 +479,7 @@ export default async function HomePage({
 
         <div className="container-page relative text-center">
           <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-5 py-2 text-sm font-bold backdrop-blur-sm">
-            {ui.badge}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 18)}</span>{ui.badge}
           </span>
 
           <h1
@@ -537,20 +545,20 @@ export default async function HomePage({
       </section>
       )}
 
-      {settingFlag(settings, "showPrayerBar", true) && <PrayerWidgetLazy lang={l} />}
+      {settingFlag(settings, "showPrayerBar", true) && <PrayerWidgetLazy lang={l} style={{ order: 2 }} />}
 
       {/* ============ أبواب الموقع ============ */}
       {gate.visible('sections') && topGroups.length > 0 && (
-      <section className="container-page py-14 md:py-16">
+      <section style={homeSectionStyle("sections")} className="container-page py-14 md:py-16">
         <div className="mb-9 text-center">
           <h2
             className="section-title mb-0"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🗺️ {gate.title('sections', ui.sectionsTitle, l)}
+            {renderDesignIcon("📍", 20)} {gate.title('sections', ui.sectionsTitle, l)}
           </h2>
           <div className="islamic-divider my-0" aria-hidden="true">
-            <span className="text-xl text-gold-500">✦</span>
+            <span className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
           </div>
           <p className="section-subtitle mx-auto max-w-2xl">
             {ui.sectionsSubtitle}
@@ -573,7 +581,7 @@ export default async function HomePage({
 
       {/* ============ آية اليوم ============ */}
       {gate.visible('verse') && (
-      <section className="container-page py-16 md:py-20">
+      <section style={homeSectionStyle("verse")} className="container-page py-16 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="card relative overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-10 text-center md:p-14 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
             <div
@@ -609,22 +617,23 @@ export default async function HomePage({
           subtitle={ui.picksSubtitle}
           viewAll={ui.viewAll}
           href={`/${l}/learn`}
+          style={homeSectionStyle("picks")}
         />
       )}
 
       {/* ============ أحدث ما نُشر ============ */}
       {gate.visible('latest') && latestRows.length > 0 && (
-        <section className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
+        <section style={homeSectionStyle("latest")} className="bg-primary-50/50 py-16 dark:bg-night-800/30 md:py-20">
           <div className="container-page">
             <div className="mb-10 text-center">
               <h2
                 className="section-title mb-0"
                 style={{ fontFamily: "var(--font-amiri)" }}
               >
-                🆕 {gate.title('latest', ui.latestTitle, l)}
+                {renderDesignIcon("✨", 20)} {gate.title('latest', ui.latestTitle, l)}
               </h2>
               <div className="islamic-divider my-0" aria-hidden="true">
-                <span className="text-xl text-gold-500">✦</span>
+                <span className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
               </div>
               <p className="section-subtitle mx-auto max-w-2xl">
                 {ui.latestSubtitle}
@@ -689,14 +698,14 @@ export default async function HomePage({
 
       {/* ============ النشرة البريدية ============ */}
       {gate.visible('newsletter') && (
-      <section className="container-page pb-16 md:pb-20">
+      <section style={homeSectionStyle("newsletter")} className="container-page pb-16 md:pb-20">
         <Newsletter lang={l} />
       </section>
       )}
 
       {/* ============ تطبيق أندرويد ============ */}
       {gate.visible('download') && (
-      <section className="container-page pb-16 md:pb-20">
+      <section style={homeSectionStyle("download")} className="container-page pb-16 md:pb-20">
         <div className="card relative overflow-hidden border-2 border-primary-200 p-8 md:p-10 dark:border-primary-800">
           <div
             aria-hidden="true"
@@ -704,7 +713,7 @@ export default async function HomePage({
           />
 
           <div className="mx-auto max-w-3xl text-center">
-            <span className="badge-primary mb-5">{ui.downloadBadge}</span>
+            <span className="badge-primary mb-5"><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📱", 18)}</span>{ui.downloadBadge}</span>
 
             <h2
               className="mb-4 text-3xl font-black leading-tight text-slate-900 md:text-4xl dark:text-white"
@@ -753,7 +762,7 @@ export default async function HomePage({
 
       {/* ============ CTA النهائي ============ */}
       {gate.visible('cta') && (
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-16 text-white md:py-20">
+      <section style={homeSectionStyle("cta")} className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-16 text-white md:py-20">
         <div
           aria-hidden="true"
           className="absolute inset-0 opacity-10"
@@ -790,6 +799,8 @@ export default async function HomePage({
         </div>
       </section>
       )}
+
+      </div>
 
       {/* الصفحة بتنتهي بسكشن ملوّن → flushTop يشيل الفراغ بينه وبين الفوتر */}
       <Footer lang={l} settings={settings} showNewsletter={false} flushTop />

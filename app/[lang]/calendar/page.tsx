@@ -4,10 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import LiveCountdown from "./LiveCountdown";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
@@ -461,7 +463,9 @@ export default async function CalendarPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "calendar", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "calendar", l);
+  if (!gate.pageVisible) return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "calendar", l)} />;
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -549,7 +553,7 @@ export default async function CalendarPage({
 
               <div className="mb-4 flex justify-center">
                 <span className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-gold-400 to-gold-600 text-4xl text-white shadow-2xl">
-                  {nextEvent.icon}
+                  {renderDesignIcon(nextEvent.icon, 24)}
                 </span>
               </div>
 
@@ -667,7 +671,7 @@ export default async function CalendarPage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.upcomingTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.upcomingDesc}</p>
           </div>
@@ -689,7 +693,7 @@ export default async function CalendarPage({
 
                   <div className="mb-5 flex items-start gap-4">
                     <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                      {event.icon}
+                      {renderDesignIcon(event.icon, 24)}
                     </span>
 
                     <div className="min-w-0">
@@ -742,7 +746,7 @@ export default async function CalendarPage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.allTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
           </div>
 
@@ -761,7 +765,7 @@ export default async function CalendarPage({
                 >
                   <div className="flex min-w-0 items-start gap-4">
                     <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                      {event.icon}
+                      {renderDesignIcon(event.icon, 24)}
                     </span>
 
                     <div className="min-w-0">
@@ -810,7 +814,7 @@ export default async function CalendarPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -819,7 +823,7 @@ export default async function CalendarPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🕐
+                {renderDesignIcon("🕐", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -836,7 +840,7 @@ export default async function CalendarPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🧭
+                {renderDesignIcon("🧭", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -853,7 +857,7 @@ export default async function CalendarPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🤲
+                {renderDesignIcon("🤲", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -870,7 +874,7 @@ export default async function CalendarPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🕋
+                {renderDesignIcon("🕋", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -890,7 +894,7 @@ export default async function CalendarPage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/20">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              ⚠️
+              {renderDesignIcon("⚠️", 42)}
             </span>
 
             <div>
@@ -948,7 +952,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

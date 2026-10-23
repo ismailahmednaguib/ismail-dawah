@@ -6,10 +6,12 @@
 // ============================================================
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import ContentCard from "@/components/learn/ContentCard";
 import type { PublicItem } from "@/lib/learn/public";
 import type { Lang } from "@/lib/i18n";
+import { renderDesignIcon } from "@/components/ui";
 
 export default function EditorPicks({
   items,
@@ -18,6 +20,7 @@ export default function EditorPicks({
   subtitle,
   viewAll,
   href,
+  style,
 }: {
   items: PublicItem[];
   lang: Lang;
@@ -25,6 +28,7 @@ export default function EditorPicks({
   subtitle: string;
   viewAll: string;
   href: string;
+  style?: CSSProperties;
 }) {
   if (items.length === 0) return null;
 
@@ -34,6 +38,7 @@ export default function EditorPicks({
     <section
       aria-labelledby="editor-picks-title"
       className="container-page py-16 md:py-20"
+      style={style}
     >
       <div className="mb-10 text-center">
         <h2
@@ -41,10 +46,11 @@ export default function EditorPicks({
           className="section-title mb-0"
           style={{ fontFamily: "var(--font-amiri)" }}
         >
-          ✦ {title}
+          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✦", 20)}</span>
+          {title}
         </h2>
         <div className="islamic-divider my-0" aria-hidden="true">
-          <span className="text-xl text-gold-500">✦</span>
+          <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
         </div>
         <p className="section-subtitle mx-auto max-w-2xl">{subtitle}</p>
       </div>

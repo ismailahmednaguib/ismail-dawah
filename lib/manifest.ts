@@ -1,5 +1,6 @@
 // lib/manifest.ts
 import type { MetadataRoute } from "next";
+import { themeCssVariables } from "./theme-settings.ts";
 
 // ============================================================
 // Site URL
@@ -24,7 +25,6 @@ const ICONS = {
 
 const COLORS = {
   background: "#f8fafc",
-  theme: "#0e7490",
 };
 
 // ============================================================
@@ -32,6 +32,13 @@ const COLORS = {
 // ============================================================
 
 export type ManifestLang = "ar" | "en";
+
+export type ManifestOverrides = {
+  theme?: unknown;
+  name?: unknown;
+  shortName?: unknown;
+  description?: unknown;
+};
 
 type Shortcut = {
   name: string;
@@ -185,14 +192,26 @@ const MANIFEST_TEXT: Record<ManifestLang, ManifestText> = {
 // Manifest generator
 // ============================================================
 
-export function buildManifest(lang: ManifestLang): MetadataRoute.Manifest {
+function localizedOverride(value: unknown, lang: ManifestLang): string | null {
+  if (typeof value === "string" && value.trim()) return value.trim();
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const selected = record[lang];
+  return typeof selected === "string" && selected.trim() ? selected.trim() : null;
+}
+
+export function buildManifest(lang: ManifestLang, theme?: unknown, overrides?: ManifestOverrides): MetadataRoute.Manifest {
   const text = MANIFEST_TEXT[lang];
+  const colors = themeCssVariables(overrides?.theme ?? theme);
+  const name = localizedOverride(overrides?.name, lang) ?? text.name;
+  const shortName = localizedOverride(overrides?.shortName, lang) ?? text.short_name;
+  const description = localizedOverride(overrides?.description, lang) ?? text.description;
 
   return {
     id: `${SITE_URL}/`,
-    name: text.name,
-    short_name: text.short_name,
-    description: text.description,
+    name,
+    short_name: shortName,
+    description,
 
     start_url: "/",
     scope: "/",
@@ -202,7 +221,7 @@ export function buildManifest(lang: ManifestLang): MetadataRoute.Manifest {
     orientation: "portrait-primary",
 
     background_color: COLORS.background,
-    theme_color: COLORS.theme,
+    theme_color: colors["--color-primary-600"],
 
     lang,
     dir: lang === "ar" ? "rtl" : "ltr",

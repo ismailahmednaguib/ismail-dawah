@@ -8,6 +8,7 @@ import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -554,7 +555,7 @@ export default async function EmbraceIslamPage({
             </div>
 
             <span className="badge-gold mb-5">
-              🌙 {isRTL ? "بداية جديدة" : "New Beginning"}
+               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🌙", 22)}</span>{isRTL ? "بداية جديدة" : "New Beginning"}
             </span>
 
             <h1
@@ -663,7 +664,7 @@ export default async function EmbraceIslamPage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.stepsTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.stepsDesc}</p>
           </div>
@@ -679,7 +680,7 @@ export default async function EmbraceIslamPage({
 
                 <div className="mb-5 flex items-start gap-4">
                   <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                    {step.icon}
+                    {renderDesignIcon(step.icon, 30)}
                   </span>
 
                   <div className="min-w-0">
@@ -719,7 +720,7 @@ export default async function EmbraceIslamPage({
           <div className="mb-6 text-center">
             <h2 className="section-title mb-0">{ui.faqTitle}</h2>
             <div className="islamic-divider my-0">
-              <span className="text-xl text-gold-500">✦</span>
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
             </div>
             <p className="section-subtitle mx-auto max-w-2xl">{ui.faqDesc}</p>
           </div>
@@ -780,7 +781,7 @@ export default async function EmbraceIslamPage({
         {gate.visible('k5') && (<>
         <div className="card mb-8 p-6 md:p-8">
           <h2 className="mb-5 text-xl font-black text-slate-900 dark:text-white">
-            📚 {ui.resourcesTitle}
+             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 22)}</span>{ui.resourcesTitle}
           </h2>
 
           <p className="mb-6 leading-relaxed text-slate-500 dark:text-slate-400">
@@ -793,7 +794,7 @@ export default async function EmbraceIslamPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                📖
+                 {renderDesignIcon("📖", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -807,7 +808,7 @@ export default async function EmbraceIslamPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🕌
+                {renderDesignIcon("🕌", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -835,7 +836,7 @@ export default async function EmbraceIslamPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ✍️
+                 {renderDesignIcon("✍️", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -854,7 +855,7 @@ export default async function EmbraceIslamPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            🔗 {ui.relatedTitle}
+             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -880,7 +881,7 @@ export default async function EmbraceIslamPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                🧠
+                 {renderDesignIcon("🧠", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -897,7 +898,7 @@ export default async function EmbraceIslamPage({
               className="card card-interactive group flex items-center gap-3 p-5"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                ✍️
+                 {renderDesignIcon("✍️", 24)}
               </span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
@@ -934,7 +935,7 @@ export default async function EmbraceIslamPage({
         <div className="card border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+               {renderDesignIcon("📌", 24)}
             </span>
 
             <div>
@@ -991,7 +992,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>

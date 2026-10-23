@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import { SURAHS, type SurahInfo } from "@/lib/references/display";
+import { renderDesignIcon } from "@/components/ui";
 
 // ============================================================
 // Types
@@ -561,7 +562,7 @@ export default function MemorizationPlan({
 
       <div className="mb-6">
         <h2 className="mb-2 text-2xl font-black text-slate-900 dark:text-white">
-          🧠 {ui.title}
+          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🧠", 20)}</span>{ui.title}
         </h2>
         <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           {ui.description}

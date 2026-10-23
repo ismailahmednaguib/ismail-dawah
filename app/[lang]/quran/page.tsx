@@ -4,13 +4,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
-import { buildPageControls, pageGate } from "@/lib/page-sections";
+import { buildPageControls, pageGate, toolFallbackMessage } from "@/lib/page-sections";
 import { SURAHS } from "@/lib/data";
 import { SURAH_MEANINGS_EN } from "@/lib/references/surah-meanings";
 import TopBar from "@/components/TopBar";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import { InfoIcon, QuranIcon } from "@/lib/icons";
+import { renderDesignIcon } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -360,7 +363,11 @@ export default async function QuranPage({
 
   const l = lang as Lang;
   const __pageSettings = await getSiteSettings();
-  const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "quran", l);
+  const controls = buildPageControls(__pageSettings as Record<string, unknown>);
+  const gate = pageGate(controls, "quran", l);
+  if (!gate.pageVisible) {
+    return <ToolUnavailablePage lang={l} message={toolFallbackMessage(controls, "quran", l)} />;
+  }
   const ui = UI[l];
   const isRTL = l === "ar";
 
@@ -474,7 +481,7 @@ export default async function QuranPage({
             </div>
 
             <span className="badge-gold mb-5">
-              📖 {isRTL ? "كتاب الله" : "Book of Allah"}
+              <QuranIcon size={20} aria-hidden="true" /> {isRTL ? "كتاب الله" : "Book of Allah"}
             </span>
 
             <h1
@@ -558,7 +565,7 @@ export default async function QuranPage({
                 «{ui.hadithText}»
               </p>
               <p className="text-xs font-bold text-gold-600 dark:text-gold-400">
-                📜 {ui.hadithSource}
+                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>{ui.hadithSource}
               </p>
             </div>
           </div>
@@ -652,7 +659,7 @@ export default async function QuranPage({
         {/* ===== خطأ التحميل ===== */}
         {loadError && (
           <div className="card mb-8 border-red-200 bg-red-50/70 p-8 text-center dark:border-red-900/40 dark:bg-red-950/20">
-            <div className="mb-4 text-5xl">⚠️</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("⚠️", 48)}</div>
             <h2 className="mb-2 text-xl font-black text-slate-900 dark:text-white">
               {ui.loadError}
             </h2>
@@ -668,7 +675,7 @@ export default async function QuranPage({
         {/* ===== لا توجد نتائج ===== */}
         {!loadError && filteredSurahs.length === 0 && (
           <div className="card p-12 text-center">
-            <div className="mb-4 text-5xl">📭</div>
+            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</div>
             <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
             </h2>
@@ -732,7 +739,7 @@ export default async function QuranPage({
 
                   <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-xs font-bold text-slate-500 dark:border-night-700 dark:text-slate-400">
                     <span className="inline-flex items-center gap-1">
-                      ✨ {formatNumber(surah.numberOfAyahs, l)} {ui.ayahs}
+                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 16)}</span>{formatNumber(surah.numberOfAyahs, l)} {ui.ayahs}
                     </span>
 
                     <span className="inline-flex items-center gap-1 text-primary-700 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 dark:text-primary-300 transition-transform">
@@ -767,7 +774,7 @@ export default async function QuranPage({
               className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              🔗 {ui.relatedTitle}
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
             </h2>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -784,7 +791,7 @@ export default async function QuranPage({
               </Link>
 
               <Link href={`/${l}/adhkar`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🤲</span>
+                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🤲", 24)}</span>
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.adhkarPage}
@@ -796,7 +803,7 @@ export default async function QuranPage({
               </Link>
 
               <Link href={`/${l}/prayer-times`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🕐</span>
+                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🕐", 24)}</span>
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.prayerTimesPage}
@@ -808,7 +815,7 @@ export default async function QuranPage({
               </Link>
 
               <Link href={`/${l}/fields/tafsir`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🔍</span>
+                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🔍", 24)}</span>
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.tafsirPage}
@@ -828,7 +835,7 @@ export default async function QuranPage({
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              📌
+              <InfoIcon size={24} aria-hidden="true" />
             </span>
 
             <div>
@@ -840,7 +847,7 @@ export default async function QuranPage({
               </h2>
 
               <ul className="space-y-3">
-                {[ui.note1, ui.note2].map((note, index) => (
+                {[ui.note1.replace("AlQuran Cloud", controls.tools.quran.sourceLabel), ui.note2].map((note, index) => (
                   <li
                     key={`note-${index}`}
                     className="flex items-start gap-3 leading-relaxed text-slate-700 dark:text-slate-200"
@@ -885,7 +892,7 @@ function StatCard({
     <div className="card p-5 text-center">
       <div className="mb-2 flex justify-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {icon}
+          {renderDesignIcon(icon, 28)}
         </span>
       </div>
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
