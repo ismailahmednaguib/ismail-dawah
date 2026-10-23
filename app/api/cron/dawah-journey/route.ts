@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSiteSettings } from '@/lib/content';
+import { isCronAuthorized } from '@/lib/cron-auth';
 import { journeyText, normalizeDawahJourneyConfig } from '@/lib/dawah-journey';
 import { sendNewsletterEmail } from '@/lib/email';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
@@ -13,15 +14,8 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char));
 }
 
-function authorized(request: NextRequest): boolean {
-  const secret = process.env.CRON_SECRET?.trim();
-  if (!secret) return false;
-  const bearer = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '').trim();
-  return bearer === secret || request.headers.get('x-cron-secret') === secret;
-}
-
 export async function GET(request: NextRequest) {
-  if (!authorized(request)) return NextResponse.json({ ok: false, error: 'غير مصرح' }, { status: 401 });
+  if (!isCronAuthorized(request)) return NextResponse.json({ ok: false, error: 'غير مصرح' }, { status: 401 });
 
   const config = normalizeDawahJourneyConfig((await getSiteSettings()).dawahJourney);
   if (!config.enabled) return NextResponse.json({ ok: true, skipped: true, reason: 'journey_disabled' });

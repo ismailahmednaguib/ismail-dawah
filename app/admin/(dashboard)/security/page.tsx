@@ -53,6 +53,21 @@ const HARDENING: { item: string; state: string; detail: string }[] = [
     state: 'مفعَّل',
     detail: 'كل تعديل حسّاس (مراجعة · إعدادات · محتوى) يُسجَّل في audit_log بمعرّف المستخدم.',
   },
+  {
+    item: 'التحقق من البشر (Turnstile)',
+    state:
+      process.env.TURNSTILE_SECRET_KEY && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+        ? 'مفعَّل'
+        : 'غير مضبوط',
+    detail:
+      'يُفعَّل بضبط مفتاح الموقع والسر معًا. النشرة وبريد التذييل مجهّزان، ويُتجاوز التحقق بأمان إذا غاب أحدهما.',
+  },
+  {
+    item: 'النسخ الاحتياطي اليومي',
+    state: 'قابل للتحكم',
+    detail:
+      'يُفعَّل من /admin/backup إلى حاوية Storage خاصة، مع سياسة احتفاظ. التشغيل اليدوي متاح دائمًا.',
+  },
 ];
 
 /** جداول يجب ألّا يقرأها الزائر المجهول. */
@@ -76,10 +91,7 @@ const PRIVATE_TABLES = [
   'user_questions',
   'media_library',
   'rate_limits',
-  'notifications',
   'push_subscriptions',
-  'bookmarks',
-  'user_downloads',
 ] as const;
 
 type RlsState = 'leaking' | 'open' | 'blocked' | 'missing' | 'error';

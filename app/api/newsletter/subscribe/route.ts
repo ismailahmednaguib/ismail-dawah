@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { subscribeEmail } from "@/lib/email";
 import { rateLimitGuard } from "@/lib/rate-limit";
+import { getTurnstileToken, verifyTurnstile } from "@/lib/turnstile";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,24 +43,12 @@ const SUBSCRIBE_TIMEOUT_MS = positiveNumber(
   8000
 );
 
-const TURNSTILE_TIMEOUT_MS = positiveNumber(
-  process.env.NEWSLETTER_TURNSTILE_TIMEOUT_MS,
-  5000
-);
-
 const REQUIRE_ORIGIN = process.env.NEWSLETTER_REQUIRE_ORIGIN !== "false";
 
 const ALLOWED_ORIGINS = (process.env.NEWSLETTER_ALLOWED_ORIGINS || "")
   .split(",")
   .map((origin) => origin.trim().toLowerCase())
   .filter(Boolean);
-
-const TURNSTILE_SECRET =
-  process.env.TURNSTILE_SECRET_KEY ||
-  process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY ||
-  "";
-
-const ENABLE_TURNSTILE = Boolean(TURNSTILE_SECRET);
 
 // ============================================================
 // Types
@@ -420,52 +409,6 @@ async function readBody(req: NextRequest): Promise<Body | null> {
   }
 }
 
-function getTurnstileToken(body: Body): string {
-  return sanitizeText(
-    body.turnstileToken ??
-      body["cf-turnstile-response"] ??
-      body.token ??
-      "",
-    4096
-  );
-}
-
-async function verifyTurnstile(token: string): Promise<boolean> {
-  if (!ENABLE_TURNSTILE) {
-    return true;
-  }
-
-  if (!token) {
-    return false;
-  }
-
-  try {
-    const formData = new FormData();
-    formData.append("secret", TURNSTILE_SECRET);
-    formData.append("response", token);
-
-    const res = await withTimeout(
-      fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-        method: "POST",
-        body: formData,
-        headers: {
-          accept: "application/json",
-        },
-        cache: "no-store",
-      }),
-      TURNSTILE_TIMEOUT_MS,
-      "turnstile_verify"
-    );
-
-    const data = (await res.json()) as { success?: boolean };
-
-    return Boolean(data?.success);
-  } catch (error) {
-    console.error("[Newsletter] Turnstile verification error:", error);
-    return false;
-  }
-}
-
 function normalizeSubscribeResult(
   result: unknown,
   lang: Lang
@@ -609,15 +552,13 @@ export async function POST(req: NextRequest) {
 
     // 6) Optional Turnstile
     const turnstileToken = getTurnstileToken(body);
-    const turnstileOk = await verifyTurnstile(turnstileToken);
+    const turnstile = await verifyTurnstile(turnstileToken);
 
-    if (!turnstileOk) {
+    if (!turnstile.ok) {
       return jsonResponse(
         {
           ok: false,
-          error: ENABLE_TURNSTILE
-            ? messages.turnstileFailed
-            : messages.serverError,
+          error: messages.turnstileFailed,
         },
         400
       );

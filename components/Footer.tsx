@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { t, type Lang } from "@/lib/i18n";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 import { mergePagesVisibility, isHrefHidden } from "@/lib/page-sections";
 import {
   NAV_TREE,
@@ -104,12 +105,18 @@ export default function Footer({
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
+  const turnstileRequired = Boolean(
+    (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim()
+  );
 
   const subscribe = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const value = email.trim();
     if (!value || status === "loading") return;
+    if (turnstileRequired && !turnstileToken) return;
 
     setStatus("loading");
 
@@ -117,7 +124,11 @@ export default function Footer({
       const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: value, lang }),
+        body: JSON.stringify({
+          email: value,
+          lang,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
 
       if (res.ok) {
@@ -125,9 +136,13 @@ export default function Footer({
         setEmail("");
       } else {
         setStatus("error");
+        setTurnstileToken(null);
+        setTurnstileKey((key) => key + 1);
       }
     } catch {
       setStatus("error");
+      setTurnstileToken(null);
+      setTurnstileKey((key) => key + 1);
     }
   };
 
@@ -217,34 +232,45 @@ export default function Footer({
                 </p>
               </div>
 
-              <form
-                onSubmit={subscribe}
-                className="flex flex-col gap-3 sm:flex-row"
-              >
-                <input
-                  type="email"
-                  required
-                  dir="ltr"
-                  autoComplete="email"
-                  aria-label={t(lang, "email_placeholder")}
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (status === "done" || status === "error") {
-                      setStatus("idle");
-                    }
-                  }}
-                  placeholder={t(lang, "email_placeholder")}
-                  className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white placeholder-slate-300 outline-none transition-all focus:border-primary-300 focus:bg-white/15"
-                />
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="btn-primary whitespace-nowrap disabled:cursor-wait disabled:opacity-70"
+              <div className="space-y-3">
+                <form
+                  onSubmit={subscribe}
+                  className="flex flex-col gap-3 sm:flex-row"
                 >
-                  {status === "loading" ? "..." : t(lang, "subscribe")}
-                </button>
-              </form>
+                  <input
+                    type="email"
+                    required
+                    dir="ltr"
+                    autoComplete="email"
+                    aria-label={t(lang, "email_placeholder")}
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (status === "done" || status === "error") {
+                        setStatus("idle");
+                      }
+                    }}
+                    placeholder={t(lang, "email_placeholder")}
+                    className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-white placeholder-slate-300 outline-none transition-all focus:border-primary-300 focus:bg-white/15"
+                  />
+                  <button
+                    type="submit"
+                    disabled={
+                      status === "loading" ||
+                      (turnstileRequired && !turnstileToken)
+                    }
+                    className="btn-primary whitespace-nowrap disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {status === "loading" ? "..." : t(lang, "subscribe")}
+                  </button>
+                </form>
+
+                <TurnstileWidget
+                  key={turnstileKey}
+                  lang={lang}
+                  onToken={setTurnstileToken}
+                />
+              </div>
             </div>
 
             <div role="status" aria-live="polite" className="min-h-6">

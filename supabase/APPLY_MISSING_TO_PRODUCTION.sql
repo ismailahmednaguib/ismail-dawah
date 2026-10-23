@@ -205,12 +205,7 @@ declare
     'user_questions',
     'media_library',
     'rate_limits',
-    'notifications',
-    'push_subscriptions',
-    'bookmarks',
-    'user_downloads',
-    'admin_sessions',
-    'sessions'
+    'push_subscriptions'
   ];
 begin
   foreach target_table in array private_tables loop

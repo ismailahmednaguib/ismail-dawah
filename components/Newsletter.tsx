@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { t, type Lang } from "@/lib/i18n";
+import TurnstileWidget from "@/components/security/TurnstileWidget";
 
 type NewsletterProps = {
   lang: Lang;
@@ -15,12 +16,18 @@ export default function Newsletter({ lang }: NewsletterProps) {
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileKey, setTurnstileKey] = useState(0);
+  const turnstileRequired = Boolean(
+    (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "").trim()
+  );
 
   const subscribe = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const value = email.trim();
     if (!value || status === "loading") return;
+    if (turnstileRequired && !turnstileToken) return;
 
     setStatus("loading");
 
@@ -28,7 +35,11 @@ export default function Newsletter({ lang }: NewsletterProps) {
       const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: value, lang }),
+        body: JSON.stringify({
+          email: value,
+          lang,
+          ...(turnstileToken ? { turnstileToken } : {}),
+        }),
       });
 
       if (res.ok) {
@@ -36,9 +47,13 @@ export default function Newsletter({ lang }: NewsletterProps) {
         setEmail("");
       } else {
         setStatus("error");
+        setTurnstileToken(null);
+        setTurnstileKey((key) => key + 1);
       }
     } catch {
       setStatus("error");
+      setTurnstileToken(null);
+      setTurnstileKey((key) => key + 1);
     }
   };
 
@@ -99,12 +114,21 @@ export default function Newsletter({ lang }: NewsletterProps) {
             />
             <button
               type="submit"
-              disabled={status === "loading"}
+              disabled={
+                status === "loading" || (turnstileRequired && !turnstileToken)
+              }
               className="btn-primary whitespace-nowrap disabled:cursor-wait disabled:opacity-70"
             >
               {buttonLabel}
             </button>
           </form>
+
+          <TurnstileWidget
+            key={turnstileKey}
+            lang={lang}
+            onToken={setTurnstileToken}
+            className="mt-3"
+          />
 
           <div role="status" aria-live="polite" className="min-h-6">
             {status === "done" && (

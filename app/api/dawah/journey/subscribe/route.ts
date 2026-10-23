@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSiteSettings } from '@/lib/content';
 import { normalizeDawahJourneyConfig } from '@/lib/dawah-journey';
+import { emailProviderConfigured } from '@/lib/email-verification-config';
 import { rateLimitGuard } from '@/lib/rate-limit';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
   if (limited) return limited;
 
   const config = normalizeDawahJourneyConfig((await getSiteSettings()).dawahJourney);
-  if (!config.enabled || !process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
+  if (!config.enabled || !emailProviderConfigured(process.env)) {
     return NextResponse.json({ ok: false, error: lang === 'ar' ? 'الرحلة غير متاحة حاليًا.' : 'The journey is not available right now.' }, { status: 503 });
   }
 

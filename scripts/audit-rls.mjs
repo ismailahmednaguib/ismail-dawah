@@ -56,12 +56,7 @@ const PRIVATE_TABLES = [
   'user_questions',
   'media_library',
   'rate_limits',
-  'notifications',
   'push_subscriptions',
-  'bookmarks',
-  'user_downloads',
-  'admin_sessions',
-  'sessions',
 ];
 
 /** جداول عامة بطبيعتها — يجب أن تبقى مقروءة للمفتاح العام. */

@@ -7,6 +7,7 @@ import JourneyFinder from "@/components/dawah/JourneyFinder";
 import JourneySignup from "@/components/dawah/JourneySignup";
 import { getSiteSettings } from "@/lib/content";
 import { normalizeDawahJourneyConfig } from "@/lib/dawah-journey";
+import { emailProviderConfigured } from "@/lib/email-verification-config";
 import { isValidLang, type Lang } from "@/lib/i18n";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 
@@ -55,7 +56,7 @@ export default async function DawahPathPage({ params }: { params: Promise<{ lang
         <div className="container-page space-y-6 py-10 md:py-14">
           {gate.visible("k1") && <JourneyFinder lang={current} />}
           {gate.visible("k2") && <aside className="rounded-2xl border border-primary-100 bg-primary-50/70 p-5 dark:border-night-700 dark:bg-night-800" aria-label={copy.privacy}><p className="font-black text-primary-950 dark:text-white">{copy.privacy}</p><p className="mt-2 text-sm leading-7 text-primary-900 dark:text-primary-100">{copy.privacyText}</p></aside>}
-          {gate.visible("k3") && <><JourneySignup lang={current} enabled={journey.enabled && Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)} /><p className="text-center text-xs text-stone-500 dark:text-stone-400">{copy.journeyNotice}</p></>}
+          {gate.visible("k3") && <><JourneySignup lang={current} enabled={journey.enabled && emailProviderConfigured(process.env)} /><p className="text-center text-xs text-stone-500 dark:text-stone-400">{copy.journeyNotice}</p></>}
         </div>
       </main>
       <Footer lang={current} />

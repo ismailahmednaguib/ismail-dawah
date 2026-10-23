@@ -6,22 +6,16 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { can } from '@/lib/admin/permissions';
+import { BACKUP_CONTENT_TABLES, BACKUP_SETTINGS_TABLES } from '@/lib/admin/backup';
 import type { Metadata } from 'next';
+import BackupPanel from './backup-panel';
 
 export const metadata: Metadata = {
   title: 'النسخ الاحتياطي | لوحة التحكم',
 };
 
-const CONTENT_TABLES = [
-  'content',
-  'content_translations',
-  'taxonomies',
-  'content_terms',
-  'content_references',
-  'content_media',
-] as const;
-
-const SETTINGS_TABLES = ['site_settings', 'dawah_journey_subscribers', 'dawah_request_assignments'] as const;
+const CONTENT_TABLES = Object.keys(BACKUP_CONTENT_TABLES);
+const SETTINGS_TABLES = Object.keys(BACKUP_SETTINGS_TABLES);
 
 const LABELS: Record<string, string> = {
   content: 'عناصر المحتوى',
@@ -30,7 +24,9 @@ const LABELS: Record<string, string> = {
   content_terms: 'ربط المحتوى بالتصنيفات',
   content_references: 'المراجع الشرعية',
   content_media: 'الوسائط',
+  content_revisions: 'سجل نسخ المحتوى',
   site_settings: 'إعدادات المنصة',
+  newsletter_subscribers: 'مشتركو النشرة',
   dawah_journey_subscribers: 'مشتركو رحلة غير المسلمين',
   dawah_request_assignments: 'توزيع طلبات الحوار',
 };
@@ -63,6 +59,10 @@ export default async function BackupPage() {
           تنزيل نسخة كاملة من المحتوى والإعدادات بصيغة JSON — تُستخدم للنسخ الاحتياطي
           أو للترحيل بين البيئات.
         </p>
+      </div>
+
+      <div className="mb-6">
+        <BackupPanel />
       </div>
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
