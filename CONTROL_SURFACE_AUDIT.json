@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T20:36:50.170Z",
+  "generated_at": "2026-10-23T20:42:35.822Z",
   "repository": "ismail-dawah",
   "commit": "local-working-tree",
   "summary": {
@@ -53330,12 +53330,12 @@
       "reason": "tool quran client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:40cc0baeab05",
+      "element_key": "text:8564ed16ca00",
       "page": "/{lang}/quran/{id}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/quran/[id]/page.tsx",
-      "line": 495,
+      "line": 500,
       "value": "تعذر تحميل الآيات",
       "admin_key": "tools.quran",
       "language": "ar|en",
@@ -53346,12 +53346,12 @@
       "reason": "tool quran client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:dc8a59a8f2b0",
+      "element_key": "text:96f4a53791a0",
       "page": "/{lang}/quran/{id}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/quran/[id]/page.tsx",
-      "line": 499,
+      "line": 504,
       "value": "إعادة المحاولة",
       "admin_key": "tools.quran",
       "language": "ar|en",
@@ -53362,12 +53362,12 @@
       "reason": "tool quran client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:ae976ebf7dca",
+      "element_key": "text:8514f2033890",
       "page": "/{lang}/quran/{id}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/quran/[id]/page.tsx",
-      "line": 526,
+      "line": 536,
       "value": "آية",
       "admin_key": "tools.quran",
       "language": "ar|en",
@@ -53378,12 +53378,12 @@
       "reason": "tool quran client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:0dad16318ccf",
+      "element_key": "text:3441137607b5",
       "page": "/{lang}/quran/{id}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/quran/[id]/page.tsx",
-      "line": 534,
+      "line": 544,
       "value": "آية",
       "admin_key": "tools.quran",
       "language": "ar|en",
@@ -53394,12 +53394,12 @@
       "reason": "tool quran client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:d422e36c81ab",
+      "element_key": "text:5c1939b4fc05",
       "page": "/{lang}/quran/{id}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/quran/[id]/page.tsx",
-      "line": 598,
+      "line": 608,
       "value": "السورة السابقة",
       "admin_key": "tools.quran",
       "language": "ar|en",
@@ -53410,12 +53410,12 @@
       "reason": "tool quran client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:0f138866c7c8",
+      "element_key": "text:4f6ef1486b1e",
       "page": "/{lang}/quran/{id}",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/quran/[id]/page.tsx",
-      "line": 614,
+      "line": 624,
       "value": "السورة التالية",
       "admin_key": "tools.quran",
       "language": "ar|en",
