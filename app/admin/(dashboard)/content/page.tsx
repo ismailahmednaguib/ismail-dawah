@@ -2,6 +2,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import ContentListClient from '@/components/admin/ContentListClient';
+import ContentImportPanel from '@/components/admin/ContentImportPanel';
 import { can } from '@/lib/admin/permissions';
 
 export const metadata = { title: 'المحتوى | لوحة التحكم' };
@@ -17,6 +18,7 @@ export default async function ContentPage({
 
   const { type } = await searchParams;
   const initialType = typeof type === 'string' ? type : '';
+  const canCreate = can(session.roles, 'content.create');
 
   return (
     <div>
@@ -29,6 +31,7 @@ export default async function ContentPage({
           + محتوى جديد
         </Link>
       </div>
+      {canCreate && <ContentImportPanel />}
       <ContentListClient key={initialType || 'all'} initialType={initialType} />
     </div>
   );

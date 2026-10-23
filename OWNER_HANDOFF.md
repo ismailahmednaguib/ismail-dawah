@@ -75,7 +75,7 @@ npx vercel --prod
 - بوابة القرآن تعرض النص والتلاوة بأربعة قراء، وأصبح التفسير الميسر اختياريًا داخل صفحة السورة؛ لا يُطلب مصدر التفسير إلا عند اختياره.
 - الصفحة الرئيسية تفصل حزم `Footer` و`Newsletter` و`LatestTabs` وودجت الصلاة عبر `next/dynamic` مع إبقاء SSR؛ أعد قياس TBT/Lighthouse بعد نشر النسخة على Vercel.
 - `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). يُعطَّل `webpackBuildWorker` على Windows فقط؛ نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
-- سلسلة commits المحلية للخطة جاهزة للرفع، وآخرها حاليًا `4de4b25 docs: refresh control surface audit`. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
+- سلسلة commits المحلية للخطة جاهزة للرفع؛ اعرض آخر commit قبل الرفع عبر `git log -1 --oneline` باستخدام أمر Git الموضح أدناه. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
 - الرفع الخارجي لم يُنفَّذ من هذه البيئة؛ بعد تسجيل الدخول إلى حساب GitHub الصحيح شغّل من PowerShell:
 
 ```powershell

@@ -193,6 +193,7 @@ function classifyElement(rel, route, translationSource) {
     rel === "lib/dawah-journey.ts" ||
     rel === "lib/rate-limit.ts" ||
     rel === "lib/scheduled-publishing.ts" ||
+    rel === "lib/content-import.ts" ||
     rel === "lib/supabase/admin.ts" ||
     rel === "lib/turnstile.ts"
   ) {

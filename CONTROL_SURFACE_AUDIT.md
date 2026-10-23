@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-10-23T20:55:13.597Z
+> تاريخ التوليد: 2026-10-23T21:07:09.272Z
 
 ## الملخص
 
 - المسارات العامة: **57**
 - مسارات الإدارة: **19**
-- واجهات API: **73**
+- واجهات API: **74**
 - مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **6781**
+- العناصر المفحوصة: **6826**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **951** · `api-contract` = **540** · `catalogued` = **2946** · `curated-reference` = **1634** · `immutable-reference` = **710**
+- توزيع الحالات: `admin-ui` = **961** · `api-contract` = **575** · `catalogued` = **2946** · `curated-reference` = **1634** · `immutable-reference` = **710**
 
 ## المسارات
 
@@ -105,6 +105,7 @@
 | api | `/api/admin/content/{id}/revisions` | `app/api/admin/content/[id]/revisions/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/content/{id}/revisions/{revisionId}` | `app/api/admin/content/[id]/revisions/[revisionId]/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/content/{id}/terms` | `app/api/admin/content/[id]/terms/route.ts` | يحتاج فحص metadata |
+| api | `/api/admin/content/import` | `app/api/admin/content/import/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/control-surface` | `app/api/admin/control-surface/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/dawah-assignments` | `app/api/admin/dawah-assignments/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/dawah-journey` | `app/api/admin/dawah-journey/route.ts` | يحتاج فحص metadata |
