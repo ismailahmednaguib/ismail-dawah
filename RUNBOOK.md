@@ -252,6 +252,7 @@ npm run fix:citations -- --commit     # كتابة
 - **PWA**: لا يوجد `public/manifest.webmanifest` ولا `app/manifest.ts`. المولّد في `lib/manifest.ts` (`buildManifest(lang)`)، وتُخدَم النسختان `/ar/manifest.webmanifest` و`/en/manifest.webmanifest`، بينما `/manifest.webmanifest` احتياطي يختار اللغة من `Accept-Language`. `start_url="/"` ليختار middleware لغة المتصفح. `public/sw.js` (الإصدار `v4`) يخزّن البيانين مسبقًا؛ بعد أي تغيير في الأيقونات ارفع الإصدار.
 - **الرئيسية وISR**: `app/[lang]/page.tsx` يستخدم `revalidate = 60` بدل `force-dynamic`، فتُخزَّن صفحة `/ar` و`/en` في الحافة. أي تعديل محتوى عبر `/api/admin/content` أو `[id]` يستدعي `revalidatePublicContent()` من `lib/revalidate-public.ts` لإبطال الرئيسية والقوائم، وتعديلات الإعدادات تُبطلها مسار الإعدادات. لا تعِد `force-dynamic` بلا سبب؛ سترفع TTFB وتلغي التخزين.
 - **قياس الأداء الأولي**: Trace على `/ar` الإنتاجي أظهر ٠ مهام طويلة (>٥٠ms)، وCLS = ٠، وFCP/LCP ≈ ١٫٥–٢٫٠ث. بعد ISR صار `x-vercel-cache: HIT` وTTFB ≈ ٠٫٢–٠٫٤ث بدل ١٫٣–١٫٧ث. هذا ليس بديلًا عن Lighthouse؛ يتبقّى قياس LCP/INP على أجهزة وشبكات أبطأ.
+- **Lighthouse (٢٣ أكتوبر ٢٠٢٦)**: على بناء إنتاج محلي (Lighthouse 12.8.2، Edge headless، preset=desktop): `/ar` ٩٩/١٠٠/١٠٠/١٠٠، `/ar/quran` ١٠٠/١٠٠/١٠٠/١٠٠، `/ar/fatwa` ١٠٠/١٠٠/١٠٠/١٠٠ (أداء/إتاحة/ممارسات/SEO)، مع LCP ٠٫٥–٠٫٧ث وCLS ≤ ٠٫٠١٢. الموبايل: ٨٢/٧٧/٩٤ مع TBT ٦٣٠/٨٤٠/٢٧٠ms، فخفض TBT بند لاحق. القياس المحلي لا يغني عن قياس الإنتاج.
 
 ## ٧.٧) الإتاحة وبيانات التعريف لصفحات الحساب (2026-10-21)
 
@@ -288,7 +289,7 @@ npm run fix:citations -- --commit     # كتابة
   - صفحة الدرس/المقال: شريط `bg-primary-900` كان يبدأ تحت الهيدر الثابت الشفاف، فنص الهيدر `text-primary-700` على `#164e63` = ١٫٧:١، ورابط «العودة إلى المكتبة» كان مخفيًّا تحت الهيدر. أُضيف `pt-16 md:pt-20` إلى `<main>` ليبدأ الشريط بعد الهيدر.
   - رابط التخطي: `start-4` منطقي الاتجاه بدل `right-4` (يعمل في RTL وLTR).
 - **حراسة الانحدار**: `tests/design-guards.test.ts` يمنع أي صفحة `openGraph` بلا `siteName` أو بلا صورة `/og/og-<lang>.png`.
-- **Lighthouse (٢٢ أكتوبر ٢٠٢٦)**: ١٠٠/١٠٠/١٠٠ في الإتاحة وأفضل الممارسات وSEO على ستة مسارات: `/ar` · `/en` · `/ar/quran` · `/en/fatwa` · `/ar/learn/lesson/lesson-lessons-1` · `/en/live` · `/en/fields/tawhid`. الأداة لا تقيس الأداء، فقياس LCP/CLS يبقى على `browser.trace`.
+- **Lighthouse (٢٢ أكتوبر ٢٠٢٦)**: ١٠٠/١٠٠/١٠٠ في الإتاحة وأفضل الممارسات وSEO على ستة مسارات: `/ar` · `/en` · `/ar/quran` · `/en/fatwa` · `/ar/learn/lesson/lesson-lessons-1` · `/en/live` · `/en/fields/tawhid`. تلك الجولة ركّزت على الإتاحة/الممارسات/SEO؛ قياس الأداء في البند أعلاه (٢٣ أكتوبر ٢٠٢٦).
 
 ## ٧.١٠) فحص تسرّب العربية إلى الواجهة الإنجليزية (2026-10-22)
 
