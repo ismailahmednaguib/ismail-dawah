@@ -7,7 +7,7 @@
     "build": "npm run typecheck && npm run lint && next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --incremental false",
     "test:unit": "node --experimental-strip-types scripts/run-unit-tests.mjs",
     "verify": "npm run test:unit && npm run build",
     "qa:content": "node scripts/content-qa.mjs",

@@ -1,6 +1,7 @@
 // يولّد سجلًا مركزيًا لعناصر سطح الموقع ولوحة الإدارة.
 // الفحص ثابت ولا يتصل بقاعدة البيانات، حتى يمكن تشغيله قبل أي ترحيل.
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { createHash } from "node:crypto";
 
@@ -390,8 +391,27 @@ const report = {
 
 const tick = String.fromCharCode(96);
 const fence = tick.repeat(3);
-const jsonPath = path.join(root, "CONTROL_SURFACE_AUDIT.json");
-fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2) + "\n", "utf8");
+const requestedOutputDir = process.env.CONTROL_SURFACE_AUDIT_DIR
+  ? path.resolve(process.env.CONTROL_SURFACE_AUDIT_DIR)
+  : root;
+const fallbackOutputDir = path.join(os.tmpdir(), "ismail-dawah-control-surface");
+
+function writeReport(fileName, content) {
+  const primaryPath = path.join(requestedOutputDir, fileName);
+  try {
+    fs.writeFileSync(primaryPath, content, "utf8");
+    return primaryPath;
+  } catch (error) {
+    if (requestedOutputDir !== root) throw error;
+    fs.mkdirSync(fallbackOutputDir, { recursive: true });
+    const fallbackPath = path.join(fallbackOutputDir, fileName);
+    fs.writeFileSync(fallbackPath, content, "utf8");
+    console.warn(`⚠ تعذّرت الكتابة إلى ${primaryPath}; حُفظ التقرير مؤقتًا في ${fallbackPath}.`);
+    return fallbackPath;
+  }
+}
+
+writeReport("CONTROL_SURFACE_AUDIT.json", JSON.stringify(report, null, 2) + "\n");
 
 const lines = [
   "# سجل سطح الإدارة والموقع",
@@ -440,8 +460,7 @@ const lines = [
   "كل عنصر غير مرتبط يحتاج إما إلى مفتاح إعداد/محتوى واختبار طرف إلى طرف، أو استثناء موثق يوضح أنه ثابت لأسباب أمنية أو شرعية أو حسابية.",
 ].filter((line) => line !== null);
 
-const mdPath = path.join(root, "CONTROL_SURFACE_AUDIT.md");
-fs.writeFileSync(mdPath, lines.join("\n") + "\n", "utf8");
+writeReport("CONTROL_SURFACE_AUDIT.md", lines.join("\n") + "\n");
 
 console.log("✅ جرى جرد " + publicRoutes.length + " مسارًا عامًا، " + adminRoutes.length + " إداريًا، " + apiRoutes.length + " API، و" + elements.length + " عنصرًا.");
 console.log("⚠ عناصر ثابتة تحتاج ربطًا أو استثناءً: " + unbound.length + ".");

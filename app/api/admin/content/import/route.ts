@@ -141,7 +141,14 @@ export async function POST(request: NextRequest) {
 
   let body: unknown;
   try {
-    body = await request.json();
+    const rawBody = await request.text();
+    if (Buffer.byteLength(rawBody, 'utf8') > MAX_IMPORT_BYTES) {
+      return NextResponse.json(
+        { error: `حجم ملف الاستيراد يتجاوز ${MAX_IMPORT_BYTES / (1024 * 1024)} ميجابايت.` },
+        { status: 413 }
+      );
+    }
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: 'ملف JSON غير صالح.' }, { status: 400 });
   }
