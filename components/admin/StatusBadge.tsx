@@ -7,6 +7,7 @@ const STATUS_CONFIG: Record<
 > = {
   draft: { label: 'مسودة', className: 'bg-stone-100 text-stone-600' },
   in_review: { label: 'قيد المراجعة', className: 'bg-amber-100 text-amber-700' },
+  scheduled: { label: 'مجدول', className: 'bg-sky-100 text-sky-700' },
   published: { label: 'منشور', className: 'bg-primary-100 text-primary-700' },
   archived: { label: 'مؤرشف', className: 'bg-stone-200 text-stone-500' },
   rejected: { label: 'مرفوض', className: 'bg-red-100 text-red-700' },

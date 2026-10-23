@@ -26,6 +26,7 @@ export type ContentType =
 export type ContentStatus =
   | 'draft'
   | 'in_review'
+  | 'scheduled'
   | 'published'
   | 'archived'
   | 'rejected';
@@ -77,6 +78,7 @@ export interface Content {
   reviewer_id: string | null;
   reviewed_at: string | null;
   published_at: string | null;
+  scheduled_at: string | null;
   expires_at: string | null;
   views: number;
   bookmark_count: number;

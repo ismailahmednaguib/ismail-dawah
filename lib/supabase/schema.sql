@@ -11,7 +11,7 @@ create type content_type as enum (
 );
 
 create type content_status as enum (
-  'draft', 'in_review', 'published', 'archived', 'rejected'
+  'draft', 'in_review', 'scheduled', 'published', 'archived', 'rejected'
 );
 
 create type audience_type as enum (
@@ -59,6 +59,7 @@ create table content (
   reviewer_id uuid references auth.users(id),
   reviewed_at timestamptz,
   published_at timestamptz,
+  scheduled_at timestamptz,
   expires_at timestamptz,
   views int not null default 0,
   bookmark_count int not null default 0,
@@ -75,6 +76,7 @@ create index idx_content_audience on content using gin(audience);
 create index idx_content_age on content using gin(age_groups);
 create index idx_content_parent on content(parent_id, sort_order);
 create index idx_content_published on content(status, published_at desc);
+create index idx_content_scheduled on content(scheduled_at);
 
 -- 3. الترجمات
 create table content_translations (

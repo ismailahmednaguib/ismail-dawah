@@ -38,7 +38,7 @@ export async function getTranslationMatrix(
         updated_at
       )
     `, { count: 'exact' })
-.in('status', ['published', 'draft', 'in_review']);
+.in('status', ['published', 'draft', 'in_review', 'scheduled']);
   if (search) {
     query = query.ilike('content_translations.title', `%${search}%`);
   }

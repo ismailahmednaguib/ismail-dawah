@@ -44,9 +44,12 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
 
   try {
-    // تغيير الحالة فقط (النشر/الأرشفة)
+    // تغيير الحالة فقط (النشر/الأرشفة/الجدولة)
     if (body.status) {
-      if (Object.keys(body).some((key) => key !== 'status')) {
+      const allowedKeys =
+        body.status === 'scheduled' ? ['status', 'scheduled_at'] : ['status'];
+
+      if (Object.keys(body).some((key) => !allowedKeys.includes(key))) {
         return NextResponse.json(
           { error: 'افصل تغيير الحالة عن حفظ بيانات المحتوى' },
           { status: 400 }
@@ -55,6 +58,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
       const allowedStatuses = [
         'draft',
         'in_review',
+        'scheduled',
         'published',
         'archived',
         'rejected',
@@ -64,11 +68,19 @@ export async function PUT(req: NextRequest, { params }: Params) {
         return NextResponse.json({ error: 'حالة محتوى غير صالحة' }, { status: 400 });
       }
 
-      if (body.status === 'published' && !can(session.roles, 'content.publish')) {
+      if (
+        (body.status === 'published' || body.status === 'scheduled') &&
+        !can(session.roles, 'content.publish')
+      ) {
         return NextResponse.json({ error: 'ليس لديك صلاحية نشر المحتوى' }, { status: 403 });
       }
 
-      await setStatus(id, body.status, session.userId);
+      await setStatus(
+        id,
+        body.status,
+        session.userId,
+        body.status === 'scheduled' ? body.scheduled_at : null
+      );
       revalidatePublicContent();
       return NextResponse.json({ success: true });
     }

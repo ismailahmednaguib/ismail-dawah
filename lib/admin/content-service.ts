@@ -18,6 +18,7 @@ import type {
   PaginatedResult,
 } from '@/lib/types/content';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
+import { normalizeScheduledAt } from '@/lib/scheduled-publishing';
 import { isMissingTableError } from '@/lib/supabase-errors';
 import {
   MAX_CONTENT_REVISIONS,
@@ -605,7 +606,10 @@ export async function updateContentDetails(
     { status: current.status, content_type: current.content_type }
   );
 
-  if (current.status === 'published' && requiresReview) {
+  if (
+    (current.status === 'published' || current.status === 'scheduled') &&
+    requiresReview
+  ) {
     await setStatus(contentId, 'in_review', userId);
   }
 
@@ -638,11 +642,12 @@ export async function assertVerifiedReferenceForPublish(contentId: string, conte
   }
 }
 
-/** تغيير حالة النشر */
+/** تغيير حالة النشر (أو جدولته) */
 export async function setStatus(
   contentId: string,
   status: ContentStatus,
-  userId: string
+  userId: string,
+  scheduledAt?: string | null
 ) {
   const supabase = getSupabaseAdmin();
 
@@ -655,25 +660,56 @@ export async function setStatus(
   if (contentLookupError) throw new Error(contentLookupError.message);
   if (!content) throw new Error('المحتوى غير موجود');
 
-  if (status === 'published' && requiresScholarReview(content)) {
+  const isPublishing = status === 'published' || status === 'scheduled';
+
+  if (isPublishing && requiresScholarReview(content)) {
     throw new Error(
-      'هذا المحتوى يحتاج اعتماد مراجع علمي أولاً. أرسله إلى المراجعة العلمية قبل النشر.'
+      'هذا المحتوى يحتاج اعتماد مراجع علمي أولاً. أرسله إلى المراجعة العلمية قبل النشر أو الجدولة.'
     );
   }
 
-  if (status === 'published') {
+  if (isPublishing) {
     await assertVerifiedReferenceForPublish(contentId, content);
   }
 
-  const { error } = await supabase
+  const scheduledAtIso =
+    status === 'scheduled' ? normalizeScheduledAt(scheduledAt) : null;
+
+  const update: Record<string, unknown> = {
+    status,
+    published_at: status === 'published' ? new Date().toISOString() : null,
+    scheduled_at: status === 'scheduled' ? scheduledAtIso : null,
+    updated_by: userId,
+  };
+
+  let { error } = await supabase
     .from('content')
-    .update({
-      status,
-      published_at: status === 'published' ? new Date().toISOString() : null,
-      updated_by: userId,
-    })
+    .update(update)
     .eq('id', contentId);
-  if (error) throw new Error(error.message);
+
+  if (error && isMissingColumnError(error, 'scheduled_at')) {
+    if (status === 'scheduled') {
+      throw new Error(
+        'جدولة النشر تحتاج تنفيذ migration 20261026_scheduled_publishing.sql أولاً.'
+      );
+    }
+
+    const fallback = { ...update };
+    delete fallback.scheduled_at;
+    ({ error } = await supabase
+      .from('content')
+      .update(fallback)
+      .eq('id', contentId));
+  }
+
+  if (error) {
+    if (/invalid input value for enum|content_status/i.test(error.message)) {
+      throw new Error(
+        'جدولة النشر تحتاج تنفيذ migration 20261026_scheduled_publishing.sql أولاً.'
+      );
+    }
+    throw new Error(error.message);
+  }
 
   if (status === 'in_review') {
     const { data: pendingItems, error: pendingError } = await supabase

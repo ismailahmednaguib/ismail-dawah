@@ -1,7 +1,7 @@
 // components/admin/ContentEditClient.tsx
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import StatusBadge from '@/components/admin/StatusBadge';
@@ -47,6 +47,7 @@ type EditableContent = {
   id: string;
   status: ContentStatus;
   updated_at?: string;
+  scheduled_at?: string | null;
   content_type?: ContentType;
   audience?: Audience[];
   age_groups?: AgeGroup[];
@@ -132,6 +133,31 @@ function toggleValue<T>(values: T[], value: T): T[] {
     : [...values, value];
 }
 
+/** يحوّل ISO إلى قيمة حقل datetime-local بالتوقيت المحلي. */
+function toDateTimeLocal(value?: string | null): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+
+  const pad = (part: number) => String(part).padStart(2, '0');
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function formatScheduledUtc(value?: string | null): string {
+  if (!value) return '';
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat('ar-EG', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'UTC',
+  }).format(date);
+}
+
 export default function ContentEditClient({
   content,
   canEdit,
@@ -191,11 +217,18 @@ export default function ContentEditClient({
     Boolean(content.needs_scholar_review)
   );
   const [isSensitive, setIsSensitive] = useState(Boolean(content.is_sensitive));
+  const [scheduleAt, setScheduleAt] = useState('');
   const requiresReview = Boolean(
     content.needs_scholar_review ||
       content.is_sensitive ||
-      content.content_type === 'fatwa'
+      content.content_type === 'fatwa' ||
+      content.content_type === 'hadith' ||
+      content.content_type === 'khutbah'
   );
+
+  useEffect(() => {
+    setScheduleAt(toDateTimeLocal(content.scheduled_at));
+  }, [content.scheduled_at]);
 
   const saveContent = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -250,9 +283,47 @@ export default function ContentEditClient({
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.error ?? 'فشل تغيير حالة المحتوى');
+      setScheduleAt('');
       router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'فشل تغيير حالة المحتوى');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const scheduleContent = async () => {
+    if (!canEdit) return;
+
+    const date = new Date(scheduleAt);
+
+    if (!scheduleAt || !Number.isFinite(date.getTime())) {
+      setError('حدّد تاريخ ووقت النشر أولًا.');
+      return;
+    }
+
+    if (date.getTime() < Date.now() + 60_000) {
+      setError('موعد الجدولة يجب أن يكون بعد دقيقة على الأقل من الآن.');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch(`/api/admin/content/${content.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'scheduled',
+          scheduled_at: date.toISOString(),
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error ?? 'فشل جدولة النشر');
+      router.refresh();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'فشل جدولة النشر');
     } finally {
       setLoading(false);
     }
@@ -405,6 +476,79 @@ export default function ContentEditClient({
           )}
         </div>
       </div>
+
+      {/* جدولة النشر */}
+      {canEdit && (content.status === 'draft' || content.status === 'scheduled') && (
+        <div className="rounded-xl border border-stone-200 bg-white p-5">
+          <h3 className="text-lg font-bold text-primary-950">جدولة النشر</h3>
+
+          {content.status === 'scheduled' && content.scheduled_at && (
+            <p className="mt-2 rounded-lg bg-sky-50 px-3 py-2 text-sm text-sky-900">
+              مجدول حاليًا: {formatScheduledUtc(content.scheduled_at)} (UTC)
+            </p>
+          )}
+
+          {requiresReview ? (
+            <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
+              هذا المحتوى يحتاج اعتمادًا علميًّا. أرسله إلى المراجعة العلمية؛
+              وعند اعتماده يُنشر مباشرة، فلا حاجة لجدولته.
+            </p>
+          ) : (
+            <>
+              <p className="mt-1 text-sm text-stone-500">
+                يبقى المحتوى مخفيًّا عن الزوار حتى يحين الموعد. التوقيت المعروض
+                بتوقيت جهازك، ويُخزَّن بتوقيت UTC.
+              </p>
+
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
+                <label className="flex-1 text-sm font-medium text-primary-950">
+                  تاريخ ووقت النشر
+                  <input
+                    type="datetime-local"
+                    value={scheduleAt}
+                    onChange={(event) => setScheduleAt(event.target.value)}
+                    disabled={!canEdit || loading}
+                    className="input-islamic mt-1"
+                    dir="ltr"
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  onClick={scheduleContent}
+                  disabled={loading || !scheduleAt}
+                  className="rounded-lg bg-sky-700 px-4 py-2 text-sm text-white disabled:opacity-50"
+                >
+                  {content.status === 'scheduled'
+                    ? 'تحديث الجدولة'
+                    : 'جدولة النشر'}
+                </button>
+              </div>
+            </>
+          )}
+
+          {content.status === 'scheduled' && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => changeStatus('published')}
+                disabled={loading}
+                className="rounded-lg bg-primary-700 px-4 py-2 text-sm text-white disabled:opacity-50"
+              >
+                ✓ نشر الآن
+              </button>
+              <button
+                type="button"
+                onClick={() => changeStatus('draft')}
+                disabled={loading}
+                className="rounded-lg bg-stone-600 px-4 py-2 text-sm text-white disabled:opacity-50"
+              >
+                إلغاء الجدولة
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* بيانات المحتوى */}
       <form onSubmit={saveContent} className="card space-y-5">

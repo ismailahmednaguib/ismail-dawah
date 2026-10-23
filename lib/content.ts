@@ -4,6 +4,7 @@ import "server-only";
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { isNonLocalizedSetting } from "@/lib/settings-keys";
+import { publishDueScheduledContent } from "@/lib/admin/publish-scheduled";
 
 // ============================================================
 // Types
@@ -33,6 +34,7 @@ export interface ContentBase {
   created_at?: string;
   updated_at?: string;
   published_at?: string | null;
+  scheduled_at?: string | null;
   author_id?: string | null;
   views?: number;
   lang?: string;
@@ -671,7 +673,35 @@ export async function getSiteSettings(): Promise<Record<string, any>> {
   }
 }
 
+let lastScheduledPublishCheck = 0;
+
+/**
+ * نشر كسول: أول قراءة عامة بعد موعد الجدولة تنقل المواد المستحقة إلى
+ * `published`. هذا لا يغني عن cron، لكنه يجعل الموعد دقيقًا عمليًّا
+ * على خطة Vercel Hobby التي لا تسمح بمهام كل دقيقة.
+ */
+async function maybePublishDueScheduledContent(): Promise<void> {
+  if (process.env.NEXT_PHASE === "phase-production-build") return;
+
+  const now = Date.now();
+  if (now - lastScheduledPublishCheck < 60_000) return;
+  lastScheduledPublishCheck = now;
+
+  try {
+    const result = await publishDueScheduledContent();
+    if (result.published > 0) {
+      invalidateContentCache();
+      console.info(
+        `[Content] published ${result.published} scheduled item(s)`
+      );
+    }
+  } catch (error) {
+    console.warn("[Content] scheduled publish check failed:", error);
+  }
+}
+
 async function fetchCollection(name: CollectionName): Promise<ContentItem[]> {
+  await maybePublishDueScheduledContent();
   const client = createContentClient();
 
   const attempts: Array<() => any> = [
