@@ -87,7 +87,7 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
       <Header lang={currentLang} />
       <main id="main-content" tabIndex={-1}
         dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-        className="min-h-screen bg-slate-50 dark:bg-night-900"
+        className="site-page-shell"
       >
         <PageHero
           icon="💬"
@@ -99,24 +99,24 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
           ]}
         />
 
-        <div className="mx-auto max-w-6xl px-4 py-8">
+        <div className="container-page py-8">
           <form className="mx-auto flex max-w-3xl gap-2" method="get">
             <input
               type="search"
               name="q"
               defaultValue={query}
               placeholder={copy.searchPlaceholder}
-              className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-200 dark:border-night-700 dark:bg-night-800 dark:text-white"
+              className="input-islamic min-w-0 flex-1"
             />
             <button
               type="submit"
-              className="rounded-xl bg-gold-500 px-5 py-3 font-semibold text-night-950 transition hover:bg-gold-400"
+              className="btn-gold"
             >
               {copy.search}
             </button>
           </form>
 
-          <div className="mx-auto mt-5 max-w-3xl rounded-xl border border-primary-100 bg-primary-50 px-4 py-3 text-sm text-primary-900 dark:border-primary-900/50 dark:bg-primary-950/30 dark:text-primary-100">
+          <div className="card mx-auto mt-5 max-w-3xl border-primary-100 bg-primary-50 px-4 py-3 text-sm text-primary-900 dark:border-primary-900/50 dark:bg-primary-950/30 dark:text-primary-100">
             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 20)}</span>{copy.notice}
           </div>
 
@@ -142,7 +142,7 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center dark:border-night-700 dark:bg-night-800">
+            <div className="card border-dashed px-6 py-16 text-center">
               <p aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</p>
               <h2 className="text-xl font-semibold text-slate-700 dark:text-white">{copy.emptyTitle}</h2>
               <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{copy.emptyHint}</p>
@@ -152,13 +152,13 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
           {total_pages > 1 && (
             <nav className="mt-8 flex items-center justify-center gap-3" aria-label="Pagination">
               {currentPage > 1 && (
-                <Link href={pageHref(currentPage - 1)} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary-400 dark:border-night-700 dark:bg-night-800 dark:text-slate-200">
+                <Link href={pageHref(currentPage - 1)} className="btn-outline">
                   {copy.previous}
                 </Link>
               )}
               <span className="text-sm text-slate-500 dark:text-slate-400">{currentPage} / {total_pages}</span>
               {currentPage < total_pages && (
-                <Link href={pageHref(currentPage + 1)} className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 hover:border-primary-400 dark:border-night-700 dark:bg-night-800 dark:text-slate-200">
+                <Link href={pageHref(currentPage + 1)} className="btn-outline">
                   {copy.next}
                 </Link>
               )}

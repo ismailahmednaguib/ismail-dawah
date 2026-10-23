@@ -246,7 +246,7 @@ export default async function PrayerTimesPage({
   };
 
   return (
-    <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+    <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="site-page-shell">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

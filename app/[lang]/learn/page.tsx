@@ -93,7 +93,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
       <Header lang={currentLang} />
       <main id="main-content" tabIndex={-1}
         dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-        className="min-h-screen bg-slate-50 dark:bg-night-900"
+        className="site-page-shell"
       >
       <PageHero
         icon="📚"
@@ -105,7 +105,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
         ]}
       />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="container-page py-8">
         {/* الفلاتر */}
         <Suspense fallback={<div className="h-32 animate-pulse rounded-2xl bg-primary-50" />}>
           <ContentFilters lang={currentLang} />
@@ -153,7 +153,7 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
+          <div className="card border-dashed px-6 py-16 text-center">
             <p aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</p>
             <p className="text-xl text-slate-500 dark:text-slate-400">
               {copy.emptyTitle}
@@ -171,10 +171,10 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
               <a
                 key={p}
                 href={pageHref(p)}
-                className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-medium transition-colors ${
+                  className={`btn flex h-10 w-10 items-center justify-center rounded-lg px-0 text-sm ${
                   p === currentPage
-                    ? 'bg-primary-700 text-white'
-                    : 'bg-white dark:bg-night-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-night-700 hover:bg-primary-50'
+                    ? 'bg-primary-700 text-white hover:bg-primary-800'
+                    : 'btn-outline'
                 }`}
               >
                 {p}

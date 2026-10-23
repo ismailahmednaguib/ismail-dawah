@@ -89,7 +89,7 @@ export default async function ReligionsPage({ params }: { params: Promise<{ lang
   return (
     <>
       <Header lang={currentLang} />
-      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="site-page-shell">
         {gate.visible('k0') && <PageHero
           icon="◈"
           title={copy.title}

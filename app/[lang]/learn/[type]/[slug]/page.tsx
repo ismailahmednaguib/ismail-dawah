@@ -184,10 +184,10 @@ export default async function LearnContentPage({ params }: PageProps) {
     <>
       <JsonLd data={[jsonLd, breadcrumbJsonLd]} />
       <Header lang={currentLang} />
-      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 pt-16 dark:bg-night-900 md:pt-20">
+      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="site-page-shell">
       {/* شريط علوي */}
-      <div className="bg-primary-900 text-white py-4 px-4">
-        <div className="max-w-4xl mx-auto">
+      <div className="border-b border-primary-800/40 bg-gradient-to-r from-primary-950 via-primary-900 to-primary-800 px-4 py-4 text-white">
+        <div className="container-page">
           <Link
             href={`/${lang}/learn`}
             className="text-primary-300 hover:text-white text-sm transition-colors"
@@ -197,15 +197,15 @@ export default async function LearnContentPage({ params }: PageProps) {
         </div>
       </div>
 
-      <article className="max-w-4xl mx-auto px-4 py-10">
+      <article className="container-page max-w-4xl py-10 md:py-14">
         {/* العنوان */}
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary-950 dark:text-white mb-4 leading-tight">
+          <h1 className="mb-4 text-3xl font-black leading-tight text-primary-950 dark:text-white md:text-4xl" style={{ fontFamily: 'var(--font-amiri)' }}>
             {t.title}
           </h1>
 
           {t.summary && (
-            <p className="text-lg text-stone-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {t.summary}
             </p>
           )}
@@ -227,7 +227,7 @@ export default async function LearnContentPage({ params }: PageProps) {
           )}
 
           {/* معلومات إضافية */}
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-stone-500 dark:text-gray-400">
+          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
             {content.published_at && (
               <span><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📅", 16)}</span>{new Date(content.published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
             )}

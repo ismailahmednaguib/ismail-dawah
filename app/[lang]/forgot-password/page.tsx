@@ -31,7 +31,7 @@ export default async function ForgotPasswordPage({
       id="main-content"
       tabIndex={-1}
       dir={isRTL ? "rtl" : "ltr"}
-      className="min-h-screen bg-cream-dark dark:bg-gray-900"
+      className="site-page-shell"
     >
       <Header lang={l} />
 

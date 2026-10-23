@@ -7,7 +7,7 @@ import ContentCard from '@/components/learn/ContentCard';
 import { getPublishedContent } from '@/lib/learn/queries';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import type { Madhhab } from '@/lib/types/content';
-import { renderDesignIcon } from '@/components/ui';
+import { PageHero, renderDesignIcon } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,14 +95,16 @@ export default async function FiqhPage({ params, searchParams }: PageProps) {
   return (
     <>
       <Header lang={currentLang} />
-      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-slate-50 dark:bg-night-900">
-        <section className="gradient-hero px-4 py-14 text-white">
-          <div className="container-page text-center">
-            <p className="mb-3 text-5xl">⚖️</p>
-            <h1 className="text-3xl font-bold md:text-4xl">{copy.title}</h1>
-            <p className="mx-auto mt-3 max-w-2xl text-primary-100">{copy.subtitle}</p>
-          </div>
-        </section>
+      <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="site-page-shell">
+        <PageHero
+          icon="⚖️"
+          title={copy.title}
+          subtitle={copy.subtitle}
+          crumbs={[
+            { label: currentLang === 'ar' ? 'الرئيسية' : 'Home', href: `/${lang}` },
+            { label: copy.title },
+          ]}
+        />
 
         <div className="container-page py-8">
           <form className="mx-auto flex max-w-3xl flex-col gap-2 sm:flex-row" method="get">
@@ -119,7 +121,7 @@ export default async function FiqhPage({ params, searchParams }: PageProps) {
             </button>
           </form>
 
-          <div className="mx-auto mt-5 max-w-3xl rounded-2xl border border-primary-100 bg-primary-50 px-4 py-3 text-sm text-primary-900 shadow-sm dark:border-primary-900/50 dark:bg-primary-950/30 dark:text-primary-100">
+          <div className="card mx-auto mt-5 max-w-3xl border-primary-100 bg-primary-50 px-4 py-3 text-sm text-primary-900 shadow-sm dark:border-primary-900/50 dark:bg-primary-950/30 dark:text-primary-100">
             <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🧭", 18)}</span>{copy.notice}
           </div>
 

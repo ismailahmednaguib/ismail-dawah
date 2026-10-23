@@ -84,7 +84,7 @@ export default async function ReligionDetailPage({ params }: PageProps) {
   return (
     <>
       <Header lang={lang} />
-      <main id="main-content" tabIndex={-1} dir={lang === 'ar' ? 'rtl' : 'ltr'} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={lang === 'ar' ? 'rtl' : 'ltr'} className="site-page-shell">
         {gate.visible('k0') && <PageHero
           icon={entry.icon}
           title={localized(entry.title, lang)}

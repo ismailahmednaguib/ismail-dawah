@@ -59,7 +59,7 @@ export default async function SearchPage({
       <Header lang={currentLang} />
       <main id="main-content" tabIndex={-1}
         dir={currentLang === 'ar' ? 'rtl' : 'ltr'}
-        className="min-h-screen bg-slate-50 dark:bg-night-900"
+        className="site-page-shell"
       >
         <LanguageSEO path="/search" lang={currentLang} />
 
@@ -73,11 +73,13 @@ export default async function SearchPage({
           ]}
         />
 
-        <div className="mx-auto max-w-4xl px-4 py-8">
-          <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-primary-50 dark:bg-night-800" />}>
-            <SearchAdvanced lang={currentLang} />
-          </Suspense>
-          <ConstrainedAssistant lang={currentLang} enabled={assistantEnabled} />
+        <div className="container-page py-8">
+          <div className="mx-auto max-w-4xl">
+            <Suspense fallback={<div className="h-96 animate-pulse rounded-2xl bg-primary-50 dark:bg-night-800" />}>
+              <SearchAdvanced lang={currentLang} />
+            </Suspense>
+            <ConstrainedAssistant lang={currentLang} enabled={assistantEnabled} />
+          </div>
         </div>
       </main>
       <Footer lang={currentLang} />

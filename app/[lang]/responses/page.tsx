@@ -101,7 +101,7 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
   return (
     <>
       <Header lang={L} />
-      <main id="main-content" tabIndex={-1} dir={L === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-gray-900">
+      <main id="main-content" tabIndex={-1} dir={L === "ar" ? "rtl" : "ltr"} className="site-page-shell">
         <PageHero
           icon={<ShieldIcon size={28} aria-hidden="true" />}
           badge={L === "ar" ? "مركز الردود" : "Responses Center"}
@@ -113,8 +113,8 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
           ]}
         />
 
-        <section className="py-16">
-          <div className="max-w-5xl mx-auto px-4">
+        <section className="section">
+          <div className="container-page">
             <div className="mb-8">
               <h2 className="text-2xl font-black text-primary-950 mb-3">{c.overviewTitle}</h2>
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">{c.intro}</p>
@@ -125,7 +125,7 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
                 <Link
                   key={cat.id}
                   href={`/${L}${cat.href}`}
-                  className="group rounded-2xl border border-cream-200 bg-white p-5 shadow-sm hover:border-primary-300 hover:shadow-card transition"
+                  className="card-interactive group p-5"
                 >
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-primary-700 text-xl group-hover:bg-primary-100 group-hover:text-primary-800 transition">
                     <cat.icon size={24} aria-hidden="true" />
@@ -138,12 +138,12 @@ export default async function ResponsesPage({ params }: { params: Promise<{ lang
           </div>
         </section>
 
-        <section className="py-16 bg-gold-50">
-          <div className="max-w-4xl mx-auto px-4">
+        <section className="section bg-gold-50/70 dark:bg-gold-950/10">
+          <div className="container-page max-w-4xl">
             <h2 className="text-2xl font-black text-primary-950 text-center mb-10">{c.featuredTitle}</h2>
             <div className="space-y-4">
               {c.featured.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-cream-200 bg-white p-6 shadow-sm">
+                <div key={item.id} className="card p-6">
                   <div className="flex items-start gap-3 mb-4">
                     <span className="flex shrink-0 items-center justify-center rounded-full bg-red-100 text-red-700 text-xs font-black w-6 h-6">
                       <HelpCircleIcon size={14} aria-hidden="true" />

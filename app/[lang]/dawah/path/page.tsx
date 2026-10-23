@@ -51,7 +51,7 @@ export default async function DawahPathPage({ params }: { params: Promise<{ lang
   return (
     <>
       <Header lang={current} />
-      <main id="main-content" tabIndex={-1} dir={current === "ar" ? "rtl" : "ltr"} className="min-h-screen bg-cream-dark dark:bg-night-900">
+      <main id="main-content" tabIndex={-1} dir={current === "ar" ? "rtl" : "ltr"} className="site-page-shell">
         {gate.visible("k0") && <PageHero icon="🧭" title={copy.title} subtitle={copy.subtitle} crumbs={[{ label: copy.home, href: `/${current}` }, { label: copy.title }]} />}
         <div className="container-page space-y-6 py-10 md:py-14">
           {gate.visible("k1") && <JourneyFinder lang={current} />}
