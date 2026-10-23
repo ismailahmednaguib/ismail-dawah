@@ -484,7 +484,7 @@ export default async function HomePage({
 
         <div className="container-page relative text-center">
           <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-5 py-2 text-sm font-bold backdrop-blur-sm">
-            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 18)}</span>{ui.badge}
+            {ui.badge}
           </span>
 
           <h1
