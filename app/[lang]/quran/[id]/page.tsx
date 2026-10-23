@@ -457,6 +457,11 @@ export default async function SurahPage({
                 </Link>
               ))}
             </div>
+            {tafsirId && (
+              <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                المصدر: AlQuran Cloud · {TAFSIRS.find((item) => item.id === tafsirId)?.ar}
+              </p>
+            )}
           </div>}
         </div>
 
@@ -505,6 +510,11 @@ export default async function SurahPage({
         {gate.visible('k4') && (<>
         {quranData && (
           <div className="mt-10 space-y-5">
+            {tafsirId && quranData.tafsirAyahs.length === 0 && (
+              <div className="card border-gold-200 p-4 text-sm font-semibold text-gold-800 dark:border-gold-800/60 dark:text-gold-200" role="status">
+                تعذر تحميل التفسير من المصدر الخارجي حاليًا؛ النص القرآني والتلاوة ما زالا متاحين.
+              </div>
+            )}
             {quranData.arabicAyahs.map((ayah, index) => {
               const translation = quranData.translationAyahs[index]?.text;
               const ayahAnchor = `ayah-${ayah.numberInSurah}`;
