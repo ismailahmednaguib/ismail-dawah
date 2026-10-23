@@ -28,6 +28,14 @@ const RECITERS = [
 
 type ReciterId = (typeof RECITERS)[number]["id"];
 
+// التفسير يُجلب عند طلبه فقط حتى لا نضيف طلبًا خارجيًا إلى كل صفحة سورة.
+// القائمة ثابتة ومحمية عمدًا: لا نسمح بتحويل معرّف مصدر خارجي إلى URL من query string.
+const TAFSIRS = [
+  { id: "ar.muyassar", ar: "التفسير الميسر", en: "Tafsir Al-Muyassar" },
+] as const;
+
+type TafsirId = (typeof TAFSIRS)[number]["id"];
+
 type Ayah = {
   number: number;
   text: string;
@@ -60,6 +68,7 @@ type EditionsApiResponse = {
 
 type SearchParams = {
   reciter?: string | string[];
+  tafsir?: string | string[];
 };
 
 function getFirstValue(value?: string | string[]): string {
@@ -71,21 +80,36 @@ function isReciterId(value: string): value is ReciterId {
   return RECITERS.some((reciter) => reciter.id === value);
 }
 
+function isTafsirId(value: string): value is TafsirId {
+  return TAFSIRS.some((tafsir) => tafsir.id === value);
+}
+
 function getReciterLabel(reciter: (typeof RECITERS)[number], lang: Lang) {
   return lang === "ar" ? reciter.ar : reciter.en;
 }
 
-function buildReciterHref(lang: Lang, surahNumber: number, reciterId: ReciterId) {
-  return `/${lang}/quran/${surahNumber}?reciter=${reciterId}`;
+function buildSurahHref(
+  lang: Lang,
+  surahNumber: number,
+  reciterId: ReciterId,
+  tafsirId?: TafsirId,
+) {
+  const params = new URLSearchParams({ reciter: reciterId });
+  if (tafsirId) params.set("tafsir", tafsirId);
+  return `/${lang}/quran/${surahNumber}?${params.toString()}`;
 }
 
 function getAudioUrl(reciterId: ReciterId, globalAyahNumber: number) {
   return `https://cdn.islamic.network/quran/audio/128/${reciterId}/${globalAyahNumber}.mp3`;
 }
 
-async function fetchSurahEditions(surahNumber: number, lang: Lang) {
+async function fetchSurahEditions(
+  surahNumber: number,
+  lang: Lang,
+  tafsirId?: TafsirId,
+) {
   const editions =
-    lang === "en" ? `${ARABIC_EDITION},${ENGLISH_EDITION}` : ARABIC_EDITION;
+    [ARABIC_EDITION, ...(lang === "en" ? [ENGLISH_EDITION] : []), ...(tafsirId ? [tafsirId] : [])].join(",");
   const url = `https://api.alquran.cloud/v1/surah/${surahNumber}/editions/${editions}`;
 
   const res = await fetch(url, {
@@ -108,10 +132,14 @@ async function fetchSurahEditions(surahNumber: number, lang: Lang) {
     lang === "en"
       ? json.data.find((e) => getEditionIdentifier(e) === ENGLISH_EDITION)
       : undefined;
+  const tafsirEdition = tafsirId
+    ? json.data.find((e) => getEditionIdentifier(e) === tafsirId)
+    : undefined;
 
   return {
     arabicAyahs: arabicEdition.ayahs,
     translationAyahs: translationEdition?.ayahs ?? [],
+    tafsirAyahs: tafsirEdition?.ayahs ?? [],
   };
 }
 
@@ -215,9 +243,13 @@ export default async function SurahPage({
 
   const sp = await searchParams;
   const requestedReciter = getFirstValue(sp.reciter);
+  const requestedTafsir = getFirstValue(sp.tafsir);
   const reciterId: ReciterId = isReciterId(requestedReciter)
     ? requestedReciter
     : RECITERS[0].id;
+  const tafsirId: TafsirId | undefined = isTafsirId(requestedTafsir)
+    ? requestedTafsir
+    : undefined;
 
   const reciter = RECITERS.find((r) => r.id === reciterId)!;
 
@@ -233,7 +265,7 @@ export default async function SurahPage({
   let fetchError: string | null = null;
 
   try {
-    quranData = await fetchSurahEditions(surahNumber, l);
+    quranData = await fetchSurahEditions(surahNumber, l, tafsirId);
   } catch (error) {
     fetchError = error instanceof Error
       ? error.message
@@ -380,7 +412,7 @@ export default async function SurahPage({
               return (
                 <Link
                   key={r.id}
-                  href={buildReciterHref(l, surahNumber, r.id)}
+                  href={buildSurahHref(l, surahNumber, r.id, tafsirId)}
                   className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${
                     isActive
                       ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md shadow-primary-500/25"
@@ -391,6 +423,40 @@ export default async function SurahPage({
                 </Link>
               );
             })}
+          </div>
+
+          <div className="mt-5 border-t border-slate-100 pt-5 dark:border-night-700">
+            <p className="mb-3 text-sm font-black text-slate-900 dark:text-white">
+              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📖", 18)}</span>
+              {isRTL ? "التفسير" : "Tafsir"}
+            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Link
+                href={buildSurahHref(l, surahNumber, reciterId)}
+                aria-current={!tafsirId ? "page" : undefined}
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+                  !tafsirId
+                    ? "bg-primary-700 text-white shadow-md"
+                    : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
+                }`}
+              >
+                {isRTL ? "بدون تفسير" : "Quran text only"}
+              </Link>
+              {TAFSIRS.map((tafsir) => (
+                <Link
+                  key={tafsir.id}
+                  href={buildSurahHref(l, surahNumber, reciterId, tafsir.id)}
+                  aria-current={tafsirId === tafsir.id ? "page" : undefined}
+                  className={`rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+                    tafsirId === tafsir.id
+                      ? "bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-md"
+                      : "border border-slate-200 bg-white text-slate-600 hover:border-gold-300 hover:bg-gold-50 dark:border-night-700 dark:bg-night-800 dark:text-slate-300"
+                  }`}
+                >
+                  {isRTL ? tafsir.ar : tafsir.en}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -429,7 +495,7 @@ export default async function SurahPage({
               {isRTL ? "تعذر تحميل الآيات" : "Unable to load ayahs"}
             </h2>
             <p className="mb-6 text-slate-500 dark:text-slate-400">{fetchError}</p>
-            <Link href={buildReciterHref(l, surahNumber, reciterId)} className="btn-primary">
+            <Link href={buildSurahHref(l, surahNumber, reciterId, tafsirId)} className="btn-primary">
               {isRTL ? "إعادة المحاولة" : "Retry"}
             </Link>
           </div>
@@ -489,6 +555,17 @@ export default async function SurahPage({
                     <p className="mt-5 border-t border-slate-100 pt-5 text-base leading-relaxed text-slate-600 dark:border-night-700 dark:text-slate-300">
                       {translation}
                     </p>
+                  )}
+
+                  {tafsirId && quranData.tafsirAyahs[index]?.text && (
+                    <details className="mt-5 rounded-2xl border border-gold-200 bg-gold-50/70 p-4 dark:border-gold-800/60 dark:bg-gold-950/20">
+                      <summary className="cursor-pointer text-sm font-black text-gold-800 dark:text-gold-200">
+                        {isRTL ? TAFSIRS.find((item) => item.id === tafsirId)?.ar : TAFSIRS.find((item) => item.id === tafsirId)?.en}
+                      </summary>
+                      <p className="mt-3 text-sm leading-8 text-slate-700 dark:text-slate-200">
+                        {quranData.tafsirAyahs[index].text}
+                      </p>
+                    </details>
                   )}
                 </article>
               );
