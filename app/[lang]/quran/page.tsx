@@ -691,7 +691,7 @@ export default async function QuranPage({
                 <Link
                   key={surah.number}
                   href={`/${l}/quran/${surah.number}`}
-                  className="card card-interactive group relative overflow-hidden p-5"
+                  className="card card-interactive content-auto group relative overflow-hidden p-5"
                 >
                   <div className={`absolute inset-x-0 top-0 h-1 ${isMeccanSurah ? "bg-gradient-to-r from-gold-400 to-gold-600" : "bg-gradient-to-r from-primary-400 to-primary-600"}`} />
 

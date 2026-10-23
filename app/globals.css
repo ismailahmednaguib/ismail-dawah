@@ -795,6 +795,12 @@ body.dark {
   .text-pretty {
     text-wrap: pretty;
   }
+
+  /* تؤجّل رسم البطاقات البعيدة عن الشاشة دون إزالتها من DOM أو التأثير على SEO. */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 220px;
+  }
 }
 
 /* ================================================================
