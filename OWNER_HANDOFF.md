@@ -74,4 +74,4 @@ npx vercel --prod
 - `npm run qa:rls -- --strict` متوقف فقط لأن جدول `admin_mfa` منفّذ لكنه فارغ حتى يسجّل المالك جهازه.
 - بوابة القرآن تعرض النص والتلاوة بأربعة قراء، وأصبح التفسير الميسر اختياريًا داخل صفحة السورة؛ لا يُطلب مصدر التفسير إلا عند اختياره.
 - `npm run typecheck` يمرّ محليًا. `npm run build` ينجح في مرحلة التجميع، ثم يعيد `spawn EPERM` من Windows أثناء lint/typecheck؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
-- آخر commit جاهز للرفع هو `b4d9205` (`docs: refresh control surface audit`) ويشمل commits الخطة السابقة وتحديث جرد السطح، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك.
+- آخر commit جاهز للرفع هو `ec54089` (`docs: record final control surface scan`) ويشمل commits الخطة السابقة وتحديث جرد السطح، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك.
