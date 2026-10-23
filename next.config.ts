@@ -46,12 +46,14 @@ const nextConfig: NextConfig = {
     webpackBuildWorker: false,
   },
   serverExternalPackages: ["nodemailer", "sharp"],
-  // أخطاء TypeScript أو ESLint تُفشل البناء: لا تُنشر نسخة معطوبة صامتة.
+  // تُجرى TypeScript وESLint قبل Next مباشرة في script `build`، لأن
+  // فحص Next الداخلي يحتاج child worker محظورًا في بعض بيئات Windows.
+  // لا يعني هذا تجاهل الفحص: script البناء يفشل قبله عند أي خطأ.
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],

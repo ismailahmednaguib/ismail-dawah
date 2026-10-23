@@ -73,5 +73,5 @@ npx vercel --prod
 - `npm run qa:review:strict` متوقف فقط لأن ٢٠ فتوى منشورة تنتظر مراجعًا علميًا معتمدًا.
 - `npm run qa:rls -- --strict` متوقف فقط لأن جدول `admin_mfa` منفّذ لكنه فارغ حتى يسجّل المالك جهازه.
 - بوابة القرآن تعرض النص والتلاوة بأربعة قراء، وأصبح التفسير الميسر اختياريًا داخل صفحة السورة؛ لا يُطلب مصدر التفسير إلا عند اختياره.
-- `npm run typecheck` يمرّ محليًا. بعد ضبط `webpackBuildWorker: false` نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء lint/typecheck؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
+- `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). بعد ضبط `webpackBuildWorker: false` نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
 - آخر commit جاهز للرفع هو `ace5c28` (`docs: refresh ISR control surface audit`) ويشمل commits الخطة السابقة وتحديث جرد السطح، لكن الرفع الخارجي يحتاج مصادقة GitHub/Vercel من حساب المالك.
