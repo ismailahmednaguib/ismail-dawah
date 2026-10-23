@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
   // بيئات Windows المقيدة قد تمنع Next من إنشاء Webpack worker (`spawn EPERM`).
   // تعطيله لا يتجاوز فحوص النوع أو ESLint؛ يغيّر طريقة تشغيل التجميع فقط.
   experimental: {
-    webpackBuildWorker: false,
+    webpackBuildWorker: process.platform !== "win32",
   },
   serverExternalPackages: ["nodemailer", "sharp"],
   // تُجرى TypeScript وESLint قبل Next مباشرة في script `build`، لأن
