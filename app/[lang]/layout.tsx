@@ -206,7 +206,7 @@ export default async function LangLayout({
     name: siteName,
     alternateName: otherName,
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app",
-    logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/icon-512.png`,
+    logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app"}/api/site-icon?size=512`,
     description: isRTL
       ? "منصة دعوية شاملة لنشر العلم الشرعي والمحتوى الإسلامي بلغتين."
       : "A comprehensive dawah platform for spreading Islamic knowledge and content in two languages.",

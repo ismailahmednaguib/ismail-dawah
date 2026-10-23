@@ -34,7 +34,7 @@ export default function JsonLd({ data }: JsonLdProps) {
 export function OrganizationJsonLd({
   name = SITE_NAME,
   url = "https://ismailahmednaguib.vercel.app",
-  logo = "https://ismailahmednaguib.vercel.app/icon-512.png",
+  logo = "https://ismailahmednaguib.vercel.app/api/site-icon?size=512",
   description = "منصة دعوية إسلامية شاملة",
 }: {
   name?: string;
@@ -126,7 +126,7 @@ export function ArticleJsonLd({
           name: SITE_NAME,
           logo: {
             "@type": "ImageObject",
-            url: "https://ismailahmednaguib.vercel.app/icon-512.png",
+            url: "https://ismailahmednaguib.vercel.app/api/site-icon?size=512",
           },
         },
         datePublished: datePublished || new Date().toISOString(),
@@ -251,7 +251,7 @@ export function VideoJsonLd({
           name: SITE_NAME,
           logo: {
             "@type": "ImageObject",
-            url: "https://ismailahmednaguib.vercel.app/icon-512.png",
+            url: "https://ismailahmednaguib.vercel.app/api/site-icon?size=512",
           },
         },
       }}

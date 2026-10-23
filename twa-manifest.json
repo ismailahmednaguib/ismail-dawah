@@ -13,8 +13,8 @@
   "backgroundColor": "#FDFBF7",
   "enableNotifications": true,
   "startUrl": "/",
-  "iconUrl": "https://ismailahmednaguib.vercel.app/icon-512.png",
-  "maskableIconUrl": "https://ismailahmednaguib.vercel.app/icon-maskable-512.png",
+  "iconUrl": "https://ismailahmednaguib.vercel.app/api/site-icon?size=512",
+  "maskableIconUrl": "https://ismailahmednaguib.vercel.app/api/site-icon?size=512&maskable=1",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
     "path": "D:\\ismail-dawah\\android.keystore",

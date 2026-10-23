@@ -61,6 +61,20 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.supabase.co" },
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: "/icon.png", destination: "/api/site-icon?size=512" },
+        { source: "/icon-192.png", destination: "/api/site-icon?size=192" },
+        { source: "/icon-512.png", destination: "/api/site-icon?size=512" },
+        {
+          source: "/icon-maskable-512.png",
+          destination: "/api/site-icon?size=512&maskable=1",
+        },
+        { source: "/apple-touch-icon.png", destination: "/api/site-icon?size=180" },
+      ],
+    };
+  },
   async headers() {
     return [
       {

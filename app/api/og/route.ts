@@ -114,7 +114,7 @@ export async function GET(request: Request) {
   const type = queryText(url.searchParams.get('type'), lang === 'ar' ? 'محتوى إسلامي' : 'Islamic content', 40);
 
   try {
-    const icon = await readFile(path.join(process.cwd(), 'public', 'icon-512.png'));
+    const icon = await readFile(path.join(process.cwd(), 'public', 'site-icon.svg'));
     const png = await sharp(Buffer.from(buildSvg({ lang, title, description, type })))
       .composite([{ input: await sharp(icon).resize(112, 112, { fit: 'cover' }).png().toBuffer(), top: 70, left: 544 }])
       .png({ compressionLevel: 9 })

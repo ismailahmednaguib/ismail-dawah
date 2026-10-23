@@ -17,10 +17,10 @@ const SITE_URL =
 // ============================================================
 
 const ICONS = {
-  icon192: "/icon-192.png",
-  icon512: "/icon-512.png",
-  maskable512: "/icon-maskable-512.png",
-  appleTouchIcon: "/apple-touch-icon.png",
+  icon192: "/api/site-icon?size=192",
+  icon512: "/api/site-icon?size=512",
+  maskable512: "/api/site-icon?size=512&maskable=1",
+  appleTouchIcon: "/api/site-icon?size=180",
 };
 
 const COLORS = {

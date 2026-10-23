@@ -143,19 +143,19 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icon-192.png",
+        url: "/api/site-icon?size=192",
         sizes: "192x192",
         type: "image/png",
       },
       {
-        url: "/icon-512.png",
+        url: "/api/site-icon?size=512",
         sizes: "512x512",
         type: "image/png",
       },
       // لا تضع purpose هنا إذا كان إصدار Next عندك لا يدعمه.
       // الأيقونة Maskable تُضاف في manifest.webmanifest.
     ],
-    apple: "/apple-touch-icon.png",
+    apple: "/api/site-icon?size=180",
   },
 
   appleWebApp: {
