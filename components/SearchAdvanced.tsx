@@ -27,6 +27,7 @@ type FilterOption = { value: string; icon?: IconName; ar: string; en: string };
 const TYPE_OPTIONS: FilterOption[] = [
   { value: '', ar: 'الكل', en: 'All' },
   { value: 'quran', icon: 'quran', ar: 'السور', en: 'Surahs' },
+  { value: 'quran_ayah', icon: 'quran', ar: 'الآيات', en: 'Ayahs' },
   { value: 'article', icon: 'fileText', ar: 'مقالات', en: 'Articles' },
   { value: 'lesson', icon: 'bookOpen', ar: 'دروس', en: 'Lessons' },
   { value: 'course', icon: 'bookmark', ar: 'دورات', en: 'Courses' },
@@ -81,25 +82,28 @@ const MADHHAB_OPTIONS: FilterOption[] = [
 
 const TYPE_ICONS: Record<string, IconName> = {
   quran: 'quran', quran_verse: 'quran', article: 'fileText', lesson: 'bookOpen', course: 'bookmark',
+  quran_ayah: 'quran',
   book: 'bookOpen', fatwa: 'shield', khutbah: 'mosque', audio: 'headphones', video: 'video',
   hadith: 'helpCircle', story: 'bookOpen', research: 'sparkles',
 };
 
 const COPY: Record<string, any> = {
   ar: {
-    placeholder: 'ابحث في أسماء السور ومعانيها، الأحاديث، المقالات، الفتاوى، والدروس...',
+    placeholder: 'ابحث في السور والآيات والأحاديث والمقالات والفتاوى والدروس...',
     type: 'نوع المحتوى', audience: 'الجمهور', age: 'الفئة العمرية', level: 'المستوى', madhhab: 'المذهب',
     results: (count: number) => (count > 0 ? count + ' نتيجة' : 'لا توجد نتائج'),
     noResults: (query: string) => 'لم نعثر على نتائج لـ "' + query + '"',
     tryAgain: 'جرب كلمات مختلفة أو تحقق من الإملاء',
+    quranSourceUnavailable: 'تعذر الوصول إلى مصدر البحث القرآني الآن؛ جرّب مرة أخرى لاحقًا.',
     minQuery: 'اكتب كلمتين على الأقل لبدء البحث.', dateLocale: 'ar-EG',
   },
   en: {
-    placeholder: 'Search surah names and meanings, hadith, articles, fatwas, and lessons...',
+    placeholder: 'Search surahs, ayahs, hadith, articles, fatwas, and lessons...',
     type: 'Content type', audience: 'Audience', age: 'Age group', level: 'Level', madhhab: 'Madhhab',
     results: (count: number) => (count > 0 ? count + ' results' : 'No results'),
     noResults: (query: string) => 'No results found for "' + query + '"',
     tryAgain: 'Try different words or check the spelling.',
+    quranSourceUnavailable: 'The Quran search source is temporarily unavailable; please try again later.',
     minQuery: 'Enter at least two characters to start searching.', dateLocale: 'en-US',
   },
 } as const;
@@ -122,6 +126,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
   const [totalPages, setTotalPages] = useState(0);
   const [facets, setFacets] = useState<Record<string, number>>({});
   const [error, setError] = useState(false);
+  const [quranSourceUnavailable, setQuranSourceUnavailable] = useState(false);
   const [typeFilter, setTypeFilter] = useState(searchParams.get('type') ?? '');
   const [audienceFilter, setAudienceFilter] = useState(searchParams.get('audience') ?? '');
   const [ageFilter, setAgeFilter] = useState(searchParams.get('age') ?? '');
@@ -134,6 +139,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
 
     setLoading(true);
     setError(false);
+    setQuranSourceUnavailable(false);
 
     try {
       const qs = new URLSearchParams({ q: trimmedQuery, lang, page: String(page), per_page: '20' });
@@ -143,19 +149,22 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       if (levelFilter) qs.set('level', levelFilter);
       if (madhhabFilter) qs.set('madhhab', madhhabFilter);
 
-      const res = await fetch(`/api/search?${qs.toString()}`);
+      const endpoint = typeFilter === 'quran_ayah' ? '/api/quran/search' : '/api/search';
+      const res = await fetch(`${endpoint}?${qs.toString()}`);
       if (!res.ok) throw new Error('Search request failed');
 
       const json = await res.json();
       setResults(json.data ?? []);
       setTotal(json.total ?? 0);
-      setTotalPages(json.total_pages ?? 0);
-      setFacets(json.facets ?? {});
+      setTotalPages(typeFilter === 'quran_ayah' ? (json.data?.length ? 1 : 0) : (json.total_pages ?? 0));
+      setFacets(typeFilter === 'quran_ayah' ? { quran_ayah: json.total ?? 0 } : (json.facets ?? {}));
+      setQuranSourceUnavailable(Boolean(json.source_unavailable));
     } catch {
       setResults([]);
       setTotal(0);
       setTotalPages(0);
       setFacets({});
+      setQuranSourceUnavailable(false);
       setError(true);
     } finally {
       setLoading(false);
@@ -172,6 +181,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
         setTotal(0);
         setTotalPages(0);
         setFacets({});
+        setQuranSourceUnavailable(false);
         setError(false);
         setPage(1);
       }
@@ -274,6 +284,11 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
       {/* النتائج */}
       {query.trim().length >= 2 && (
         <div>
+          {quranSourceUnavailable && typeFilter === 'quran_ayah' && (
+            <p className="mb-4 rounded-xl border border-gold-200 bg-gold-50 p-3 text-sm text-gold-800 dark:border-gold-800/60 dark:bg-gold-950/20 dark:text-gold-200" role="status">
+              {copy.quranSourceUnavailable}
+            </p>
+          )}
           <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
             {error
               ? lang === 'ar'

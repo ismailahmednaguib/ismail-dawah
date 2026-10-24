@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-10-23T23:32:08.433Z
+> تاريخ التوليد: 2026-10-24T11:21:29.322Z
 
 ## الملخص
 
 - المسارات العامة: **57**
 - مسارات الإدارة: **19**
-- واجهات API: **75**
+- واجهات API: **76**
 - مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **6828**
+- العناصر المفحوصة: **6837**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **961** · `api-contract` = **576** · `catalogued` = **2947** · `curated-reference` = **1634** · `immutable-reference` = **710**
+- توزيع الحالات: `admin-ui` = **961** · `api-contract` = **576** · `catalogued` = **2949** · `curated-reference` = **1634** · `immutable-reference` = **717**
 
 ## المسارات
 
@@ -156,6 +156,7 @@
 | api | `/api/public/prayer-times` | `app/api/public/prayer-times/route.ts` | يحتاج فحص metadata |
 | api | `/api/questions` | `app/api/questions/route.ts` | يحتاج فحص metadata |
 | api | `/api/questions/admin` | `app/api/questions/admin/route.ts` | يحتاج فحص metadata |
+| api | `/api/quran/search` | `app/api/quran/search/route.ts` | يحتاج فحص metadata |
 | api | `/api/register` | `app/api/register/route.ts` | يحتاج فحص metadata |
 | api | `/api/search` | `app/api/search/route.ts` | يحتاج فحص metadata |
 | api | `/api/site-icon` | `app/api/site-icon/route.ts` | يحتاج فحص metadata |

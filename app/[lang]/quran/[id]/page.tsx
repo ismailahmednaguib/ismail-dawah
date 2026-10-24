@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import BookmarkButton from "@/components/BookmarkButton";
 import SurahPlayer from "./SurahPlayer";
+import AyahSearch from "@/components/quran/AyahSearch";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { renderDesignIcon } from "@/components/ui";
 
@@ -514,6 +515,15 @@ export default async function SurahPage({
                 تعذر تحميل التفسير من المصدر الخارجي حاليًا؛ النص القرآني والتلاوة ما زالا متاحين.
               </div>
             )}
+            <AyahSearch
+              lang={l}
+              surahPath={`/${l}/quran/${surahNumber}`}
+              ayahs={quranData.arabicAyahs.map((ayah, index) => ({
+                numberInSurah: ayah.numberInSurah,
+                text: ayah.text,
+                translation: quranData.translationAyahs[index]?.text,
+              }))}
+            />
             {quranData.arabicAyahs.map((ayah, index) => {
               const translation = quranData.translationAyahs[index]?.text;
               const ayahAnchor = `ayah-${ayah.numberInSurah}`;

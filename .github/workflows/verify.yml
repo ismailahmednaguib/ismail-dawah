@@ -38,6 +38,12 @@ jobs:
       - name: فحص تسرّب المفاتيح
         run: npm run qa:secrets
 
+      - name: فحص ألوان الهوية
+        run: npm run qa:theme
+
+      - name: جرد سطح التحكم
+        run: npm run qa:control-surface
+
   # ── ٢) هل أسرار البيئة متاحة؟ ────────────────────────────────────────────
   detect:
     name: كشف أسرار البيئة

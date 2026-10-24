@@ -162,6 +162,7 @@ function classifyElement(rel, route, translationSource) {
     rel === "lib/seo.ts" ||
     rel === "lib/date-format.ts" ||
     rel === "lib/verse.ts" ||
+    rel === "lib/quran/search.ts" ||
     rel === "lib/managed-redirects.ts" ||
     rel.startsWith("components/quran/")
   ) {
