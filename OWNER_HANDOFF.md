@@ -54,11 +54,12 @@ npm run qa:rls -- --strict
 
 ## 5) دليل التنفيذ والتحقق الحالي
 
-- آخر تحديث مرفوع إلى `origin/main` برسالة `docs: repair owner handoff evidence`، والفرعان المحلي والبعيد متزامنان. لا نثبت SHA هنا حتى لا يتقادم مع كل تحديث لاحق.
+- آخر commit مرفوع إلى `origin/main` هو `68eda39a3d4a8ffa8e2d3890c477aea324709b1b` برسالة `docs: sync roadmap with published state`، والفرعان المحلي والبعيد متزامنان.
+- نسخة `ROADMAP_V4.md` على GitHub مطابقة للنسخة المحلية بعد التطبيع، ولا تحتوي الوصف القديم عن أن التغييرات «جاهزة للرفع اليدوي».
+- نجحت تشغيلات GitHub Actions لهذا commit: `verify`، و`handoff-consistency`، و`pages build and deployment`.
+- فحص الإنتاج المباشر أعاد HTTP 200 بلا أخطاء على `/ar` و`/en` و`/ar/search` و`/en/search` و`/ar/quran` و`/en/quran`، مع عنوان ووسم لغة في كل صفحة.
 - آخر تغيير برمجي وظيفي: `ef531d8` — `fix: show loading state during Quran search`.
-- Verify #111 وPages #272 نجحا للتغيير البرمجي، ثم Verify #112 وPages #273 نجحا لتحديث التسليم السابق.
 - إصلاح البحث يعرض «جارٍ البحث...» / «Searching...» أثناء انتظار مصدر الآيات بدل عرض «لا توجد نتائج» مؤقتًا.
-- فحص الإنتاج المباشر نجح على صفحات عربية وإنجليزية؛ بحث الآيات أعاد ٢٠ نتيجة من AlQuran Cloud بلا تسريب عربي في نتائج الإنجليزية.
 - فحوص النوع والوحدة وQA الأساسية المسجلة في الخطة ناجحة؛ فحص البناء المحلي يصل إلى مرحلة التجميع ثم يتوقف بـ `spawn EPERM` على Windows، لذلك اعتماد البناء هو CI/Vercel.
 - `npm run qa:review:strict` متوقف فقط بسبب المراجعة البشرية للفتاوى العشرين.
 - `npm run qa:rls -- --strict` متوقف فقط حتى يسجّل المالك أول جهاز MFA.
