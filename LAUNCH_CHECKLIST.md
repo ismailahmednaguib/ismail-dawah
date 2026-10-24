@@ -12,16 +12,20 @@
 - [x] حماية مسارات الإدارة، أدوار اللوحة، سجل التدقيق، RLS والمigrations الخاصة بالرحلة.
 - [x] لوحة المحتوى والمراجعة والجدولة والنسخ الاحتياطي وWeb Push من ناحية الكود.
 - [x] PWA وبيانات التثبيت العربية والإنجليزية وملف APK الموجود في المشروع.
-- [x] النشر على Vercel وGitHub Pages؛ آخر تشغيلين مؤكدين سابقًا: Verify #112 وPages #273.
+- [x] النشر على Vercel وGitHub Pages؛ آخر commit مؤكد: bf52fa4b804e896fecc412cb06561e93e8d28229.
+- [x] نجحت Verify #40101981623 وhandoff-consistency #40101981694 وPages #40101981827.
+- [x] فحص الإنتاج المباشر نجح على /ar و/en و/ar/quran و/en/quran و/ar/fatwa و/en/fatwa و/ar/search و/en/search، مع HTTP 200 ووسم لغة صحيح ووصف SEO.
+- [x] بحث القرآن المباشر أعاد 20 نتيجة بالعربي والإنجليزي، ولم يظهر تسريب عربي في البحث الإنجليزي.
+- [x] نجحت فحوص manifest وrobots وsitemap وتحويل الجذر حسب اللغة ورؤوس CSP وHSTS وX-Frame-Options وPermissions-Policy.
 
 ## ⚠️ مراجعة بشرية وحسابات خارجية
 
 - [ ] مراجعة الفتاوى العشرين من مراجع علمي حقيقي واعتماد مراجعها.
 - [ ] ضبط ADMIN_MFA_ENCRYPTION_KEY في Vercel وتسجيل جهاز TOTP للمالك.
 - [ ] تنفيذ اختبار نسخة واسترجاع على Preview أو قاعدة بيانات منفصلة.
-- [ ] تنفيذ `supabase/migrations/20261023_content_revisions.sql` في Supabase SQL Editor قبل الاعتماد على سجل المراجعات.
-- [ ] تنفيذ `supabase/migrations/20261026_scheduled_publishing.sql` قبل استخدام جدولة النشر.
-- [ ] التأكد من وجود `supabase/migrations/20261027_admin_mfa.sql` في سجل migrations قبل تفعيل MFA.
+- [ ] تنفيذ supabase/migrations/20261023_content_revisions.sql في Supabase SQL Editor قبل الاعتماد على سجل المراجعات.
+- [ ] تنفيذ supabase/migrations/20261026_scheduled_publishing.sql قبل استخدام جدولة النشر.
+- [ ] التأكد من وجود supabase/migrations/20261027_admin_mfa.sql في سجل migrations قبل تفعيل MFA.
 - [ ] إضافة Google Search Console إن أراد المالك ذلك.
 - [ ] اختيار نطاق مخصص أو الاستمرار على vercel.app.
 - [ ] امتلاك حساب Google Play ومفتاح توقيع Android ونشر التطبيق.
@@ -40,9 +44,11 @@
 
 ## أوامر التحقق
 
-    npm run qa:all
-    npm run qa:review:strict
-    npm run qa:rls -- --strict
-    npm run build
+~~~~bash
+npm run qa:all
+npm run qa:review:strict
+npm run qa:rls -- --strict
+npm run build
+~~~~
 
 راجع OWNER_HANDOFF.md للتفاصيل التي تتطلب تدخل المالك، وROADMAP_V4.md لمطابقة الخطة الكاملة.
