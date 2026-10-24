@@ -205,7 +205,8 @@ declare
     'user_questions',
     'media_library',
     'rate_limits',
-    'push_subscriptions'
+    'push_subscriptions',
+    'admin_mfa'
   ];
 begin
   foreach target_table in array private_tables loop
