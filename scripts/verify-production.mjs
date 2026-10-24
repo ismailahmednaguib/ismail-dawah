@@ -47,6 +47,12 @@ const pages = [
   ['/en/fatwa', 'en'],
   ['/ar/search', 'ar'],
   ['/en/search', 'en'],
+  ['/ar/prayer-times', 'ar'],
+  ['/en/prayer-times', 'en'],
+  ['/ar/prayer-guide', 'ar'],
+  ['/en/prayer-guide', 'en'],
+  ['/ar/qibla', 'ar'],
+  ['/en/qibla', 'en'],
 ];
 
 const apiChecks = [
