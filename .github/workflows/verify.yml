@@ -135,3 +135,20 @@ jobs:
       - name: سجل الخادم عند الفشل
         if: failure()
         run: tail -n 200 server.log
+
+  # ── ٤) فحص النسخة المنشورة بعد الرفع ────────────────────────────────────
+  production:
+    name: فحص النسخة المنشورة
+    needs: [static]
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: قبول Vercel (الصفحات واللغات وSEO وبحث القرآن)
+        run: npm run qa:production -- --base=https://ismailahmednaguib.vercel.app
