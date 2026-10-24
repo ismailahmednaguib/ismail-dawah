@@ -54,9 +54,10 @@ npm run qa:rls -- --strict
 
 ## 5) دليل التنفيذ والتحقق الحالي
 
-- آخر commit مرفوع إلى `origin/main` هو `7fbca7c214b6c2c61d5d3b9e163b9913a922ac29` برسالة `docs: refresh owner handoff after current publish`، والفرعان المحلي والبعيد متزامنان.
+- مرجع CI والإنتاج الموثق في هذه الوثيقة هو `68eda39a3d4a8ffa8e2d3890c477aea324709b1b` برسالة `docs: sync roadmap with published state`.
+- بعد هذا المرجع دُفعت تصحيحات توثيقية متتابعة لمزامنة ملف التسليم، وآخرها ظاهر في Graph المحلي، والفرعان المحلي والبعيد متزامنان.
 - نسخة `ROADMAP_V4.md` على GitHub مطابقة للنسخة المحلية بعد التطبيع، ولا تحتوي الوصف القديم عن أن التغييرات «جاهزة للرفع اليدوي».
-- نجحت تشغيلات GitHub Actions لهذا commit: `verify`، و`handoff-consistency`، و`pages build and deployment`.
+- نجحت تشغيلات GitHub Actions للمرجع الموثق: `verify`، و`handoff-consistency`، و`pages build and deployment`.
 - فحص الإنتاج المباشر أعاد HTTP 200 بلا أخطاء على `/ar` و`/en` و`/ar/search` و`/en/search` و`/ar/quran` و`/en/quran`، مع عنوان ووسم لغة في كل صفحة.
 - آخر تغيير برمجي وظيفي: `ef531d8` — `fix: show loading state during Quran search`.
 - إصلاح البحث يعرض «جارٍ البحث...» / «Searching...» أثناء انتظار مصدر الآيات بدل عرض «لا توجد نتائج» مؤقتًا.
