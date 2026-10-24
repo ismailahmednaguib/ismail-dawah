@@ -27,6 +27,7 @@ function loadEnv(file) {
 const env = { ...loadEnv('.env.local'), ...loadEnv('.env'), ...process.env };
 const URL = env.NEXT_PUBLIC_SUPABASE_URL || env.SUPABASE_URL;
 const ANON = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SERVICE = env.SUPABASE_SERVICE_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
 const AS_JSON = process.argv.includes('--json');
 const STRICT = process.argv.includes('--strict');
 
@@ -68,6 +69,30 @@ const PUBLIC_TABLES = [
   'content_terms',
 ];
 
+/**
+ * يعيد عدد الصفوف من جهة الخدمة فقط كدليل داخلي.
+ * لا نعرض العدد؛ الغرض تمييز «محجوب وبداخله بيانات» عن «مفتوح لكنه فارغ».
+ */
+async function countWithServiceKey(table) {
+  if (!SERVICE) return null;
+
+  try {
+    const res = await fetch(`${URL}/rest/v1/${table}?select=*&limit=1`, {
+      headers: {
+        apikey: SERVICE,
+        Authorization: `Bearer ${SERVICE}`,
+        Prefer: 'count=exact',
+      },
+    });
+
+    if (res.status === 404 || !res.ok) return null;
+    const range = res.headers.get('content-range') || '';
+    const total = Number(range.split('/')[1] ?? '0');
+    return Number.isFinite(total) ? total : null;
+  } catch {
+    return null;
+  }
+}
 /** يعيد حالة القراءة: غير موجود · محجوب · منفَّذ-وفارغ · به بيانات. */
 async function probe(table) {
   try {
@@ -84,7 +109,14 @@ async function probe(table) {
 
     const range = res.headers.get('content-range') || '';
     const total = Number(range.split('/')[1] ?? '0');
-    return { state: total > 0 ? 'leaking' : 'open', rows: total };
+    if (total > 0) return { state: 'leaking', rows: total };
+
+    const serviceRows = await countWithServiceKey(table);
+    if (serviceRows !== null && serviceRows > 0) {
+      return { state: 'blocked', rows: 0, evidence: 'service_rows_hidden' };
+    }
+
+    return { state: 'open', rows: total };
   } catch (error) {
     return { state: 'error', rows: 0, error: String(error) };
   }
@@ -169,3 +201,4 @@ console.log(
   STRICT ? '❌ التدقيق لم ينجح.' : 'ℹ️ تقرير فقط — شغّل مع --strict لجعله إلزاميًّا.'
 );
 process.exit(STRICT && (leaking.length || open.length) ? 1 : 0);
+>Git: Unstage Changes

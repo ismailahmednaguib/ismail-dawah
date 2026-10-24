@@ -82,3 +82,5 @@ if (problems.length === 0) {
   for (const problem of problems.sort()) console.log(' - ' + problem);
 }
 process.exit(problems.length === 0 ? 0 : 1);
+
+
