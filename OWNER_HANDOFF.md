@@ -55,17 +55,16 @@ npm run qa:rls -- --strict
 
 ## 5) دليل التنفيذ والتحقق الحالي
 
-- آخر رفع موثق للفرع main هو bf52fa4b804e896fecc412cb06561e93e8d28229.
-- نجحت Verify رقم 40101981623، وhandoff-consistency رقم 40101981694، وPages رقم 40101981827.
-- فحص الإنتاج المباشر بعد الرفع نجح على الصفحات /ar و/en و/ar/quran و/en/quran و/ar/fatwa و/en/fatwa و/ar/search و/en/search: كلها HTTP 200، ووسم html lang صحيح، ووصف SEO موجود.
+- آخر رفع موثق للفرع `main` تم التحقق منه على GitHub وVercel، وحالة نشر Production الحالية `success`.
+- نجحت مهام CI الثلاث: `verify` و`handoff-consistency` و`pages build and deployment`.
+- فحص الإنتاج المباشر نجح على 14 مسارًا بالعربية والإنجليزية: `/ar` و`/en` و`/ar/quran` و`/en/quran` و`/ar/fatwa` و`/en/fatwa` و`/ar/search` و`/en/search` و`/ar/prayer-times` و`/en/prayer-times` و`/ar/prayer-guide` و`/en/prayer-guide` و`/ar/qibla` و`/en/qibla`: كلها HTTP 200، ووسم `html lang` صحيح، ووصف SEO موجود.
 - بحث القرآن المباشر أعاد 20 نتيجة في العربي والإنجليزي، ولم يظهر تسريب عربي في نتيجة البحث الإنجليزي.
-- فحوص التشغيل الإضافية نجحت: manifest.webmanifest وrobots.txt وsitemap.xml، وتحويل الجذر حسب Accept-Language، وCSP وHSTS وX-Frame-Options وPermissions-Policy.
-- ملف .github/workflows/verify.yml ينتظر وصول نسخة Vercel المرتبطة بالرفع قبل تشغيل فحص الإنتاج، لمنع سباق الفحص مع النشر.
-- كانت حالة Vercel في صفحة حالات GitHub ما تزال pending وقت التحقق، لكن النسخة المنشورة نفسها وفحص Verify المباشر نجحا؛ لذلك لا نخلط بين حالة التكامل المتأخرة ونتيجة الموقع الفعلية.
-- آخر تغيير وظيفي منشور يتضمن إصلاح لغة المستند، إزالة النص الشارد من middleware، وإصلاح حالة تحميل بحث القرآن. فحص النوع والاختبارات واللينت وفحص الأسرار وCI نجحوا.
-- فحص البناء المحلي على Windows يصل إلى مرحلة التجميع ثم يتوقف بخطأ spawn EPERM؛ اعتماد البناء الحالي هو CI/Vercel.
-- npm run qa:review:strict متوقف فقط بسبب المراجعة البشرية للفتاوى العشرين.
-- npm run qa:rls -- --strict متوقف فقط حتى يسجّل المالك أول جهاز MFA.
+- فحوص التشغيل الإضافية نجحت: `manifest.webmanifest` و`robots.txt` و`sitemap.xml`، وتحويل الجذر حسب Accept-Language، وCSP وHSTS وX-Frame-Options وPermissions-Policy.
+- ملف `.github/workflows/verify.yml` ينتظر وصول نسخة Vercel المرتبطة بالرفع قبل تشغيل فحص الإنتاج، لمنع سباق الفحص مع النشر.
+- آخر تغييرات التحقق شملت إصلاح لغة صفحة دليل الصلاة الإنجليزية، وإضافة مسارات الصلاة والقبلة إلى بوابة فحص الإنتاج. فحص النوع والاختبارات واللينت وفحص الأسرار وCI نجحوا.
+- فحص البناء المحلي على Windows يصل إلى مرحلة التجميع ثم يتوقف بخطأ `spawn EPERM`؛ اعتماد البناء الحالي هو CI/Vercel، وقد نجح بناء ونشر Production هناك.
+- `npm run qa:review:strict` متوقف فقط بسبب المراجعة البشرية للفتاوى العشرين.
+- `npm run qa:rls -- --strict` متوقف فقط حتى يسجّل المالك أول جهاز MFA.
 - إعادة قياس Lighthouse/TBT واختبار المستخدمين الحقيقيين والأجهزة واختبارات الصلاة والقبلة والأذان ما زالت خطوات تحقق خارجية.
 
 ## 6) أوامر التحقق بعد إكمال البنود اليدوية
