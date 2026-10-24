@@ -66,7 +66,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(newUrl, 308);
   }
 
-  return NextResponse.next();
+  const requestLanguage = pathname.startsWith('/en/') || pathname === '/en' ? 'en' : 'ar';
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-site-language', requestLanguage);
+
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {
@@ -74,3 +80,4 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico|admin|setup-admin|sitemap.xml|robots.txt|manifest.webmanifest).*)',
   ],
 };
+layout.tsx

@@ -1,6 +1,7 @@
 // app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { headers } from "next/headers";
 import "./globals.css";
 import HtmlDir from "@/components/HtmlDir";
 import SkipLink from "@/components/SkipLink";
@@ -202,10 +203,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const settings = await getSiteSettings();
+  const requestHeaders = await headers();
+  const lang = requestHeaders.get("x-site-language") === "en" ? "en" : "ar";
+  const isRTL = lang === "ar";
+
   return (
     <html
-      lang="ar"
-      dir="rtl"
+      lang={lang}
+      dir={isRTL ? "rtl" : "ltr"}
       style={themeCssVariables(settings.theme) as React.CSSProperties}
       suppressHydrationWarning
     >
