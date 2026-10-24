@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24T11:28:54.687Z",
+  "generated_at": "2026-10-24T17:16:21.655Z",
   "repository": "ismail-dawah",
   "commit": "local-working-tree",
   "summary": {
@@ -7,13 +7,13 @@
     "admin_routes": 19,
     "api_routes": 76,
     "settings_keys": 33,
-    "inventoried_elements": 6837,
+    "inventoried_elements": 6838,
     "unbound_static_elements": 0,
     "public_unbound_static_elements": 0,
     "status_counts": {
       "admin-ui": 961,
       "api-contract": 576,
-      "catalogued": 2949,
+      "catalogued": 2950,
       "curated-reference": 1634,
       "immutable-reference": 717
     }
@@ -13169,12 +13169,12 @@
       "reason": "server/API contract message"
     },
     {
-      "element_key": "text:cc20343580a1",
+      "element_key": "text:73968ed2cd5c",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 40,
+      "line": 41,
       "value": "منصة إسلامية شاملة: القرآن الكريم، الأذكار، الفتاوى، مواقيت الصلاة، الرد على الشبهات، وأدوات الدعوة — كل ما يحتاجه المسلم في مكان واحد.",
       "admin_key": null,
       "language": "system",
@@ -13185,12 +13185,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:25754a283d1c",
+      "element_key": "text:322836e0a58e",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 56,
+      "line": 57,
       "value": "إسلام",
       "admin_key": null,
       "language": "system",
@@ -13201,12 +13201,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:2cbd15fac5a4",
+      "element_key": "text:9115f766262b",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 57,
+      "line": 58,
       "value": "قرآن",
       "admin_key": null,
       "language": "system",
@@ -13217,12 +13217,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:37e8fc19bee4",
+      "element_key": "text:c179f143038e",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 58,
+      "line": 59,
       "value": "أذكار",
       "admin_key": null,
       "language": "system",
@@ -13233,12 +13233,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:e83f1b0745dc",
+      "element_key": "text:d3752c171bf2",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 59,
+      "line": 60,
       "value": "فتاوى",
       "admin_key": null,
       "language": "system",
@@ -13249,12 +13249,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:8c3f20cb7c1e",
+      "element_key": "text:c6064e54b4b1",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 60,
+      "line": 61,
       "value": "مواقيت الصلاة",
       "admin_key": null,
       "language": "system",
@@ -13265,12 +13265,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:2793f13652d7",
+      "element_key": "text:e533cfcfd070",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 61,
+      "line": 62,
       "value": "القبلة",
       "admin_key": null,
       "language": "system",
@@ -13281,12 +13281,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:1d06c819b8f6",
+      "element_key": "text:39f5f27227c8",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 62,
+      "line": 63,
       "value": "دعوة",
       "admin_key": null,
       "language": "system",
@@ -13297,12 +13297,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:ec76ac04ed26",
+      "element_key": "text:a0f2c95788e2",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 63,
+      "line": 64,
       "value": "الرد على الشبهات",
       "admin_key": null,
       "language": "system",
@@ -13313,12 +13313,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:9ba4ab561205",
+      "element_key": "text:e817a5f72665",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 64,
+      "line": 65,
       "value": "منصة دعوية",
       "admin_key": null,
       "language": "system",
@@ -13329,12 +13329,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:b2d865b3cfb6",
+      "element_key": "text:e75688982d2a",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 65,
+      "line": 66,
       "value": "قصص الأنبياء",
       "admin_key": null,
       "language": "system",
@@ -13345,12 +13345,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:d03f2cc586cf",
+      "element_key": "text:619d57379d91",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 66,
+      "line": 67,
       "value": "الرقية الشرعية",
       "admin_key": null,
       "language": "system",
@@ -13361,12 +13361,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:a8c7204d8262",
+      "element_key": "text:2dd0402db8c2",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 67,
+      "line": 68,
       "value": "حاسبة الزكاة",
       "admin_key": null,
       "language": "system",
@@ -13377,12 +13377,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:39aa270da35f",
+      "element_key": "text:79d99fa1113e",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 68,
+      "line": 69,
       "value": "دليل الحج",
       "admin_key": null,
       "language": "system",
@@ -13393,12 +13393,12 @@
       "reason": "framework shell and fallback document copy"
     },
     {
-      "element_key": "text:542bece19f40",
+      "element_key": "text:55c5994e79f6",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "app/layout.tsx",
-      "line": 125,
+      "line": 126,
       "value": "منصة إسلامية شاملة لكل ما يحتاجه المسلم.",
       "admin_key": null,
       "language": "system",
@@ -43041,12 +43041,12 @@
       "reason": "homepage copy and section visibility are overridden by site settings"
     },
     {
-      "element_key": "text:f51f3b2f1a86",
+      "element_key": "text:819199fd840f",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 100,
+      "line": 101,
       "value": "دليل الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43057,12 +43057,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:d152b9904467",
+      "element_key": "text:a08d42d1e5e9",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 101,
+      "line": 102,
       "value": "تعلم الصلاة خطوة بخطوة كما كان يصلي النبي ﷺ",
       "admin_key": null,
       "language": "ar|en",
@@ -43073,12 +43073,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:52be22ca6611",
+      "element_key": "text:5f0c9d334393",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 102,
+      "line": 103,
       "value": "الرئيسية",
       "admin_key": null,
       "language": "ar|en",
@@ -43089,12 +43089,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:e7e1e1564692",
+      "element_key": "text:41687e51403c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 104,
+      "line": 105,
       "value": "دليل عملي شامل لتعلم الصلاة الصحيحة، يتضمن خطوات الصلاة، الصلوات الخمس، الشروط، والمبطلات، مع الأدعية والأذكار المأثورة.",
       "admin_key": null,
       "language": "ar|en",
@@ -43105,12 +43105,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:deb43286f1f2",
+      "element_key": "text:b8d076321b99",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 105,
+      "line": 106,
       "value": "الصلاة عماد الدين",
       "admin_key": null,
       "language": "ar|en",
@@ -43121,12 +43121,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:4a740230ce8c",
+      "element_key": "text:da2f8b7fa6ee",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 107,
+      "line": 108,
       "value": "الصلاة هي الركن الثاني من أركان الإسلام، وأول ما يُحاسب عليه العبد يوم القيامة. هذا الدليل يأخذك خطوة بخطوة لتتعلم الصلاة كما كان يصلي النبي",
       "admin_key": null,
       "language": "ar|en",
@@ -43137,12 +43137,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:8d286c095a41",
+      "element_key": "text:614bbeead485",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 108,
+      "line": 109,
       "value": "الصلوات الخمس",
       "admin_key": null,
       "language": "ar|en",
@@ -43153,12 +43153,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:e9ff93b20aed",
+      "element_key": "text:ca51517472e6",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 109,
+      "line": 110,
       "value": "مواقيت وعدد ركعات كل صلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43169,12 +43169,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c896f0b8f315",
+      "element_key": "text:22042f9e30b6",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 110,
+      "line": 111,
       "value": "خطوات الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43185,12 +43185,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:d092021ea24f",
+      "element_key": "text:5743b80189a4",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 111,
+      "line": 112,
       "value": "8 خطوات لأداء الصلاة صحيحة",
       "admin_key": null,
       "language": "ar|en",
@@ -43201,12 +43201,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:0e08b2262df0",
+      "element_key": "text:8a47b32e2e0f",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 112,
+      "line": 113,
       "value": "التفاصيل",
       "admin_key": null,
       "language": "ar|en",
@@ -43217,12 +43217,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:d16d5fe039a5",
+      "element_key": "text:d094e8d6119e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 113,
+      "line": 114,
       "value": "عدد الركعات",
       "admin_key": null,
       "language": "ar|en",
@@ -43233,12 +43233,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:06fc208dee47",
+      "element_key": "text:508f4fb918d3",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 114,
+      "line": 115,
       "value": "السنن الرواتب",
       "admin_key": null,
       "language": "ar|en",
@@ -43249,12 +43249,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:a6ddf064af6b",
+      "element_key": "text:a938e2838f74",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 115,
+      "line": 116,
       "value": "شروط صحة الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43265,12 +43265,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:cf885096d907",
+      "element_key": "text:a6ae1f60a8b5",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 116,
+      "line": 117,
       "value": "قبل الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43281,12 +43281,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:d82495b87f5c",
+      "element_key": "text:a5b91b16e8a7",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 117,
+      "line": 118,
       "value": "مبطلات الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43297,12 +43297,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:1fef5ea0b57c",
+      "element_key": "text:2cde2fefba33",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 118,
+      "line": 119,
       "value": "خطوات",
       "admin_key": null,
       "language": "ar|en",
@@ -43313,12 +43313,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:4f6499ba4ff8",
+      "element_key": "text:c076ef19960e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 119,
+      "line": 120,
       "value": "صلوات",
       "admin_key": null,
       "language": "ar|en",
@@ -43329,12 +43329,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:e227a6d23a56",
+      "element_key": "text:64eb82449e5d",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 120,
+      "line": 121,
       "value": "شروط",
       "admin_key": null,
       "language": "ar|en",
@@ -43345,12 +43345,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:b0ae3b8a604a",
+      "element_key": "text:619c353a49f8",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 121,
+      "line": 122,
       "value": "مبطلات",
       "admin_key": null,
       "language": "ar|en",
@@ -43361,12 +43361,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:668912c01463",
+      "element_key": "text:d4918397f7fb",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 122,
+      "line": 123,
       "value": "﴿ إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا ﴾",
       "admin_key": null,
       "language": "ar|en",
@@ -43377,12 +43377,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:a6fc1d3587ae",
+      "element_key": "text:3432d2766ebe",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 123,
+      "line": 124,
       "value": "سورة النساء — الآية 103",
       "admin_key": null,
       "language": "ar|en",
@@ -43393,12 +43393,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:94fa11116c88",
+      "element_key": "text:8a06cea1b485",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 124,
+      "line": 125,
       "value": "صَلُّوا كَمَا رَأَيْتُمُونِي أُصَلِّي",
       "admin_key": null,
       "language": "ar|en",
@@ -43409,12 +43409,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:d983f71b32a6",
+      "element_key": "text:4e2ea8b8bd08",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 125,
+      "line": 126,
       "value": "رواه البخاري",
       "admin_key": null,
       "language": "ar|en",
@@ -43425,12 +43425,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:af229a8eda29",
+      "element_key": "text:4b42a1eeeba2",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 126,
+      "line": 127,
       "value": "صفحات ذات صلة",
       "admin_key": null,
       "language": "ar|en",
@@ -43441,12 +43441,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:8f0db050ec5b",
+      "element_key": "text:eec9d044d70e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 127,
+      "line": 128,
       "value": "مواقيت الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -43457,12 +43457,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:3de0a060f81c",
+      "element_key": "text:875510b44bcf",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 128,
+      "line": 129,
       "value": "أوقات الصلاة حسب موقعك.",
       "admin_key": null,
       "language": "ar|en",
@@ -43473,12 +43473,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:a095606347e2",
+      "element_key": "text:376f0d0c2d5f",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 129,
+      "line": 130,
       "value": "اتجاه القبلة",
       "admin_key": null,
       "language": "ar|en",
@@ -43489,12 +43489,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:876a49713b58",
+      "element_key": "text:1fd340ea72a6",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 130,
+      "line": 131,
       "value": "بوصلة القبلة الدقيقة.",
       "admin_key": null,
       "language": "ar|en",
@@ -43505,12 +43505,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:9237784a7fa6",
+      "element_key": "text:f839c3672fcd",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 131,
+      "line": 132,
       "value": "القرآن الكريم",
       "admin_key": null,
       "language": "ar|en",
@@ -43521,12 +43521,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:f0c9b093d6ee",
+      "element_key": "text:9d147d89bff5",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 132,
+      "line": 133,
       "value": "اقرأ واستمع لكتاب الله.",
       "admin_key": null,
       "language": "ar|en",
@@ -43537,12 +43537,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:b9389024eb55",
+      "element_key": "text:f70f68bfbfad",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 133,
+      "line": 134,
       "value": "الأذكار",
       "admin_key": null,
       "language": "ar|en",
@@ -43553,12 +43553,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:5d11f4c4b8f1",
+      "element_key": "text:36e7b742a717",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 134,
+      "line": 135,
       "value": "أذكار الصلاة وبعد السلام.",
       "admin_key": null,
       "language": "ar|en",
@@ -43569,12 +43569,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:40a2197a7013",
+      "element_key": "text:b551a5ba7259",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 135,
+      "line": 136,
       "value": "تنبيهات مهمة",
       "admin_key": null,
       "language": "ar|en",
@@ -43585,12 +43585,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:91c651da89f1",
+      "element_key": "text:13f68dc73455",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 136,
+      "line": 137,
       "value": "هذا الدليل مبسط للمبتدئين، ويُنصح بمراجعة كتب الفقه المعتمدة للتفاصيل الدقيقة.",
       "admin_key": null,
       "language": "ar|en",
@@ -43601,12 +43601,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:277393c9d05a",
+      "element_key": "text:b510f4dae50f",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 137,
+      "line": 138,
       "value": "الوضوء شرط لصحة الصلاة، فتعلم أحكامه قبل تعلم الصلاة.",
       "admin_key": null,
       "language": "ar|en",
@@ -43617,12 +43617,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6f3a79a6df5f",
+      "element_key": "text:a303dba0e025",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 138,
+      "line": 139,
       "value": "الأفضل التعلم بالتطبيق العملي مع إمام ثقة أو مشاهدة مقاطع تعليمية صحيحة.",
       "admin_key": null,
       "language": "ar|en",
@@ -43633,12 +43633,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:fa6be6136aee",
+      "element_key": "text:1345e077faaa",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 139,
+      "line": 140,
       "value": "الإسلام والعقل والبلوغ",
       "admin_key": null,
       "language": "ar|en",
@@ -43649,12 +43649,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:3dc422006c01",
+      "element_key": "text:8a8008b07729",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 140,
+      "line": 141,
       "value": "دخول الوقت",
       "admin_key": null,
       "language": "ar|en",
@@ -43665,12 +43665,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:4d7f1c744b7b",
+      "element_key": "text:025fbcb4b9a0",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 141,
+      "line": 142,
       "value": "الطهارة من الحدث",
       "admin_key": null,
       "language": "ar|en",
@@ -43681,12 +43681,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:e525d8753180",
+      "element_key": "text:c5de84dd22b5",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 142,
+      "line": 143,
       "value": "طهارة الثوب والبدن والمكان",
       "admin_key": null,
       "language": "ar|en",
@@ -43697,12 +43697,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c41efaed381b",
+      "element_key": "text:5164a3b0e649",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 143,
+      "line": 144,
       "value": "ستر العورة",
       "admin_key": null,
       "language": "ar|en",
@@ -43713,12 +43713,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:ca5ffdef2260",
+      "element_key": "text:245e420c5ca8",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 144,
+      "line": 145,
       "value": "استقبال القبلة",
       "admin_key": null,
       "language": "ar|en",
@@ -43729,12 +43729,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:15a226e39260",
+      "element_key": "text:f9e57a2b85c5",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 145,
+      "line": 146,
       "value": "النية",
       "admin_key": null,
       "language": "ar|en",
@@ -43745,12 +43745,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:06ff07a673c6",
+      "element_key": "text:28a045c1a30a",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 146,
+      "line": 147,
       "value": "الكلام العمد",
       "admin_key": null,
       "language": "ar|en",
@@ -43761,12 +43761,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c312c0d38cf5",
+      "element_key": "text:4334d664e20e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 147,
+      "line": 148,
       "value": "الضحك",
       "admin_key": null,
       "language": "ar|en",
@@ -43777,12 +43777,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:8359ec4a9c64",
+      "element_key": "text:94a266dff753",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 148,
+      "line": 149,
       "value": "الأكل والشرب",
       "admin_key": null,
       "language": "ar|en",
@@ -43793,12 +43793,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:08b8f7098071",
+      "element_key": "text:44de745c983a",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 149,
+      "line": 150,
       "value": "كثرة الحركة لغير ضرورة",
       "admin_key": null,
       "language": "ar|en",
@@ -43809,12 +43809,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:170c194b9547",
+      "element_key": "text:f9a176251a0d",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 150,
+      "line": 151,
       "value": "الالتفات بلا حاجة",
       "admin_key": null,
       "language": "ar|en",
@@ -43825,12 +43825,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:b77e45881a8d",
+      "element_key": "text:504b25b5eb1d",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 151,
+      "line": 152,
       "value": "انتقاض الطهارة",
       "admin_key": null,
       "language": "ar|en",
@@ -43841,12 +43841,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2e6ffafa5fa0",
+      "element_key": "text:b7be79cea233",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 218,
+      "line": 219,
       "value": "النية والطهارة",
       "admin_key": null,
       "language": "ar|en",
@@ -43857,12 +43857,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:abbaa7de857c",
+      "element_key": "text:a11ece727c4c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 220,
+      "line": 221,
       "value": "انوِ الصلاة في قلبك، وتأكد من طهارتك (الوضوء) وطهارة ثوبك ومكانك.",
       "admin_key": null,
       "language": "ar|en",
@@ -43873,12 +43873,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2ca7e0ddfb83",
+      "element_key": "text:db7fba8c9d2c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 224,
+      "line": 225,
       "value": "النية محلها القلب، ولا يُشترط التلفظ بها.",
       "admin_key": null,
       "language": "ar|en",
@@ -43889,12 +43889,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:eb5cc1f8461a",
+      "element_key": "text:cd8e7f98d3dd",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 225,
+      "line": 226,
       "value": "الوضوء شرط لصحة الصلاة.",
       "admin_key": null,
       "language": "ar|en",
@@ -43905,12 +43905,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:bf9357a47181",
+      "element_key": "text:acfe75f7c4c2",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 226,
+      "line": 227,
       "value": "يجب أن يكون الثوب والبدن والمكان طاهراً.",
       "admin_key": null,
       "language": "ar|en",
@@ -43921,12 +43921,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:410c9b795556",
+      "element_key": "text:0a2fa84bb1e5",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 227,
+      "line": 228,
       "value": "استقبال القبلة شرط أساسي.",
       "admin_key": null,
       "language": "ar|en",
@@ -43937,12 +43937,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6012dbe96cba",
+      "element_key": "text:9580467dc55d",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 234,
+      "line": 235,
       "value": "تكبيرة الإحرام",
       "admin_key": null,
       "language": "ar|en",
@@ -43953,12 +43953,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6a5ce051d1bc",
+      "element_key": "text:9ec117f62fed",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 236,
+      "line": 237,
       "value": "قف مستقبلاً القبلة، وارفع يديك حذو منكبيك، وكبّر قائلاً: الله أكبر.",
       "admin_key": null,
       "language": "ar|en",
@@ -43969,12 +43969,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:63f8ba5c4195",
+      "element_key": "text:dcd3000658b4",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 240,
+      "line": 241,
       "value": "ارفع يديك حذو منكبيك أو حذو أذنيك.",
       "admin_key": null,
       "language": "ar|en",
@@ -43985,12 +43985,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c601b0740e61",
+      "element_key": "text:fb453ad97966",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 241,
+      "line": 242,
       "value": "قل: الله أكبر.",
       "admin_key": null,
       "language": "ar|en",
@@ -44001,12 +44001,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:97167dffd93e",
+      "element_key": "text:9c190a18f148",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 242,
+      "line": 243,
       "value": "انظر إلى موضع سجودك.",
       "admin_key": null,
       "language": "ar|en",
@@ -44017,12 +44017,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:23d27d2ed4e7",
+      "element_key": "text:b9a22fea5dc7",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 243,
+      "line": 244,
       "value": "ضع يدك اليمنى على اليسرى فوق صدرك.",
       "admin_key": null,
       "language": "ar|en",
@@ -44033,12 +44033,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:736f12b85c14",
+      "element_key": "text:77abdb319971",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 250,
+      "line": 251,
       "value": "دعاء الاستفتاح والفاتحة",
       "admin_key": null,
       "language": "ar|en",
@@ -44049,12 +44049,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:4c7559ca37c0",
+      "element_key": "text:9687d7d375d6",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 252,
+      "line": 253,
       "value": "اقرأ دعاء الاستفتاح، ثم استعذ بالله، ثم اقرأ الفاتحة.",
       "admin_key": null,
       "language": "ar|en",
@@ -44065,12 +44065,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:49979fb8113b",
+      "element_key": "text:ee8e70639a7e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 256,
+      "line": 257,
       "value": "دعاء الاستفتاح: سبحانك اللهم وبحمدك...",
       "admin_key": null,
       "language": "ar|en",
@@ -44081,12 +44081,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6089af6ee6d2",
+      "element_key": "text:63f15ba6f363",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 257,
+      "line": 258,
       "value": "قل: أعوذ بالله من الشيطان الرجيم.",
       "admin_key": null,
       "language": "ar|en",
@@ -44097,12 +44097,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:d7b7627f626e",
+      "element_key": "text:c82f038f10be",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 258,
+      "line": 259,
       "value": "اقرأ الفاتحة كاملة.",
       "admin_key": null,
       "language": "ar|en",
@@ -44113,12 +44113,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:5d38633fad0d",
+      "element_key": "text:da28cc1a3a33",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 259,
+      "line": 260,
       "value": "قل: آمين بعد الفاتحة.",
       "admin_key": null,
       "language": "ar|en",
@@ -44129,12 +44129,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:4eca27ff9dcb",
+      "element_key": "text:5f493859cae1",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 266,
+      "line": 267,
       "value": "الركوع",
       "admin_key": null,
       "language": "ar|en",
@@ -44145,12 +44145,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6e9511bf036a",
+      "element_key": "text:ff6704eef935",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 268,
+      "line": 269,
       "value": "كبّر وانحنِ حتى تطمئن راكعاً، وسبّح ثلاثاً: سبحان ربي العظيم.",
       "admin_key": null,
       "language": "ar|en",
@@ -44161,12 +44161,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:0650f69d9dde",
+      "element_key": "text:b0555424625b",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 272,
+      "line": 273,
       "value": "كبّر وأنت نازل للركوع.",
       "admin_key": null,
       "language": "ar|en",
@@ -44177,12 +44177,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:09dd5cfa6a61",
+      "element_key": "text:de3564b3e49c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 273,
+      "line": 274,
       "value": "ضع يديك على ركبتيك.",
       "admin_key": null,
       "language": "ar|en",
@@ -44193,12 +44193,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:b2c899d5f5d0",
+      "element_key": "text:8e4e8188a78b",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 274,
+      "line": 275,
       "value": "اجعل ظهرك مستوياً.",
       "admin_key": null,
       "language": "ar|en",
@@ -44209,12 +44209,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:4d6a29c8550e",
+      "element_key": "text:c9bbfd1d9afa",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 275,
+      "line": 276,
       "value": "قل: سبحان ربي العظيم (3 مرات).",
       "admin_key": null,
       "language": "ar|en",
@@ -44225,12 +44225,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:ada84a9b3a74",
+      "element_key": "text:891f2303bc79",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 282,
+      "line": 283,
       "value": "الرفع من الركوع",
       "admin_key": null,
       "language": "ar|en",
@@ -44241,12 +44241,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:702027e53232",
+      "element_key": "text:fd44ae0c4e92",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 284,
+      "line": 285,
       "value": "ارفع من الركوع قائلاً: سمع الله لمن حمده، ثم: ربنا ولك الحمد.",
       "admin_key": null,
       "language": "ar|en",
@@ -44257,12 +44257,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:f9bcec8acb61",
+      "element_key": "text:698c35d80f29",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 288,
+      "line": 289,
       "value": "قل وأنت رافع: سمع الله لمن حمده.",
       "admin_key": null,
       "language": "ar|en",
@@ -44273,12 +44273,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:936d49cdad5f",
+      "element_key": "text:4e5db4281d22",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 289,
+      "line": 290,
       "value": "قف معتدلاً تماماً.",
       "admin_key": null,
       "language": "ar|en",
@@ -44289,12 +44289,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:bddef9a76583",
+      "element_key": "text:5bbde176df5f",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 290,
+      "line": 291,
       "value": "قل: ربنا ولك الحمد حمداً كثيراً طيباً مباركاً فيه.",
       "admin_key": null,
       "language": "ar|en",
@@ -44305,12 +44305,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c50cfd503d78",
+      "element_key": "text:3d1f68d71f9a",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 291,
+      "line": 292,
       "value": "أطل القيام قليلاً.",
       "admin_key": null,
       "language": "ar|en",
@@ -44321,12 +44321,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:f3387481b165",
+      "element_key": "text:276d1b33a8cb",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 298,
+      "line": 299,
       "value": "السجود",
       "admin_key": null,
       "language": "ar|en",
@@ -44337,12 +44337,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:e50c651f7f17",
+      "element_key": "text:ed9fb6c1541b",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 300,
+      "line": 301,
       "value": "اسجد على سبعة أعضاء، وسبّح: سبحان ربي الأعلى ثلاثاً.",
       "admin_key": null,
       "language": "ar|en",
@@ -44353,12 +44353,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:99da08267793",
+      "element_key": "text:c014ba8eee77",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 304,
+      "line": 305,
       "value": "اسجد على 7 أعضاء: الجبهة مع الأنف، الكفين، الركبتين، أطراف القدمين.",
       "admin_key": null,
       "language": "ar|en",
@@ -44369,12 +44369,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:7697bb006218",
+      "element_key": "text:07127a4fd946",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 305,
+      "line": 306,
       "value": "قل: سبحان ربي الأعلى (3 مرات).",
       "admin_key": null,
       "language": "ar|en",
@@ -44385,12 +44385,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:f826d6d31e98",
+      "element_key": "text:3a05c925b3c5",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 306,
+      "line": 307,
       "value": "ادعُ الله في السجود بما شئت.",
       "admin_key": null,
       "language": "ar|en",
@@ -44401,12 +44401,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2e1570e2c9b6",
+      "element_key": "text:3bc0e0707a5e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 307,
+      "line": 308,
       "value": "السجود أقرب ما يكون العبد من ربه.",
       "admin_key": null,
       "language": "ar|en",
@@ -44417,12 +44417,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:db2a11eff216",
+      "element_key": "text:6bf81499efb3",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 314,
+      "line": 315,
       "value": "الجلسة بين السجدتين",
       "admin_key": null,
       "language": "ar|en",
@@ -44433,12 +44433,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:8df59d89549a",
+      "element_key": "text:00194c0e8c8b",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 316,
+      "line": 317,
       "value": "ارفع من السجود واجلس مفترشاً، وقل: رب اغفر لي.",
       "admin_key": null,
       "language": "ar|en",
@@ -44449,12 +44449,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c1b738e84bf7",
+      "element_key": "text:1be66e12a224",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 320,
+      "line": 321,
       "value": "اجلس مفترشاً رجلك اليسرى وانصب اليمنى.",
       "admin_key": null,
       "language": "ar|en",
@@ -44465,12 +44465,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:27d0f3a2aa81",
+      "element_key": "text:85b7eb3358fd",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 321,
+      "line": 322,
       "value": "قل: رب اغفر لي، رب اغفر لي.",
       "admin_key": null,
       "language": "ar|en",
@@ -44481,12 +44481,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:39e4dc852c3e",
+      "element_key": "text:a0387295a074",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 322,
+      "line": 323,
       "value": "ضع يديك على فخذيك.",
       "admin_key": null,
       "language": "ar|en",
@@ -44497,12 +44497,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:cdd11bf4be2a",
+      "element_key": "text:1515dbb2614b",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 323,
+      "line": 324,
       "value": "أطل الجلسة قليلاً.",
       "admin_key": null,
       "language": "ar|en",
@@ -44513,12 +44513,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6d1de6080dfe",
+      "element_key": "text:3a27c288e37c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 330,
+      "line": 331,
       "value": "التشهد والتسليم",
       "admin_key": null,
       "language": "ar|en",
@@ -44529,12 +44529,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:e7d157ec719e",
+      "element_key": "text:1085995fd59a",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 332,
+      "line": 333,
       "value": "في آخر الصلاة، اقرأ التشهد والصلاة الإبراهيمية، ثم سلّم يميناً وشمالاً.",
       "admin_key": null,
       "language": "ar|en",
@@ -44545,12 +44545,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:3d4f647af165",
+      "element_key": "text:cc1a6a4b49ba",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 336,
+      "line": 337,
       "value": "اقرأ التشهد: التحيات لله...",
       "admin_key": null,
       "language": "ar|en",
@@ -44561,12 +44561,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:c997c3a3a163",
+      "element_key": "text:4fb0fe4bcf01",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 337,
+      "line": 338,
       "value": "اقرأ الصلاة الإبراهيمية: اللهم صل على محمد...",
       "admin_key": null,
       "language": "ar|en",
@@ -44577,12 +44577,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:6ca60b27d43e",
+      "element_key": "text:cff2ce74cea3",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 338,
+      "line": 339,
       "value": "ادعُ الله بما شئت قبل التسليم.",
       "admin_key": null,
       "language": "ar|en",
@@ -44593,12 +44593,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:74a5f714fc21",
+      "element_key": "text:f92bac519512",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 339,
+      "line": 340,
       "value": "سلّم: السلام عليكم ورحمة الله (يميناً ثم يساراً).",
       "admin_key": null,
       "language": "ar|en",
@@ -44609,12 +44609,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:1f3db26c5586",
+      "element_key": "text:906ac7c639bb",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 350,
+      "line": 351,
       "value": "الفجر",
       "admin_key": null,
       "language": "ar|en",
@@ -44625,12 +44625,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:0e6d2c8c197c",
+      "element_key": "text:b3fa7469d547",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 352,
+      "line": 353,
       "value": "ركعتان قبلها",
       "admin_key": null,
       "language": "ar|en",
@@ -44641,12 +44641,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2d67db135bd1",
+      "element_key": "text:90aca604a404",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 354,
+      "line": 355,
       "value": "من طلوع الفجر إلى شروق الشمس",
       "admin_key": null,
       "language": "ar|en",
@@ -44657,12 +44657,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:f6589378eea0",
+      "element_key": "text:73aa14f7164d",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 357,
+      "line": 358,
       "value": "الظهر",
       "admin_key": null,
       "language": "ar|en",
@@ -44673,12 +44673,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:46bd818ad092",
+      "element_key": "text:eeb5bb29f5ee",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 359,
+      "line": 360,
       "value": "4 قبلها + 2 بعدها",
       "admin_key": null,
       "language": "ar|en",
@@ -44689,12 +44689,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:a31ea899cfd4",
+      "element_key": "text:80d766324eed",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 361,
+      "line": 362,
       "value": "من زوال الشمس إلى وقت العصر",
       "admin_key": null,
       "language": "ar|en",
@@ -44705,12 +44705,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:fe282b2e2564",
+      "element_key": "text:eb6d802e7681",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 364,
+      "line": 365,
       "value": "العصر",
       "admin_key": null,
       "language": "ar|en",
@@ -44721,12 +44721,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:319a3922cfb6",
+      "element_key": "text:8d23da4166bb",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 366,
+      "line": 367,
       "value": "لا سنة راتبة",
       "admin_key": null,
       "language": "ar|en",
@@ -44737,12 +44737,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:fd23c5dd4425",
+      "element_key": "text:21205e0ab8a4",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 368,
+      "line": 369,
       "value": "من دخول وقته إلى اصفرار الشمس",
       "admin_key": null,
       "language": "ar|en",
@@ -44753,12 +44753,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:15a302cdf03c",
+      "element_key": "text:de09e805769e",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 371,
+      "line": 372,
       "value": "المغرب",
       "admin_key": null,
       "language": "ar|en",
@@ -44769,12 +44769,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:df86204bd296",
+      "element_key": "text:2887cb0b278c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 373,
+      "line": 374,
       "value": "ركعتان بعدها",
       "admin_key": null,
       "language": "ar|en",
@@ -44785,12 +44785,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:3964faf249de",
+      "element_key": "text:f29ef2ed6760",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 375,
+      "line": 376,
       "value": "من غروب الشمس إلى مغيب الشفق",
       "admin_key": null,
       "language": "ar|en",
@@ -44801,12 +44801,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:ed3eb3cbc912",
+      "element_key": "text:ba1a79473c3f",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 378,
+      "line": 379,
       "value": "العشاء",
       "admin_key": null,
       "language": "ar|en",
@@ -44817,12 +44817,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:f170a5444388",
+      "element_key": "text:8b59fa1cc1fa",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 380,
+      "line": 381,
       "value": "ركعتان بعدها + وتر",
       "admin_key": null,
       "language": "ar|en",
@@ -44833,12 +44833,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2dfc0633501d",
+      "element_key": "text:02efd8cfc182",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 382,
+      "line": 383,
       "value": "من مغيب الشفق إلى نصف الليل",
       "admin_key": null,
       "language": "ar|en",
@@ -44849,12 +44849,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:7350860a1bab",
+      "element_key": "text:c7bdc04c6a16",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 470,
+      "line": 471,
       "value": "العبادات",
       "admin_key": null,
       "language": "ar|en",
@@ -44865,12 +44865,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2242c9c49a57",
+      "element_key": "text:0b386bf2a25c",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 472,
+      "line": 473,
       "value": "الصلاة, تعلم الصلاة, خطوات الصلاة, كيفية الصلاة",
       "admin_key": null,
       "language": "ar|en",
@@ -44881,12 +44881,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:fbeeb88ce94c",
+      "element_key": "text:47e2686d26d9",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 492,
+      "line": 493,
       "value": "ما شروط صحة الصلاة؟",
       "admin_key": null,
       "language": "ar|en",
@@ -44897,12 +44897,12 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:2b84605552c1",
+      "element_key": "text:c078935ca993",
       "page": "/{lang}/prayer-guide",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/prayer-guide/page.tsx",
-      "line": 500,
+      "line": 501,
       "value": "ما مبطلات الصلاة؟",
       "admin_key": null,
       "language": "ar|en",
@@ -83384,6 +83384,22 @@
       "source_file": "components/SearchAdvanced.tsx",
       "line": 98,
       "value": "اكتب كلمتين على الأقل لبدء البحث.",
+      "admin_key": null,
+      "language": "system",
+      "mode": "catalogued",
+      "permission": "settings.manage",
+      "test": "source override tests",
+      "status": "catalogued",
+      "reason": "shared UI component copy is source-controlled and covered by bilingual component tests"
+    },
+    {
+      "element_key": "text:06d27df6b016",
+      "page": null,
+      "kind": "text",
+      "source": "code",
+      "source_file": "components/SearchAdvanced.tsx",
+      "line": 98,
+      "value": "جارٍ البحث...",
       "admin_key": null,
       "language": "system",
       "mode": "catalogued",
