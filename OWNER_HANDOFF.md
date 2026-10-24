@@ -77,13 +77,14 @@ npx vercel --prod
 - الصفحة الرئيسية تفصل حزم `Footer` و`Newsletter` و`LatestTabs` وودجت الصلاة عبر `next/dynamic` مع إبقاء SSR؛ أعد قياس TBT/Lighthouse بعد نشر النسخة على Vercel.
 - `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). يُعطَّل `webpackBuildWorker` على Windows فقط؛ نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
 - محاولة التشغيل المحلي أثبتت أن `next dev` بـTurbopack وNext بدون Turbopack يفشلان أيضًا بـ`spawn EPERM` في هذه البيئة؛ لذلك مسار التشغيل المعتمد هو Ubuntu داخل `.github/workflows/verify.yml`، الذي يبني المشروع ثم يشغّل الخادم ويفحص الروابط واللغات والمحتوى وRLS.
-- آخر دفعة برمجية للخطة مرفوعة على `origin/main` في commit `46e05cb`، وتشمل فحص `qa:production` وتحديث تقارير التسليم. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
+docs: refresh owner handoff after Quran search fix- آخر دفعة برمجية للخطة مرفوعة على `origin/main` في commit `ef531d8`، وتشمل فحص `qa:production` وتحديث تقارير التسليم. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
 - أضيف أمر `npm run qa:production` لفحص الصفحات الأساسية بالعربية والإنجليزية، ووسم اللغة ووصف SEO، وواجهتي بحث القرآن بعد النشر. يقبل `--base=` لفحص Preview أو أي نطاق مخصص، ويفشل عند تعذر مصدر البحث أو تسريب العربية في نتيجة البحث الإنجليزية.
 
 ## 8) حالة الرفع والتحقق الحالي
 
-- commit الحالي على `origin/main`: `46e05cb` — `Add production deployment verification`.
-- تشغيل GitHub Actions للتحقق نجح في Run `#109`، كما نجح بناء ونشر Pages في Run `#270`.
+- commit الحالي على `origin/main`: `ef531d8` — `fix: show loading state during Quran search`.
+- تشغيل GitHub Actions للتحقق نجح في Run `#111`، كما نجح بناء ونشر Pages في Run `#272`.
+- تحسين واجهة البحث: أثناء انتظار مصدر الآيات يظهر نص تحميل واضح بالعربية والإنجليزية بدل عرض «لا توجد نتائج» مؤقتًا.
 - فحص الإنتاج المباشر نجح على ٨ صفحات عربية/إنجليزية: وسم اللغة ووصف SEO موجودان، وواجهتا بحث القرآن أعادتا ٢٠ نتيجة من `AlQuran Cloud` بلا تسريب عربي في نتائج الإنجليزية.
 - بعد إكمال المراجعة العلمية وتسجيل MFA، شغّل:
 
