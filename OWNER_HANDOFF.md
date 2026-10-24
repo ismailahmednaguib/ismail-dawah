@@ -77,13 +77,15 @@ npx vercel --prod
 - الصفحة الرئيسية تفصل حزم `Footer` و`Newsletter` و`LatestTabs` وودجت الصلاة عبر `next/dynamic` مع إبقاء SSR؛ أعد قياس TBT/Lighthouse بعد نشر النسخة على Vercel.
 - `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). يُعطَّل `webpackBuildWorker` على Windows فقط؛ نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
 - محاولة التشغيل المحلي أثبتت أن `next dev` بـTurbopack وNext بدون Turbopack يفشلان أيضًا بـ`spawn EPERM` في هذه البيئة؛ لذلك مسار التشغيل المعتمد هو Ubuntu داخل `.github/workflows/verify.yml`، الذي يبني المشروع ثم يشغّل الخادم ويفحص الروابط واللغات والمحتوى وRLS.
-- سلسلة commits المحلية للخطة جاهزة للرفع؛ اعرض آخر commit قبل الرفع عبر `git log -1 --oneline` باستخدام أمر Git الموضح أدناه. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
-- الرفع الخارجي لم يُنفَّذ من هذه البيئة؛ بعد تسجيل الدخول إلى حساب GitHub الصحيح شغّل من PowerShell:
+- آخر دفعة برمجية للخطة مرفوعة على `origin/main` في commit `891e617`، وتشمل بحث الآيات داخل السورة والبحث العام بفلتر «الآيات» وتحديث بوابة CI. بقيت بعد تشغيل QA تغييرات توثيقية محلية فقط في تقريري التدقيق وملف التسليم؛ يمكن رفعها اختياريًا بالأمر التالي. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
+
+لرفع تقارير QA وملف التسليم المحدّثين:
 
 ```powershell
-$meta='C:\Users\ismail\Documents\Codex\2026-10-23\new-chat\publish-meta-20261023-a'
-$project='D:\ismail-dawah'
-git --git-dir=$meta --work-tree=$project push origin main
+Set-Location "D:\ismail-dawah"
+git add CONTROL_SURFACE_AUDIT.json CONTROL_SURFACE_AUDIT.md OWNER_HANDOFF.md
+git commit -m "Refresh QA handoff reports"
+git push origin main
 ```
 
 - بعد الرفع، يجب التحقق من نجاح Vercel ثم تشغيل `npm run qa:review:strict` و`npm run qa:rls -- --strict` بعد إكمال البنود الخارجية، وفحص `/ar` و`/en` و`/admin/control` يدويًا.
