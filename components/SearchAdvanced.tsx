@@ -95,7 +95,7 @@ const COPY: Record<string, any> = {
     noResults: (query: string) => 'لم نعثر على نتائج لـ "' + query + '"',
     tryAgain: 'جرب كلمات مختلفة أو تحقق من الإملاء',
     quranSourceUnavailable: 'تعذر الوصول إلى مصدر البحث القرآني الآن؛ جرّب مرة أخرى لاحقًا.',
-    minQuery: 'اكتب كلمتين على الأقل لبدء البحث.', dateLocale: 'ar-EG',
+    minQuery: 'اكتب كلمتين على الأقل لبدء البحث.', dateLocale: 'ar-EG', loading: 'جارٍ البحث...',
   },
   en: {
     placeholder: 'Search surahs, ayahs, hadith, articles, fatwas, and lessons...',
@@ -104,7 +104,7 @@ const COPY: Record<string, any> = {
     noResults: (query: string) => 'No results found for "' + query + '"',
     tryAgain: 'Try different words or check the spelling.',
     quranSourceUnavailable: 'The Quran search source is temporarily unavailable; please try again later.',
-    minQuery: 'Enter at least two characters to start searching.', dateLocale: 'en-US',
+    minQuery: 'Enter at least two characters to start searching.', dateLocale: 'en-US', loading: 'Searching...',
   },
 } as const;
 
@@ -294,7 +294,7 @@ export default function SearchAdvanced({ lang }: { lang: Lang }) {
               ? lang === 'ar'
                 ? 'تعذر تنفيذ البحث'
                 : 'Search failed'
-              : copy.results(total)}
+              : loading ? copy.loading : copy.results(total)}
           </p>
 
           {results.length === 0 && !loading && !error ? (
