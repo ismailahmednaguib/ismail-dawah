@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
+
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
@@ -11,7 +12,7 @@ import Footer from "@/components/Footer";
 import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
 // ============================================================
 // الأنواع
