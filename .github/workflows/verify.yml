@@ -53,13 +53,22 @@ jobs:
     steps:
       - id: check
         env:
-          SUPA: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPA_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPA_ANON: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPA_SERVICE: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SESSION: ${{ secrets.SESSION_SECRET }}
         run: |
-          if [ -n "$SUPA" ]; then
+          missing=()
+          [ -z "$SUPA_URL" ] && missing+=(NEXT_PUBLIC_SUPABASE_URL)
+          [ -z "$SUPA_ANON" ] && missing+=(NEXT_PUBLIC_SUPABASE_ANON_KEY)
+          [ -z "$SUPA_SERVICE" ] && missing+=(SUPABASE_SERVICE_KEY)
+          [ -z "$SESSION" ] && missing+=(SESSION_SECRET)
+          if [ "${#missing[@]}" -eq 0 ]; then
             echo "has_env=true" >> "$GITHUB_OUTPUT"
+            echo "كل أسرار Supabase المطلوبة متاحة — سيعمل فحص التكامل."
           else
             echo "has_env=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::لم تُضبط أسرار Supabase — تُخطّى فحوصات قاعدة البيانات والبناء."
+            echo "::notice::تُخطّى فحص التكامل والبناء: أسرار مفقودة (${missing[*]})."
           fi
 
   # ── ٣) البناء + قبول المحتوى على خادم حقيقي ──────────────────────────────
