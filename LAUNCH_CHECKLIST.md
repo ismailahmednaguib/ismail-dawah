@@ -19,6 +19,9 @@
 - [ ] مراجعة الفتاوى العشرين من مراجع علمي حقيقي واعتماد مراجعها.
 - [ ] ضبط ADMIN_MFA_ENCRYPTION_KEY في Vercel وتسجيل جهاز TOTP للمالك.
 - [ ] تنفيذ اختبار نسخة واسترجاع على Preview أو قاعدة بيانات منفصلة.
+- [ ] تنفيذ `supabase/migrations/20261023_content_revisions.sql` في Supabase SQL Editor قبل الاعتماد على سجل المراجعات.
+- [ ] تنفيذ `supabase/migrations/20261026_scheduled_publishing.sql` قبل استخدام جدولة النشر.
+- [ ] التأكد من وجود `supabase/migrations/20261027_admin_mfa.sql` في سجل migrations قبل تفعيل MFA.
 - [ ] إضافة Google Search Console إن أراد المالك ذلك.
 - [ ] اختيار نطاق مخصص أو الاستمرار على vercel.app.
 - [ ] امتلاك حساب Google Play ومفتاح توقيع Android ونشر التطبيق.

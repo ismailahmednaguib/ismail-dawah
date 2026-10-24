@@ -17,6 +17,9 @@ const requiredLaunch = [
   '## ⚠️ مراجعة بشرية وحسابات خارجية',
   '## ⚠️ تحقق خارجي قبل الإطلاق النهائي',
   'OWNER_HANDOFF.md',
+  '20261023_content_revisions.sql',
+  '20261026_scheduled_publishing.sql',
+  '20261027_admin_mfa.sql',
 ];
 const forbidden = [
   'docs: refresh owner handoff after Quran search fix-',

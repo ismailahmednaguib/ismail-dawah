@@ -40,6 +40,12 @@ npm run qa:rls -- --strict
 - قارن عدد المحتوى والترجمات والإعدادات وسجل التدقيق.
 - لا تُنفّذ استرجاعًا مدمّرًا على Production دون نسخة أحدث وخطة رجوع.
 
+### migrations المطلوبة قبل تفعيل الميزات
+
+- نفّذ `supabase/migrations/20261023_content_revisions.sql` في Supabase SQL Editor قبل الاعتماد على سجل مراجعات المحتوى.
+- نفّذ `supabase/migrations/20261026_scheduled_publishing.sql` قبل استخدام جدولة النشر أو الاعتماد عليها.
+- حسب سجل المشروع، `supabase/migrations/20261027_admin_mfa.sql` منفّذة في الإنتاج؛ تحقّق من سجل migrations في Supabase قبل تفعيل MFA.
+- نفّذ هذه الخطوات أولًا على Preview أو مشروع Supabase منفصل، ثم شغّل `npm run qa:migrations`.
 ## 4) الدومين والتطبيق
 
 - قرار المالك: البقاء على نطاق `vercel.app` أو اختيار نطاق مخصص.
