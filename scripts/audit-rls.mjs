@@ -201,4 +201,3 @@ console.log(
   STRICT ? '❌ التدقيق لم ينجح.' : 'ℹ️ تقرير فقط — شغّل مع --strict لجعله إلزاميًّا.'
 );
 process.exit(STRICT && (leaking.length || open.length) ? 1 : 0);
->Git: Unstage Changes
