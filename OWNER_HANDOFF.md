@@ -77,14 +77,15 @@ npx vercel --prod
 - الصفحة الرئيسية تفصل حزم `Footer` و`Newsletter` و`LatestTabs` وودجت الصلاة عبر `next/dynamic` مع إبقاء SSR؛ أعد قياس TBT/Lighthouse بعد نشر النسخة على Vercel.
 - `npm run typecheck` و`npm run lint` يمران محليًا (٣٦٠ تحذيرًا بلا أخطاء). يُعطَّل `webpackBuildWorker` على Windows فقط؛ نجحت مرحلة تجميع `npm run build` محليًا، ثم أعاد Next.js `spawn EPERM` من Windows أثناء توليد الصفحات؛ يجب اعتماد بناء CI/Vercel قبل النشر، ولا يُعد هذا نجاحًا كاملًا للبناء المحلي.
 - محاولة التشغيل المحلي أثبتت أن `next dev` بـTurbopack وNext بدون Turbopack يفشلان أيضًا بـ`spawn EPERM` في هذه البيئة؛ لذلك مسار التشغيل المعتمد هو Ubuntu داخل `.github/workflows/verify.yml`، الذي يبني المشروع ثم يشغّل الخادم ويفحص الروابط واللغات والمحتوى وRLS.
-- آخر دفعة برمجية للخطة مرفوعة على `origin/main` في commit `891e617`، وتشمل بحث الآيات داخل السورة والبحث العام بفلتر «الآيات» وتحديث بوابة CI. بقيت بعد تشغيل QA تغييرات توثيقية محلية فقط في تقريري التدقيق وملف التسليم؛ يمكن رفعها اختياريًا بالأمر التالي. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
+- آخر دفعة برمجية للخطة مرفوعة على `origin/main` في commit `891e617`، وتشمل بحث الآيات داخل السورة والبحث العام بفلتر «الآيات» وتحديث بوابة CI. توجد الآن دفعة لاحقة محلية غير مرفوعة تضيف فحص `qa:production` وتحدّث تقارير التسليم؛ ارفعها بالأمر التالي. ملفات `mail-dawah` و`public/perf-blank.html` مستثناة عمدًا من سجل النشر.
+- أضيف أمر `npm run qa:production` لفحص الصفحات الأساسية بالعربية والإنجليزية، ووسم اللغة ووصف SEO، وواجهتي بحث القرآن بعد النشر. يقبل `--base=` لفحص Preview أو أي نطاق مخصص، ويفشل عند تعذر مصدر البحث أو تسريب العربية في نتيجة البحث الإنجليزية.
 
 لرفع تقارير QA وملف التسليم المحدّثين:
 
 ```powershell
 Set-Location "D:\ismail-dawah"
-git add CONTROL_SURFACE_AUDIT.json CONTROL_SURFACE_AUDIT.md OWNER_HANDOFF.md
-git commit -m "Refresh QA handoff reports"
+git add CONTROL_SURFACE_AUDIT.json CONTROL_SURFACE_AUDIT.md OWNER_HANDOFF.md ROADMAP_V4.md package.json scripts/verify-production.mjs
+git commit -m "Add production deployment verification"
 git push origin main
 ```
 

@@ -14,6 +14,7 @@
     "qa:secrets": "node scripts/check-secrets.mjs",
     "qa:theme": "node scripts/theme-qa.mjs",
     "qa:i18n": "node scripts/qa-i18n.mjs",
+    "qa:production": "node scripts/verify-production.mjs",
     "qa:rls": "node scripts/audit-rls.mjs",
     "qa:rls:strict": "node scripts/audit-rls.mjs --strict",
     "qa:citations": "node scripts/check-citations.mjs",
