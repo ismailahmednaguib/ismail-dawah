@@ -151,4 +151,19 @@ jobs:
           node-version: 24
 
       - name: قبول Vercel (الصفحات واللغات وSEO وبحث القرآن)
-        run: npm run qa:production -- --base=https://ismailahmednaguib.vercel.app
+        run: |
+          echo "انتظار وصول نسخة Vercel المرتبطة بهذا الرفع"
+          for attempt in $(seq 1 30); do
+            status=$(curl -L -s -o /tmp/ismail-production.html -w '%{http_code}' "https://ismailahmednaguib.vercel.app/en?deploy=${GITHUB_SHA}")
+            if [ "$status" = "200" ] && grep -Fqi 'lang="en"' /tmp/ismail-production.html; then
+              echo "النسخة المنشورة جاهزة بعد ${attempt} محاولة"
+              npm run qa:production -- --base=https://ismailahmednaguib.vercel.app
+              exit $?
+            fi
+            echo "لم تصبح النسخة المنشورة جاهزة (${attempt}/30، HTTP ${status})"
+            sleep 10
+          done
+          echo "::error::لم تصل النسخة المنشورة الجديدة خلال المهلة"
+          head -c 1000 /tmp/ismail-production.html || true
+          exit 1
+
