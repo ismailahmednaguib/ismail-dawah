@@ -165,9 +165,9 @@ export async function GET(req: NextRequest) {
       id: item.id,
       type: item.content_type,
       title: t.title,
-      slug: t.slug,
+      slug: encodeURIComponent(t.slug),
       summary: typeof t.summary === 'string' ? t.summary.slice(0, 200) : undefined,
-      url: `/${lang}/learn/${item.content_type}/${t.slug}`,
+      url: `/${lang}/learn/${item.content_type}/${encodeURIComponent(t.slug)}`,
       published_at: item.published_at,
       views: item.views,
     }];
