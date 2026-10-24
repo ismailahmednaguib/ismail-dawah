@@ -80,4 +80,3 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico|admin|setup-admin|sitemap.xml|robots.txt|manifest.webmanifest).*)',
   ],
 };
-layout.tsx
