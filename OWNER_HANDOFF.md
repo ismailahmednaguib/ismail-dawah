@@ -54,7 +54,7 @@ npm run qa:rls -- --strict
 
 ## 5) دليل التنفيذ والتحقق الحالي
 
-- آخر commit مرفوع إلى `origin/main` هو `68eda39a3d4a8ffa8e2d3890c477aea324709b1b` برسالة `docs: sync roadmap with published state`، والفرعان المحلي والبعيد متزامنان.
+- آخر commit مرفوع إلى `origin/main` هو `7fbca7c214b6c2c61d5d3b9e163b9913a922ac29` برسالة `docs: refresh owner handoff after current publish`، والفرعان المحلي والبعيد متزامنان.
 - نسخة `ROADMAP_V4.md` على GitHub مطابقة للنسخة المحلية بعد التطبيع، ولا تحتوي الوصف القديم عن أن التغييرات «جاهزة للرفع اليدوي».
 - نجحت تشغيلات GitHub Actions لهذا commit: `verify`، و`handoff-consistency`، و`pages build and deployment`.
 - فحص الإنتاج المباشر أعاد HTTP 200 بلا أخطاء على `/ar` و`/en` و`/ar/search` و`/en/search` و`/ar/quran` و`/en/quran`، مع عنوان ووسم لغة في كل صفحة.
