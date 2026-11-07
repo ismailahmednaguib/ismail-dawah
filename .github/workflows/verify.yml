@@ -51,6 +51,9 @@ jobs:
           npm run qa:launch:evidence
           npm run qa:android
 
+      - name: JSON-LD safety gate
+        run: npm run qa:jsonld
+
 
   # ── ٢) هل أسرار البيئة متاحة؟ ────────────────────────────────────────────
   detect:
