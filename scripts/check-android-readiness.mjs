@@ -12,7 +12,7 @@ function exists(rel) {
 function listApks(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === 'node_modules' || entry.name === '.git') continue;
+    if (['node_modules', '.git', 'build', '.gradle'].includes(entry.name)) continue;
     const absolute = path.join(dir, entry.name);
     if (entry.isDirectory()) listApks(absolute, out);
     else if (entry.name.toLowerCase().endsWith('.apk')) out.push(path.relative(ROOT, absolute));
@@ -28,7 +28,8 @@ const requiredFiles = [
   'android/app/src/main/AndroidManifest.xml',
 ];
 const missingFiles = requiredFiles.filter((file) => !exists(file));
-const apks = listApks(path.join(ROOT, 'android'));
+const apkRoots = ['android/app/build/outputs/apk', 'android/app/build/outputs/bundle'];
+const apks = [...new Set(apkRoots.flatMap((root) => listApks(path.join(ROOT, root))))];
 const androidWrapper = exists('android/gradlew.bat') || exists('android/gradlew');
 const rootWrapper = exists('gradlew.bat') && exists('gradle/wrapper/gradle-wrapper.jar') && exists('gradle/wrapper/gradle-wrapper.properties');
 const wrapper = androidWrapper || rootWrapper;
