@@ -1,0 +1,15 @@
+{
+  "schema": "discover-islam-launch-evidence",
+  "version": 1,
+  "instructions": "لا تغيّر الحالة إلى passed إلا بعد تنفيذ الاختبار فعليًا وإرفاق وصف الدليل وتاريخ التنفيذ.",
+  "gates": [
+    { "id": "backup-restore", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "migration-ledger", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "production-performance", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "real-device-accessibility", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "live-tools", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "search-console", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "custom-domain", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "google-play", "required": false, "status": "pending", "evidence": "", "completed_at": "" }
+  ]
+}

@@ -44,6 +44,14 @@ jobs:
       - name: جرد سطح التحكم
         run: npm run qa:control-surface
 
+      - name: فحوصات التسليم وجاهزية Android
+        run: |
+          npm run qa:coverage-queue
+          npm run qa:launch
+          npm run qa:launch:evidence
+          npm run qa:android
+
+
   # ── ٢) هل أسرار البيئة متاحة؟ ────────────────────────────────────────────
   detect:
     name: كشف أسرار البيئة

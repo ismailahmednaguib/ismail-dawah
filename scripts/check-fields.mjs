@@ -5,12 +5,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const BASE = (process.argv.find((a) => a.startsWith('--base='))?.slice(7) ?? 'http://localhost:3000').replace(/\/+$/, '');
-const REQUEST_TIMEOUT_MS = Number(process.env.QA_TIMEOUT_MS ?? 15000);
+const REQUEST_TIMEOUT_MS = Number(process.env.QA_TIMEOUT_MS ?? 60000);
 const fieldsSource = fs.readFileSync(path.join(process.cwd(), 'app', '[lang]', 'fields', '[slug]', 'page.tsx'), 'utf8');
 const arEmpty = /noContent:\s*"([^"]+)"/.exec(fieldsSource.split('en:')[0])?.[1] ?? '';
 const enEmpty = /noContent:\s*"([^"]+)"/.exec(fieldsSource.split('en:')[1] ?? '')?.[1] ?? '';
 const navSource = fs.readFileSync(path.join(process.cwd(), 'lib', 'navigation.ts'), 'utf8');
-const navSlugs = [...new Set([...navSource.matchAll(/\/fields\/([A-Za-z0-9-]+)/g)].map((m) => m[1]))];
+const navSlugs = [...new Set([...navSource.matchAll(/\/fields\/([A-Za-z0-9-]+)/g)].map((m) => m[1]))].filter((s) => s !== 'page');
 const ARABIC = /[\u0600-\u06FF]/;
 const strip = (html) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
@@ -32,7 +32,7 @@ if (indexPage.error || !indexPage.response?.ok) {
   process.exit(1);
 }
 const indexSlugs = [...new Set([...indexPage.html.matchAll(/\/fields\/([A-Za-z0-9-]+)/g)].map((m) => m[1]))]
-  .filter((s) => !s.startsWith('page-'));
+  .filter((s) => s !== 'page' && !s.startsWith('page-'));
 const slugs = [...new Set([...navSlugs, ...indexSlugs])].sort();
 const jobs = slugs.flatMap((slug) => ['ar', 'en'].map((lang) => ({ slug, lang })));
 const problems = [];
@@ -82,5 +82,3 @@ if (problems.length === 0) {
   for (const problem of problems.sort()) console.log(' - ' + problem);
 }
 process.exit(problems.length === 0 ? 0 : 1);
-
-

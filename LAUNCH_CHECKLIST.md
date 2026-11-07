@@ -11,21 +11,22 @@
 - [x] Sitemap وRobots وhreflang وCanonical وOpen Graph وبيانات المواد.
 - [x] حماية مسارات الإدارة، أدوار اللوحة، سجل التدقيق، RLS والمigrations الخاصة بالرحلة.
 - [x] لوحة المحتوى والمراجعة والجدولة والنسخ الاحتياطي وWeb Push من ناحية الكود.
-- [x] PWA وبيانات التثبيت العربية والإنجليزية وملف APK الموجود في المشروع.
-- [x] النشر على Vercel وGitHub Pages؛ آخر commit مؤكد: bf52fa4b804e896fecc412cb06561e93e8d28229.
-- [x] نجحت Verify #40101981623 وhandoff-consistency #40101981694 وPages #40101981827.
-- [x] فحص الإنتاج المباشر نجح على /ar و/en و/ar/quran و/en/quran و/ar/fatwa و/en/fatwa و/ar/search و/en/search، مع HTTP 200 ووسم لغة صحيح ووصف SEO.
-- [x] بحث القرآن المباشر أعاد 20 نتيجة بالعربي والإنجليزي، ولم يظهر تسريب عربي في البحث الإنجليزي.
+- [x] PWA وبيانات التثبيت العربية والإنجليزية وملف مصدر Android جاهز، ويُولَّد APK عبر CI عند الرفع في المشروع.
+- [x] النشر على Vercel وGitHub Pages؛ آخر commit مؤكد: f4c685711ce9fe3e8af12c09022dde0ae69ba8fe.
+- [x] نجحت Verify #40123228722 وhandoff-consistency #40123228767 وPages #40123228346.
+- [x] فحص الإنتاج المباشر نجح على المسارات الأساسية العربية والإنجليزية، مع HTTP 200 ووسم لغة صحيح ووصف SEO.
+- [x] بحث القرآن المباشر أعاد نتائج بالعربي والإنجليزي، ولم يظهر تسريب عربي في البحث الإنجليزي.
 - [x] نجحت فحوص manifest وrobots وsitemap وتحويل الجذر حسب اللغة ورؤوس CSP وHSTS وX-Frame-Options وPermissions-Policy.
+- [x] فحص Supabase القراءة فقط أثبت وجود schema الخاص بـ 20261023_content_revisions.sql و20261026_scheduled_publishing.sql و20261027_admin_mfa.sql، إضافة إلى bucket النسخ الاحتياطية.
 
 ## ⚠️ مراجعة بشرية وحسابات خارجية
 
 - [ ] مراجعة الفتاوى العشرين من مراجع علمي حقيقي واعتماد مراجعها.
 - [ ] ضبط ADMIN_MFA_ENCRYPTION_KEY في Vercel وتسجيل جهاز TOTP للمالك.
 - [ ] تنفيذ اختبار نسخة واسترجاع على Preview أو قاعدة بيانات منفصلة.
-- [ ] تنفيذ supabase/migrations/20261023_content_revisions.sql في Supabase SQL Editor قبل الاعتماد على سجل المراجعات.
-- [ ] تنفيذ supabase/migrations/20261026_scheduled_publishing.sql قبل استخدام جدولة النشر.
-- [ ] التأكد من وجود supabase/migrations/20261027_admin_mfa.sql في سجل migrations قبل تفعيل MFA.
+- [x] schema الخاص بـ 20261023_content_revisions.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل الإطلاق النهائي.
+- [x] schema الخاص بـ 20261026_scheduled_publishing.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل استخدام الجدولة.
+- [x] schema جدول 20261027_admin_mfa.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي وتسجيل جهاز المالك.
 - [ ] إضافة Google Search Console إن أراد المالك ذلك.
 - [ ] اختيار نطاق مخصص أو الاستمرار على vercel.app.
 - [ ] امتلاك حساب Google Play ومفتاح توقيع Android ونشر التطبيق.
@@ -36,7 +37,8 @@
 - [ ] اختبار الموقع على أجهزة حقيقية وشبكات بطيئة وقارئات الشاشة.
 - [ ] اختبار القيم الحية للمواقيت والقبلة والأذان على أجهزة فعلية.
 - [ ] تشغيل npm run qa:review:strict بعد اعتماد الفتاوى.
-- [ ] تشغيل npm run qa:rls -- --strict بعد تسجيل MFA.
+- [ ] تشغيل npm run qa:rls:strict بعد تسجيل MFA؛ يفشل حاليًا لأن جدول admin_mfa فارغ قبل تسجيل جهاز المالك.
+
 
 ## ⚠️ ملاحظة البناء المحلي
 

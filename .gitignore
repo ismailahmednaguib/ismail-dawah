@@ -24,7 +24,14 @@ next-env.d.ts
 # ================================
 # 🤖 Android / TWA / Bubblewrap
 # ================================
-android/
+android/.gradle/
+android/build/
+android/app/build/
+android/gradle/
+android/local.properties
+android/*.keystore
+android/*.jks
+android/*.idsig
 .gradle/
 app/build/
 build/
@@ -73,7 +80,6 @@ pnpm-debug.log*
 project-map.txt
 tree.txt
 .kilo/
-
 # ملفات اختبار محلية غير مخصصة للنشر
 /mail-dawah
 /public/perf-blank.html
