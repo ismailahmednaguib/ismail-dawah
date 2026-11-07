@@ -260,6 +260,21 @@ async function fetchWithTimeout(
 }
 
 // ============================================================
+const MAX_UPSTREAM_REDIRECTS = 3;
+
+async function fetchValidatedApk(url: URL, init: RequestInit): Promise<Response> {
+  let current = url;
+  for (let attempt = 0; attempt <= MAX_UPSTREAM_REDIRECTS; attempt += 1) {
+    const response = await fetchWithTimeout(current.toString(), { ...init, redirect: "manual" });
+    if (response.status < 300 || response.status >= 400) return response;
+    const location = response.headers.get("location");
+    if (!location) return response;
+    const next = validateApkUrl(new URL(location, current).toString());
+    if (!next.ok) throw new Error("unsafe_apk_redirect_" + next.reason);
+    current = next.url;
+  }
+  throw new Error("too_many_apk_redirects");
+}
 // GET /api/download/android
 // ============================================================
 
@@ -315,11 +330,11 @@ export async function GET(req: NextRequest) {
     let upstream: Response;
 
     try {
-      upstream = await fetchWithTimeout(apkUrl, {
+      upstream = await fetchValidatedApk(validation.url, {
         method: "GET",
         headers: upstreamHeaders,
         cache: "no-store",
-        redirect: "follow",
+
       });
     } catch (error) {
       console.error("[AndroidDownload] Fetch error:", error);
@@ -467,11 +482,11 @@ export async function HEAD(req: NextRequest) {
     let upstream: Response;
 
     try {
-      upstream = await fetchWithTimeout(validation.url.toString(), {
+      upstream = await fetchValidatedApk(validation.url, {
         method: "HEAD",
         headers: upstreamHeaders,
         cache: "no-store",
-        redirect: "follow",
+
       });
     } catch {
       return new NextResponse(null, {
