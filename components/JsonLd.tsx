@@ -2,6 +2,7 @@
 // مكوّن البيانات المنظمة (JSON-LD) لتحسين محركات البحث
 
 import { SITE_NAME } from "@/lib/site";
+import { safeJsonLd } from "@/lib/seo";
 
 interface JsonLdProps {
   data: Record<string, unknown> | Record<string, unknown>[];
@@ -17,7 +18,7 @@ export default function JsonLd({ data }: JsonLdProps) {
           key={index}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               "@context": "https://schema.org",
               ...item,
             }),
