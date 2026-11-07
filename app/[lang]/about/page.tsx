@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/about/page.tsx
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -611,7 +612,7 @@ export default async function AboutPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd),
+          __html: safeJsonLd(jsonLd),
         }}
       />
 

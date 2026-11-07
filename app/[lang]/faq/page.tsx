@@ -6,7 +6,7 @@ import { isValidLang, languages, type Lang } from "@/lib/i18n";
 
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
-import { faqJsonLd } from "@/lib/seo";
+import {faqJsonLd, safeJsonLd} from "@/lib/seo";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
@@ -628,7 +628,7 @@ export default async function FaqPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqJsonLdData),
+          __html: safeJsonLd(faqJsonLdData),
         }}
       />
 

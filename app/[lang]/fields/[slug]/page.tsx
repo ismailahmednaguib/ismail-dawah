@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/fields/[slug]/page.tsx
 // صفحة مجال/فرع/تحت-فرع — تعتمد نظام التصميم الموحّد (components/ui).
 import type { Metadata } from "next";
@@ -239,7 +240,7 @@ export default async function FieldPage({
     <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="site-page-shell">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       <Header lang={l} />

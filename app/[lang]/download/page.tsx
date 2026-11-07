@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/download/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -389,11 +390,11 @@ export default async function DownloadPage({
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(faqLd) }}
       />
 
       <Header lang={l} />

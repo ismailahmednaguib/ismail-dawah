@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/page.tsx
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -453,7 +454,7 @@ export default async function HomePage({
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteJsonLd) }}
       />
 
       <Header lang={l} overHero settings={settings} />

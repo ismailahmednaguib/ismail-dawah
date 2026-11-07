@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/layout.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -246,13 +247,13 @@ export default async function LangLayout({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationJsonLd),
+          __html: safeJsonLd(organizationJsonLd),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(websiteJsonLd),
+          __html: safeJsonLd(websiteJsonLd),
         }}
       />
 

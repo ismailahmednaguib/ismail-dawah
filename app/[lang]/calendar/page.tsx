@@ -1,3 +1,4 @@
+import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/calendar/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -515,7 +516,7 @@ export default async function CalendarPage({
     <main id="main-content" tabIndex={-1} dir={isRTL ? "rtl" : "ltr"} className="site-page-shell">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       <Header lang={l} />
