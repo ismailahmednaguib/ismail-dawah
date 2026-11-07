@@ -38,12 +38,20 @@ const gitignore = exists('.gitignore') ? fs.readFileSync(path.join(ROOT, '.gitig
 const gitignoreLines = gitignore.split(/\r?\n/).map((line) => line.trim());
 const sourceIgnored = gitignoreLines.includes('android/');
 const generatedProtected = ['android/app/build/', '*.apk', '*.aab', '*.keystore', '*.jks'].every((rule) => gitignoreLines.includes(rule));
+const mainActivityPath = 'android/app/src/main/java/com/ismailahmednaguib/dawah/MainActivity.java';
+const mainActivity = exists(mainActivityPath) ? fs.readFileSync(path.join(ROOT, mainActivityPath), 'utf8') : '';
+const navigationGuard = mainActivity.includes('private boolean isAllowedUrl(Uri uri)')
+  && mainActivity.includes('"https".equalsIgnoreCase(uri.getScheme())')
+  && mainActivity.includes('ALLOWED_HOST.equalsIgnoreCase(uri.getHost())')
+  && !mainActivity.includes('url.contains(ALLOWED_HOST)');
 
 const manualIssues = [];
 if (!wrapper) manualIssues.push('Gradle wrapper غير موجود؛ يلزم توليده أو استخدام Android Studio/Gradle مثبت.');
 if (!apks.length) manualIssues.push('لا يوجد APK مولّد؛ يلزم تنفيذ assembleRelease بعد ضبط أدوات البناء والتوقيع.');
 
 const structuralIssues = [
+  ...(!navigationGuard ? ['تحقق روابط Android يجب أن يقيّد HTTPS والمضيف المطابق.'] : []),
+
   ...(missingFiles.length ? ['ملفات Android ناقصة: ' + missingFiles.join('، ')] : []),
   ...(sourceIgnored ? ['قاعدة android/ في .gitignore تمنع رفع مصدر التطبيق.'] : []),
   ...(!generatedProtected ? ['قواعد حماية مخرجات Android أو مفاتيح التوقيع ناقصة.'] : []),
@@ -57,6 +65,7 @@ const result = {
   apks,
   sourceIgnored,
   generatedProtected,
+  navigationGuard,
   manualIssues,
   structuralIssues,
   ready: Boolean(!missingFiles.length && !structuralIssues.length && wrapper && apks.length),

@@ -3,6 +3,7 @@ package com.ismailahmednaguib.dawah;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -65,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String url = request.getUrl().toString();
+                Uri uri = request.getUrl();
 
-                if (url.contains(ALLOWED_HOST)) {
+                if (isAllowedUrl(uri)) {
                     return false;
                 }
 
@@ -142,6 +143,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             webView.loadUrl(START_URL);
         }
+    }
+
+    private boolean isAllowedUrl(Uri uri) {
+        return "https".equalsIgnoreCase(uri.getScheme())
+                && ALLOWED_HOST.equalsIgnoreCase(uri.getHost());
     }
 
     private boolean hasLocationPermission() {
