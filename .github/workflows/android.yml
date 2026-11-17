@@ -43,7 +43,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build debug APK
-        run: ./gradlew -p android assembleDebug --stacktrace
+        run: bash ./gradlew -p android assembleDebug --stacktrace
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

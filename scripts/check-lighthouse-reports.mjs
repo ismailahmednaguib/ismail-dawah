@@ -15,7 +15,15 @@ const thresholds = {
 let failed = false;
 
 for (const reportPath of reportPaths) {
-  const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+  let report;
+  try {
+    report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+  } catch (error) {
+    console.error("Unable to read Lighthouse report: " + reportPath + " — " + error.message);
+    failed = true;
+    continue;
+  }
+
   const mode = /desktop/i.test(reportPath) ? "desktop" : "mobile";
   const threshold = thresholds[mode];
   const performance = report.categories?.performance?.score;
@@ -42,18 +50,3 @@ for (const reportPath of reportPaths) {
 }
 
 if (failed) process.exit(1);
-
-      - name: Lighthouse على نسخة الإنتاج (موبايل + سطح مكتب)
-        run: |
-          mkdir -p lighthouse
-          npx --yes lighthouse@12.8.2 https://ismailahmednaguib.vercel.app/ar --output=json --output-path=./lighthouse/ar-mobile.json --chrome-flags="--headless=new --no-sandbox" --quiet
-          npx --yes lighthouse@12.8.2 https://ismailahmednaguib.vercel.app/ar --preset=desktop --output=json --output-path=./lighthouse/ar-desktop.json --chrome-flags="--headless=new --no-sandbox" --quiet
-          node scripts/check-lighthouse-reports.mjs lighthouse/ar-mobile.json lighthouse/ar-desktop.json
-
-      - name: حفظ تقارير Lighthouse
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lighthouse-production
-          path: lighthouse/
-          if-no-files-found: ignore
