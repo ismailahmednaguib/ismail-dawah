@@ -23,7 +23,9 @@ jobs:
           cache: gradle
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
 
       - name: Diagnose Android SDK setup
         if: failure()
@@ -36,9 +38,6 @@ jobs:
           command -v sdkmanager || true
           sdkmanager --version || true
           ls -la "${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/opt/android-sdk}}" || true
-
-      - name: Install Android SDK packages
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4

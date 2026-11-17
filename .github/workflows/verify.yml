@@ -33,7 +33,7 @@ jobs:
         run: npm run test:unit
 
       - name: اللينت
-        run: npm run lint
+        run: npm run lint -- --max-warnings=500
 
       - name: فحص تسرّب المفاتيح
         run: npm run qa:secrets
@@ -180,14 +180,12 @@ jobs:
               npm run qa:production -- --base=https://ismailahmednaguib.vercel.app
               exit $?
             fi
-            echo "لم تصبح النسخة المنشورة جاهزة (${attempt}/30، HTTP ${status})"
+            echo "لم تصبح النسخة المنشورة الجديدة جاهزة (${attempt}/30، HTTP ${status})"
             sleep 10
           done
           echo "::error::لم تصل النسخة المنشورة الجديدة خلال المهلة"
           head -c 1000 /tmp/ismail-production.html || true
           exit 1
-
-
 
       - name: Lighthouse على نسخة الإنتاج (موبايل + سطح مكتب)
         run: |
