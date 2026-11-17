@@ -187,3 +187,19 @@ jobs:
           head -c 1000 /tmp/ismail-production.html || true
           exit 1
 
+
+
+      - name: Lighthouse على نسخة الإنتاج (موبايل + سطح مكتب)
+        run: |
+          mkdir -p lighthouse
+          npx --yes lighthouse@12.8.2 https://ismailahmednaguib.vercel.app/ar --output=json --output-path=./lighthouse/ar-mobile.json --chrome-flags="--headless=new --no-sandbox" --quiet
+          npx --yes lighthouse@12.8.2 https://ismailahmednaguib.vercel.app/ar --preset=desktop --output=json --output-path=./lighthouse/ar-desktop.json --chrome-flags="--headless=new --no-sandbox" --quiet
+          node scripts/check-lighthouse-reports.mjs lighthouse/ar-mobile.json lighthouse/ar-desktop.json
+
+      - name: حفظ تقارير Lighthouse
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-production
+          path: lighthouse/
+          if-no-files-found: ignore
