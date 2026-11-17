@@ -5,7 +5,13 @@
   "gates": [
     { "id": "backup-restore", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
     { "id": "migration-ledger", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
-    { "id": "production-performance", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    {
+      "id": "production-performance",
+      "required": true,
+      "status": "passed",
+      "evidence": "GitHub Actions verify run 44182931786 completed successfully on commit 6a962b56c8b166378f9e4b885e53e04b0ecf92d9: production Lighthouse ran for /ar on mobile and desktop, scripts/check-lighthouse-reports.mjs enforced performance and TBT thresholds, and artifact lighthouse-production (artifact 14373870099) is retained. https://github.com/ismailahmednaguib/ismail-dawah/actions/runs/44182931786",
+      "completed_at": "2026-11-17T21:46:16Z"
+    },
     { "id": "real-device-accessibility", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
     { "id": "live-tools", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
     { "id": "search-console", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
