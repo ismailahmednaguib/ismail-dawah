@@ -520,7 +520,7 @@ export default async function ContactPage({
           <div className="card p-5 text-center">
             <div className="mb-2 flex justify-center">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-                🌐
+                {renderDesignIcon("🌐", 28)}
               </span>
             </div>
             <p className="text-sm font-black text-primary-700 dark:text-primary-300">
@@ -689,7 +689,7 @@ export default async function ContactPage({
                     className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:hover:border-primary-800 dark:hover:bg-night-800"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                      📧
+                      {renderDesignIcon("📧", 24)}
                     </span>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
@@ -729,7 +729,7 @@ export default async function ContactPage({
                     className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:hover:border-primary-800 dark:hover:bg-night-800"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-xl dark:bg-primary-900/40">
-                      📞
+                      {renderDesignIcon("📞", 24)}
                     </span>
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-slate-500 dark:text-slate-400">
@@ -848,7 +848,7 @@ export default async function ContactPage({
                   className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 p-4 text-sm font-bold text-slate-700 transition-all hover:border-primary-200 hover:bg-primary-50/60 dark:border-night-700 dark:text-slate-200 dark:hover:border-primary-800 dark:hover:bg-night-800"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="text-xl">🛡️</span>
+                    <span aria-hidden="true" className="inline-flex">{renderDesignIcon("🛡️", 20)}</span>
                     {ui.quickRuqyah}
                   </span>
                   <svg
@@ -894,7 +894,7 @@ export default async function ContactPage({
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 text-center dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start justify-center gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-100 text-xl dark:bg-gold-900/40">
-              💡
+              {renderDesignIcon("💡", 24)}
             </span>
             <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-200">
               {ui.note}

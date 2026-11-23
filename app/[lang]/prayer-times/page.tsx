@@ -330,7 +330,7 @@ export default async function PrayerTimesPage({
               className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              💡 {ui.introTitle}
+              <span className="me-1 inline-flex align-middle" aria-hidden="true">{renderDesignIcon("💡", 22)}</span>{ui.introTitle}
             </h2>
             <p className="mb-6 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.introDesc}

@@ -761,7 +761,7 @@ export default async function FatwaPage({
         {/* ===== لا توجد نتائج ===== */}
         {filteredFatwas.length === 0 ? (
           <div className="card p-12 text-center">
-            <div className="mb-4 text-5xl">🔎</div>
+            <div aria-hidden="true" className="mb-4 text-5xl">{renderDesignIcon("🔍", 42)}</div>
 
             <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
@@ -884,7 +884,7 @@ export default async function FatwaPage({
             </Link>
 
             <Link href={`/${l}/dawah-guide`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🤝</span>
+              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🤝", 24)}</span>
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.dawahPage}

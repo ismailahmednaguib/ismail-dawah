@@ -651,25 +651,25 @@ export default async function AboutPage({
 
           <div className="flex flex-wrap gap-3">
             <a href="#about" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              🌐 {ui.aboutTitle}
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("🌐", 20)}</span>{ui.aboutTitle}
             </a>
             <a href="#mission" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              🎯 {ui.missionTitle}
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("🎯", 20)}</span>{ui.missionTitle}
             </a>
             <a href="#values" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              💎 {ui.valuesTitle}
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("💎", 20)}</span>{ui.valuesTitle}
             </a>
             <a href="#founder" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              👤 {ui.founderTitle}
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("👤", 20)}</span>{ui.founderTitle}
             </a>
             <a href="#content" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 22)}</span>{ui.contentTitle}
             </a>
             <a href="#sections" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              🧩 {ui.sectionsTitle}
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("🧩", 20)}</span>{ui.sectionsTitle}
             </a>
             <a href="#privacy" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
-              🔒 {ui.privacyTitle}
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("🔒", 20)}</span>{ui.privacyTitle}
             </a>
           </div>
         </div>
@@ -798,7 +798,7 @@ export default async function AboutPage({
               />
             ) : (
               <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 text-3xl text-white shadow-lg shadow-primary-500/25">
-                👤
+                {renderDesignIcon("👤", 30)}
               </span>
             )}
             <div className="min-w-0 flex-1">
@@ -921,7 +921,7 @@ export default async function AboutPage({
         <div id="privacy" className="card mb-8 scroll-mt-32 border-primary-200 bg-primary-50/40 p-6 md:p-8 dark:border-primary-900/30 dark:bg-primary-950/15">
           <div className="flex items-start gap-4">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-              🔒
+              {renderDesignIcon("🔒", 26)}
             </span>
             <div>
               <h2

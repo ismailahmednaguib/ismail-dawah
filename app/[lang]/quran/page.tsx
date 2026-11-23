@@ -551,7 +551,7 @@ export default async function QuranPage({
               className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              💎 {ui.introTitle}
+              <span className="me-1 inline-flex align-middle" aria-hidden="true">{renderDesignIcon("💎", 22)}</span>{ui.introTitle}
             </h2>
             <p className="mb-5 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.introDesc}
@@ -780,7 +780,7 @@ export default async function QuranPage({
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Link href={`/${l}/quran-memorization`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">🎯</span>
+                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🎯", 24)}</span>
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.memorizationPage}

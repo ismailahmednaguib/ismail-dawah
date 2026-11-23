@@ -22,12 +22,18 @@ const ICON_ALIASES: Record<string, IconName> = {
   "✦": "sparkles",
   "🔗": "link",
   "📍": "mapPin",
+  "📞": "phone",
   "🎯": "target",
   "🧭": "qibla",
   "🤲": "duaHands",
   "📿": "tasbih",
   "🕋": "kaaba",
   "🕐": "clock",
+  "🕒": "clock",
+  "⏱": "clock",
+  "💾": "save",
+  "💎": "star",
+  "📂": "folder",
   "⏱️": "clock",
   "🛠️": "settings",
   "⚙️": "settings",
@@ -73,6 +79,7 @@ const ICON_ALIASES: Record<string, IconName> = {
   "🐋": "globe",
   "🎮": "play",
   "💭": "helpCircle",
+  "🧩": "sparkles",
   "🎭": "sparkles",
   "💔": "heart",
   "🎉": "sparkles",
@@ -80,6 +87,8 @@ const ICON_ALIASES: Record<string, IconName> = {
   "⚔️": "scale",
   "📢": "send",
   "📡": "live",
+  "🎤": "mic",
+  "🌐": "globe",
   "🔬": "search",
   "🧮": "scale",
   "📥": "download",
@@ -97,6 +106,7 @@ const ICON_ALIASES: Record<string, IconName> = {
   "📕": "bookOpen",
   "🎓": "target",
   "✉️": "mail",
+  "📧": "mail",
   "📬": "mail",
   "💬": "helpCircle",
   "🕊️": "heart",
@@ -109,6 +119,7 @@ const ICON_ALIASES: Record<string, IconName> = {
   "✝️": "sparkles",
   "👩": "user",
   "🤝": "users",
+  "🫂": "users",
   "⬜": "check",
   "🤖": "sparkles",
   "📊": "sort",
@@ -120,13 +131,34 @@ const ICON_ALIASES: Record<string, IconName> = {
   "➕": "plus",
 };
 
+function resolveDesignIconName(value: string): IconName | undefined {
+  return ICON_ALIASES[value] ?? (
+    Object.prototype.hasOwnProperty.call(iconMap, value) ? value as IconName : undefined
+  );
+}
+
 export function renderDesignIcon(icon: ReactNode, size = 24): ReactNode {
   if (typeof icon !== "string") return icon;
   const value = icon.trim();
-  const iconName = ICON_ALIASES[value] ?? (
-    Object.prototype.hasOwnProperty.call(iconMap, value) ? value as IconName : undefined
-  );
+  const iconName = resolveDesignIconName(value);
   return iconName ? <Icon name={iconName} size={size} /> : icon;
+}
+
+function renderIconLabel(value: string, size = 18): ReactNode {
+  const trimmed = value.trim();
+  const firstSpace = trimmed.search(/\s/);
+  const first = firstSpace === -1 ? trimmed : trimmed.slice(0, firstSpace);
+  const iconName = resolveDesignIconName(first);
+  if (!iconName) return value;
+  const rest = firstSpace === -1 ? "" : trimmed.slice(firstSpace).trimStart();
+  return (
+    <>
+      <span aria-hidden="true" className="me-1 inline-flex align-middle">
+        <Icon name={iconName} size={size} />
+      </span>
+      {rest}
+    </>
+  );
 }
 
 // ------------------------------------------------------------
@@ -189,7 +221,7 @@ export function PageHero({
       />
       <div className="container-page relative py-10 md:py-14">
         {crumbs && crumbs.length > 0 && <Breadcrumbs items={crumbs} />}
-        {badge && <span className="badge-gold mb-4">{badge}</span>}
+        {badge && <span className="badge-gold mb-4">{renderIconLabel(badge)}</span>}
         <div className="flex flex-wrap items-center gap-4">
           {icon && (
             <span
