@@ -78,6 +78,9 @@ type UILang = {
   dawahPageDesc: string;
   welcomeTitle: string;
   welcomeDesc: string;
+  journeyTitle: string;
+  journeyDesc: string;
+  day: string;
 };
 
 const UI: Record<string, UILang> = {
@@ -131,6 +134,9 @@ const UI: Record<string, UILang> = {
     dawahPageDesc: "كيف تنقل الإسلام للآخرين.",
     welcomeTitle: "مرحباً بك في طريق الحق",
     welcomeDesc: "نحن سعداء بخطوتك، ونسأل الله لك الثبات والتوفيق. هذه الصفحة دليلك العملي لبداية مطمئنة.",
+    journeyTitle: "برنامج أول ٣٠ يومًا",
+    journeyDesc: "خطة صغيرة قابلة للتطبيق؛ يوم واحد في كل مرة، مع مساحة للسؤال والراحة وعدم التكلف.",
+    day: "اليوم",
   },
   en: {
     title: "Embracing Islam",
@@ -182,6 +188,9 @@ const UI: Record<string, UILang> = {
     dawahPageDesc: "How to share Islam with others.",
     welcomeTitle: "Welcome to the Path of Truth",
     welcomeDesc: "We are happy for your step and ask Allah to grant you steadfastness and success. This page is your practical guide for a peaceful beginning.",
+    journeyTitle: "Your First 30 Days",
+    journeyDesc: "A small, practical plan: one day at a time, with room for questions, rest, and no pressure.",
+    day: "Day",
   },
 };
 
@@ -340,6 +349,74 @@ const STEPS: Step[] = [
         ar: "استعن بمجتمع مسلم داعم.",
         en: "Seek support from a helpful Muslim community.",
       },
+    ],
+  },
+];
+
+type JourneyWeek = {
+  id: string;
+  title: Localized;
+  focus: Localized;
+  days: Localized[];
+};
+
+const NEW_MUSLIM_JOURNEY: JourneyWeek[] = [
+  {
+    id: "days-1-7",
+    title: { ar: "الأيام ١–٧: تثبيت البداية", en: "Days 1–7: Establishing the Beginning" },
+    focus: { ar: "الشهادة، الطهارة، والصلاة خطوة خطوة.", en: "Shahadah, cleanliness, and prayer one step at a time." },
+    days: [
+      { ar: "اقرأ معنى الشهادتين واكتب ما الذي دفعك للبحث.", en: "Read the meaning of the Shahadah and write what led you to search." },
+      { ar: "تعلّم الوضوء من مصدر عملي موثوق.", en: "Learn wudu from a reliable practical source." },
+      { ar: "تعرّف على أوقات الصلوات الخمس واضبط تذكيرًا لها.", en: "Learn the five prayer times and set reminders." },
+      { ar: "احفظ الفاتحة بالتدرج، واطلب تصحيحها بلطف.", en: "Begin memorizing Al-Fatihah gradually and ask someone to correct you kindly." },
+      { ar: "صلِّ مع جماعة أو شاهد شرحًا عمليًا هادئًا للصلاة.", en: "Pray with a group or watch a calm practical prayer guide." },
+      { ar: "اقرأ سورة قصيرة بمعناها، لا بمجرد السرعة.", en: "Read a short surah with its meaning, without rushing." },
+      { ar: "اكتب سؤالين ظهرا لك واسألهما لمصدر موثوق.", en: "Write down two questions that arose and ask a trusted source." },
+    ],
+  },
+  {
+    id: "days-8-14",
+    title: { ar: "الأيام ٨–١٤: فهم الإيمان", en: "Days 8–14: Understanding Faith" },
+    focus: { ar: "التوحيد، الدعاء، والقرآن كصحبة يومية.", en: "Tawhid, supplication, and the Quran as a daily companion." },
+    days: [
+      { ar: "تعلّم أركان الإيمان والإسلام بصورة مختصرة.", en: "Learn the pillars of faith and Islam in a concise form." },
+      { ar: "اختر وقتًا ثابتًا لعشر دقائق من القرآن.", en: "Choose a fixed time for ten minutes of Quran." },
+      { ar: "تعلّم دعاءً صحيحًا واحدًا وكرره بفهم.", en: "Learn one authentic supplication and repeat it with understanding." },
+      { ar: "اقرأ عن رحمة الله وحسن الظن به.", en: "Read about Allah's mercy and having good expectations of Him." },
+      { ar: "تدرّب على ذكر قصير بعد الصلاة دون تكلف.", en: "Practice a short remembrance after prayer without burdening yourself." },
+      { ar: "تواصل مع مسلم متزن يحترم أسئلتك وحدودك.", en: "Connect with a balanced Muslim who respects your questions and boundaries." },
+      { ar: "راجع ما تعلمته، واختر موضوعًا واحدًا للأسبوع التالي.", en: "Review what you learned and choose one topic for the next week." },
+    ],
+  },
+  {
+    id: "days-15-21",
+    title: { ar: "الأيام ١٥–٢١: بناء العادات", en: "Days 15–21: Building Habits" },
+    focus: { ar: "الأخلاق، الصحبة، والتدرج في التعلم.", en: "Character, companionship, and gradual learning." },
+    days: [
+      { ar: "اختر خلقًا واحدًا وطبّقه مع أهلك اليوم.", en: "Choose one character trait and practice it with family today." },
+      { ar: "اقرأ سيرة مختصرة للنبي ﷺ من مصدر موثوق.", en: "Read a short biography of the Prophet ﷺ from a reliable source." },
+      { ar: "اترك جدالًا لا يفيد، واستبدله بحوار هادئ.", en: "Leave an unhelpful argument and replace it with calm dialogue." },
+      { ar: "تعلم حكمًا فقهيًا تحتاجه في حياتك اليومية فقط.", en: "Learn one practical ruling you need in daily life." },
+      { ar: "احفظ آيتين مع فهم المعنى العام.", en: "Memorize two verses while understanding their general meaning." },
+      { ar: "حدد شخصًا أو مركزًا تسأله عند الحاجة.", en: "Identify a person or center you can ask when needed." },
+      { ar: "اكتب عادة نافعة ستستمر عليها بعد الشهر الأول.", en: "Write one beneficial habit you will continue after the first month." },
+    ],
+  },
+  {
+    id: "days-22-30",
+    title: { ar: "الأيام ٢٢–٣٠: الاستمرار بأمان", en: "Days 22–30: Continuing Safely" },
+    focus: { ar: "تثبيت ما ينفع، وحماية النفس من الضغط والمعلومات المربكة.", en: "Keep what benefits you and protect yourself from pressure and confusing information." },
+    days: [
+      { ar: "راجع صلاتك واسأل عن موضع واحد يحتاج تحسينًا.", en: "Review your prayer and ask about one point to improve." },
+      { ar: "اقرأ عن حقوق الوالدين وصلة الرحم.", en: "Read about kindness to parents and maintaining family ties." },
+      { ar: "استخدم مصدرًا واحدًا موثوقًا بدل التنقل بين مقاطع كثيرة.", en: "Use one reliable source instead of jumping between many videos." },
+      { ar: "تعلم كيف تميّز بين السؤال العلمي والجدال الإلكتروني.", en: "Learn to distinguish a sincere question from an online argument." },
+      { ar: "خصص وقتًا للدعاء بهدوء، ولو لدقائق قليلة.", en: "Set aside quiet time for supplication, even for a few minutes." },
+      { ar: "اكتب أكثر ما تغيّر فيك منذ البداية.", en: "Write what has changed in you since the beginning." },
+      { ar: "استرح إن احتجت؛ الاستمرار لا يعني إنهاك النفس.", en: "Rest when needed; consistency does not mean exhausting yourself." },
+      { ar: "ضع خطة شهر ثانٍ من ثلاثة أهداف صغيرة فقط.", en: "Plan a second month with only three small goals." },
+      { ar: "احتفل بالثبات واشكر الله، وابقَ قريبًا من أهل الخير.", en: "Celebrate your progress, thank Allah, and stay close to good people." },
     ],
   },
 ];
@@ -592,6 +669,48 @@ export default async function EmbraceIslamPage({
                 {ui.contact}
               </Link>
             </div>
+          </div>
+        </div>
+
+        <div id="first-30-days" className="mb-12 scroll-mt-32">
+          <div className="mb-6 text-center">
+            <h2 className="section-title mb-0">{ui.journeyTitle}</h2>
+            <div className="islamic-divider my-0">
+              <span aria-hidden="true" className="text-xl text-gold-500">{renderDesignIcon("✦", 18)}</span>
+            </div>
+            <p className="section-subtitle mx-auto max-w-2xl">{ui.journeyDesc}</p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            {NEW_MUSLIM_JOURNEY.map((week, weekIndex) => (
+              <article key={week.id} className="card overflow-hidden p-6 md:p-7">
+                <div className="mb-5 border-b border-slate-100 pb-4 dark:border-night-700">
+                  <p className="mb-2 text-xs font-black uppercase tracking-[0.12em] text-primary-700 dark:text-primary-300">
+                    {weekIndex + 1} / 4
+                  </p>
+                  <h3 className="text-xl font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-amiri)" }}>
+                    {isRTL ? week.title.ar : week.title.en}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                    {isRTL ? week.focus.ar : week.focus.en}
+                  </p>
+                </div>
+
+                <ol className="space-y-3">
+                  {week.days.map((day, dayIndex) => (
+                    <li key={`${week.id}-${dayIndex}`} className="flex items-start gap-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                      <span className="mt-0.5 flex h-7 min-w-7 shrink-0 items-center justify-center rounded-full bg-primary-50 px-1 text-xs font-black text-primary-700 dark:bg-primary-950/40 dark:text-primary-300">
+                        {dayIndex + 1 + (weekIndex === 0 ? 0 : weekIndex === 1 ? 7 : weekIndex === 2 ? 14 : 21)}
+                      </span>
+                      <span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">{ui.day} {dayIndex + 1 + (weekIndex === 0 ? 0 : weekIndex === 1 ? 7 : weekIndex === 2 ? 14 : 21)}: </span>
+                        {isRTL ? day.ar : day.en}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </article>
+            ))}
           </div>
         </div>
 

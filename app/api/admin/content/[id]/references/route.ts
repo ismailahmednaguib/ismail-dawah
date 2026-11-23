@@ -32,6 +32,18 @@ function nullableInt(value: unknown, min = 0, max = 2_147_483_647): number | nul
   return parsed;
 }
 
+function nullableUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim().slice(0, 1000);
+  if (!trimmed) return null;
+  try {
+    const url = new URL(trimmed);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 async function canReadContent() {
   const session = await getAdminSession();
   return session && can(session.roles, 'content.read') ? session : null;
@@ -106,6 +118,7 @@ export async function POST(req: NextRequest, { params }: Params) {
       volume_page: nullableText(body.volume_page),
       quote_text: nullableText(body.quote_text),
       note: nullableText(body.note),
+      source_url: nullableUrl(body.source_url),
       verified: false,
       verified_by: null,
       sort_order: nullableInt(body.sort_order, 0) ?? 0,

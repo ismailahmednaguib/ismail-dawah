@@ -47,6 +47,7 @@ const CATEGORIES: FaqCategory[] = [
   { id: "technical", ar: "التقنية والأداء", en: "Technical & Performance", icon: "⚙️" },
   { id: "privacy", ar: "الخصوصية والبيانات", en: "Privacy & Data", icon: "🔒" },
   { id: "dawah", ar: "الدعوة والتعاون", en: "Dawah & Collaboration", icon: "🤝" },
+  { id: "non-muslim", ar: "أسئلة الباحثين عن الإسلام", en: "Questions from Non-Muslims", icon: "◈" },
 ];
 
 // ============================================================
@@ -352,6 +353,43 @@ const FAQS: FaqItem[] = [
       ar: "نرحب بالمتطوعين للترجمة. راسلنا عبر صفحة \"تواصل معنا\" مع ذكر: لغتك، مستوى إتقانك للعربية أو الإنجليزية، وعيّنة من ترجمتك السابقة إن وجدت. سنراجع ونضيفك لفريق الترجمة.",
       en: "We welcome volunteer translators. Contact us through the \"Contact Us\" page mentioning: your language, your proficiency level in Arabic or English, and a sample of your previous translation if available. We will review and add you to the translation team.",
     },
+  },
+  // ===== أسئلة الباحثين عن الإسلام =====
+  {
+    id: "non-muslim-why-islam",
+    categoryId: "non-muslim",
+    question: { ar: "لماذا أبحث في الإسلام؟", en: "Why should I explore Islam?" },
+    answer: { ar: "ابدأ بالسؤال الذي يهمك واقرأ من مصادر واضحة، ثم قارن الأفكار بإنصاف. لا تطلب المنصة منك قرارًا سريعًا، بل توفر مدخلًا هادئًا ومراجع قابلة للرجوع.", en: "Start with the question that matters to you and read clear sources, then compare ideas fairly. The platform does not ask for a rushed decision; it offers a calm starting point and references you can revisit." },
+  },
+  {
+    id: "non-muslim-compulsion",
+    categoryId: "non-muslim",
+    question: { ar: "هل يفرض الإسلام نفسه على الناس؟", en: "Does Islam force people to believe?" },
+    answer: { ar: "الإيمان لا يصح بالإكراه، والبحث الديني يحتاج إلى قناعة واختيار. اقرأ الأدلة واسأل، مع احترام حق كل إنسان في قراره ومسؤوليته.", en: "Faith cannot be genuine under coercion. Religious inquiry requires conviction and choice; read, ask, and respect every person’s responsibility for their decision." },
+  },
+  {
+    id: "non-muslim-god",
+    categoryId: "non-muslim",
+    question: { ar: "من هو الله في الإسلام؟", en: "Who is God in Islam?" },
+    answer: { ar: "الله في الإسلام هو الإله الواحد الخالق المستحق للعبادة، ليس كمثله شيء، ولا يحتاج إلى وسيط في الدعاء والعبادة. يمكنك قراءة صفحة التعريف بالتوحيد لمزيد من التفصيل.", en: "In Islam, God is the one Creator worthy of worship. Nothing is comparable to Him, and worship does not require an intermediary. See the introduction to monotheism for more detail." },
+  },
+  {
+    id: "non-muslim-muhammad-worship",
+    categoryId: "non-muslim",
+    question: { ar: "هل يعبد المسلمون محمدًا ﷺ؟", en: "Do Muslims worship Muhammad ﷺ?" },
+    answer: { ar: "لا. المسلمون يعبدون الله وحده، ويؤمنون بمحمد ﷺ رسولًا وعبدًا لله، ويحبونه ويتبعون سنته دون أن يجعلوه إلهًا.", en: "No. Muslims worship God alone and believe Muhammad ﷺ was His servant and messenger. They love and follow him without treating him as divine." },
+  },
+  {
+    id: "non-muslim-jesus",
+    categoryId: "non-muslim",
+    question: { ar: "ما مكانة عيسى عليه السلام في الإسلام؟", en: "What is Jesus’ place in Islam?" },
+    answer: { ar: "عيسى عليه السلام نبي كريم ومسيح في الإسلام، وُلد من مريم عليها السلام بمعجزة، ودعا إلى الله. تعرض بوابة غير المسلمين الموضوع باحترام ومراجع.", en: "Jesus is a noble prophet and the Messiah in Islam. He was born to Mary by a miracle and called people to God. The portal presents the topic respectfully with references." },
+  },
+  {
+    id: "non-muslim-compare",
+    categoryId: "non-muslim",
+    question: { ar: "كيف أقارن بين الأديان بعدل؟", en: "How can I compare religions fairly?" },
+    answer: { ar: "اقرأ كل دين من مصادره الأساسية، وافصل بين تعاليمه وبين أخطاء أتباعه، وانتبه لاختلاف تعريف المصطلحات والسياقات التاريخية. ابدأ بمنهج المقارنة ثم اسأل عن الجزئيات.", en: "Read each tradition from its primary sources, distinguish teachings from followers’ mistakes, and notice differences in terms and historical context. Start with a method for comparison before focusing on individual questions." },
   },
 ];
 

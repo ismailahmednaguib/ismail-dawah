@@ -32,6 +32,7 @@ type Fatwa = {
   answer: string;
   tags: string[];
   source?: string;
+  sourceUrl?: string;
   reviewed?: boolean;
 };
 
@@ -92,14 +93,20 @@ function mapPublicFatwa(item: PublicItem): Fatwa {
     ["source", "reference", "references", "book", "hadith"].includes(term.kind)
   );
 
+  const reference = item.references[0];
+  const referenceSource = reference
+    ? [reference.book_title, reference.hadith_book, reference.scholar_name].filter(Boolean).join(' — ')
+    : '';
+
   return {
     id: item.slug || item.id,
     categoryId: resolveCategoryId(item.terms),
     question: item.title.trim(),
     answer: (item.body ?? item.summary ?? "").trim(),
     tags: item.terms.map((term) => term.name).filter(Boolean),
-    source: sourceTerm?.name?.trim() || undefined,
-    reviewed: Boolean(item.reviewer_id),
+    source: sourceTerm?.name?.trim() || referenceSource || undefined,
+    sourceUrl: reference?.source_url || undefined,
+    reviewed: Boolean(item.reviewer_id && item.references.length > 0),
   };
 }
 
@@ -154,6 +161,7 @@ const UI: Record<string,
     verse: string;
     verseSource: string;
     totalFatwas: string;
+    pendingReviewLabel: string;
     totalCategories: string;
     trustedSources: string;
     relatedTitle: string;
@@ -197,6 +205,7 @@ const UI: Record<string,
     verse: "﴿ وَلَوْ رَدُّوهُ إِلَى الرَّسُولِ وَإِلَىٰ أُولِي الْأَمْرِ مِنْهُمْ لَعَلِمَهُ الَّذِينَ يَسْتَنبِطُونَهُ مِنْهُمْ ﴾",
     verseSource: "سورة النساء — الآية 83",
     totalFatwas: "فتوى",
+    pendingReviewLabel: "قيد التوثيق والمراجعة",
     totalCategories: "تصنيف",
     trustedSources: "مصادر موثوقة",
     relatedTitle: "صفحات ذات صلة",
@@ -239,6 +248,7 @@ const UI: Record<string,
     verse: "\"But if they had referred it back to the Messenger and to those in authority among them, those who can draw out the truth would have known it.\"",
     verseSource: "Surah An-Nisa — Verse 83",
     totalFatwas: "Fatwas",
+    pendingReviewLabel: "Source review pending",
     totalCategories: "Categories",
     trustedSources: "Trusted Sources",
     relatedTitle: "Related Pages",
@@ -674,9 +684,19 @@ export default async function FatwaPage({
                           {ui.source}: {fatwa.source}
                         </p>
                       )}
+                      {fatwa.sourceUrl && (
+                        <a href={fatwa.sourceUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-xs font-semibold text-primary-700 underline-offset-4 hover:underline dark:text-primary-300">
+                          {l === "ar" ? "فتح المصدر" : "Open source"}
+                        </a>
+                      )}
                       {fatwa.reviewed && (
                         <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-200">
                           ✓ {ui.reviewedLabel}
+                        </p>
+                      )}
+                      {!fatwa.reviewed && (
+                        <p className="mt-2 inline-flex rounded-full bg-gold-50 px-2.5 py-1 text-xs font-bold text-gold-800 dark:bg-gold-900/30 dark:text-gold-200">
+                          {ui.pendingReviewLabel}
                         </p>
                       )}
                       <div className="mt-3 flex flex-wrap gap-2">
@@ -805,10 +825,20 @@ export default async function FatwaPage({
                         {ui.source}: {fatwa.source}
                       </p>
                     )}
+                    {fatwa.sourceUrl && (
+                      <a href={fatwa.sourceUrl} target="_blank" rel="noreferrer" className="mt-2 inline-flex text-xs font-semibold text-primary-700 underline-offset-4 hover:underline dark:text-primary-300">
+                        {l === "ar" ? "فتح المصدر" : "Open source"}
+                      </a>
+                    )}
 
                     {fatwa.reviewed && (
                       <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-primary-50 px-2.5 py-1 text-xs font-bold text-primary-700 dark:bg-primary-900/40 dark:text-primary-200">
                         ✓ {ui.reviewedLabel}
+                      </p>
+                    )}
+                    {!fatwa.reviewed && (
+                      <p className="mt-2 inline-flex rounded-full bg-gold-50 px-2.5 py-1 text-xs font-bold text-gold-800 dark:bg-gold-900/30 dark:text-gold-200">
+                        {ui.pendingReviewLabel}
                       </p>
                     )}
 

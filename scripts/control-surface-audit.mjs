@@ -62,6 +62,7 @@ const CURATED_PUBLIC_ROUTES = new Set([
   "/{lang}/about",
   "/{lang}/atheism-response",
   "/{lang}/dawah",
+  "/{lang}/dawah/{slug}",
   "/{lang}/dawah-guide",
   "/{lang}/dawah/path",
   "/{lang}/doubts",
@@ -167,6 +168,9 @@ function classifyElement(rel, route, translationSource) {
     rel.startsWith("components/quran/")
   ) {
     return { status: "immutable-reference", reason: "trusted reference, curated catalogue, or calculation source" };
+  }
+  if (rel === "lib/dawah-portal.ts") {
+    return { status: "curated-reference", reason: "bilingual dawah portal content released through scholarly review" };
   }
   if (
     rel === "lib/tool-settings.ts" ||

@@ -41,6 +41,7 @@ type ContentReferenceSummary = {
   hadith_grade?: string | null;
   book_title?: string | null;
   scholar_name?: string | null;
+  source_url?: string | null;
   verified?: boolean;
 };
 
@@ -188,6 +189,7 @@ export default function ContentEditClient({
   const [bookTitle, setBookTitle] = useState('');
   const [quoteText, setQuoteText] = useState('');
   const [note, setNote] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
   const translation =
     content.content_translations?.find((item) => item.lang === 'ar') ??
     content.content_translations?.[0];
@@ -352,6 +354,7 @@ export default function ContentEditClient({
           book_title: bookTitle,
           quote_text: quoteText,
           note,
+          source_url: sourceUrl,
         }),
       });
       const json = await res.json().catch(() => ({}));
@@ -368,6 +371,7 @@ export default function ContentEditClient({
       setBookTitle('');
       setQuoteText('');
       setNote('');
+      setSourceUrl('');
     } catch (err: unknown) {
       setReferenceError(err instanceof Error ? err.message : 'فشل إضافة المرجع');
     } finally {
@@ -947,6 +951,13 @@ export default function ContentEditClient({
                 placeholder="ملاحظة للمراجع (اختياري)"
                 className="min-w-[240px] flex-1 rounded-lg border border-stone-300 px-3 py-2"
               />
+              <input
+                value={sourceUrl}
+                onChange={(event) => setSourceUrl(event.target.value)}
+                placeholder="رابط المصدر https://... (اختياري)"
+                type="url"
+                className="min-w-[240px] flex-1 rounded-lg border border-stone-300 px-3 py-2"
+              />
               <button
                 type="submit"
                 disabled={referenceSaving}
@@ -982,6 +993,11 @@ export default function ContentEditClient({
                 </span>
                 {ref.verified && (
                   <span className="text-primary-700 text-xs">✓ موثق</span>
+                )}
+                {ref.source_url && (
+                  <a href={ref.source_url} target="_blank" rel="noreferrer" className="text-xs text-primary-700 hover:underline">
+                    فتح المصدر
+                  </a>
                 )}
                 <span className="mr-auto flex gap-2">
                   {canReview && (

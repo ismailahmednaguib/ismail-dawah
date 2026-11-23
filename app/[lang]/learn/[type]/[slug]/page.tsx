@@ -129,6 +129,10 @@ export default async function LearnContentPage({ params }: PageProps) {
     process.env.NEXT_PUBLIC_SITE_URL || 'https://ismailahmednaguib.vercel.app'
   ).replace(/\/+$/, '');
   const pageUrl = `${siteUrl}/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`;
+  const reportHref = `/${lang}/contact?${new URLSearchParams({
+    subject: currentLang === 'ar' ? `بلاغ عن مادة: ${t.title}` : `Report about: ${t.title}`,
+    page: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
+  }).toString()}`;
   const schemaType =
     content.content_type === 'course'
       ? 'Course'
@@ -229,9 +233,9 @@ export default async function LearnContentPage({ params }: PageProps) {
                 ✓ {currentLang === 'ar' ? 'اعتمده' : 'Reviewed by'} {content.reviewerName || (currentLang === 'ar' ? 'مراجع علمي' : 'a scholar reviewer')}
               </span>
             )}
-            {(content.reviewed_at || content.reviewer_id) && (
+            {content.reviewed_at && (
               <span>
-                🗓️ {currentLang === 'ar' ? 'آخر مراجعة' : 'Last review'}: {new Date(content.reviewed_at || content.updated_at).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US')}
+                🗓️ {currentLang === 'ar' ? 'آخر مراجعة' : 'Last review'}: {new Date(content.reviewed_at).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US')}
               </span>
             )}
           </div>
@@ -299,6 +303,17 @@ export default async function LearnContentPage({ params }: PageProps) {
 
         {/* المراجع الشرعية */}
         <ReferenceDisplay references={content.references} lang={currentLang} />
+
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-primary-100 pt-6 dark:border-night-700">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            {currentLang === 'ar'
+              ? 'هل وجدت خطأً في النص أو المرجع؟ أرسل رابط الصفحة ووصفًا مختصرًا للمشكلة.'
+              : 'Found an issue in the text or source? Send the page link and a short description.'}
+          </p>
+          <Link href={reportHref} className="btn-outline">
+            {currentLang === 'ar' ? 'الإبلاغ عن خطأ' : 'Report an issue'}
+          </Link>
+        </div>
       </article>
       </main>
       <Footer lang={currentLang} />

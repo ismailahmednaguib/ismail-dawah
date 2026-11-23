@@ -18,6 +18,8 @@ import {
 
 const STORAGE_KEY = "dawah_prayer_location_v2";
 const SETTINGS_KEY = "dawah_prayer_settings_v1";
+const TIMINGS_CACHE_KEY = "dawah_prayer_times_v1";
+const TIMINGS_CACHE_TTL = 48 * 60 * 60 * 1000;
 
 // طرق الحساب المتاحة
 const CALCULATION_METHODS = [
@@ -125,6 +127,7 @@ const UI: Record<string,
     settingsSaved: string;
     timeNow: string;
     currentTime: string;
+    cachedWarning: string;
   }
 > = {
   ar: {
@@ -166,6 +169,7 @@ const UI: Record<string,
     settingsSaved: "تم حفظ الإعدادات",
     timeNow: "الوقت الحالي",
     currentTime: "الآن",
+    cachedWarning: "تعذر تحديث المواقيت الآن؛ المعروض آخر توقيت محفوظ لديك.",
   },
   en: {
     currentLocation: "Current location",
@@ -206,6 +210,7 @@ const UI: Record<string,
     settingsSaved: "Settings saved",
     timeNow: "Current time",
     currentTime: "Now",
+    cachedWarning: "Prayer times could not be refreshed; showing the last saved times.",
   },
 };
 
@@ -238,6 +243,28 @@ function defaultSettings(toolSettings: PrayerToolSettings): PrayerSettings {
 
 function timingKey(id: string): keyof Timings {
   return `${id.charAt(0).toUpperCase()}${id.slice(1)}` as keyof Timings;
+}
+
+function timingsCacheKey(location: LocationState, method: number): string {
+  return `${TIMINGS_CACHE_KEY}:${location.latitude.toFixed(4)}:${location.longitude.toFixed(4)}:${method}`;
+}
+
+type CachedTimings = {
+  savedAt: number;
+  timings: Timings;
+  hijriDate: string | null;
+  gregorianDate: string | null;
+};
+
+function isValidTimings(value: unknown): value is Timings {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<Timings>;
+  return ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"].every(
+    (key) => {
+      const timing = candidate[key as keyof Timings];
+      return typeof timing === "string" && timing.includes(":");
+    },
+  );
 }
 
 function parseTimeToDate(time: string, base: Date): Date {
@@ -430,6 +457,33 @@ export default function PrayerTimesContent({
       setLoading(true);
       setError(null);
 
+      const cacheKey = timingsCacheKey(loc, method);
+      let hasCachedTimings = false;
+      try {
+        const cachedRaw = localStorage.getItem(cacheKey);
+        if (cachedRaw) {
+          const cached = JSON.parse(cachedRaw) as Partial<CachedTimings>;
+          if (
+            typeof cached.savedAt === "number" &&
+            Date.now() - cached.savedAt <= TIMINGS_CACHE_TTL &&
+            isValidTimings(cached.timings)
+          ) {
+            setTimings(cached.timings);
+            setHijriDate(typeof cached.hijriDate === "string" ? cached.hijriDate : null);
+            setGregorianDate(typeof cached.gregorianDate === "string" ? cached.gregorianDate : null);
+            hasCachedTimings = true;
+          }
+        }
+      } catch {
+        // Ignore malformed or unavailable browser storage and use the network.
+      }
+
+      if (!hasCachedTimings) {
+        setTimings(null);
+        setHijriDate(null);
+        setGregorianDate(null);
+      }
+
       try {
         const url = `https://api.aladhan.com/v1/timings/${todayString()}?latitude=${loc.latitude}&longitude=${loc.longitude}&method=${method}`;
         const res = await fetch(url);
@@ -440,9 +494,18 @@ export default function PrayerTimesContent({
         setTimings(json.data.timings);
         setHijriDate(json.data.date?.hijri?.date ?? null);
         setGregorianDate(json.data.date?.gregorian?.date ?? null);
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify({
+            savedAt: Date.now(),
+            timings: json.data.timings,
+            hijriDate: json.data.date?.hijri?.date ?? null,
+            gregorianDate: json.data.date?.gregorian?.date ?? null,
+          } satisfies CachedTimings));
+        } catch {
+          // Caching is an enhancement; it must not block live timings.
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : ui.errorLoad);
-        setTimings(null);
       } finally {
         setLoading(false);
       }
@@ -822,6 +885,12 @@ export default function PrayerTimesContent({
           >
             {ui.retry}
           </button>
+        </div>
+      )}
+
+      {error && timings && (
+        <div className="mb-6 rounded-2xl border border-gold-200 bg-gold-50 px-4 py-3 text-sm font-semibold text-gold-800 dark:border-gold-800/60 dark:bg-gold-950/20 dark:text-gold-200" role="status">
+          {ui.cachedWarning}
         </div>
       )}
 

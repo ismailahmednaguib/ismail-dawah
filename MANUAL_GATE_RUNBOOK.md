@@ -25,8 +25,12 @@
 
 ## 4) سجل migrations
 1. افتح Supabase Dashboard للمشروع الصحيح.
-2. تحقق من السجل الرسمي للـ migrations الخاصة بالمحتوى والجدولة وMFA.
-3. سجّل أسماء migrations ووقت التحقق أو رابطًا داخليًا آمنًا، دون نسخ أسرار.
+2. نفّذ في SQL Editor، بعد التأكد من المشروع والبيئة الصحيحين، الملفين:
+   - `supabase/migrations/20261124_dawah_inquiries.sql`
+   - `supabase/migrations/20261124_reference_source_urls.sql`
+3. شغّل `npm run qa:migrations` وتأكد من ظهور جدول `dawah_inquiries` وعمود `content_references.source_url` كمنفّذين.
+4. تحقق من السجل الرسمي للـ migrations الخاصة بالمحتوى والجدولة وMFA والهجرتين الجديدتين.
+5. سجّل أسماء migrations ووقت التحقق أو رابطًا داخليًا آمنًا، دون نسخ أسرار.
 
 ## 5) الأداء وإمكانية الوصول
 1. أعد قياس Lighthouse وTBT على نسخة Vercel الحالية، خصوصًا الهاتف والشبكة البطيئة.

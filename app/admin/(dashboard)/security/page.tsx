@@ -91,6 +91,7 @@ const PRIVATE_TABLES = [
   'learner_content_progress',
   'user_favorites',
   'user_questions',
+  'dawah_inquiries',
   'media_library',
   'rate_limits',
   'push_subscriptions',

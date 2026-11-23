@@ -35,6 +35,21 @@ export interface PublicTerm {
   lang?: string | null;
 }
 
+export interface PublicReferenceSummary {
+  id: string;
+  kind: string;
+  surah?: number | null;
+  ayah_from?: number | null;
+  ayah_to?: number | null;
+  hadith_book?: string | null;
+  hadith_number?: number | null;
+  hadith_grade?: string | null;
+  scholar_name?: string | null;
+  book_title?: string | null;
+  source_url?: string | null;
+  verified?: boolean;
+}
+
 export interface PublicItem {
   id: string;
   content_type: string;
@@ -47,6 +62,7 @@ export interface PublicItem {
   audience: string[];
   levels: string[];
   terms: PublicTerm[];
+  references: PublicReferenceSummary[];
   /** معرّف المراجع العلمي إن اعتمد المحتوى. */
   reviewer_id: string | null;
   /** true عندما نعرض النص الأصلي لأن الترجمة المطلوبة غير متوفرة. */
@@ -170,9 +186,55 @@ function mapItem(row: any, isFallback: boolean): PublicItem {
     audience: row.audience ?? [],
     levels: row.levels ?? [],
     terms,
+    references: mapPublicReferences(row.content_references),
     reviewer_id: row.reviewer_id ?? null,
     isFallback,
   };
+}
+
+function mapPublicReferences(rows: any): PublicReferenceSummary[] {
+  return (Array.isArray(rows) ? rows : [])
+    .filter((reference) => reference?.verified === true)
+    .map((reference) => ({
+      id: String(reference.id ?? ''),
+      kind: String(reference.kind ?? 'other'),
+      surah: reference.surah ?? null,
+      ayah_from: reference.ayah_from ?? null,
+      ayah_to: reference.ayah_to ?? null,
+      hadith_book: reference.hadith_book ?? null,
+      hadith_number: reference.hadith_number ?? null,
+      hadith_grade: reference.hadith_grade ?? null,
+      scholar_name: reference.scholar_name ?? null,
+      book_title: reference.book_title ?? null,
+      source_url: reference.source_url ?? null,
+      verified: true,
+    }))
+    .filter((reference) => reference.id);
+}
+
+async function attachPublicReferences(
+  supabase: ReturnType<typeof getClient>,
+  items: PublicItem[]
+): Promise<PublicItem[]> {
+  if (items.length === 0) return items;
+  const ids = items.map((item) => item.id).filter(Boolean);
+  if (ids.length === 0) return items;
+
+  const fields = 'id, content_id, kind, surah, ayah_from, ayah_to, hadith_book, hadith_number, hadith_grade, scholar_name, book_title, verified, source_url';
+  let result = (await supabase.from('content_references').select(fields).in('content_id', ids).eq('verified', true).order('sort_order', { ascending: true })) as { data: any; error: any };
+  if (result.error) {
+    result = (await supabase.from('content_references').select(fields.replace(', source_url', '')).in('content_id', ids).eq('verified', true).order('sort_order', { ascending: true })) as { data: any; error: any };
+  }
+  if (result.error) return items;
+
+  const byContent = new Map<string, PublicReferenceSummary[]>();
+  for (const row of result.data ?? []) {
+    const key = String(row.content_id ?? '');
+    const current = byContent.get(key) ?? [];
+    current.push(...mapPublicReferences([row]));
+    byContent.set(key, current);
+  }
+  return items.map((item) => ({ ...item, references: byContent.get(item.id) ?? item.references }));
 }
 
 /**
@@ -315,7 +377,7 @@ async function runListQuery(
     return [];
   }
   const items = (data ?? []).map((row: any) => mapItem(row, isFallback));
-  return localizeItemTerms(supabase, items, lang);
+  return attachPublicReferences(supabase, await localizeItemTerms(supabase, items, lang));
 }
 
 // ============================================================
@@ -337,6 +399,7 @@ export async function getPublicBySlug(
         id, lang, slug, title, summary, body, is_machine_translated,
         content:content_id (
           id, content_type, audience, levels, published_at, views, status, reviewer_id,
+          content_references (*),
           ${TERM_SELECT}
         )
       `
@@ -379,6 +442,7 @@ export async function getPublicBySlug(
     audience: c.audience ?? [],
     levels: c.levels ?? [],
     terms: await localizeTermList(supabase, rawTerms, lang),
+    references: mapPublicReferences(c.content_references),
     reviewer_id: c.reviewer_id ?? null,
     isFallback,
   };
@@ -462,6 +526,7 @@ export async function getPublicPicks(
         audience: content.audience ?? [],
         levels: content.levels ?? [],
         terms: [],
+        references: [],
         reviewer_id: content.reviewer_id ?? null,
         isFallback: false,
       });

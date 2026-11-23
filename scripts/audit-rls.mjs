@@ -29,7 +29,7 @@ const PRIVATE_TABLES = [
   'activity_log', 'page_views', 'analytics_events', 'site_settings', 'review_queue',
   'content_revisions', 'newsletter_subscribers', 'dawah_journey_subscribers',
   'dawah_request_assignments', 'learner_content_progress', 'user_favorites',
-  'user_questions', 'media_library', 'rate_limits', 'push_subscriptions', 'admin_mfa',
+  'user_questions', 'dawah_inquiries', 'media_library', 'rate_limits', 'push_subscriptions', 'admin_mfa',
 ];
 const PUBLIC_TABLES = ['content', 'content_translations', 'taxonomies', 'content_terms'];
 

@@ -21,6 +21,8 @@ import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
 type SearchParams = {
   status?: string | string[];
   field?: string | string[];
+  subject?: string | string[];
+  page?: string | string[];
 };
 
 // ============================================================
@@ -302,6 +304,8 @@ export default async function ContactPage({
   const sp = await searchParams;
   const status = getFirstValue(sp.status);
   const field = getFirstValue(sp.field);
+  const initialSubject = getFirstValue(sp.subject).trim().slice(0, 200);
+  const contextPageUrl = getFirstValue(sp.page).trim().slice(0, 600);
 
   // ===== Server Action =====
   async function submitContact(formData: FormData): Promise<void> {
@@ -320,6 +324,7 @@ export default async function ContactPage({
     const email = String(formData.get("email") || "").trim();
     const subject = String(formData.get("subject") || "").trim();
     const message = String(formData.get("message") || "").trim();
+    const pageUrl = String(formData.get("page") || "").trim().slice(0, 600);
 
     if (!name) redirect(`/${actionLang}/contact?status=error&field=name`);
     if (!email) redirect(`/${actionLang}/contact?status=error&field=email`);
@@ -332,7 +337,9 @@ export default async function ContactPage({
         name,
         email,
         subject || DEFAULT_SUBJECT[actionLang],
-        message,
+        pageUrl
+          ? `${message}\n\n${actionLang === "ar" ? "صفحة البلاغ" : "Reported page"}: ${pageUrl}`
+          : message,
         actionLang
       );
       success = result.success;
@@ -565,6 +572,7 @@ export default async function ContactPage({
 
             <form action={submitContact} className="grid gap-5">
               <input type="hidden" name="lang" value={l} />
+              {contextPageUrl && <input type="hidden" name="page" value={contextPageUrl} />}
 
               {/* Honeypot */}
               <input
@@ -623,6 +631,7 @@ export default async function ContactPage({
                   id="subject"
                   name="subject"
                   type="text"
+                  defaultValue={initialSubject}
                   placeholder={ui.subjectPlaceholder}
                   className="input-islamic"
                 />

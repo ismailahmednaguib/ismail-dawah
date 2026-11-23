@@ -181,6 +181,13 @@ export interface LearnItem {
   levels: string[];
   published_at: string | null;
   views: number;
+  references: Array<{
+    kind: string;
+    hadith_book?: string | null;
+    hadith_number?: number | null;
+    hadith_grade?: string | null;
+    verified?: boolean;
+  }>;
 }
 
 /**
@@ -218,7 +225,8 @@ export async function getPublishedContent(
         slug,
         summary,
         lang
-      )
+      ),
+      content_references (kind, hadith_book, hadith_number, hadith_grade, verified)
     `, { count: 'exact' })
     .eq('status', 'published')
     .eq('content_translations.lang', lang);
@@ -274,6 +282,7 @@ export async function getPublishedContent(
       levels: row.levels ?? [],
       published_at: row.published_at,
       views: row.views ?? 0,
+      references: (row.content_references ?? []).filter((reference: any) => reference?.verified === true),
     };
   });
 

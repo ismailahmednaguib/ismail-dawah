@@ -6,6 +6,7 @@ import QuestionsClient from '@/components/admin/QuestionsClient';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
+import DawahInquiriesClient from '@/components/admin/DawahInquiriesClient';
 
 export const metadata: Metadata = {
   title: 'أسئلة الزوار | لوحة التحكم',
@@ -21,6 +22,7 @@ export default async function QuestionsPage() {
     <div>
       <AdminPageHeader title="أسئلة الزوار" description="راجع الأسئلة الواردة واكتب الإجابات من نفس لوحة التحكم." eyebrow="التواصل" />
       <QuestionsClient />
+      <DawahInquiriesClient />
     </div>
   );
 }

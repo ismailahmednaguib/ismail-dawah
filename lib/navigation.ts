@@ -106,16 +106,21 @@ export const NAV_TREE: NavNode[] = [
 
   n("non-muslim", "بوابة غير المسلمين", "Non-Muslim Portal", "◈", "/dawah", [
     n("dawah-path", "اختبر مسارك الدعوي", "Find your learning path", "🧭", "/dawah/path"),
-    n("what-is-islam", "ما هو الإسلام؟", "What is Islam?", "🕌"),
-    n("who-is-muhammad", "من هو محمد ﷺ؟", "Who is Muhammad ﷺ?", "🌟"),
-    n("quran-intro", "القرآن الكريم (مقدمة)", "The Quran (Intro)", "📖", "/quran"),
-    n("women-in-islam", "المرأة في الإسلام", "Women in Islam", "👩"),
-    n("jihad-terrorism", "الجهاد والإرهاب (الرد على الشبهة)", "Jihad & Terrorism", "🛡️"),
-    n("equality-freedom", "الحرية والمساواة في الإسلام", "Equality & Freedom in Islam", "⚖️"),
+    n("what-is-islam", "ما هو الإسلام؟", "What is Islam?", "🕌", "/dawah/what-is-islam"),
+    n("who-is-muhammad", "من هو محمد ﷺ؟", "Who is Muhammad ﷺ?", "🌟", "/dawah/who-is-muhammad"),
+    n("quran-intro", "القرآن الكريم وكيف نُقل إلينا", "The Quran: What It Is and How It Reached Us", "📖", "/dawah/quran-intro"),
+    n("muslim-day", "كيف يعيش المسلم يومه؟", "How Does a Muslim Live?", "🕌", "/dawah/muslim-day"),
+    n("women-in-islam", "المرأة في الإسلام", "Women in Islam", "👩", "/dawah/women-in-islam"),
+    n("jihad-terrorism", "الإسلام والعنف والجهاد", "Islam, Violence, and Jihad", "🛡️", "/dawah/jihad-and-violence"),
+    n("jesus-in-islam", "المسيح عيسى عليه السلام", "Jesus in Islam", "✝️", "/dawah/jesus-in-islam"),
+    n("suffering-and-evil", "الله والمعاناة والشر", "God, Suffering, and Evil", "🌿", "/dawah/suffering-and-evil"),
+    n("reason-and-science", "الإسلام والعقل والعلم", "Islam, Reason, and Science", "🔬", "/dawah/reason-and-science"),
+    n("death-and-purpose", "الموت وغاية الحياة", "Death and the Purpose of Life", "🌙", "/dawah/death-and-purpose"),
+    n("equality-freedom", "الحرية والمساواة في الإسلام", "Equality & Freedom in Islam", "⚖️", "/dawah/what-is-islam"),
     n("convert-guide", "دليل اعتناق الإسلام خطوة بخطوة", "How to Embrace Islam", "🤲", "/embrace-islam"),
     n("comparative-religion", "مقارنة الأديان", "Comparative Religion", "📚", "/fields/comparative-religion", undefined, { taxonomy: "comparative-religion" }),
     n("non-muslim-faq", "أسئلة شائعة من غير المسلمين", "FAQ from Non-Muslims", "❓", "/faq"),
-    n("ask-daee", "تواصل مع داعية / اطرح سؤالًا", "Ask a Daee", "💬", "/contact"),
+    n("ask-daee", "تواصل مع داعية / اطرح سؤالًا", "Ask a Daee", "💬", "/dawah/ask-muslim"),
   ], { desc: { ar: "تعريف مبسّط بالإسلام لمن يبحث عنه", en: "A simple introduction to Islam" } }),
 
   n("religions", "الأديان والفكر", "Religions & Thought", "◈", "/religions", [

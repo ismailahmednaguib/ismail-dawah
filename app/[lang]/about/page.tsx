@@ -662,6 +662,9 @@ export default async function AboutPage({
             <a href="#founder" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               <span aria-hidden="true" className="inline-flex">{renderDesignIcon("👤", 20)}</span>{ui.founderTitle}
             </a>
+            <a href="#review" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
+              <span aria-hidden="true" className="inline-flex">{renderDesignIcon("✓", 20)}</span>{isRTL ? "المراجعة العلمية" : "Scholarly review"}
+            </a>
             <a href="#content" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition-all hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-200 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300">
               <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 22)}</span>{ui.contentTitle}
             </a>
@@ -822,25 +825,55 @@ export default async function AboutPage({
                   {ui.founderParagraph2}
                 </p>
               </div>
-              {(cred1 || cred2) && (
-                <div
-                  id="certificates"
-                  className="mt-5 scroll-mt-32 rounded-xl border border-gold-500/25 bg-gold-500/5 p-4"
-                >
-                  <p className="mb-2 text-sm font-bold text-gold-700 dark:text-gold-300">
-                    {isRTL ? "الشهادات العلمية" : "Academic credentials"}
-                  </p>
+              <div
+                id="certificates"
+                className="mt-5 scroll-mt-32 rounded-xl border border-gold-500/25 bg-gold-500/5 p-4"
+              >
+                <p className="mb-2 text-sm font-bold text-gold-700 dark:text-gold-300">
+                  {isRTL ? "الشهادات العلمية" : "Academic credentials"}
+                </p>
+                {cred1 || cred2 ? (
                   <ul className="space-y-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                     {cred1 && <li>• {cred1}</li>}
                     {cred2 && <li>• {cred2}</li>}
                   </ul>
-                </div>
-              )}
+                ) : (
+                  <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                    {isRTL
+                      ? "لم تُضف بيانات الشهادات العلمية إلى إعدادات المنصة بعد. لن نضع مؤهلات غير موثقة هنا."
+                      : "Academic credentials have not been added to the platform settings yet. We will not publish unverified credentials here."}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         </>)}
+        {/* ===== الشفافية والمراجعة العلمية ===== */}
+        {gate.visible('k5') && (
+          <section id="review" className="card mb-8 scroll-mt-32 p-6 md:p-8">
+            <h2
+              className="mb-3 text-2xl font-black text-slate-900 dark:text-white"
+              style={{ fontFamily: "var(--font-amiri)" }}
+            >
+              {isRTL ? "المراجعة العلمية والشفافية" : "Scholarly review and transparency"}
+            </h2>
+            <p className="mb-5 leading-relaxed text-slate-600 dark:text-slate-300">
+              {isRTL
+                ? "نعرض حالة المراجعة ومصادر المادة عندما تتوفر، ولا نُنشئ أسماء أو مؤهلات غير موجودة. اللجنة المعلنة تحتاج إلى اعتماد أصحابها وتخصصاتهم قبل نشر أسمائهم. حتى يكتمل ذلك، تُحصر المواد الحساسة في مراجع قابلة للتحقق وتبقى المراجعة البشرية شرطًا للنشر باسم المنصة."
+                : "We show review status and sources when available, and we do not invent names or credentials. A public committee requires confirmed members and specialties before their names are published. Until then, sensitive material must have verifiable references and human review remains required for publication under the platform name."}
+            </p>
+            <ul className="grid gap-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300 md:grid-cols-2">
+              <li className="rounded-xl border border-slate-100 bg-slate-50/60 p-4 dark:border-night-700 dark:bg-night-800/40">
+                {isRTL ? "مسار المادة: مسودة، مراجعة شرعية، مراجعة لغوية، نشر، ثم تاريخ مراجعة ظاهر." : "Content path: draft, scholarly review, language review, publication, then a visible review date."}
+              </li>
+              <li className="rounded-xl border border-slate-100 bg-slate-50/60 p-4 dark:border-night-700 dark:bg-night-800/40">
+                {isRTL ? "يمكن الإبلاغ عن الخطأ من صفحة المادة، وتُراجع البلاغات قبل أي تعديل." : "Errors can be reported from the content page, and reports are reviewed before changes are made."}
+              </li>
+            </ul>
+          </section>
+        )}
         {/* ===== منهج المحتوى ===== */}
         {gate.visible('k6') && (<>
         <div id="content" className="card mb-8 scroll-mt-32 p-6 md:p-8">

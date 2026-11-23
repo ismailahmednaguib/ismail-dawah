@@ -48,6 +48,7 @@ interface ContentCardProps {
   published_at?: string | null;
   /** هل عُرضت الترجمة البديلة (العربية) لعدم توفر ترجمة اللغة المطلوبة؟ */
   isFallback?: boolean;
+  sourceLabel?: string | null;
 }
 
 export default function ContentCard({
@@ -58,6 +59,7 @@ export default function ContentCard({
   summary,
   published_at,
   isFallback = false,
+  sourceLabel,
 }: ContentCardProps) {
   const config = TYPE_CONFIG[type] ?? {
     icon: FileTextIcon,
@@ -115,6 +117,12 @@ export default function ContentCard({
         {summary && (
           <p className="line-clamp-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             {summary}
+          </p>
+        )}
+
+        {sourceLabel && (
+          <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            {sourceLabel}
           </p>
         )}
 

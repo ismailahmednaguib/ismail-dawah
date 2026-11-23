@@ -28,6 +28,7 @@ interface Reference {
   scholar_name?: string;
   book_title?: string;
   quote_text?: string;
+  source_url?: string | null;
   verified?: boolean;
 }
 
@@ -154,6 +155,16 @@ export default function ReferenceDisplay({
                     )}
                   </div>
                 </div>
+              )}
+              {ref.source_url && /^https?:\/\//i.test(ref.source_url) && (
+                <a
+                  href={ref.source_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 inline-flex text-xs font-semibold text-primary-700 underline-offset-4 hover:underline dark:text-primary-300"
+                >
+                  {lang === 'ar' ? 'فتح المصدر' : 'Open source'}
+                </a>
               )}
             </li>
           );

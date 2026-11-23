@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-11-07T16:44:46.118Z
+> تاريخ التوليد: 2026-11-23T23:02:12.742Z
 
 ## الملخص
 
-- المسارات العامة: **57**
-- مسارات الإدارة: **19**
-- واجهات API: **76**
+- المسارات العامة: **58**
+- مسارات الإدارة: **20**
+- واجهات API: **78**
 - مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **6838**
+- العناصر المفحوصة: **7243**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **961** · `api-contract` = **576** · `catalogued` = **2950** · `curated-reference` = **1634** · `immutable-reference` = **717**
+- توزيع الحالات: `admin-ui` = **1115** · `api-contract` = **587** · `catalogued` = **2988** · `curated-reference` = **1836** · `immutable-reference` = **717**
 
 ## المسارات
 
@@ -29,6 +29,7 @@
 | public | `/{lang}/daily-wird` | `app/[lang]/daily-wird/page.tsx` | metadata |
 | public | `/{lang}/dawah` | `app/[lang]/dawah/page.tsx` | metadata |
 | public | `/{lang}/dawah-guide` | `app/[lang]/dawah-guide/page.tsx` | metadata |
+| public | `/{lang}/dawah/{slug}` | `app/[lang]/dawah/[slug]/page.tsx` | metadata |
 | public | `/{lang}/dawah/path` | `app/[lang]/dawah/path/page.tsx` | metadata |
 | public | `/{lang}/doubts` | `app/[lang]/doubts/page.tsx` | metadata |
 | public | `/{lang}/download` | `app/[lang]/download/page.tsx` | metadata |
@@ -81,6 +82,7 @@
 | admin | `/admin/content` | `app/admin/(dashboard)/content/page.tsx` | metadata |
 | admin | `/admin/content/{id}` | `app/admin/(dashboard)/content/[id]/page.tsx` | metadata |
 | admin | `/admin/content/new` | `app/admin/(dashboard)/content/new/page.tsx` | metadata |
+| admin | `/admin/content/type/{type}` | `app/admin/(dashboard)/content/type/[type]/page.tsx` | metadata |
 | admin | `/admin/control` | `app/admin/(dashboard)/control/page.tsx` | يحتاج فحص metadata |
 | admin | `/admin/login` | `app/admin/login/page.tsx` | يحتاج فحص metadata |
 | admin | `/admin/newsletter` | `app/admin/(dashboard)/newsletter/page.tsx` | metadata |
@@ -108,6 +110,7 @@
 | api | `/api/admin/content/import` | `app/api/admin/content/import/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/control-surface` | `app/api/admin/control-surface/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/dawah-assignments` | `app/api/admin/dawah-assignments/route.ts` | يحتاج فحص metadata |
+| api | `/api/admin/dawah-inquiries` | `app/api/admin/dawah-inquiries/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/dawah-journey` | `app/api/admin/dawah-journey/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/email/test` | `app/api/admin/email/test/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/export` | `app/api/admin/export/route.ts` | يحتاج فحص metadata |
@@ -139,6 +142,7 @@
 | api | `/api/cron/backup` | `app/api/cron/backup/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/dawah-journey` | `app/api/cron/dawah-journey/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/publish` | `app/api/cron/publish/route.ts` | يحتاج فحص metadata |
+| api | `/api/dawah/inquiries` | `app/api/dawah/inquiries/route.ts` | يحتاج فحص metadata |
 | api | `/api/dawah/journey/subscribe` | `app/api/dawah/journey/subscribe/route.ts` | يحتاج فحص metadata |
 | api | `/api/dawah/journey/unsubscribe` | `app/api/dawah/journey/unsubscribe/route.ts` | يحتاج فحص metadata |
 | api | `/api/debug` | `app/api/debug/route.ts` | يحتاج فحص metadata |

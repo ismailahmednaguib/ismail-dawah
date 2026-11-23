@@ -13,6 +13,8 @@ import type { Lang } from "@/lib/i18n";
 
 const STORAGE_KEY = "dawah_prayer_location_v2";
 const SETTINGS_KEY = "dawah_prayer_settings_v1";
+const TIMINGS_CACHE_KEY = "dawah_prayer_times_v1";
+const TIMINGS_CACHE_TTL = 48 * 60 * 60 * 1000;
 
 const DEFAULT_LOCATION = {
   latitude: 30.0444,
@@ -100,6 +102,18 @@ function parseTimeToDate(time: string, base: Date): Date {
 
 function timingKey(id: string): string {
   return id.charAt(0).toUpperCase() + id.slice(1);
+}
+
+function timingsCacheKey(location: WidgetLocation, method: number): string {
+  return `${TIMINGS_CACHE_KEY}:${location.latitude.toFixed(4)}:${location.longitude.toFixed(4)}:${method}`;
+}
+
+function hasUsableTimings(value: unknown): value is Timings {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Timings;
+  return ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"].every(
+    (key) => typeof candidate[key] === "string" && candidate[key].includes(":"),
+  );
 }
 
 function formatCountdown(ms: number, lang: Lang): string {
@@ -204,6 +218,36 @@ export default function PrayerWidget({ lang }: { lang: Lang }) {
     async function load() {
       setLoading(true);
       setError(false);
+      const cacheKey = timingsCacheKey(location, method);
+      let hasCachedTimings = false;
+
+      try {
+        const cachedRaw = localStorage.getItem(cacheKey);
+        if (cachedRaw) {
+          const cached = JSON.parse(cachedRaw) as {
+            savedAt?: number;
+            timings?: Timings;
+            hijri?: string | null;
+          };
+          if (
+            typeof cached.savedAt === "number" &&
+            Date.now() - cached.savedAt <= TIMINGS_CACHE_TTL &&
+            hasUsableTimings(cached.timings)
+          ) {
+            setTimings(cached.timings);
+            setHijri(typeof cached.hijri === "string" ? cached.hijri : null);
+            hasCachedTimings = true;
+          }
+        }
+      } catch {
+        // Ignore malformed browser storage and continue with the live request.
+      }
+
+      if (!hasCachedTimings) {
+        setTimings(null);
+        setHijri(null);
+      }
+
       try {
         const url = `https://api.aladhan.com/v1/timings/${todayPath()}?latitude=${location.latitude}&longitude=${location.longitude}&method=${method}`;
         const response = await fetch(url, { signal: controller.signal });
@@ -212,10 +256,18 @@ export default function PrayerWidget({ lang }: { lang: Lang }) {
         if (json.code !== 200 || !json.data?.timings) throw new Error("prayer-times");
         setTimings(json.data.timings);
         setHijri(json.data.date?.hijri?.date ?? null);
+        try {
+          localStorage.setItem(cacheKey, JSON.stringify({
+            savedAt: Date.now(),
+            timings: json.data.timings,
+            hijri: json.data.date?.hijri?.date ?? null,
+          }));
+        } catch {
+          // Caching is optional and must not block live prayer times.
+        }
       } catch (err) {
         if ((err as Error).name !== "AbortError") {
           setError(true);
-          setTimings(null);
         }
       } finally {
         setLoading(false);
@@ -290,7 +342,7 @@ export default function PrayerWidget({ lang }: { lang: Lang }) {
 
               {loading && !timings ? (
                 <p className="mt-1 text-sm opacity-70">{ui.loading}</p>
-              ) : error ? (
+              ) : error && !timings ? (
                 <p className="mt-1 text-sm opacity-70">
                   {ui.error}{" "}
                   <Link href={`/${lang}/prayer-times`} className="underline">

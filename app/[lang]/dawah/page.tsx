@@ -24,12 +24,18 @@ const COPY: Record<string, {
     introTitle: "ما هو الإسلام؟",
     intro: "الإسلام دين الله الذي ارتضاه للبشرية، يدعو إلى توحيد الله وعبادته وحده، وتكريم الأنبياء والرسل، وتحقيق العدالة والمساواة بين الناس.",
     sections: [
-      { id: "intro", icon: "🕌", title: "تعريف بالإسلام", desc: "مقدمة مبسطة عن دين الإسلام، أركانه، ومبادئه الأساسية.", href: "/ar/dawah-guide" },
-      { id: "prophet", icon: "🌙", title: "من هو النبي محمد ﷺ؟", desc: "حياة الرسول الكريم، خلقه، رسالته، وأثره في التاريخ.", href: "/ar/prophets-stories" },
-      { id: "quran", icon: "📖", title: "القرآن الكريم", desc: "كتاب الله المنزل، معجزة محمد ﷺ المستمرة إلى يوم القيامة.", href: "/ar/quran" },
-      { id: "women", icon: "👩", title: "المرأة في الإسلام", desc: "مكانة المرأة، حقوقها، وواجباتها في ظل الشريعة الإسلامية.", href: "/ar/women-fatwas" },
-      { id: "jesus", icon: "✝️", title: "المسيح في الإسلام والمسيحية", desc: "مقارنة بين مكانة عيسى عليه السلام في الإسلام والمسيحية.", href: "/ar/atheism-response" },
-      { id: "convert", icon: "🤲", title: "دليل اعتناق الإسلام", desc: "خطوات مبسطة للراغبين في اعتناق الإسلام، وكيفية النطق بالشهادتين.", href: "/ar/embrace-islam" },
+      { id: "intro", icon: "🕌", title: "تعريف بالإسلام", desc: "مقدمة مبسطة عن دين الإسلام، أركانه، ومبادئه الأساسية.", href: "/ar/dawah/what-is-islam" },
+      { id: "prophet", icon: "🌙", title: "من هو النبي محمد ﷺ؟", desc: "حياة الرسول الكريم، خلقه، رسالته، وأثره في التاريخ.", href: "/ar/dawah/who-is-muhammad" },
+      { id: "quran", icon: "📖", title: "القرآن الكريم", desc: "ما هو القرآن، وكيف يُقرأ ويُفهم ويُراجع.", href: "/ar/dawah/quran-intro" },
+      { id: "daily", icon: "🕌", title: "كيف يعيش المسلم يومه؟", desc: "الصلاة والذكر والعمل والأخلاق في الحياة اليومية.", href: "/ar/dawah/muslim-day" },
+      { id: "women", icon: "👩", title: "المرأة في الإسلام", desc: "مكانة المرأة وحقوقها مع عرض منصف ومتزن.", href: "/ar/dawah/women-in-islam" },
+      { id: "jihad", icon: "🛡️", title: "الإسلام والعنف والجهاد", desc: "تفريق واضح بين الجهاد المشروع والعنف ضد الأبرياء.", href: "/ar/dawah/jihad-and-violence" },
+      { id: "jesus", icon: "✝️", title: "المسيح في الإسلام", desc: "مكانة عيسى عليه السلام والحوار باحترام.", href: "/ar/dawah/jesus-in-islam" },
+      { id: "suffering", icon: "🌿", title: "الله والمعاناة والشر", desc: "مدخل متواضع لسؤال الألم والمعنى والرجاء.", href: "/ar/dawah/suffering-and-evil" },
+      { id: "reason", icon: "🔬", title: "الإسلام والعقل والعلم", desc: "كيف نميز بين الوحي والتفسير والمعرفة التجريبية.", href: "/ar/dawah/reason-and-science" },
+      { id: "death", icon: "🌙", title: "الموت وغاية الحياة", desc: "الغاية والمسؤولية والآخرة في التصور الإسلامي.", href: "/ar/dawah/death-and-purpose" },
+      { id: "convert", icon: "🤲", title: "كيف أعتنق الإسلام؟", desc: "خطوات مبسطة وآمنة بعد الشهادتين.", href: "/ar/embrace-islam" },
+      { id: "ask", icon: "💬", title: "اسأل مسلمًا", desc: "أرسل سؤالك العام دون ضغط أو تتبع غير ضروري.", href: "/ar/dawah/ask-muslim" },
     ],
     faq: [
       { q: "هل الإسلام عنيف؟", a: "الإسلام دين سلام ورحمة، والله تعالى يقول: «لَا إِكْرَاهَ فِي الدِّينِ». القتال في الإسلام للدفاع وليس للاعتداء." },
@@ -44,12 +50,18 @@ const COPY: Record<string, {
     introTitle: "What is Islam?",
     intro: "Islam is the religion of God that He has chosen for humanity, calling to the oneness of God and worshipping Him alone, respecting the prophets and messengers, and achieving justice and equality among people.",
     sections: [
-      { id: "intro", icon: "🕌", title: "Introduction to Islam", desc: "A simple introduction to the religion of Islam, its pillars, and basic principles.", href: "/en/dawah-guide" },
-      { id: "prophet", icon: "🌙", title: "Who is Prophet Muhammad ﷺ?", desc: "The life of the noble Messenger, his character, his message, and his impact on history.", href: "/en/prophets-stories" },
-      { id: "quran", icon: "📖", title: "The Holy Quran", desc: "The Book of God revealed, the enduring miracle of Muhammad ﷺ until the Day of Judgment.", href: "/en/quran" },
-      { id: "women", icon: "👩", title: "Women in Islam", desc: "The status of women, their rights, and their duties under Islamic law.", href: "/en/women-fatwas" },
-      { id: "jesus", icon: "✝️", title: "Jesus in Islam and Christianity", desc: "A comparison of the status of Jesus (peace be upon him) in Islam and Christianity.", href: "/en/atheism-response" },
-      { id: "convert", icon: "🤲", title: "Guide to Embracing Islam", desc: "Simple steps for those wishing to embrace Islam, and how to pronounce the two testimonies of faith.", href: "/en/embrace-islam" },
+      { id: "intro", icon: "🕌", title: "Introduction to Islam", desc: "A simple introduction to monotheism, prophethood, worship, and character.", href: "/en/dawah/what-is-islam" },
+      { id: "prophet", icon: "🌙", title: "Who Was Prophet Muhammad ﷺ?", desc: "His message, character, and a careful way to read his biography.", href: "/en/dawah/who-is-muhammad" },
+      { id: "quran", icon: "📖", title: "The Quran: An Introduction", desc: "What the Quran is and how readers can approach it responsibly.", href: "/en/dawah/quran-intro" },
+      { id: "daily", icon: "🕌", title: "How Does a Muslim Live?", desc: "Prayer, remembrance, work, character, and daily relationships.", href: "/en/dawah/muslim-day" },
+      { id: "women", icon: "👩", title: "Women in Islam", desc: "A fair overview of dignity, rights, and diversity of experience.", href: "/en/dawah/women-in-islam" },
+      { id: "jihad", icon: "🛡️", title: "Islam, Violence, and Jihad", desc: "A clear distinction between lawful striving and violence against civilians.", href: "/en/dawah/jihad-and-violence" },
+      { id: "jesus", icon: "✝️", title: "Jesus in Islam", desc: "Jesus in Islam and respectful comparison in dialogue.", href: "/en/dawah/jesus-in-islam" },
+      { id: "suffering", icon: "🌿", title: "God, Suffering, and Evil", desc: "A humble introduction to pain, meaning, justice, and hope.", href: "/en/dawah/suffering-and-evil" },
+      { id: "reason", icon: "🔬", title: "Islam, Reason, and Science", desc: "Distinguishing revelation, interpretation, and empirical knowledge.", href: "/en/dawah/reason-and-science" },
+      { id: "death", icon: "🌙", title: "Death and the Purpose of Life", desc: "Purpose, responsibility, death, and the Hereafter.", href: "/en/dawah/death-and-purpose" },
+      { id: "convert", icon: "🤲", title: "How Do I Embrace Islam?", desc: "Simple and safe steps after the two testimonies.", href: "/en/embrace-islam" },
+      { id: "ask", icon: "💬", title: "Ask a Muslim", desc: "Send a general question without pressure or unnecessary tracking.", href: "/en/dawah/ask-muslim" },
     ],
     faq: [
       { q: "Is Islam violent?", a: "Islam is a religion of peace and mercy, and God says: «There is no compulsion in religion». Fighting in Islam is for defense only, not for aggression." },
@@ -86,6 +98,9 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
             <div className="mb-8">
               <h2 className="text-2xl font-black text-primary-950 mb-3">{c.introTitle}</h2>
               <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed">{c.intro}</p>
+              <p className="mt-3 text-sm font-semibold text-primary-700 dark:text-primary-300">
+                {L === "ar" ? `${c.sections.length} صفحة أساسية للبدء والبحث` : `${c.sections.length} essential pages for starting and exploring`}
+              </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -38,6 +38,7 @@ declare
     'newsletter_subscribers',
     'dawah_journey_subscribers',
     'dawah_request_assignments',
+    'dawah_inquiries',
     'learner_content_progress',
     'user_favorites',
     'user_questions',

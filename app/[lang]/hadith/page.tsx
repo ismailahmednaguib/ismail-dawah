@@ -7,6 +7,7 @@ import ContentCard from '@/components/learn/ContentCard';
 import { getPublishedContent } from '@/lib/learn/queries';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { PageHero, renderDesignIcon } from '@/components/ui';
+import { hadithBookLabel, hadithGradeLabel } from '@/lib/references/display';
 
 export const dynamic = 'force-dynamic';
 
@@ -130,6 +131,14 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
           {data.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {data.map((item) => (
+                (() => {
+                  const reference = item.references?.[0];
+                  const book = hadithBookLabel(reference?.hadith_book, currentLang);
+                  const grade = hadithGradeLabel(reference?.hadith_grade, currentLang);
+                  const sourceLabel = book || grade
+                    ? `${currentLang === 'ar' ? 'المصدر' : 'Source'}: ${[book, grade].filter(Boolean).join(' · ')}`
+                    : currentLang === 'ar' ? 'قيد التوثيق والمراجعة' : 'Source review pending';
+                  return (
                 <ContentCard
                   key={item.id}
                   lang={lang}
@@ -138,7 +147,10 @@ export default async function HadithPage({ params, searchParams }: PageProps) {
                   title={item.title}
                   summary={item.summary}
                   published_at={item.published_at}
+                  sourceLabel={sourceLabel}
                 />
+                  );
+                })()
               ))}
             </div>
           ) : (

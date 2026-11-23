@@ -140,6 +140,7 @@ export interface ContentReferenceRow {
   volume_page: string | null;
   quote_text: string | null;
   note: string | null;
+  source_url: string | null;
   verified: boolean;
   verified_by: string | null;
   sort_order: number;

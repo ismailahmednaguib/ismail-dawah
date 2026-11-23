@@ -57,6 +57,16 @@ const checks = [
     query: 'admin_mfa?select=admin_id&limit=1',
     migration: '20261027_admin_mfa.sql',
   },
+  {
+    name: 'dawah_inquiries',
+    query: 'dawah_inquiries?select=id&limit=1',
+    migration: '20261124_dawah_inquiries.sql',
+  },
+  {
+    name: 'content_references.source_url',
+    query: 'content_references?select=source_url&limit=1',
+    migration: '20261124_reference_source_urls.sql',
+  },
 ];
 
 const storageChecks = [
