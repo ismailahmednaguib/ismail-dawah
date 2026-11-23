@@ -9,6 +9,7 @@ import type { IconComponent } from "@/lib/icons";
 import {
   BellIcon,
   BookOpenIcon,
+  BookmarkIcon,
   CheckCircleIcon,
   DownloadIcon,
   EditIcon,
@@ -56,6 +57,22 @@ export default function AdminSidebar({
     { section: "الرئيسية", href: "/admin", label: "لوحة المعلومات", icon: HomeIcon, show: true },
     { section: "الرئيسية", href: "/admin/control", label: "التحكم الموحد", icon: SettingsIcon, show: true },
     { section: "المحتوى", href: "/admin/content", label: "المحتوى", icon: EditIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/research", label: "العلوم والأبحاث", icon: BookOpenIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/fatwas", label: "الفتاوى", icon: ShieldIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/articles", label: "المقالات", icon: FileTextIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/lessons", label: "الدروس", icon: BookOpenIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/courses", label: "الدورات", icon: BookmarkIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/books", label: "الكتب", icon: BookOpenIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/hadith", label: "الأحاديث", icon: BookOpenIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/khutbahs", label: "الخطب", icon: FileTextIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/duas", label: "الأدعية والأذكار", icon: BookOpenIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/stories", label: "القصص والسيرة", icon: BookOpenIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/faq", label: "الأسئلة والشبهات", icon: HelpCircleIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/events", label: "الفعاليات", icon: BellIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/audio", label: "الصوتيات", icon: FileTextIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/videos", label: "الفيديوهات", icon: FileTextIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/pages", label: "الصفحات الثابتة", icon: FileTextIcon, show: can(roles, "content.read") },
+    { section: "أبواب الموقع", href: "/admin/content/type/profiles", label: "تراجم العلماء", icon: BookOpenIcon, show: can(roles, "content.read") },
     { section: "المحتوى", href: "/admin/taxonomies", label: "التصنيفات", icon: BookOpenIcon, show: can(roles, "taxonomy.manage") },
     { section: "المحتوى", href: "/admin/translations", label: "الترجمات", icon: LanguageIcon, show: can(roles, "content.read") },
     { section: "المحتوى", href: "/admin/quality", label: "جودة المحتوى", icon: SparklesIcon, show: can(roles, "content.read") },
@@ -114,9 +131,11 @@ export default function AdminSidebar({
 
       <nav className="flex flex-1 gap-2 overflow-x-auto px-3 pb-3 lg:block lg:space-y-1.5 lg:overflow-y-auto lg:px-4" aria-label="قائمة لوحة التحكم">
         {visibleItems.map((item, index) => {
+            const isContentSectionPage = pathname.startsWith("/admin/content/type/");
             const active =
               pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
+              (!isContentSectionPage && item.href !== "/admin" && pathname.startsWith(`${item.href}/`)) ||
+              (isContentSectionPage && item.section === "أبواب الموقع" && pathname.startsWith(`${item.href}/`));
 
             return (
               <div key={item.href}>

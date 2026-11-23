@@ -14,6 +14,7 @@ import type {
 import type { IconComponent } from '@/lib/icons';
 import {
   AlertIcon,
+  BellIcon,
   BookOpenIcon,
   BookmarkIcon,
   DuaHandsIcon,
@@ -37,6 +38,12 @@ const CONTENT_TYPES: { value: ContentType; label: string; icon: IconComponent }[
   { value: 'duaa', label: 'دعاء', icon: DuaHandsIcon },
   { value: 'hadith', label: 'حديث', icon: BookOpenIcon },
   { value: 'research', label: 'بحث', icon: FileTextIcon },
+  { value: 'faq', label: 'سؤال شائع', icon: HelpCircleIcon },
+  { value: 'event', label: 'فعالية', icon: BellIcon },
+  { value: 'audio', label: 'مادة صوتية', icon: FileTextIcon },
+  { value: 'video', label: 'فيديو', icon: FileTextIcon },
+  { value: 'page', label: 'صفحة ثابتة', icon: FileTextIcon },
+  { value: 'profile', label: 'ترجمة عالم', icon: BookOpenIcon },
 ];
 
 const AUDIENCES: { value: Audience; label: string }[] = [
@@ -76,12 +83,12 @@ const MADHHABS: { value: Madhhab; label: string }[] = [
   { value: 'jafari', label: 'جعفري' },
 ];
 
-export default function ContentForm() {
+export default function ContentForm({ initialType = 'article' }: { initialType?: ContentType }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  const [contentType, setContentType] = useState<ContentType>('article');
+  const [contentType, setContentType] = useState<ContentType>(initialType);
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [summary, setSummary] = useState('');

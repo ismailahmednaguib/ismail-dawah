@@ -17,8 +17,9 @@ export default function AdminPageHeader({
   children,
 }: AdminPageHeaderProps) {
   return (
-    <header className="admin-page-header mb-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
+    <header className="admin-page-header relative mb-6 overflow-hidden rounded-2xl border p-5 md:p-7">
+      <div aria-hidden="true" className="pointer-events-none absolute -end-20 -top-24 h-56 w-56 rounded-full bg-gold-400/10 blur-3xl" />
+      <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="admin-page-eyebrow">{eyebrow}</p>
           <h1 className="admin-page-title">{title}</h1>
@@ -26,7 +27,7 @@ export default function AdminPageHeader({
         </div>
         {actions && <div className="shrink-0">{actions}</div>}
       </div>
-      {children}
+      {children && <div className="relative z-10">{children}</div>}
     </header>
   );
 }
