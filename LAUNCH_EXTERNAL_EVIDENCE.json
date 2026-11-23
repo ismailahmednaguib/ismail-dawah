@@ -3,20 +3,8 @@
   "version": 1,
   "instructions": "لا تغيّر الحالة إلى passed إلا بعد تنفيذ الاختبار فعليًا وإرفاق وصف الدليل وتاريخ التنفيذ.",
   "gates": [
-    {
-      "id": "backup-restore",
-      "required": true,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    },
-    {
-      "id": "migration-ledger",
-      "required": true,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    },
+    { "id": "backup-restore", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "migration-ledger", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
     {
       "id": "production-performance",
       "required": true,
@@ -24,40 +12,10 @@
       "evidence": "GitHub Actions verify run 44187656639 completed successfully on commit 393d62e940242e764136a5424771c933698f5ca7: production Lighthouse ran for /ar on mobile and desktop, scripts/check-lighthouse-reports.mjs enforced performance and TBT thresholds, and artifact lighthouse-production (artifact 14375851407) is retained. https://github.com/ismailahmednaguib/ismail-dawah/actions/runs/44187656639",
       "completed_at": "2026-11-18T00:02:00Z"
     },
-    {
-      "id": "real-device-accessibility",
-      "required": true,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    },
-    {
-      "id": "live-tools",
-      "required": true,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    },
-    {
-      "id": "search-console",
-      "required": false,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    },
-    {
-      "id": "custom-domain",
-      "required": false,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    },
-    {
-      "id": "google-play",
-      "required": false,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
-    }
+    { "id": "real-device-accessibility", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "live-tools", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "search-console", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "custom-domain", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
+    { "id": "google-play", "required": false, "status": "pending", "evidence": "", "completed_at": "" }
   ]
 }
