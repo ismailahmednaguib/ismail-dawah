@@ -102,14 +102,15 @@ export default function TopBar({
         ${className}
       `}
     >
-      <div className="container-page">
-        <div className="flex min-h-14 items-center justify-between gap-3 py-3">
+      <div className="container-page relative">
+        <div aria-hidden="true" className="pointer-events-none absolute -end-20 -top-24 h-56 w-56 rounded-full bg-gold-400/10 blur-3xl" />
+        <div className="page-topbar-content flex items-start justify-between gap-5 py-7 md:py-10">
           {/* ===== الجهة الأولى: رجوع + عنوان + مسار ===== */}
           <div className="flex min-w-0 items-center gap-3">
             {showBack && (
               <BackButtonCompact
                 href={resolvedBackHref}
-                className="shrink-0"
+                className="page-topbar-back shrink-0 rounded-xl"
               />
             )}
 
@@ -144,12 +145,12 @@ export default function TopBar({
                 </nav>
               )}
 
-              <TitleTag className="truncate text-base font-bold text-slate-900 sm:text-lg dark:text-white">
+              <TitleTag className="truncate text-2xl font-black leading-tight text-slate-900 md:text-4xl dark:text-white" style={{ fontFamily: "var(--font-amiri)" }}>
                 {title}
               </TitleTag>
 
               {subtitle && (
-                <p className="hidden max-w-xl truncate text-xs text-slate-500 sm:block dark:text-slate-400">
+                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600 sm:block md:text-base dark:text-slate-300">
                   {subtitle}
                 </p>
               )}

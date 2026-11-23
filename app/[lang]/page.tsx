@@ -463,7 +463,7 @@ export default async function HomePage({
 
       {/* ============ Hero Section ============ */}
       {gate.visible('hero') && (
-      <section style={homeSectionStyle("hero")} className="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 py-20 text-white md:py-28">
+      <section style={homeSectionStyle("hero")} className="home-hero relative overflow-hidden py-20 text-white md:py-28">
         <div
           aria-hidden="true"
           className="absolute inset-0 opacity-10"

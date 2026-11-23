@@ -13,7 +13,7 @@ import { isValidLang, type Lang } from '@/lib/i18n';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import { decodeParam } from '@/lib/params';
 import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
-import { renderDesignIcon } from '@/components/ui';
+import { PageHero, renderDesignIcon } from '@/components/ui';
 
 /**
  * الصور المخزَّنة في Supabase قابلة للتحسين عبر next/image؛ أما الروابط الخارجية
@@ -185,49 +185,37 @@ export default async function LearnContentPage({ params }: PageProps) {
       <JsonLd data={[jsonLd, breadcrumbJsonLd]} />
       <Header lang={currentLang} />
       <main id="main-content" tabIndex={-1} dir={currentLang === 'ar' ? 'rtl' : 'ltr'} className="site-page-shell">
-      {/* شريط علوي */}
-      <div className="border-b border-primary-800/40 bg-gradient-to-r from-primary-950 via-primary-900 to-primary-800 px-4 py-4 text-white">
-        <div className="container-page">
-          <Link
-            href={`/${lang}/learn`}
-            className="text-primary-300 hover:text-white text-sm transition-colors"
-          >
-            {currentLang === 'ar' ? '→ العودة إلى المكتبة' : '← Back to library'}
-          </Link>
-        </div>
-      </div>
+      <PageHero
+        icon="📚"
+        title={t.title}
+        subtitle={t.summary}
+        crumbs={[
+          { label: currentLang === 'ar' ? 'الرئيسية' : 'Home', href: `/${lang}` },
+          { label: currentLang === 'ar' ? 'المكتبة' : 'Library', href: `/${lang}/learn` },
+          { label: t.title },
+        ]}
+      >
+        {content.isTranslated === false && (
+          <div className="mt-5 max-w-3xl rounded-2xl border border-gold-200 bg-white/60 p-4 text-sm leading-relaxed text-gold-800 dark:border-gold-900/30 dark:bg-white/5 dark:text-gold-200">
+            {currentLang === 'ar'
+              ? 'هذا المحتوى متاح حاليًا باللغة العربية فقط، والعمل جارٍ على ترجمته.'
+              : 'This content is currently available in Arabic only; its translation is in progress.'}{' '}
+            {content.translationLang && content.translationLang !== currentLang && (
+              <Link
+                href={`/${content.translationLang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`}
+                className="font-bold underline"
+              >
+                {currentLang === 'ar' ? 'اقرأه باللغة الأصلية' : 'Read the original'}
+              </Link>
+            )}
+          </div>
+        )}
+      </PageHero>
 
       <article className="container-page max-w-4xl py-10 md:py-14">
-        {/* العنوان */}
-        <header className="mb-8">
-          <h1 className="mb-4 text-3xl font-black leading-tight text-primary-950 dark:text-white md:text-4xl" style={{ fontFamily: 'var(--font-amiri)' }}>
-            {t.title}
-          </h1>
-
-          {t.summary && (
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              {t.summary}
-            </p>
-          )}
-
-          {content.isTranslated === false && (
-            <div className="mt-4 rounded-2xl border border-gold-200 bg-gold-50/70 p-4 text-sm leading-relaxed text-gold-800 dark:border-gold-900/30 dark:bg-gold-950/20 dark:text-gold-200">
-              {currentLang === 'ar'
-                ? 'هذا المحتوى متاح حاليًا باللغة العربية فقط، والعمل جارٍ على ترجمته.'
-                : 'This content is currently available in Arabic only; its translation is in progress.'}{' '}
-              {content.translationLang && content.translationLang !== currentLang && (
-                <Link
-                  href={`/${content.translationLang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`}
-                  className="font-bold underline"
-                >
-                  {currentLang === 'ar' ? 'اقرأه باللغة الأصلية' : 'Read the original'}
-                </Link>
-              )}
-            </div>
-          )}
-
+        <header className="mb-8 border-b border-primary-100 pb-6 dark:border-night-700">
           {/* معلومات إضافية */}
-          <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
             {content.published_at && (
               <span><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📅", 16)}</span>{new Date(content.published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
             )}
