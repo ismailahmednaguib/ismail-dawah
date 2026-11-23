@@ -9,7 +9,7 @@ import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { PageHero, Callout, renderDesignIcon } from "@/components/ui";
+import { PageHero } from "@/components/ui";
 import { getPublicList, type PublicItem, type PublicTerm } from "@/lib/learn/public";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 
@@ -23,7 +23,6 @@ type FatwaCategory = {
   id: string;
   ar: string;
   en: string;
-  icon: string;
 };
 
 type Fatwa = {
@@ -46,15 +45,15 @@ type SearchParams = {
 // ============================================================
 
 const CATEGORIES: FatwaCategory[] = [
-  { id: "all", ar: "كل الفتاوى", en: "All Fatwas", icon: "📚" },
-  { id: "prayer", ar: "الصلاة", en: "Prayer", icon: "🕌" },
-  { id: "fasting", ar: "الصيام", en: "Fasting", icon: "🌙" },
-  { id: "zakat", ar: "الزكاة", en: "Zakat", icon: "💰" },
-  { id: "hajj", ar: "الحج والعمرة", en: "Hajj & Umrah", icon: "🕋" },
-  { id: "family", ar: "الأسرة", en: "Family", icon: "👨‍👩‍👧‍👦" },
-  { id: "transactions", ar: "المعاملات", en: "Transactions", icon: "🤝" },
-  { id: "aqeedah", ar: "العقيدة", en: "Aqeedah", icon: "🧠" },
-  { id: "ethics", ar: "الأخلاق والآداب", en: "Ethics & Manners", icon: "✦" },
+  { id: "all", ar: "كل الفتاوى", en: "All Fatwas" },
+  { id: "prayer", ar: "الصلاة", en: "Prayer" },
+  { id: "fasting", ar: "الصيام", en: "Fasting" },
+  { id: "zakat", ar: "الزكاة", en: "Zakat" },
+  { id: "hajj", ar: "الحج والعمرة", en: "Hajj & Umrah" },
+  { id: "family", ar: "الأسرة", en: "Family" },
+  { id: "transactions", ar: "المعاملات", en: "Transactions" },
+  { id: "aqeedah", ar: "العقيدة", en: "Aqeedah" },
+  { id: "ethics", ar: "الأخلاق والآداب", en: "Ethics & Manners" },
 ];
 
 // ============================================================
@@ -286,24 +285,6 @@ function categoryLabel(categoryId: string, lang: Lang): string {
   return lang === "ar" ? category.ar : category.en;
 }
 
-function categoryIcon(categoryId: string): string {
-  return CATEGORIES.find((item) => item.id === categoryId)?.icon ?? "📖";
-}
-
-function categoryColor(categoryId: string): string {
-  const colors: Record<string, string> = {
-    prayer: "from-primary-500 to-primary-600",
-    fasting: "from-primary-500 to-primary-600",
-    zakat: "from-gold-500 to-gold-600",
-    hajj: "from-gold-500 to-gold-600",
-    family: "from-primary-500 to-primary-600",
-    transactions: "from-primary-500 to-primary-600",
-    aqeedah: "from-night-500 to-night-600",
-    ethics: "from-primary-500 to-primary-600",
-  };
-  return colors[categoryId] ?? "from-slate-500 to-slate-600";
-}
-
 function matchesQuery(fatwa: Fatwa, query: string): boolean {
   if (!query) return true;
   const q = query.trim().toLowerCase();
@@ -451,8 +432,7 @@ export default async function FatwaPage({
 
       {gate.visible('k0') && (
         <PageHero
-          icon="⚖️"
-          badge={isRTL ? "⚖️ أسئلة شرعية" : "⚖️ Islamic Questions"}
+          badge={isRTL ? "أسئلة شرعية" : "Islamic Questions"}
           title={ui.title}
           subtitle={ui.description}
           crumbs={[
@@ -464,24 +444,22 @@ export default async function FatwaPage({
 
       <section className="container-page py-10 md:py-14">
         {gate.visible('k0') && (
-          <div className="mb-8">
-            <Callout icon="🕌" tone="gold">
-              <p
-                className="text-xl font-black text-gold-700 md:text-2xl dark:text-gold-300"
-                style={{ fontFamily: "var(--font-quran)" }}
-              >
-                {ui.verse}
-              </p>
-              <p className="mt-1 text-xs text-gold-600 dark:text-gold-400">{ui.verseSource}</p>
-            </Callout>
+          <div className="card mb-8 border-primary-100 bg-white/70 p-5 dark:border-night-700 dark:bg-night-800/60">
+            <p
+              className="text-lg font-black leading-relaxed text-primary-800 dark:text-primary-200 md:text-xl"
+              style={{ fontFamily: "var(--font-quran)" }}
+            >
+              {ui.verse}
+            </p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{ui.verseSource}</p>
           </div>
         )}
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-3 gap-4">
-          <StatCard icon="⚖️" label={ui.totalFatwas} value={fatwas.length} color="primary" />
-          <StatCard icon="📂" label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
-          <StatCard icon="📚" label={ui.trustedSources} value={uniqueSources} color="primary" />
+          <StatCard label={ui.totalFatwas} value={fatwas.length} color="primary" />
+          <StatCard label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
+          <StatCard label={ui.trustedSources} value={uniqueSources} color="primary" />
         </div>
 
         </>)}
@@ -528,7 +506,7 @@ export default async function FatwaPage({
               >
                 {CATEGORIES.map((item) => (
                   <option key={item.id} value={item.id}>
-                    {item.icon} {l === "ar" ? item.ar : item.en}
+                    {l === "ar" ? item.ar : item.en}
                   </option>
                 ))}
               </select>
@@ -553,7 +531,7 @@ export default async function FatwaPage({
           {(q || category !== "all") && (
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <span className="badge-primary">
-                {ui.category}: {renderDesignIcon(activeCategory.icon, 16)}{" "}
+                {ui.category}: {" "}
                 {l === "ar" ? activeCategory.ar : activeCategory.en}
               </span>
 
@@ -604,11 +582,10 @@ export default async function FatwaPage({
                   href={href}
                   className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
                     isActive
-                      ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25"
+                      ? "border border-primary-600 bg-primary-600 text-white"
                       : "border border-slate-200 bg-white text-slate-600 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-night-700 dark:bg-night-800 dark:text-slate-300 dark:hover:border-primary-600 dark:hover:bg-night-700 dark:hover:text-primary-300"
                   }`}
                 >
-                  <span aria-hidden="true">{renderDesignIcon(item.icon, 20)}</span>
                   <span>{l === "ar" ? item.ar : item.en}</span>
                   {item.id !== "all" && count > 0 && (
                     <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-black ${
@@ -644,21 +621,15 @@ export default async function FatwaPage({
 
             <div className="grid gap-5 md:grid-cols-3">
               {featuredFatwas.map((fatwa) => {
-                const color = categoryColor(fatwa.categoryId);
-                const icon = categoryIcon(fatwa.categoryId);
                 const cat = categoryLabel(fatwa.categoryId, l);
 
                 return (
-                  <details key={fatwa.id} className="card group relative overflow-hidden">
-                    <div className={`absolute inset-x-0 top-0 h-2 bg-gradient-to-r ${color}`} />
+                  <details key={fatwa.id} className="card group overflow-hidden">
 
                     <summary className="flex cursor-pointer list-none flex-col p-6 [&::-webkit-details-marker]:hidden">
-                      <div className="mb-4 flex items-center justify-between">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-3 py-1 text-xs font-bold text-white`}>
-                          {renderDesignIcon(icon, 16)} {cat}
-                        </span>
-                        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl dark:bg-night-800">
-                          {renderDesignIcon(icon, 28)}
+                      <div className="mb-4">
+                        <span className="text-xs font-bold text-primary-700 dark:text-primary-300">
+                          {cat}
                         </span>
                       </div>
 
@@ -700,7 +671,7 @@ export default async function FatwaPage({
                       </p>
                       {fatwa.source && (
                         <p className="mt-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                          <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 16)}</span>{ui.source}: {fatwa.source}
+                          {ui.source}: {fatwa.source}
                         </p>
                       )}
                       {fatwa.reviewed && (
@@ -761,8 +732,6 @@ export default async function FatwaPage({
         {/* ===== لا توجد نتائج ===== */}
         {filteredFatwas.length === 0 ? (
           <div className="card p-12 text-center">
-            <div aria-hidden="true" className="mb-4 text-5xl">{renderDesignIcon("🔍", 42)}</div>
-
             <h3 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
             </h3>
@@ -785,18 +754,15 @@ export default async function FatwaPage({
           <div className="grid gap-5 lg:grid-cols-2">
             {filteredFatwas.map((fatwa) => {
               const cat = categoryLabel(fatwa.categoryId, l);
-              const icon = categoryIcon(fatwa.categoryId);
-              const color = categoryColor(fatwa.categoryId);
 
               return (
-                <details key={fatwa.id} className="card group relative overflow-hidden p-6">
-                  <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${color}`} />
+                <details key={fatwa.id} className="card group overflow-hidden p-6">
 
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-2">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r ${color} px-2.5 py-0.5 text-xs font-bold text-white`}>
-                          {renderDesignIcon(icon, 16)} {cat}
+                        <span className="text-xs font-bold text-primary-700 dark:text-primary-300">
+                          {cat}
                         </span>
                       </div>
 
@@ -836,7 +802,7 @@ export default async function FatwaPage({
 
                     {fatwa.source && (
                       <p className="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                        <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📚", 16)}</span>{ui.source}: {fatwa.source}
+                        {ui.source}: {fatwa.source}
                       </p>
                     )}
 
@@ -867,12 +833,11 @@ export default async function FatwaPage({
             className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
             style={{ fontFamily: "var(--font-amiri)" }}
           >
-            <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
+            {ui.relatedTitle}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Link href={`/${l}/contact`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("mail", 24)}</span>
+            <Link href={`/${l}/contact`} className="card card-interactive group p-5">
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.contactPage}
@@ -883,8 +848,7 @@ export default async function FatwaPage({
               </div>
             </Link>
 
-            <Link href={`/${l}/dawah-guide`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🤝", 24)}</span>
+            <Link href={`/${l}/dawah-guide`} className="card card-interactive group p-5">
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.dawahPage}
@@ -895,8 +859,7 @@ export default async function FatwaPage({
               </div>
             </Link>
 
-            <Link href={`/${l}/articles`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("✍️", 24)}</span>
+            <Link href={`/${l}/articles`} className="card card-interactive group p-5">
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.articlesPage}
@@ -907,8 +870,7 @@ export default async function FatwaPage({
               </div>
             </Link>
 
-            <Link href={`/${l}/doubts`} className="card card-interactive group flex items-center gap-3 p-5">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">❓</span>
+            <Link href={`/${l}/doubts`} className="card card-interactive group p-5">
               <div className="min-w-0">
                 <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                   {ui.doubtsPage}
@@ -925,12 +887,7 @@ export default async function FatwaPage({
         {/* ===== تنبيه ===== */}
         {gate.visible('k7') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 dark:border-gold-800/40 dark:bg-gold-950/20">
-          <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              {renderDesignIcon("⚠️", 24)}
-            </span>
-
-            <div>
+          <div>
               <h3
                 className="mb-2 text-lg font-black text-slate-900 dark:text-white"
                 style={{ fontFamily: "var(--font-amiri)" }}
@@ -943,7 +900,6 @@ export default async function FatwaPage({
               </p>
             </div>
           </div>
-        </div>
         </>)}
       </section>
 
@@ -957,9 +913,8 @@ export default async function FatwaPage({
 // ============================================================
 
 function StatCard({
-  icon, label, value, color,
+  label, value, color,
 }: {
-  icon: string;
   label: string;
   value: number;
   color: "primary" | "gold";
@@ -970,12 +925,7 @@ function StatCard({
   };
 
   return (
-    <div className="card p-5 text-center">
-      <div className="mb-2 flex justify-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {renderDesignIcon(icon, 28)}
-        </span>
-      </div>
+    <div className="card border-primary-100 p-5 text-center dark:border-night-700">
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
       <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
         {label}

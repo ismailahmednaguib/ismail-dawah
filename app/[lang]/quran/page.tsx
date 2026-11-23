@@ -13,8 +13,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
-import { InfoIcon, QuranIcon } from "@/lib/icons";
-import { renderDesignIcon } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -454,23 +452,11 @@ export default async function QuranPage({
       />
 
       <section className="container-page py-10 md:py-14">
-        {/* ===== Hero محسّن ===== */}
+        {/* ===== آية افتتاحية هادئة ===== */}
         {gate.visible('k0') && (<>
-        <div className="card relative mb-8 overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-8 md:p-12 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
-          <div className="gradient-gold absolute inset-x-0 top-0 h-1.5" />
-
-          {/* نمط زخرفي */}
-          <div
-            className="absolute inset-0 opacity-5"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 50%, #d4af37 1px, transparent 1px), radial-gradient(circle at 80% 50%, #0e7490 1px, transparent 1px)",
-              backgroundSize: "70px 70px",
-            }}
-          />
-
+        <div className="card mb-8 border-primary-100 bg-white/70 p-6 dark:border-night-700 dark:bg-night-800/60 md:p-8">
           <div className="relative mx-auto max-w-3xl text-center">
-            <div className="mb-6 flex justify-center">
+            {/* الزخرفة السابقة أزيلت من التصميم الهادئ */}{/*
               <span
                 className="flex h-24 w-24 items-center justify-center rounded-3xl text-white shadow-2xl"
                 style={{ background: "linear-gradient(135deg, #d4af37, #0e7490)" }}
@@ -480,31 +466,31 @@ export default async function QuranPage({
                 </svg>
               </span>
             </div>
+            */}
 
-            <span className="badge-gold mb-5">
-              <QuranIcon size={20} aria-hidden="true" /> {isRTL ? "كتاب الله" : "Book of Allah"}
+            <span className="hidden">
             </span>
 
             <h1
-              className="mb-4 text-4xl font-black leading-tight text-slate-900 md:text-6xl dark:text-white"
+              className="hidden"
               style={{ fontFamily: "var(--font-quran)" }}
             >
               {ui.title}
             </h1>
 
-            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+            <p className="hidden">
               {ui.description}
             </p>
 
             {/* آية كريمة */}
-            <div className="mt-8 rounded-2xl border border-gold-300 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-gold-800 dark:bg-night-800/80">
+            <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-5 dark:border-primary-900/40 dark:bg-primary-950/20">
               <p
-                className="mb-2 text-2xl font-black text-gold-700 md:text-3xl dark:text-gold-300"
+                className="mb-2 text-xl font-black text-primary-800 dark:text-primary-200 md:text-2xl"
                 style={{ fontFamily: "var(--font-quran)" }}
               >
                 {ui.verse}
               </p>
-              <p className="text-xs text-gold-600 dark:text-gold-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {ui.verseSource}
               </p>
             </div>
@@ -516,25 +502,21 @@ export default async function QuranPage({
         {gate.visible('k1') && (<>
         <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           <StatCard
-            icon="📖"
             label={ui.totalSurahs}
             value={formatNumber(surahs.length, l)}
             color="primary"
           />
           <StatCard
-            icon="✨"
             label={ui.totalAyahs}
             value={formatNumber(totalAyahs, l)}
             color="gold"
           />
           <StatCard
-            icon="📚"
             label={ui.totalJuz}
             value={formatNumber(30, l)}
             color="primary"
           />
           <StatCard
-            icon="📄"
             label={ui.totalPages}
             value={formatNumber(604, l)}
             color="gold"
@@ -545,13 +527,12 @@ export default async function QuranPage({
         {/* ===== مقدمة ===== */}
         {gate.visible('k2') && (<>
         <div className="card mb-8 overflow-hidden">
-          <div className="gradient-gold h-1.5 w-full" />
           <div className="p-6 md:p-8">
             <h2
               className="mb-4 text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              <span className="me-1 inline-flex align-middle" aria-hidden="true">{renderDesignIcon("💎", 22)}</span>{ui.introTitle}
+              {ui.introTitle}
             </h2>
             <p className="mb-5 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
               {ui.introDesc}
@@ -566,7 +547,7 @@ export default async function QuranPage({
                 «{ui.hadithText}»
               </p>
               <p className="text-xs font-bold text-gold-600 dark:text-gold-400">
-                <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📜", 16)}</span>{ui.hadithSource}
+                {ui.hadithSource}
               </p>
             </div>
           </div>
@@ -660,7 +641,6 @@ export default async function QuranPage({
         {/* ===== خطأ التحميل ===== */}
         {loadError && (
           <div className="card mb-8 border-red-200 bg-red-50/70 p-8 text-center dark:border-red-900/40 dark:bg-red-950/20">
-            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("⚠️", 48)}</div>
             <h2 className="mb-2 text-xl font-black text-slate-900 dark:text-white">
               {ui.loadError}
             </h2>
@@ -676,7 +656,6 @@ export default async function QuranPage({
         {/* ===== لا توجد نتائج ===== */}
         {!loadError && filteredSurahs.length === 0 && (
           <div className="card p-12 text-center">
-            <div aria-hidden="true" className="mb-4 inline-flex">{renderDesignIcon("📭", 48)}</div>
             <h2 className="mb-2 text-xl font-bold text-slate-800 dark:text-white">
               {ui.noResults}
             </h2>
@@ -701,8 +680,6 @@ export default async function QuranPage({
                   href={`/${l}/quran/${surah.number}`}
                   className="card card-interactive content-auto group relative overflow-hidden p-5"
                 >
-                  <div className={`absolute inset-x-0 top-0 h-1 ${isMeccanSurah ? "bg-gradient-to-r from-gold-400 to-gold-600" : "bg-gradient-to-r from-primary-400 to-primary-600"}`} />
-
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-base font-black ${
                       isMeccanSurah
@@ -740,7 +717,7 @@ export default async function QuranPage({
 
                   <div className="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 text-xs font-bold text-slate-500 dark:border-night-700 dark:text-slate-400">
                     <span className="inline-flex items-center gap-1">
-                      <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✨", 16)}</span>{formatNumber(surah.numberOfAyahs, l)} {ui.ayahs}
+                      {formatNumber(surah.numberOfAyahs, l)} {ui.ayahs}
                     </span>
 
                     <span className="inline-flex items-center gap-1 text-primary-700 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 dark:text-primary-300 transition-transform">
@@ -775,12 +752,11 @@ export default async function QuranPage({
               className="mb-6 text-center text-2xl font-black text-slate-900 dark:text-white"
               style={{ fontFamily: "var(--font-amiri)" }}
             >
-              <span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("🔗", 22)}</span>{ui.relatedTitle}
+              {ui.relatedTitle}
             </h2>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <Link href={`/${l}/quran-memorization`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🎯", 24)}</span>
+              <Link href={`/${l}/quran-memorization`} className="card card-interactive group p-5">
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.memorizationPage}
@@ -791,8 +767,7 @@ export default async function QuranPage({
                 </div>
               </Link>
 
-              <Link href={`/${l}/adhkar`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🤲", 24)}</span>
+              <Link href={`/${l}/adhkar`} className="card card-interactive group p-5">
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.adhkarPage}
@@ -803,8 +778,7 @@ export default async function QuranPage({
                 </div>
               </Link>
 
-              <Link href={`/${l}/prayer-times`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🕐", 24)}</span>
+              <Link href={`/${l}/prayer-times`} className="card card-interactive group p-5">
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.prayerTimesPage}
@@ -815,8 +789,7 @@ export default async function QuranPage({
                 </div>
               </Link>
 
-              <Link href={`/${l}/fields/tafsir`} className="card card-interactive group flex items-center gap-3 p-5">
-                <span aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-xl dark:bg-primary-900/40">{renderDesignIcon("🔍", 24)}</span>
+              <Link href={`/${l}/fields/tafsir`} className="card card-interactive group p-5">
                 <div className="min-w-0">
                   <h3 className="truncate text-base font-black text-slate-900 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
                     {ui.tafsirPage}
@@ -835,10 +808,6 @@ export default async function QuranPage({
         {gate.visible('k6') && (<>
         <div className="card mt-10 border-gold-200 bg-gold-50/60 p-6 md:p-8 dark:border-gold-900/30 dark:bg-gold-950/15">
           <div className="flex items-start gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold-100 text-2xl dark:bg-gold-900/40">
-              <InfoIcon size={24} aria-hidden="true" />
-            </span>
-
             <div>
               <h2
                 className="mb-4 text-xl font-black text-slate-900 dark:text-white"
@@ -874,12 +843,10 @@ export default async function QuranPage({
 // ============================================================
 
 function StatCard({
-  icon,
   label,
   value,
   color,
 }: {
-  icon: string;
   label: string;
   value: string | number;
   color: "primary" | "gold";
@@ -890,12 +857,7 @@ function StatCard({
   };
 
   return (
-    <div className="card p-5 text-center">
-      <div className="mb-2 flex justify-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-2xl dark:bg-primary-900/40">
-          {renderDesignIcon(icon, 28)}
-        </span>
-      </div>
+    <div className="card border-primary-100 p-5 text-center dark:border-night-700">
       <p className={`text-2xl font-black ${colorClasses[color]}`}>{value}</p>
       <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">
         {label}
