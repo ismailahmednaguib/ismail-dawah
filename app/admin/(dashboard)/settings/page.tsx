@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import SiteSettingsClient from '@/components/admin/SiteSettingsClient';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,5 +17,14 @@ export default async function SettingsPage() {
   if (!session) redirect('/ar/login');
   if (!can(session.roles, 'settings.manage')) redirect('/admin');
 
-  return <SiteSettingsClient />;
+  return (
+    <div>
+      <AdminPageHeader
+        title="إعدادات المنصة"
+        description="اضبط الهوية والمحتوى الافتراضي والأدوات العامة من مكان واحد."
+        eyebrow="الإدارة"
+      />
+      <SiteSettingsClient />
+    </div>
+  );
 }

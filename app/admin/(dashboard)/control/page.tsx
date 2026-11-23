@@ -24,6 +24,7 @@ import { getIcon, type IconName } from '@/lib/icons';
 import { renderDesignIcon } from '@/components/ui';
 import { DEFAULT_THEME_SETTINGS, normalizeThemeSettings } from '@/lib/theme-settings';
 import ManagedRedirectsEditor from '@/components/admin/ManagedRedirectsEditor';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import {
   UnifiedAuditTab,
   UnifiedNotificationsTab,
@@ -2022,22 +2023,16 @@ export default function AdminControlPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-black text-primary-950">لوحة التحكم الموحدة</h1>
-          <p className="mt-1 text-sm text-stone-500">
-            تحكم في كل صغيرة وكبيرة من المنصة، وتُطبَّق التغييرات فور الحفظ.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href="/admin/content/new"
-            className="inline-flex items-center gap-2 rounded-xl bg-primary-700 px-4 py-2.5 text-sm font-black text-white hover:bg-primary-800 transition"
-          >
-            + محتوى جديد
+      <AdminPageHeader
+        title="لوحة التحكم الموحدة"
+        description="تحكم في أقسام المنصة، وتُطبَّق التغييرات فور الحفظ."
+        eyebrow="الرئيسية"
+        actions={
+          <Link href="/admin/content/new" className="btn-primary">
+            محتوى جديد
           </Link>
-        </div>
-      </div>
+        }
+      />
 
       <div className="flex gap-1 overflow-x-auto pb-2 mb-6">
         {TABS.map((tab) => {

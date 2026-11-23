@@ -444,7 +444,7 @@ export default async function FatwaPage({
 
       <section className="container-page py-10 md:py-14">
         {gate.visible('k0') && (
-          <div className="card mb-8 border-primary-100 bg-white/70 p-5 dark:border-night-700 dark:bg-night-800/60">
+          <div className="hidden">
             <p
               className="text-lg font-black leading-relaxed text-primary-800 dark:text-primary-200 md:text-xl"
               style={{ fontFamily: "var(--font-quran)" }}
@@ -456,7 +456,7 @@ export default async function FatwaPage({
         )}
         {/* ===== إحصائيات سريعة ===== */}
         {gate.visible('k1') && (<>
-        <div className="mb-8 grid grid-cols-3 gap-4">
+        <div className="hidden">
           <StatCard label={ui.totalFatwas} value={fatwas.length} color="primary" />
           <StatCard label={ui.totalCategories} value={CATEGORIES.length - 1} color="gold" />
           <StatCard label={ui.trustedSources} value={uniqueSources} color="primary" />

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import ContentListClient from '@/components/admin/ContentListClient';
 import ContentImportPanel from '@/components/admin/ContentImportPanel';
 import { can } from '@/lib/admin/permissions';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata = { title: 'المحتوى | لوحة التحكم' };
 
@@ -22,15 +23,16 @@ export default async function ContentPage({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-primary-950">إدارة المحتوى</h1>
-        <Link
-          href="/admin/content/new"
-          className="bg-primary-700 hover:bg-primary-800 text-white px-4 py-2 rounded-lg text-sm transition-colors"
-        >
-          + محتوى جديد
-        </Link>
-      </div>
+      <AdminPageHeader
+        title="إدارة المحتوى"
+        description="أنشئ المواد، راجع حالتها، وحدد ما يظهر للزوار من مكان واحد."
+        eyebrow="المحتوى"
+        actions={
+          <Link href="/admin/content/new" className="btn-primary">
+            محتوى جديد
+          </Link>
+        }
+      />
       {canCreate && <ContentImportPanel />}
       <ContentListClient key={initialType || 'all'} initialType={initialType} />
     </div>

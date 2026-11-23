@@ -462,8 +462,10 @@ export function Callout({
   children: ReactNode;
   tone?: "primary" | "gold" | "warning";
 }) {
+  const isVerseCallout = icon === "🕌";
+
   return (
-    <div className={`rounded-2xl border-2 p-5 md:p-6 ${CALLOUT_TONES[tone]}`}>
+    <div className={`site-callout ${isVerseCallout ? "site-verse-callout" : ""} rounded-2xl border-2 p-5 md:p-6 ${CALLOUT_TONES[tone]}`}>
       <div className="flex items-start gap-4">
         <span aria-hidden="true" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-xl dark:bg-white/10">
           {renderDesignIcon(icon, 22)}

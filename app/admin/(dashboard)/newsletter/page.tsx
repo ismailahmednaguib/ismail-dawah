@@ -6,6 +6,7 @@ import NewsletterSubscribersClient from '@/components/admin/NewsletterSubscriber
 import DawahJourneySubscribersClient from '@/components/admin/DawahJourneySubscribersClient';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = { title: 'مشتركو النشرة | لوحة التحكم' };
 
@@ -16,10 +17,7 @@ export default async function NewsletterPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-black text-primary-950">مشتركو النشرة البريدية</h1>
-        <p className="mt-2 text-sm leading-6 text-stone-500">راجع المشتركين وأوقف أو أعد تفعيل الاشتراك من مكان واحد.</p>
-      </div>
+      <AdminPageHeader title="مشتركو النشرة البريدية" description="راجع المشتركين وأوقف أو أعد تفعيل الاشتراك من مكان واحد." eyebrow="التواصل" />
       <NewsletterSubscribersClient />
       <div className="mt-8"><DawahJourneySubscribersClient /></div>
     </div>

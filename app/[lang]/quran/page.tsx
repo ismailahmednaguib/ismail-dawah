@@ -454,7 +454,7 @@ export default async function QuranPage({
       <section className="container-page py-10 md:py-14">
         {/* ===== آية افتتاحية هادئة ===== */}
         {gate.visible('k0') && (<>
-        <div className="card mb-8 border-primary-100 bg-white/70 p-6 dark:border-night-700 dark:bg-night-800/60 md:p-8">
+        <div className="hidden">
           <div className="relative mx-auto max-w-3xl text-center">
             {/* الزخرفة السابقة أزيلت من التصميم الهادئ */}{/*
               <span
@@ -500,7 +500,7 @@ export default async function QuranPage({
         </>)}
         {/* ===== إحصائيات ===== */}
         {gate.visible('k1') && (<>
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="hidden">
           <StatCard
             label={ui.totalSurahs}
             value={formatNumber(surahs.length, l)}
@@ -539,7 +539,7 @@ export default async function QuranPage({
             </p>
 
             {/* حديث شريف */}
-            <div className="rounded-xl border border-gold-200 bg-gold-50/60 p-4 dark:border-gold-900/30 dark:bg-gold-950/15">
+            <div className="hidden">
               <p
                 className="mb-1 text-lg font-black text-gold-700 md:text-xl dark:text-gold-300"
                 style={{ fontFamily: "var(--font-amiri)" }}

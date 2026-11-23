@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import UsersClient from '@/components/admin/UsersClient';
 import type { Metadata } from 'next';
 import { can } from '@/lib/admin/permissions';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'إدارة المستخدمين | لوحة التحكم',
@@ -19,14 +20,7 @@ export default async function UsersPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary-950 dark:text-gold mb-2">
-          👥 إدارة المستخدمين والأدوار
-        </h1>
-        <p className="text-sm text-stone-500 dark:text-gray-400">
-          تحكم في صلاحيات الوصول إلى لوحة التحكم
-        </p>
-      </div>
+      <AdminPageHeader title="إدارة المستخدمين والأدوار" description="تحكم في صلاحيات الوصول إلى لوحة التحكم." eyebrow="الإدارة" />
       <UsersClient session={session} />
     </div>
   );

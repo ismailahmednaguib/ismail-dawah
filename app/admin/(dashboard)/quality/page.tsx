@@ -7,7 +7,7 @@ import type { Metadata } from 'next';
 import { getAdminSession } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
 import QualityPanel from './quality-panel';
-import { renderDesignIcon } from '@/components/ui';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'جودة المحتوى | لوحة التحكم',
@@ -20,13 +20,11 @@ export default async function QualityPage() {
 
   return (
     <div className="space-y-6">
-      <header className="card p-5">
-        <h1 className="text-xl font-bold"><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("✦", 20)}</span>جودة المحتوى والمراجعة</h1>
-        <p className="mt-1 text-sm opacity-80">
-          طابور الترجمات الآلية التي تنتظر مراجعة بشرية، مع فحص آلي للحقول الفارغة والمتون
-          القصيرة والنصوص الشرعية التي تحتاج مصدرًا موثّقًا.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="جودة المحتوى والمراجعة"
+        description="طابور الترجمات الآلية التي تنتظر مراجعة بشرية، مع فحص آلي للحقول الفارغة والمتون القصيرة والمصادر."
+        eyebrow="المحتوى"
+      />
 
       <QualityPanel />
     </div>

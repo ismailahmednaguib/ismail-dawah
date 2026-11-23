@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { IconComponent } from "@/lib/icons";
 import {
   AlertIcon,
   BellIcon,
@@ -105,17 +104,14 @@ function formatNumber(value: number | undefined): string {
 function StatCard({
   label,
   value,
-  icon,
   hint,
   accent,
 }: {
   label: string;
   value: number | undefined;
-  icon: IconComponent;
   hint: string;
   accent: "primary" | "gold" | "dark";
 }) {
-  const StatIcon = icon;
   const accentClasses = {
     primary: "bg-primary-50 text-primary-700 border-primary-100",
     gold: "bg-gold-50 text-gold-700 border-gold-200",
@@ -132,12 +128,7 @@ function StatCard({
           </p>
           <p className="mt-1 text-xs text-stone-500">{hint}</p>
         </div>
-        <span
-          className={`flex h-11 w-11 items-center justify-center rounded-2xl border text-xl ${accentClasses[accent]}`}
-          aria-hidden="true"
-        >
-          <StatIcon size={21} aria-hidden="true" />
-        </span>
+        <span className={`h-2 w-2 rounded-full ${accentClasses[accent].split(" ")[0]}`} aria-hidden="true" />
       </div>
     </article>
   );
@@ -251,9 +242,7 @@ export default function AdminPanel({
 
   return (
     <div className="space-y-6 pb-8">
-      <section className="admin-dashboard-hero relative overflow-hidden rounded-3xl p-6 text-white shadow-card-lg md:p-8">
-        <div className="absolute -left-16 -top-20 h-56 w-56 rounded-full bg-primary-700/30 blur-3xl" />
-        <div className="absolute -bottom-24 right-10 h-64 w-64 rounded-full bg-gold-500/15 blur-3xl" />
+      <section className="admin-dashboard-hero relative overflow-hidden rounded-2xl p-6 text-white shadow-card md:p-8">
 
         <div className="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
@@ -301,15 +290,15 @@ export default function AdminPanel({
       ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" aria-label="ملخص الإحصائيات">
-        <StatCard label="إجمالي المحتوى" value={totalContent} icon={FileTextIcon} hint="كل المواد المنشورة والمضافة" accent="primary" />
-        <StatCard label="المستخدمون" value={stats.users?.total} icon={UsersIcon} hint="الحسابات المسجلة في المنصة" accent="gold" />
+        <StatCard label="إجمالي المحتوى" value={totalContent} hint="كل المواد المنشورة والمضافة" accent="primary" />
+        <StatCard label="المستخدمون" value={stats.users?.total} hint="الحسابات المسجلة في المنصة" accent="gold" />
         <Link href="/admin/questions" className="block rounded-2xl transition hover:-translate-y-0.5 hover:shadow-card">
-          <StatCard label="أسئلة معلقة" value={stats.questions?.pending} icon={HelpCircleIcon} hint="تحتاج ردًا أو متابعة" accent="dark" />
+          <StatCard label="أسئلة معلقة" value={stats.questions?.pending} hint="تحتاج ردًا أو متابعة" accent="dark" />
         </Link>
         <Link href="/admin/review" className="block rounded-2xl transition hover:-translate-y-0.5 hover:shadow-card">
-          <StatCard label="مراجعات معلقة" value={stats.review?.pending} icon={CheckCircleIcon} hint="تنتظر اعتماد المراجع" accent="primary" />
+          <StatCard label="مراجعات معلقة" value={stats.review?.pending} hint="تنتظر اعتماد المراجع" accent="primary" />
         </Link>
-        <StatCard label="زيارات اليوم" value={advanced.todayViews} icon={EyeIcon} hint="حسب سجل زيارات الموقع" accent="primary" />
+        <StatCard label="زيارات اليوم" value={advanced.todayViews} hint="حسب سجل زيارات الموقع" accent="primary" />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">

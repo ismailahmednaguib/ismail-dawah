@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import QuestionsClient from '@/components/admin/QuestionsClient';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'أسئلة الزوار | لوحة التحكم',
@@ -18,17 +19,7 @@ export default async function QuestionsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex flex-col justify-between gap-3 md:flex-row md:items-end">
-        <div>
-          <h1 className="text-2xl font-black text-primary-950">أسئلة الزوار</h1>
-          <p className="mt-2 text-sm leading-6 text-stone-500">
-            راجع الأسئلة الواردة واكتب الإجابات من نفس لوحة التحكم.
-          </p>
-        </div>
-        <span className="inline-flex w-fit rounded-full bg-primary-50 px-3 py-1.5 text-xs font-bold text-primary-700">
-          صندوق المتابعة
-        </span>
-      </div>
+      <AdminPageHeader title="أسئلة الزوار" description="راجع الأسئلة الواردة واكتب الإجابات من نفس لوحة التحكم." eyebrow="التواصل" />
       <QuestionsClient />
     </div>
   );

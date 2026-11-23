@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { getAdminSession } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
 import { getSupabaseAdmin } from '@/lib/supabase/admin';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'التحليلات | لوحة التحكم',
@@ -85,14 +86,12 @@ export default async function AnalyticsPage({
 
   return (
     <div className="space-y-6">
-      <header className="card flex flex-wrap items-center justify-between gap-4 p-5">
-        <div>
-          <h1 className="text-xl font-bold">▲ تحليلات المنصة</h1>
-          <p className="mt-1 text-sm opacity-80">
-            آخر {range.label} — {error ? "تعذّر قراءة الجدول" : `${totals.views} حدثًا`}
-          </p>
-        </div>
-        <nav className="flex gap-2 text-xs">
+      <AdminPageHeader
+        title="تحليلات المنصة"
+        description={`آخر ${range.label} — ${error ? "تعذّر قراءة الجدول" : `${totals.views} حدثًا`}`}
+        eyebrow="التواصل"
+      >
+        <nav className="mt-4 flex gap-2 text-xs">
           {RANGES.map((r) => (
             <a
               key={r.key}
@@ -107,7 +106,7 @@ export default async function AnalyticsPage({
             </a>
           ))}
         </nav>
-      </header>
+      </AdminPageHeader>
 
       {error && (
         <section className="card p-5 text-sm text-amber-700 dark:text-amber-300">

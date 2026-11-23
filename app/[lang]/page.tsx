@@ -587,7 +587,7 @@ export default async function HomePage({
 
       {/* ============ آية اليوم ============ */}
       {gate.visible('verse') && (
-      <section style={homeSectionStyle("verse")} className="container-page py-16 md:py-20">
+      <section style={homeSectionStyle("verse")} className="hidden">
         <div className="mx-auto max-w-3xl">
           <div className="card relative overflow-hidden border-2 border-gold-200 bg-gradient-to-br from-gold-50 via-cream-dark to-primary-50 p-10 text-center md:p-14 dark:border-gold-800 dark:from-gold-950/30 dark:via-gray-900 dark:to-primary-950/30">
             <div
@@ -818,13 +818,8 @@ export default async function HomePage({
 // HeroStatCard
 // ============================================================
 
-function HeroStatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="rounded-2xl border border-white/20 bg-white/10 p-4 text-center backdrop-blur-sm">
-      <p className="text-2xl font-black text-gold-300 md:text-3xl">{value}</p>
-      <p className="mt-1 text-xs font-bold text-white/80">{label}</p>
-    </div>
-  );
+function HeroStatCard(_props: { value: string; label: string }) {
+  return null;
 }
 
 // ============================================================

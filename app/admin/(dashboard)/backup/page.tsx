@@ -9,6 +9,7 @@ import { can } from '@/lib/admin/permissions';
 import { BACKUP_CONTENT_TABLES, BACKUP_SETTINGS_TABLES } from '@/lib/admin/backup';
 import type { Metadata } from 'next';
 import BackupPanel from './backup-panel';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'النسخ الاحتياطي | لوحة التحكم',
@@ -51,15 +52,11 @@ export default async function BackupPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="mb-2 text-2xl font-bold text-primary-950 dark:text-gold">
-          💾 النسخ الاحتياطي والتصدير
-        </h1>
-        <p className="text-sm text-stone-500 dark:text-gray-400">
-          تنزيل نسخة كاملة من المحتوى والإعدادات بصيغة JSON — تُستخدم للنسخ الاحتياطي
-          أو للترحيل بين البيئات.
-        </p>
-      </div>
+      <AdminPageHeader
+        title="النسخ الاحتياطي والتصدير"
+        description="تنزيل نسخة كاملة من المحتوى والإعدادات بصيغة JSON للنسخ الاحتياطي أو الترحيل بين البيئات."
+        eyebrow="الإدارة"
+      />
 
       <div className="mb-6">
         <BackupPanel />

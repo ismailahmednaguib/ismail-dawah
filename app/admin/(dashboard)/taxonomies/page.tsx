@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { can } from '@/lib/admin/permissions';
 import { getAdminSession } from '@/lib/admin/session';
 import TaxonomyManager from '@/components/admin/TaxonomyManager';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,12 +18,7 @@ export default async function TaxonomiesPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary-950">🏷️ التصنيفات والوسوم</h1>
-        <p className="mt-2 text-sm text-stone-500">
-          أنشئ التصنيفات المعتمدة واربطها بالمحتوى من صفحة التعديل.
-        </p>
-      </div>
+      <AdminPageHeader title="التصنيفات والوسوم" description="أنشئ التصنيفات المعتمدة واربطها بالمحتوى من صفحة التعديل." eyebrow="المحتوى" />
       <TaxonomyManager />
     </div>
   );

@@ -3,6 +3,7 @@ import { can } from '@/lib/admin/permissions';
 import { redirect } from 'next/navigation';
 import { getContentFull } from '@/lib/admin/content-service';
 import ContentEditClient from '@/components/admin/ContentEditClient';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata = { title: 'تعديل المحتوى | لوحة التحكم' };
 
@@ -20,9 +21,7 @@ export default async function EditContentPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-primary-950 mb-6">
-        تعديل المحتوى
-      </h1>
+      <AdminPageHeader title="تعديل المحتوى" description="راجع النصوص والترجمات والمراجع وحالة النشر قبل الحفظ." eyebrow="المحتوى" />
       <ContentEditClient
         content={content}
         canEdit={can(session.roles, 'content.update')}

@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import TranslationsClient from '@/components/admin/TranslationsClient';
 import type { Metadata } from 'next';
 import { can } from '@/lib/admin/permissions';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'إدارة الترجمات | لوحة التحكم',
@@ -19,14 +20,7 @@ export default async function TranslationsPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-primary-950 dark:text-gold mb-2">
-          ◈ إدارة الترجمات
-        </h1>
-        <p className="text-sm text-stone-500 dark:text-gray-400">
-          ترجم المحتوى إلى لغات متعددة وتتبع حالة كل ترجمة
-        </p>
-      </div>
+      <AdminPageHeader title="إدارة الترجمات" description="ترجم المحتوى إلى لغات متعددة وتتبع حالة كل ترجمة." eyebrow="المحتوى" />
       <TranslationsClient session={session} />
     </div>
   );

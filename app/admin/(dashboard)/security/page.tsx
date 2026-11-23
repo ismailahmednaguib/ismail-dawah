@@ -8,6 +8,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { can } from '@/lib/admin/permissions';
 import SecurityPanel from './security-panel';
 import MfaPanel from './mfa-panel';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata: Metadata = {
   title: 'الأمان | لوحة التحكم',
@@ -151,12 +152,11 @@ export default async function SecurityPage() {
 
   return (
     <div className="space-y-6">
-      <header className="card p-5">
-        <h1 className="text-xl font-bold">🛡️ مركز الأمان</h1>
-        <p className="mt-1 text-sm opacity-80">
-          ترويسات الحماية المُطبَّقة على الموقع كله، وحدود المعدّل التي تتحكم بها من هنا مباشرةً.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="مركز الأمان"
+        description="ترويسات الحماية وحدود المعدّل وحالة الصلاحيات التي تتحكم بها من مكان واحد."
+        eyebrow="الإدارة"
+      />
 
       <section className="card overflow-hidden">
         <h2 className="border-b border-black/5 p-4 text-base font-bold dark:border-white/10">

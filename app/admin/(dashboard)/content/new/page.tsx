@@ -2,6 +2,7 @@ import { getAdminSession } from '@/lib/admin/session';
 import { redirect } from 'next/navigation';
 import ContentForm from '@/components/admin/ContentForm';
 import { can } from '@/lib/admin/permissions';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 export const metadata = { title: 'محتوى جديد | لوحة التحكم' };
 
@@ -12,9 +13,7 @@ export default async function NewContentPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-primary-950 mb-6">
-        إنشاء محتوى جديد
-      </h1>
+      <AdminPageHeader title="إنشاء محتوى جديد" description="أدخل المادة ومعلوماتها الأساسية قبل إرسالها للمراجعة أو النشر." eyebrow="المحتوى" />
       <ContentForm />
     </div>
   );
