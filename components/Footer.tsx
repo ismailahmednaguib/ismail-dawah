@@ -209,11 +209,7 @@ export default function Footer({
   return (
     <footer
       dir={isRTL ? "rtl" : "ltr"}
-      className={`${flushTop ? "" : "mt-24"} text-white`}
-      style={{
-        background:
-          "linear-gradient(160deg, var(--color-primary-950) 0%, var(--color-primary-700) 60%, var(--color-primary-950) 130%)",
-      }}
+      className={`site-footer ${flushTop ? "" : "mt-24"} text-white`}
     >
       {/* ===== النشرة البريدية ===== */}
       {showNewsletter && (

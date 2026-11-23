@@ -1,6 +1,7 @@
+"use client";
+
 import { safeJsonLd } from "@/lib/seo";
 // app/[lang]/bookmarks/page.tsx
-"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,7 +10,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
-
+
 import { usePageGate } from "@/components/PageGate";
 // ============================================================
 // الأنواع

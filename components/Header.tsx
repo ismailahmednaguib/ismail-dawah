@@ -410,8 +410,8 @@ export default function Header({
     <header
       role="banner"
       dir={isRTL ? "rtl" : "ltr"}
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass shadow-lg" : "bg-transparent"
+      className={`site-header fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        scrolled ? "site-header-scrolled glass shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="container-page">

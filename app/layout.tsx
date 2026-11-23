@@ -216,10 +216,6 @@ export default async function RootLayout({
     >
       <body
         className="min-h-screen flex flex-col antialiased"
-        style={{
-          fontFamily:
-            "var(--font-cairo-source), ui-sans-serif, system-ui, sans-serif",
-        }}
       >
         {/*
           يضبط اللغة والاتجاه قبل أول رسم، فلا تظهر صفحة إنجليزية

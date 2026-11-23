@@ -214,7 +214,7 @@ export function PageHero({
   children?: ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden border-b border-primary-100 bg-gradient-to-br from-primary-50 via-cream-dark to-gold-50 dark:border-primary-900/40 dark:from-primary-950/40 dark:via-gray-900 dark:to-gold-950/20">
+    <section className="page-hero relative overflow-hidden border-b">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -end-24 -top-24 h-64 w-64 rounded-full bg-gold-400/15 blur-3xl"
@@ -226,7 +226,7 @@ export function PageHero({
           {icon && (
             <span
               aria-hidden="true"
-              className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/70 text-4xl shadow-sm ring-1 ring-primary-100 dark:bg-white/10 dark:ring-primary-900/40"
+              className="page-hero-icon flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-4xl"
             >
               {renderDesignIcon(icon, 30)}
             </span>
@@ -248,7 +248,7 @@ export function PageHero({
         {stats && stats.length > 0 && (
           <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {stats.map((s) => (
-              <div key={s.label} className="rounded-2xl border border-primary-100 bg-white/70 p-4 text-center dark:border-primary-900/40 dark:bg-white/5">
+              <div key={s.label} className="page-hero-stat rounded-2xl border p-4 text-center">
                 <p className="text-xl font-black text-primary-700 md:text-2xl dark:text-primary-300">{s.value}</p>
                 <p className="mt-1 text-xs font-bold text-slate-500 dark:text-slate-400">{s.label}</p>
               </div>

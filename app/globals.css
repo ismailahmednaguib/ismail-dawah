@@ -66,8 +66,11 @@ body.dark {
   --color-night-900: #0a1628;
   --color-night-950: #060d1a;
 
+  /* ---------- الخلفية الهادئة ---------- */
+  --color-cream-dark: #f7f6f1;
+
   /* ---------- الخطوط ---------- */
-  --font-sans: var(--font-cairo);
+  --font-sans: var(--font-amiri);
 
   --font-cairo:
     var(--font-cairo-source),
@@ -98,10 +101,10 @@ body.dark {
   --radius-card: 1.25rem;
 
   /* ---------- الظلال ---------- */
-  --shadow-card: 0 2px 16px -4px rgb(8 51 68 / 0.08);
-  --shadow-card-hover: 0 12px 40px -12px rgb(6 182 212 / 0.25);
-  --shadow-islamic: 0 10px 40px -10px rgb(6 182 212 / 0.35);
-  --shadow-gold: 0 8px 30px -8px rgb(212 175 55 / 0.4);
+  --shadow-card: 0 8px 24px -16px rgb(8 51 68 / 0.24);
+  --shadow-card-hover: 0 18px 38px -20px rgb(8 51 68 / 0.35);
+  --shadow-islamic: 0 14px 40px -16px rgb(6 182 212 / 0.28);
+  --shadow-gold: 0 12px 30px -14px rgb(212 175 55 / 0.35);
 
   /* ---------- الحركات ---------- */
   --animate-fade-in: fade-in 0.7s ease-out both;
@@ -190,12 +193,15 @@ body.dark {
   }
 
   body {
-    background-color: #f8fafc;
-    color: #1e293b;
+    background-color: var(--color-cream-dark);
+    background-image:
+      radial-gradient(circle at 8% 0%, rgb(14 116 144 / 0.055), transparent 26rem),
+      radial-gradient(circle at 92% 16%, rgb(212 175 55 / 0.045), transparent 22rem);
+    color: #20323a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: var(--font-cairo);
-    line-height: 1.8;
+    font-family: var(--font-amiri);
+    line-height: 1.85;
     overflow-x: hidden;
   }
 
@@ -285,7 +291,7 @@ body.dark {
   .container-page {
     margin-inline: auto;
     width: 100%;
-    max-width: 80rem;
+    max-width: 78rem;
     padding-inline: 1rem;
   }
 
@@ -302,12 +308,12 @@ body.dark {
   }
 
   .section {
-    padding-block: 4rem;
+    padding-block: 3.5rem;
   }
 
   @media (min-width: 768px) {
     .section {
-      padding-block: 6rem;
+      padding-block: 5rem;
     }
   }
 
@@ -315,8 +321,9 @@ body.dark {
   .site-page-shell {
     min-height: 100vh;
     background:
-      radial-gradient(circle at 100% 0%, rgb(14 116 144 / 0.06), transparent 28rem),
-      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      radial-gradient(circle at 100% 0%, rgb(14 116 144 / 0.075), transparent 30rem),
+      radial-gradient(circle at 0% 42%, rgb(212 175 55 / 0.035), transparent 26rem),
+      linear-gradient(180deg, var(--color-cream-dark) 0%, #f3f6f4 100%);
   }
 
   .dark .site-page-shell,
@@ -326,12 +333,76 @@ body.dark {
       linear-gradient(180deg, var(--color-night-900) 0%, #071b2b 100%);
   }
 
+  /* ---------- ترويسة الصفحات الداخلية ---------- */
+  .page-hero {
+    border-color: rgb(15 118 110 / 0.13);
+    background:
+      radial-gradient(circle at 8% 18%, rgb(255 255 255 / 0.9), transparent 22rem),
+      radial-gradient(circle at 92% 0%, rgb(212 175 55 / 0.1), transparent 20rem),
+      linear-gradient(135deg, #edf8f6 0%, var(--color-cream-dark) 56%, #fffaf0 100%);
+  }
+
+  .dark .page-hero,
+  body.dark .page-hero {
+    border-color: rgb(6 182 212 / 0.18);
+    background:
+      radial-gradient(circle at 8% 18%, rgb(8 145 178 / 0.16), transparent 22rem),
+      radial-gradient(circle at 92% 0%, rgb(212 175 55 / 0.08), transparent 20rem),
+      linear-gradient(135deg, #0c2d38 0%, var(--color-night-900) 56%, #162538 100%);
+  }
+
+  .page-hero::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgb(212 175 55 / 0.5), transparent);
+  }
+
+  .page-hero-icon {
+    border: 1px solid rgb(15 118 110 / 0.14);
+    background: rgb(255 255 255 / 0.72);
+    box-shadow: 0 10px 24px -18px rgb(8 51 68 / 0.7);
+  }
+
+  .dark .page-hero-icon,
+  body.dark .page-hero-icon {
+    border-color: rgb(6 182 212 / 0.2);
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .page-hero-stat {
+    border-color: rgb(15 118 110 / 0.14);
+    background: rgb(255 255 255 / 0.62);
+  }
+
+  .dark .page-hero-stat,
+  body.dark .page-hero-stat {
+    border-color: rgb(6 182 212 / 0.18);
+    background: rgb(255 255 255 / 0.055);
+  }
+
+  /* ---------- شريط الصفحة ---------- */
+  .page-topbar {
+    border-color: rgb(15 118 110 / 0.12);
+    background: rgb(255 255 255 / 0.78);
+    box-shadow: 0 8px 24px -22px rgb(8 51 68 / 0.6);
+  }
+
+  .dark .page-topbar,
+  body.dark .page-topbar {
+    border-color: rgb(6 182 212 / 0.16);
+    background: rgb(10 22 40 / 0.78);
+  }
+
   /* ---------- البطاقات ---------- */
   .card {
     overflow: hidden;
-    border-radius: 1.5rem;
-    border: 1px solid rgb(207 250 254 / 0.6);
-    background-color: #ffffff;
+    border-radius: 1.25rem;
+    border: 1px solid rgb(15 118 110 / 0.12);
+    background-color: rgb(255 255 255 / 0.88);
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease,
@@ -348,7 +419,7 @@ body.dark {
 
   .card:hover {
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: var(--color-primary-200);
   }
 
@@ -360,9 +431,9 @@ body.dark {
   .card-interactive {
     cursor: pointer;
     overflow: hidden;
-    border-radius: 1.5rem;
-    border: 1px solid rgb(207 250 254 / 0.6);
-    background-color: #ffffff;
+    border-radius: 1.25rem;
+    border: 1px solid rgb(15 118 110 / 0.12);
+    background-color: rgb(255 255 255 / 0.88);
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease,
@@ -379,7 +450,7 @@ body.dark {
 
   .card-interactive:hover {
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: var(--color-primary-200);
   }
 
@@ -398,7 +469,7 @@ body.dark {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.75rem;
+    border-radius: 0.9rem;
     font-weight: 600;
     transition:
       transform 0.3s ease,
@@ -430,24 +501,16 @@ body.dark {
       opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
-    background: linear-gradient(
-      to left,
-      var(--color-primary-500),
-      var(--color-primary-700)
-    );
+    background: linear-gradient(135deg, var(--color-primary-800), var(--color-primary-600));
     padding: 0.75rem 1.5rem;
     color: #ffffff;
-    box-shadow: 0 4px 18px -4px rgb(6 182 212 / 0.5);
+    box-shadow: 0 8px 20px -12px rgb(8 51 68 / 0.8);
   }
 
   .btn-primary:hover {
-    box-shadow: 0 10px 30px -6px rgb(6 182 212 / 0.6);
+    box-shadow: 0 14px 28px -14px rgb(8 51 68 / 0.9);
     transform: translateY(-2px);
-    background: linear-gradient(
-      to left,
-      var(--color-primary-600),
-      var(--color-primary-800)
-    );
+    background: linear-gradient(135deg, var(--color-primary-700), var(--color-primary-500));
   }
 
   .btn-primary:disabled {
@@ -460,7 +523,7 @@ body.dark {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-radius: 0.75rem;
+    border-radius: 0.9rem;
     font-weight: 600;
     transition:
       transform 0.3s ease,
@@ -469,14 +532,10 @@ body.dark {
       opacity 0.3s ease;
     cursor: pointer;
     user-select: none;
-    background: linear-gradient(
-      to left,
-      var(--color-gold-400),
-      var(--color-gold-600)
-    );
+    background: linear-gradient(135deg, var(--color-gold-500), var(--color-gold-600));
     padding: 0.75rem 1.5rem;
     color: #ffffff;
-    box-shadow: 0 4px 18px -4px rgb(212 175 55 / 0.5);
+    box-shadow: 0 8px 20px -12px rgb(133 101 10 / 0.8);
   }
 
   .btn-gold:hover {
@@ -748,8 +807,8 @@ body.dark {
   .glass {
     -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
-    background: rgb(255 255 255 / 0.85);
-    border-bottom: 1px solid rgb(6 182 212 / 0.1);
+    background: rgb(255 255 255 / 0.78);
+    border-bottom: 1px solid rgb(15 118 110 / 0.12);
   }
 
   /* ---------- غلاف لوحة الإدارة: نفس روح الموقع ---------- */
@@ -807,13 +866,29 @@ body.dark {
     border-bottom: 1px solid rgb(6 182 212 / 0.15);
   }
 
+  /* ---------- الهيدر والفوتر ---------- */
+  .site-header {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+  }
+
+  .site-header.site-header-scrolled {
+    box-shadow: 0 10px 28px -24px rgb(8 51 68 / 0.8);
+  }
+
+  .site-footer {
+    background:
+      radial-gradient(circle at 12% 0%, rgb(6 182 212 / 0.14), transparent 24rem),
+      radial-gradient(circle at 88% 18%, rgb(212 175 55 / 0.1), transparent 22rem),
+      linear-gradient(160deg, var(--color-primary-950) 0%, #0a3640 60%, var(--color-primary-950) 130%);
+  }
+
   /* ---------- التدرجات ---------- */
   .gradient-primary {
-    background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
+    background: linear-gradient(135deg, var(--color-primary-800) 0%, var(--color-primary-600) 100%);
   }
 
   .gradient-hero {
-    background: linear-gradient(135deg, #083344 0%, #0e7490 55%, #06b6d4 100%);
+    background: linear-gradient(135deg, #0a3640 0%, var(--color-primary-800) 55%, var(--color-primary-600) 100%);
   }
 
   .gradient-gold {

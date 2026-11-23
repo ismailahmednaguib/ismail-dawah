@@ -92,14 +92,13 @@ export default function TopBar({
 
   return (
     <div
-      className={`
+      className={`page-topbar
         ${
           sticky
             ? "sticky top-16 z-40 md:top-20"
             : "relative z-30"
         }
-        border-b border-primary-100/70 bg-white/85 backdrop-blur-xl
-        dark:border-night-700/60 dark:bg-night-900/85
+        border-b backdrop-blur-xl
         ${className}
       `}
     >
