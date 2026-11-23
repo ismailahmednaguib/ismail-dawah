@@ -18,7 +18,7 @@
 - [x] بحث القرآن المباشر أعاد نتائج بالعربي والإنجليزي، ولم يظهر تسريب عربي في البحث الإنجليزي.
 - [x] نجحت فحوص manifest وrobots وsitemap وتحويل الجذر حسب اللغة ورؤوس CSP وHSTS وX-Frame-Options وPermissions-Policy.
 - [x] فحص Supabase القراءة فقط أثبت وجود schema الخاص بـ 20261023_content_revisions.sql و20261026_scheduled_publishing.sql و20261027_admin_mfa.sql، إضافة إلى bucket النسخ الاحتياطية.
-- [ ] تنفيذ `20261124_dawah_inquiries.sql` و`20261124_reference_source_urls.sql` في Supabase ثم إعادة `npm run qa:migrations`.
+- [x] تنفيذ `20261124_dawah_inquiries.sql` و`20261124_reference_source_urls.sql` في Supabase؛ `npm run qa:migrations` ناجح.
 
 ## ⚠️ مراجعة بشرية وحسابات خارجية
 
@@ -28,7 +28,7 @@
 - [x] schema الخاص بـ 20261023_content_revisions.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل الإطلاق النهائي.
 - [x] schema الخاص بـ 20261026_scheduled_publishing.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل استخدام الجدولة.
 - [x] schema جدول 20261027_admin_mfa.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي وتسجيل جهاز المالك.
-- [ ] schema جدول `dawah_inquiries` وعمود `content_references.source_url`؛ يحتاجان تنفيذ الهجرتين الجديدتين وتأكيد السجل الرسمي.
+- [x] schema جدول `dawah_inquiries` وعمود `content_references.source_url` متحققان؛ يبقى فقط تأكيد سجل migration الرسمي في Dashboard.
 - [ ] إضافة Google Search Console إن أراد المالك ذلك.
 - [ ] اختيار نطاق مخصص أو الاستمرار على vercel.app.
 - [ ] امتلاك حساب Google Play ومفتاح توقيع Android ونشر التطبيق.

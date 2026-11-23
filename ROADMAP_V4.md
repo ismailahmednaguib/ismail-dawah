@@ -386,4 +386,4 @@ npm run qa:all
 
 حالة التحقق الحالية: `typecheck` و`lint` و`test:unit` (259/259) و`qa:content` و`qa:citations` و`qa:theme` و`qa:secrets` و`qa:handoff` و`qa:android` و`qa:control-surface -- --strict` ناجحة. يظل البناء المحلي على Windows عرضة لخطأ `spawn EPERM` بعد التجميع، ويجب اعتماد بناء Vercel/CI.
 
-المتبقي الذي يحتاج حساب Supabase أو قرارًا بشريًا: تنفيذ `supabase/migrations/20261124_dawah_inquiries.sql` و`supabase/migrations/20261124_reference_source_urls.sql`، مراجعة الفتاوى، ضبط MFA، واختبارات النسخ والاسترجاع والأجهزة الحقيقية وإمكانية الوصول.
+الهجرتان `supabase/migrations/20261124_dawah_inquiries.sql` و`supabase/migrations/20261124_reference_source_urls.sql` نُفّذتا يدويًا ونجح فحصهما. المتبقي الذي يحتاج قرارًا بشريًا أو اختبارًا خارجيًا: مراجعة الفتاوى، ضبط MFA، اختبارات النسخ والاسترجاع، والأجهزة الحقيقية وإمكانية الوصول.
