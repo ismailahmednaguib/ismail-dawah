@@ -3,19 +3,61 @@
   "version": 1,
   "instructions": "لا تغيّر الحالة إلى passed إلا بعد تنفيذ الاختبار فعليًا وإرفاق وصف الدليل وتاريخ التنفيذ.",
   "gates": [
-    { "id": "backup-restore", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
-    { "id": "migration-ledger", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
+    {
+      "id": "backup-restore",
+      "required": true,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    },
+    {
+      "id": "migration-ledger",
+      "required": true,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    },
     {
       "id": "production-performance",
       "required": true,
       "status": "passed",
-      "evidence": "GitHub Actions verify run 44187656639 completed successfully on commit 393d62e940242e764136a5424771c933698f5ca7: production Lighthouse ran for /ar on mobile and desktop, scripts/check-lighthouse-reports.mjs enforced performance and TBT thresholds, and artifact lighthouse-production (artifact 14375851407) is retained. https://github.com/ismailahmednaguib/ismail-dawah/actions/runs/44187656639",
-      "completed_at": "2026-11-18T00:02:00Z"
+      "evidence": "GitHub Actions verify run 45248810866 completed successfully on commit 25a291a267220c5d3d5b4f242e8d522248edbf46: production Lighthouse ran for /ar on mobile and desktop, scripts/check-lighthouse-reports.mjs enforced performance and TBT thresholds, and artifact lighthouse-production (artifact 14856395255, digest sha256:1766b14663463e37d0eda4ea94c35b757a976feadddc726b0d8b05d3048de8c2) is retained. https://github.com/ismailahmednaguib/ismail-dawah/actions/runs/45248810866",
+      "completed_at": "2026-11-23T19:28:10Z"
     },
-    { "id": "real-device-accessibility", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
-    { "id": "live-tools", "required": true, "status": "pending", "evidence": "", "completed_at": "" },
-    { "id": "search-console", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
-    { "id": "custom-domain", "required": false, "status": "pending", "evidence": "", "completed_at": "" },
-    { "id": "google-play", "required": false, "status": "pending", "evidence": "", "completed_at": "" }
+    {
+      "id": "real-device-accessibility",
+      "required": true,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    },
+    {
+      "id": "live-tools",
+      "required": true,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    },
+    {
+      "id": "search-console",
+      "required": false,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    },
+    {
+      "id": "custom-domain",
+      "required": false,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    },
+    {
+      "id": "google-play",
+      "required": false,
+      "status": "pending",
+      "evidence": "",
+      "completed_at": ""
+    }
   ]
 }
