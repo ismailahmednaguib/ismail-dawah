@@ -388,7 +388,7 @@ npm run qa:migrations -- --strict
 
 رحلة البريد لا تُفعّل إلا من `/admin/settings` بعد ضبط `CRON_SECRET` ومزوّد بريد (SMTP أو `RESEND_API_KEY` و`EMAIL_FROM`)، ويستدعي Vercel المسار `/api/cron/dawah-journey` مرة يوميًا.
 
-رحلة المسلم الجديد البريدية اختيارية وتغطي 15 رسالة على أول 30 يومًا بفاصل افتراضي 48 ساعة. تُدار نصوصها وفاصلها من `/admin/settings`، ويُراجع المشتركون من `/admin/new-muslim`. بعد تطبيق `20261124_new_muslim_journey.sql` وضبط مزوّد البريد و`CRON_SECRET` يستدعي Vercel `/api/cron/new-muslim-journey` كل ساعتين، وكل رسالة تحمل رابط إلغاء اشتراك.
+رحلة المسلم الجديد البريدية اختيارية وتغطي 15 رسالة على أول 30 يومًا بفاصل افتراضي 48 ساعة. تُدار نصوصها وفاصلها من `/admin/settings`، ويُراجع المشتركون من `/admin/new-muslim`. بعد تطبيق `20261124_new_muslim_journey.sql` وضبط مزوّد البريد و`CRON_SECRET` يستدعي Vercel `/api/cron/new-muslim-journey` مرة يوميًا (متوافق مع خطة Hobby)، بينما يظل اختيار الرسالة المستحقة وتوقيت الإرسال مضبوطًا بفاصل 48 ساعة داخل التطبيق. كل رسالة تحمل رابط إلغاء اشتراك.
 
 بعد التنفيذ: `npm run qa:rls` (يجب ٠ مكشوف) وأعد تحميل `/admin/security`.
 

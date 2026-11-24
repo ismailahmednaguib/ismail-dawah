@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/new-muslim-journey",
-      "schedule": "0 */2 * * *"
+      "schedule": "0 4 * * *"
     },
     {
       "path": "/api/cron/dawah-retention",
