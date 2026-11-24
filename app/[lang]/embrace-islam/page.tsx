@@ -255,13 +255,13 @@ const STEPS: Step[] = [
       en: "3. Ghusl and Cleanliness",
     },
     description: {
-      ar: "يُستحب للمسلم الجديد أن يغتسل بعد الشهادة، لأن النظافة من الإيمان، والبدء بالطهارة يعطي شعورًا بالبداية الجديدة.",
-      en: "It is recommended for a new Muslim to perform ghusl after Shahadah, because cleanliness is part of faith, and starting with purity gives a sense of a new beginning.",
+      ar: "تعلّم أحكام الطهارة بعد الشهادة بهدوء؛ وفي تفاصيل الغسل بعد الإسلام أقوال فقهية متباينة، فاسأل أهل العلم الموثوقين بما يناسب حالك.",
+      en: "Learn the rules of cleanliness calmly after the Shahadah. Scholars differ on the details of ghusl after embracing Islam, so ask qualified people about your circumstances.",
     },
     points: [
       {
-        ar: "الغسل سنة مؤكدة في حق من أسلم.",
-        en: "Ghusl is a confirmed sunnah for one who embraces Islam.",
+        ar: "في الغسل بعد الإسلام أقوال فقهية متباينة؛ لا تجعل هذه المسألة حاجزًا، واسأل أهل العلم عند الحاجة.",
+        en: "Scholars differ on ghusl after embracing Islam; do not let this question become a barrier, and ask qualified scholars when needed.",
       },
       {
         ar: "لو لا يوجد ماء أو ضرر، التيمم يكفي عند الحاجة.",

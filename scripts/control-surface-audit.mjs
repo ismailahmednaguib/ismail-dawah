@@ -202,6 +202,7 @@ function classifyElement(rel, route, translationSource) {
     rel === "lib/content-import.ts" ||
     rel === "lib/supabase/admin.ts" ||
     rel === "lib/turnstile.ts"
+    || rel === "lib/content-report.ts"
   ) {
     return { status: "api-contract", reason: "server-side operational or audit message" };
   }

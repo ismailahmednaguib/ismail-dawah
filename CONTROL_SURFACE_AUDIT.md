@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-11-23T23:02:12.742Z
+> تاريخ التوليد: 2026-11-23T23:57:56.098Z
 
 ## الملخص
 
 - المسارات العامة: **58**
 - مسارات الإدارة: **20**
-- واجهات API: **78**
+- واجهات API: **80**
 - مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **7243**
+- العناصر المفحوصة: **7277**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **1115** · `api-contract` = **587** · `catalogued` = **2988** · `curated-reference` = **1836** · `immutable-reference` = **717**
+- توزيع الحالات: `admin-ui` = **1126** · `api-contract` = **601** · `catalogued` = **2995** · `curated-reference` = **1838** · `immutable-reference` = **717**
 
 ## المسارات
 
@@ -99,6 +99,7 @@
 | api | `/api/admin/backup` | `app/api/admin/backup/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/backup/run` | `app/api/admin/backup/run/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/content` | `app/api/admin/content/route.ts` | يحتاج فحص metadata |
+| api | `/api/admin/content-reports` | `app/api/admin/content-reports/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/content/{id}` | `app/api/admin/content/[id]/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/content/{id}/media` | `app/api/admin/content/[id]/media/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/content/{id}/media/{mediaId}` | `app/api/admin/content/[id]/media/[mediaId]/route.ts` | يحتاج فحص metadata |
@@ -138,6 +139,7 @@
 | api | `/api/auth/reset-password` | `app/api/auth/reset-password/route.ts` | يحتاج فحص metadata |
 | api | `/api/auth/verify-email` | `app/api/auth/verify-email/route.ts` | يحتاج فحص metadata |
 | api | `/api/content` | `app/api/content/route.ts` | يحتاج فحص metadata |
+| api | `/api/content/report` | `app/api/content/report/route.ts` | يحتاج فحص metadata |
 | api | `/api/content/translate` | `app/api/content/translate/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/backup` | `app/api/cron/backup/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/dawah-journey` | `app/api/cron/dawah-journey/route.ts` | يحتاج فحص metadata |

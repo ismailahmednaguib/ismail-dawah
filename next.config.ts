@@ -49,12 +49,6 @@ const nextConfig: NextConfig = {
   // تُجرى TypeScript وESLint قبل Next مباشرة في script `build`، لأن
   // فحص Next الداخلي يحتاج child worker محظورًا في بعض بيئات Windows.
   // لا يعني هذا تجاهل الفحص: script البناء يفشل قبله عند أي خطأ.
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [

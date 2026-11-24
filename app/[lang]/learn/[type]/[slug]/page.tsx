@@ -14,6 +14,8 @@ import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import { decodeParam } from '@/lib/params';
 import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
 import { PageHero, renderDesignIcon } from '@/components/ui';
+import ContentReportForm from '@/components/content/ContentReportForm';
+import { formatPublishDate } from '@/lib/date-format';
 
 /**
  * الصور المخزَّنة في Supabase قابلة للتحسين عبر next/image؛ أما الروابط الخارجية
@@ -129,10 +131,7 @@ export default async function LearnContentPage({ params }: PageProps) {
     process.env.NEXT_PUBLIC_SITE_URL || 'https://ismailahmednaguib.vercel.app'
   ).replace(/\/+$/, '');
   const pageUrl = `${siteUrl}/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`;
-  const reportHref = `/${lang}/contact?${new URLSearchParams({
-    subject: currentLang === 'ar' ? `بلاغ عن مادة: ${t.title}` : `Report about: ${t.title}`,
-    page: `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`,
-  }).toString()}`;
+  const pagePath = `/${lang}/learn/${encodeURIComponent(type)}/${encodeURIComponent(slug)}`;
   const schemaType =
     content.content_type === 'course'
       ? 'Course'
@@ -221,7 +220,7 @@ export default async function LearnContentPage({ params }: PageProps) {
           {/* معلومات إضافية */}
           <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
             {content.published_at && (
-              <span><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📅", 16)}</span>{new Date(content.published_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</span>
+              <span><span aria-hidden="true" className="me-1 inline-flex align-middle">{renderDesignIcon("📅", 16)}</span>{formatPublishDate(content.published_at, currentLang === 'ar')}</span>
             )}
             {content.views > 0 && (
               <span>
@@ -235,7 +234,7 @@ export default async function LearnContentPage({ params }: PageProps) {
             )}
             {content.reviewed_at && (
               <span>
-                🗓️ {currentLang === 'ar' ? 'آخر مراجعة' : 'Last review'}: {new Date(content.reviewed_at).toLocaleDateString(currentLang === 'ar' ? 'ar-EG' : 'en-US')}
+                🗓️ {currentLang === 'ar' ? 'آخر مراجعة' : 'Last review'}: {formatPublishDate(content.reviewed_at, currentLang === 'ar')}
               </span>
             )}
           </div>
@@ -304,16 +303,7 @@ export default async function LearnContentPage({ params }: PageProps) {
         {/* المراجع الشرعية */}
         <ReferenceDisplay references={content.references} lang={currentLang} />
 
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-primary-100 pt-6 dark:border-night-700">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            {currentLang === 'ar'
-              ? 'هل وجدت خطأً في النص أو المرجع؟ أرسل رابط الصفحة ووصفًا مختصرًا للمشكلة.'
-              : 'Found an issue in the text or source? Send the page link and a short description.'}
-          </p>
-          <Link href={reportHref} className="btn-outline">
-            {currentLang === 'ar' ? 'الإبلاغ عن خطأ' : 'Report an issue'}
-          </Link>
-        </div>
+        <ContentReportForm lang={currentLang} pageUrl={pagePath} pageTitle={t.title} />
       </article>
       </main>
       <Footer lang={currentLang} />

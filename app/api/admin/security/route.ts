@@ -20,6 +20,7 @@ const SCOPE_LABELS: Record<string, string> = {
   login: 'دخول المستخدمين',
   register: 'إنشاء حساب',
   questions: 'إرسال سؤال',
+  reports: 'بلاغات أخطاء المحتوى',
   newsletter: 'الاشتراك في النشرة',
   'public-api': 'واجهة المحتوى العامة',
   assistant: 'أسئلة المساعد المقيّد',

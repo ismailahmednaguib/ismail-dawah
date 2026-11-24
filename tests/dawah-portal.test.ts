@@ -19,6 +19,8 @@ test('dawah portal contains the complete bilingual page set', () => {
     assert.ok(page.sections.en.length >= 2);
     assert.ok(page.references.ar.length >= 1);
     assert.ok(page.references.en.length >= 1);
+    assert.ok(page.sections.ar.some((section) => section.body.length >= 40));
+    assert.ok(page.sections.en.some((section) => section.body.length >= 40));
     for (const relatedSlug of page.related) {
       assert.ok(slugs.includes(relatedSlug), `${page.slug} references missing page ${relatedSlug}`);
     }

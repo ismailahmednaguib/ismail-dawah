@@ -32,6 +32,7 @@ export const BACKUP_SETTINGS_TABLES: Record<string, string> = {
   dawah_journey_subscribers: '*',
   dawah_request_assignments: '*',
   dawah_inquiries: '*',
+  content_reports: '*',
 };
 
 export const BACKUP_TABLES = {

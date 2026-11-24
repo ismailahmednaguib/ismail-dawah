@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd';
@@ -9,6 +9,7 @@ import { isValidLang, languages, type Lang } from '@/lib/i18n';
 import { getDawahPortalPage, getDawahPortalSlugs } from '@/lib/dawah-portal';
 import { SITE_NAME, SITE_NAME_EN } from '@/lib/site';
 import AskMuslimForm from '@/components/dawah/AskMuslimForm';
+import ContentReportForm from '@/components/content/ContentReportForm';
 
 type PageProps = {
   params: Promise<{ lang: string; slug: string }>;
@@ -51,6 +52,7 @@ export default async function DawahPortalPage({ params }: PageProps) {
   const { lang, slug } = await params;
   if (!isValidLang(lang)) notFound();
   const current = lang as Lang;
+  if (slug === 'embrace') permanentRedirect(`/${current}/embrace-islam`);
   const page = getDawahPortalPage(slug);
   if (!page) notFound();
 
@@ -127,13 +129,26 @@ export default async function DawahPortalPage({ params }: PageProps) {
           </section>
 
           <div className="mt-10 flex flex-wrap gap-3">
-            <Link href={`/${current}/contact?subject=${encodeURIComponent(title)}&page=${encodeURIComponent(`/${current}/dawah/${slug}`)}`} className="btn-primary">
-              {current === 'ar' ? 'اسأل أو صحّح معلومة' : 'Ask or report an issue'}
+            <Link href={`/${current}/dawah/ask-muslim`} className="btn-primary">
+              {current === 'ar' ? 'اسأل مسلمًا' : 'Ask a Muslim'}
             </Link>
             <Link href={`/${current}/dawah`} className="btn-outline">
               {current === 'ar' ? 'العودة إلى البوابة' : 'Back to the portal'}
             </Link>
           </div>
+
+          <section className="mt-10 rounded-2xl border border-gold-200 bg-gold-50/60 p-5 dark:border-gold-900/40 dark:bg-gold-950/20" aria-labelledby="dawah-limits-title">
+            <h2 id="dawah-limits-title" className="text-lg font-black text-primary-950 dark:text-white">
+              {current === 'ar' ? 'ما لا ندّعيه' : 'What we do not claim'}
+            </h2>
+            <p className="mt-2 text-sm leading-7 text-slate-700 dark:text-slate-200">
+              {current === 'ar'
+                ? 'هذه صفحة تعريفية عامة؛ لا تغني عن مراجعة أهل العلم في المسائل الخاصة، ولا تحسم الخلافات المعتبرة، ولا تمثل وعدًا بنتيجة شخصية أو استشارة قانونية أو طبية.'
+                : 'This is a general introduction. It does not replace qualified guidance for personal matters, settle legitimate scholarly differences, or provide legal, medical, or personal guarantees.'}
+            </p>
+          </section>
+
+          <ContentReportForm lang={current} pageUrl={`/${current}/dawah/${slug}`} pageTitle={title} />
 
           {page.related.length > 0 && (
             <section className="mt-12 border-t border-primary-100 pt-8 dark:border-night-700" aria-labelledby="dawah-related-title">

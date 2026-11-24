@@ -18,6 +18,7 @@ export type RateLimitScope =
   | 'login'
   | 'register'
   | 'questions'
+  | 'reports'
   | 'newsletter'
   | 'public-api'
   | 'assistant'
@@ -34,6 +35,7 @@ export const RATE_LIMIT_DEFAULTS: Record<RateLimitScope, ScopeConfig> = {
   login: { windowSeconds: 600, max: 20 },
   register: { windowSeconds: 3600, max: 10 },
   questions: { windowSeconds: 3600, max: 10 },
+  reports: { windowSeconds: 3600, max: 10 },
   newsletter: { windowSeconds: 600, max: 20 },
   'public-api': { windowSeconds: 60, max: 60 },
   assistant: { windowSeconds: 600, max: 10 },

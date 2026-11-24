@@ -92,6 +92,7 @@ const PRIVATE_TABLES = [
   'user_favorites',
   'user_questions',
   'dawah_inquiries',
+  'content_reports',
   'media_library',
   'rate_limits',
   'push_subscriptions',

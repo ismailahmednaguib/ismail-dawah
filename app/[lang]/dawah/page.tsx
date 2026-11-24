@@ -16,7 +16,7 @@ const COPY: Record<string, {
   introTitle: string;
   intro: string;
   sections: Array<{ id: string; icon: string; title: string; desc: string; href: string }>;
-  faq: Array<{ q: string; a: string }>;
+  faq: Array<{ q: string; a: string; href: string }>;
 }> = {
   ar: {
     title: "بوابة غير المسلمين — تعريف بالإسلام",
@@ -38,10 +38,10 @@ const COPY: Record<string, {
       { id: "ask", icon: "💬", title: "اسأل مسلمًا", desc: "أرسل سؤالك العام دون ضغط أو تتبع غير ضروري.", href: "/ar/dawah/ask-muslim" },
     ],
     faq: [
-      { q: "هل الإسلام عنيف؟", a: "الإسلام دين سلام ورحمة، والله تعالى يقول: «لَا إِكْرَاهَ فِي الدِّينِ». القتال في الإسلام للدفاع وليس للاعتداء." },
-      { q: "لماذا ترتدي المرأة الحجاب؟", a: "الحجاب جزء من الحياء والستر في الإسلام، وتكريم للمرأة وصون لكرامتها." },
-      { q: "ما هو الجهاد في الإسلام؟", a: "الجهاد في الإسلام هو بذل الجهد في طريق الله، وأهم أشكاله جهاد النفس والتعليم والدعوة بالحكمة." },
-      { q: "كيف اعتنق الإسلام؟", a: "بالنطق بالشهادتين: «أشهد أن لا إله إلا الله وأشهد أن محمدًا رسول الله»، والإيمان بما جاء به النبي ﷺ." },
+      { q: "هل الإسلام عنيف؟", a: "فهم هذا السؤال يحتاج إلى التفريق بين الجهاد في سياقاته الفقهية والتاريخية وبين الاعتداء على المدنيين، وهو ما لا يجيزه الإسلام. اقرأ الصفحة التفصيلية بمراجعها.", href: "/dawah/jihad-and-violence" },
+      { q: "لماذا ترتدي المرأة الحجاب؟", a: "الحجاب موضوع ديني واجتماعي تتنوع فيه التجارب والتفاصيل الفقهية؛ لا تختصر المرأة في هذا السؤال، واقرأ العرض العام مع مراجعه.", href: "/dawah/women-in-islam" },
+      { q: "ما هو الجهاد في الإسلام؟", a: "الجهاد أوسع من القتال، وفهم أحكام القتال يحتاج إلى سياق ومراجعة علمية، ولا يبرر استهداف الأبرياء أو تجاوز القانون.", href: "/dawah/jihad-and-violence" },
+      { q: "كيف اعتنق الإسلام؟", a: "اعتناق الإسلام قرار شخصي؛ اقرأ الخطوات العامة، واحفظ سلامتك وخصوصيتك، واسأل شخصًا موثوقًا عند الحاجة.", href: "/embrace-islam" },
     ],
   },
   en: {
@@ -64,10 +64,10 @@ const COPY: Record<string, {
       { id: "ask", icon: "💬", title: "Ask a Muslim", desc: "Send a general question without pressure or unnecessary tracking.", href: "/en/dawah/ask-muslim" },
     ],
     faq: [
-      { q: "Is Islam violent?", a: "Islam is a religion of peace and mercy, and God says: «There is no compulsion in religion». Fighting in Islam is for defense only, not for aggression." },
-      { q: "Why do women wear hijab?", a: "Hijab is part of modesty and covering in Islam, and an honor for women and protection of their dignity." },
-      { q: "What is jihad in Islam?", a: "Jihad in Islam is striving in the way of God, and its most important forms are Jihad of the self, education, and calling with wisdom." },
-      { q: "How to embrace Islam?", a: "By pronouncing the two testimonies of faith: «I bear witness that there is no god but God and I bear witness that Muhammad is the Messenger of God», and believing in what the Prophet ﷺ brought." },
+      { q: "Is Islam violent?", a: "This question requires distinguishing jihad in its legal and historical contexts from attacks on civilians, which Islam does not permit. Read the sourced page for detail.", href: "/dawah/jihad-and-violence" },
+      { q: "Why do women wear hijab?", a: "Hijab is a religious and social topic with varied experiences and legal details. Women should not be reduced to one question; read the sourced overview.", href: "/dawah/women-in-islam" },
+      { q: "What is jihad in Islam?", a: "Jihad is broader than fighting. Discussion of warfare requires context and qualified review, and never justifies targeting civilians or bypassing law.", href: "/dawah/jihad-and-violence" },
+      { q: "How do I embrace Islam?", a: "Embracing Islam is a personal decision. Read the general steps, protect your safety and privacy, and ask a trusted person when needed.", href: "/embrace-islam" },
     ],
   },
 };
@@ -134,6 +134,9 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
                     <div>
                       <p className="font-bold text-primary-900">{item.q}</p>
                       <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{item.a}</p>
+                      <Link href={`/${L}${item.href}`} className="mt-3 inline-flex text-sm font-bold text-primary-700 underline-offset-4 hover:underline dark:text-primary-300">
+                        {L === "ar" ? "اقرأ التفصيل والمراجع" : "Read the detail and sources"}
+                      </Link>
                     </div>
                   </div>
                 </div>

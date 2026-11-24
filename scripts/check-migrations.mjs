@@ -63,6 +63,11 @@ const checks = [
     migration: '20261124_dawah_inquiries.sql',
   },
   {
+    name: 'content_reports',
+    query: 'content_reports?select=id&limit=1',
+    migration: '20261124_content_reports.sql',
+  },
+  {
     name: 'content_references.source_url',
     query: 'content_references?select=source_url&limit=1',
     migration: '20261124_reference_source_urls.sql',
