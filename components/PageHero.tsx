@@ -28,7 +28,7 @@ export default function PageHero({
 }: PageHeroProps) {
   return (
     <section
-      className="relative overflow-hidden text-white"
+      className="page-hero relative overflow-hidden border-b text-white"
       style={{ background: GRADIENTS[gradient] }}
     >
       {/* زخرفة خلفية */}
