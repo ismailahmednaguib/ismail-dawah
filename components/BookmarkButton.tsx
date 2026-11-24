@@ -8,12 +8,71 @@ interface BookmarkItem {
   title: string;
   href: string;
   type: string;
+  category?: string;
+  excerpt?: string;
 }
 
 interface BookmarkButtonProps {
   item: BookmarkItem;
   size?: "sm" | "md" | "lg";
   showLabel?: boolean;
+}
+
+const STORAGE_KEY = "ismail-dawah-bookmarks";
+const LEGACY_STORAGE_KEY = "dawah_bookmarks";
+
+type StoredBookmark = {
+  id: string;
+  title: string;
+  url: string;
+  category: string;
+  createdAt: number;
+  excerpt?: string;
+};
+
+function categoryFromType(type: string): string {
+  if (type.startsWith("quran")) return "quran";
+  if (type.startsWith("adhkar")) return "adhkar";
+  if (type.startsWith("fatwa")) return "fatwa";
+  if (type.startsWith("story")) return "stories";
+  if (type.startsWith("guide")) return "guides";
+  if (type.startsWith("article")) return "articles";
+  return "other";
+}
+
+function readBookmarks(): StoredBookmark[] {
+  const raw =
+    localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (!raw) return [];
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map((value): StoredBookmark | null => {
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+          return null;
+        }
+        const item = value as Record<string, unknown>;
+        const id = String(item.id ?? "").trim();
+        const title = String(item.title ?? "").trim();
+        const url = String(item.url ?? item.href ?? "").trim();
+        if (!id || !title || !url) return null;
+
+        return {
+          id,
+          title,
+          url,
+          category: String(item.category ?? item.type ?? "other"),
+          createdAt: Number(item.createdAt ?? Date.now()),
+          excerpt: item.excerpt ? String(item.excerpt) : undefined,
+        };
+      })
+      .filter((item): item is StoredBookmark => item !== null);
+  } catch {
+    return [];
+  }
 }
 
 export default function BookmarkButton({
@@ -24,16 +83,10 @@ export default function BookmarkButton({
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const STORAGE_KEY = "dawah_bookmarks";
-
   // تحميل حالة الحفظ من الـ localStorage
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const bookmarks: BookmarkItem[] = JSON.parse(stored);
-        setIsBookmarked(bookmarks.some((b) => b.id === item.id));
-      }
+      setIsBookmarked(readBookmarks().some((bookmark) => bookmark.id === item.id));
     } catch (error) {
       console.error("Error reading bookmarks:", error);
     } finally {
@@ -48,8 +101,7 @@ export default function BookmarkButton({
     if (isLoading) return;
 
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      let bookmarks: BookmarkItem[] = stored ? JSON.parse(stored) : [];
+      let bookmarks = readBookmarks();
 
       if (isBookmarked) {
         // إزالة من المحفوظات
@@ -58,13 +110,18 @@ export default function BookmarkButton({
       } else {
         // إضافة للمحفوظات
         bookmarks.push({
-          ...item,
           id: item.id,
+          title: item.title,
+          url: item.href,
+          category: item.category ?? categoryFromType(item.type),
+          createdAt: Date.now(),
+          excerpt: item.excerpt,
         });
         setIsBookmarked(true);
       }
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
     } catch (error) {
       console.error("Error saving bookmark:", error);
     }
@@ -157,10 +214,7 @@ export function BookmarkCount({ className = "" }: { className?: string }) {
   useEffect(() => {
     const updateCount = () => {
       try {
-        const stored = localStorage.getItem("dawah_bookmarks");
-        if (stored) {
-          setCount(JSON.parse(stored).length);
-        }
+        setCount(readBookmarks().length);
       } catch {}
     };
 

@@ -70,6 +70,7 @@ type UILang = {
 // ============================================================
 
 const STORAGE_KEY = "ismail-dawah-bookmarks";
+const LEGACY_STORAGE_KEY = "dawah_bookmarks";
 
 const UI: Record<string, UILang> = {
   ar: {
@@ -219,8 +220,8 @@ function normalizeBookmark(value: unknown): Bookmark {
   return {
     id: String(item.id ?? createId()),
     title: String(item.title ?? ""),
-    url: String(item.url ?? "#"),
-    category: String(item.category ?? "other"),
+    url: String(item.url ?? item.href ?? "#"),
+    category: String(item.category ?? item.type ?? "other"),
     createdAt: Number(item.createdAt ?? Date.now()),
     excerpt: item.excerpt ? String(item.excerpt) : undefined,
   };
@@ -252,7 +253,9 @@ export default function BookmarksPage() {
   // تحميل المفضلة من localStorage
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw =
+        localStorage.getItem(STORAGE_KEY) ??
+        localStorage.getItem(LEGACY_STORAGE_KEY);
 
       if (raw) {
         const parsed: unknown = JSON.parse(raw);
@@ -285,6 +288,7 @@ export default function BookmarksPage() {
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
     } catch {
       // تجاهل أخطاء الحفظ
     }

@@ -14,6 +14,7 @@ import ToolUnavailablePage from "@/components/ToolUnavailablePage";
 import BookmarkButton from "@/components/BookmarkButton";
 import SurahPlayer from "./SurahPlayer";
 import AyahSearch from "@/components/quran/AyahSearch";
+import QuranReaderControls from "@/components/quran/QuranReaderControls";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
 import { renderDesignIcon } from "@/components/ui";
 
@@ -525,6 +526,7 @@ export default async function SurahPage({
                 translation: quranData.translationAyahs[index]?.text,
               }))}
             />
+            <QuranReaderControls lang={l}>
             {quranData.arabicAyahs.map((ayah, index) => {
               const translation = quranData.translationAyahs[index]?.text;
               const ayahAnchor = `ayah-${ayah.numberInSurah}`;
@@ -534,7 +536,7 @@ export default async function SurahPage({
                 <article
                   key={ayah.number}
                   id={ayahAnchor}
-                  className="card scroll-mt-52 p-5 transition-all duration-300 md:p-7"
+                  className="card quran-ayah scroll-mt-52 p-5 transition-all duration-300 md:p-7"
                 >
                   {/* رأس الآية */}
                   <div className="mb-5 flex items-center justify-between gap-3">
@@ -562,7 +564,10 @@ export default async function SurahPage({
                   {/* النص العربي */}
                   <p
                     className="quran-text text-2xl leading-[2.35] md:text-3xl"
-                    style={{ fontFamily: "var(--font-quran)" }}
+                    style={{
+                      fontFamily: "var(--font-quran)",
+                      fontSize: "var(--quran-reader-font-size, 30px)",
+                    }}
                   >
                     {ayah.text}
                     <span className="ms-2 inline-flex h-9 w-9 items-center justify-center rounded-full border border-gold-400/60 bg-gold-50 text-sm font-black text-gold-700 align-middle dark:border-gold-700/50 dark:bg-gold-900/20 dark:text-gold-300">
@@ -590,6 +595,7 @@ export default async function SurahPage({
                 </article>
               );
             })}
+            </QuranReaderControls>
           </div>
         )}
 

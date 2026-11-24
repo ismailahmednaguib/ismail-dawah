@@ -135,14 +135,21 @@ export default function SurahPlayer({
     if (isPlaying) {
       audioRef.current.play().catch(() => setIsPlaying(false));
     }
-    // Scroll للآية الحالية
+    // إبراز الآية الحالية أثناء التلاوة، مع الحفاظ على مؤشر وصول واضح.
     const el = document.getElementById(`ayah-${currentAyah.numberInSurah}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
-      el.classList.add("ring-2", "ring-primary-500", "ring-offset-2");
-      setTimeout(() => {
-        el.classList.remove("ring-2", "ring-primary-500", "ring-offset-2");
-      }, 2000);
+      document.querySelectorAll(".quran-ayah-active").forEach((node) => {
+        node.classList.remove("quran-ayah-active");
+        node.removeAttribute("aria-current");
+      });
+      el.classList.add("quran-ayah-active");
+      el.setAttribute("aria-current", "true");
+
+      return () => {
+        el.classList.remove("quran-ayah-active");
+        el.removeAttribute("aria-current");
+      };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex]);

@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import JsonLd from '@/components/JsonLd';
 import ContentProgressControl from '@/components/learn/ContentProgressControl';
+import TrackedMedia from '@/components/learn/TrackedMedia';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { sanitizeRichTextHtml } from '@/lib/content-safety';
 import { decodeParam } from '@/lib/params';
@@ -286,8 +287,22 @@ export default async function LearnContentPage({ params }: PageProps) {
                       <img src={item.url} alt={item.alt_text || item.title || ''} className="h-auto w-full rounded-xl object-cover" loading="lazy" decoding="async" />
                     )
                   )}
-                  {item.type === 'audio' && <audio controls preload="metadata" className="w-full" src={item.url} />}
-                  {item.type === 'video' && <video controls preload="metadata" className="w-full rounded-xl" src={item.url} />}
+                  {item.type === 'audio' && (
+                    <TrackedMedia
+                      contentId={content.id}
+                      kind="audio"
+                      src={item.url}
+                      lang={currentLang}
+                    />
+                  )}
+                  {item.type === 'video' && (
+                    <TrackedMedia
+                      contentId={content.id}
+                      kind="video"
+                      src={item.url}
+                      lang={currentLang}
+                    />
+                  )}
                   {item.type === 'pdf' && (
                     <a href={item.url} target="_blank" rel="noreferrer" className="btn-outline w-full justify-center">
                       📄 {currentLang === 'ar' ? 'فتح ملف PDF' : 'Open PDF'}
