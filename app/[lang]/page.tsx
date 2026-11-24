@@ -95,6 +95,12 @@ type UiText = {
   portalDesc: string;
   portalCta1: string;
   portalCta2: string;
+  muslimPortalTitle: string;
+  muslimPortalDesc: string;
+  muslimPortalCta: string;
+  nonMuslimPortalTitle: string;
+  nonMuslimPortalDesc: string;
+  nonMuslimPortalCta: string;
   verseLabel: string;
   downloadBadge: string;
   downloadTitle: string;
@@ -152,6 +158,12 @@ const UI: Record<string, UiText> = {
       "تعريف مبسّط بالإسلام، وإجابات هادئة عن أكثر الأسئلة تكرارًا، وخطوات واضحة لمن يريد اعتناق الإسلام.",
     portalCta1: "تعريف بالإسلام",
     portalCta2: "كيف أدخل الإسلام؟",
+    muslimPortalTitle: "أنا مسلم",
+    muslimPortalDesc: "القرآن، الفتاوى، الأذكار، مواقيت الصلاة ومسار متدرج لطلب العلم.",
+    muslimPortalCta: "ابدأ من قسم المسلمين",
+    nonMuslimPortalTitle: "أتعرف على الإسلام",
+    nonMuslimPortalDesc: "تعريف هادئ ومبسّط بالإسلام والنبي محمد ﷺ والقرآن وأسئلة الباحثين عن الحقيقة.",
+    nonMuslimPortalCta: "ابدأ التعرف على الإسلام",
     verseLabel: "آية اليوم",
     downloadBadge: "تطبيق أندرويد",
     downloadTitle: "حمّل التطبيق الآن",
@@ -213,6 +225,12 @@ const UI: Record<string, UiText> = {
       "A simple introduction to Islam, calm answers to the most-asked questions, and clear steps for those who wish to embrace Islam.",
     portalCta1: "Introduction to Islam",
     portalCta2: "How to embrace Islam",
+    muslimPortalTitle: "I am Muslim",
+    muslimPortalDesc: "Quran, fatwas, adhkar, prayer times, and a gradual path for seeking knowledge.",
+    muslimPortalCta: "Explore the Muslim portal",
+    nonMuslimPortalTitle: "Discover Islam",
+    nonMuslimPortalDesc: "A calm introduction to Islam, Prophet Muhammad ﷺ, the Quran, and honest answers for seekers.",
+    nonMuslimPortalCta: "Start discovering Islam",
     verseLabel: "Verse of the Day",
     downloadBadge: "Android App",
     downloadTitle: "Download the App Now",
@@ -553,6 +571,48 @@ export default async function HomePage({
 
       {settingFlag(settings, "showPrayerBar", true) && <PrayerWidgetLazy lang={l} style={{ order: 2 }} />}
 
+      {/* ============ بوابة الجمهور ============ */}
+      {gate.visible('sections') && (
+        <section style={{ order: 3 }} className="container-page py-12 md:py-16">
+          <div className="mb-8 text-center">
+            <span className="badge-gold">{ui.portalBadge}</span>
+            <h2 className="mt-4 text-3xl font-black text-slate-900 dark:text-white md:text-4xl" style={{ fontFamily: "var(--font-amiri)" }}>
+              {ui.portalTitle}
+            </h2>
+            <p className="section-subtitle mx-auto mt-3 max-w-2xl">{ui.portalDesc}</p>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <AudiencePortalCard
+              lang={l}
+              tone="primary"
+              icon="🕌"
+              title={ui.muslimPortalTitle}
+              description={ui.muslimPortalDesc}
+              cta={ui.muslimPortalCta}
+              links={[
+                { label: l === "ar" ? "القرآن الكريم" : "Holy Quran", href: `/${l}/quran` },
+                { label: l === "ar" ? "العلوم الشرعية" : "Islamic sciences", href: `/${l}/learn` },
+                { label: l === "ar" ? "الأدوات الإسلامية" : "Islamic tools", href: `/${l}/prayer-times` },
+              ]}
+            />
+            <AudiencePortalCard
+              lang={l}
+              tone="gold"
+              icon="🌍"
+              title={ui.nonMuslimPortalTitle}
+              description={ui.nonMuslimPortalDesc}
+              cta={ui.nonMuslimPortalCta}
+              links={[
+                { label: ui.portalCta1, href: `/${l}/dawah` },
+                { label: l === "ar" ? "من هو محمد ﷺ؟" : "Who is Muhammad ﷺ?", href: `/${l}/dawah/who-is-muhammad` },
+                { label: ui.portalCta2, href: `/${l}/embrace-islam` },
+              ]}
+            />
+          </div>
+        </section>
+      )}
+
       {/* ============ أبواب الموقع ============ */}
       {gate.visible('sections') && topGroups.length > 0 && (
       <section style={homeSectionStyle("sections")} className="container-page py-14 md:py-16">
@@ -818,8 +878,60 @@ export default async function HomePage({
 // HeroStatCard
 // ============================================================
 
-function HeroStatCard(_props: { value: string; label: string }) {
-  return null;
+function HeroStatCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-center backdrop-blur-sm">
+      <strong className="block text-2xl font-black text-white md:text-3xl">{value}</strong>
+      <span className="mt-1 block text-xs font-bold text-primary-100">{label}</span>
+    </div>
+  );
+}
+
+function AudiencePortalCard({
+  lang,
+  tone,
+  icon,
+  title,
+  description,
+  cta,
+  links,
+}: {
+  lang: Lang;
+  tone: "primary" | "gold";
+  icon: string;
+  title: string;
+  description: string;
+  cta: string;
+  links: Array<{ label: string; href: string }>;
+}) {
+  const isPrimary = tone === "primary";
+
+  return (
+    <article className={`group relative overflow-hidden rounded-3xl border p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover md:p-9 ${
+      isPrimary
+        ? "border-primary-200 bg-gradient-to-br from-primary-50 via-white to-cyan-50 dark:border-primary-800 dark:from-primary-950/50 dark:via-night-900 dark:to-cyan-950/30"
+        : "border-gold-200 bg-gradient-to-br from-gold-50 via-white to-amber-50 dark:border-gold-800 dark:from-gold-950/40 dark:via-night-900 dark:to-amber-950/20"
+    }`}>
+      <div className={`absolute inset-x-0 top-0 h-1.5 ${isPrimary ? "gradient-primary" : "gradient-gold"}`} aria-hidden="true" />
+      <div className="relative">
+        <span className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl shadow-lg ${isPrimary ? "bg-primary-700 text-white" : "bg-gold-500 text-white"}`} aria-hidden="true">
+          {renderDesignIcon(icon, 32)}
+        </span>
+        <h3 className="mt-5 text-2xl font-black text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-amiri)" }}>{title}</h3>
+        <p className="mt-2 min-h-14 leading-7 text-slate-600 dark:text-slate-300">{description}</p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {links.map((link) => (
+            <Link key={link.href} href={link.href} className={`rounded-xl border px-3 py-2 text-sm font-bold transition ${isPrimary ? "border-primary-200 bg-white/80 text-primary-800 hover:bg-primary-100 dark:border-primary-700 dark:bg-night-800/70 dark:text-primary-200" : "border-gold-200 bg-white/80 text-gold-800 hover:bg-gold-100 dark:border-gold-700 dark:bg-night-800/70 dark:text-gold-200"}`}>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+        <Link href={links[0]?.href ?? `/${lang}`} className={`mt-7 inline-flex items-center gap-2 text-sm font-black ${isPrimary ? "text-primary-700 dark:text-primary-300" : "text-gold-700 dark:text-gold-300"}`}>
+          {cta} <span aria-hidden="true">{lang === "ar" ? "←" : "→"}</span>
+        </Link>
+      </div>
+    </article>
+  );
 }
 
 // ============================================================

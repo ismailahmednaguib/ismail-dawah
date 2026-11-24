@@ -23,10 +23,15 @@ const ARABIC_EDITION = "quran-uthmani";
 const ENGLISH_EDITION = "en.sahih";
 
 const RECITERS = [
-  { id: "ar.alafasy", ar: "مشاري راشد العفاسي", en: "Mishary Rashid Alafasy" },
-  { id: "ar.abdulbasitmurattal", ar: "عبد الباسط عبد الصمد", en: "Abdul Basit Abdus-Samad" },
+  { id: "ar.sudais", ar: "عبد الرحمن السديس", en: "Abdul Rahman Al-Sudais" },
+  { id: "ar.shuraim", ar: "سعود الشريم", en: "Saud Al-Shuraim" },
+  { id: "ar.minshawi", ar: "محمد صديق المنشاوي", en: "Mohamed Siddiq Al-Minshawi" },
   { id: "ar.husary", ar: "محمود خليل الحصري", en: "Mahmoud Khalil Al-Husary" },
-  { id: "ar.minshawi", ar: "محمد صديق المنشاوي", en: "Mohamed Siddiq El-Minshawi" },
+  { id: "ar.abdulbasit", ar: "عبد الباسط عبد الصمد", en: "Abdul Basit Abdus-Samad" },
+  { id: "ar.ajamy", ar: "أحمد العجمي", en: "Ahmed Al-Ajmy" },
+  { id: "ar.hudhaify", ar: "علي الحذيفي", en: "Ali Al-Hudhaify" },
+  { id: "ar.muhammadayoub", ar: "محمد أيوب", en: "Muhammad Ayyoub" },
+  { id: "ar.muhammadjibreel", ar: "محمد جبريل", en: "Muhammad Jibreel" },
 ] as const;
 
 type ReciterId = (typeof RECITERS)[number]["id"];
@@ -35,6 +40,9 @@ type ReciterId = (typeof RECITERS)[number]["id"];
 // القائمة ثابتة ومحمية عمدًا: لا نسمح بتحويل معرّف مصدر خارجي إلى URL من query string.
 const TAFSIRS = [
   { id: "ar.muyassar", ar: "التفسير الميسر", en: "Tafsir Al-Muyassar" },
+  { id: "ar.ibnkathir", ar: "تفسير ابن كثير", en: "Tafsir Ibn Kathir" },
+  { id: "ar.saddi", ar: "تفسير السعدي", en: "Tafsir Al-Saadi" },
+  { id: "ar.tabari", ar: "تفسير الطبري", en: "Tafsir Al-Tabari" },
 ] as const;
 
 type TafsirId = (typeof TAFSIRS)[number]["id"];

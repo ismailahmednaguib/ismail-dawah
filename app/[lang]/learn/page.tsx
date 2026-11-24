@@ -42,6 +42,23 @@ const TRACKS = {
   ],
 } as const;
 
+const LEARNING_LEVELS = {
+  ar: [
+    { number: '١', value: 'beginner', title: 'أساسيات الإسلام', text: 'تعرف على الإيمان والعبادات والمفاهيم الكبرى.' },
+    { number: '٢', value: 'beginner', title: 'العقيدة والعبادات', text: 'ثبّت الأساس وتعلم ما تحتاجه في يومك.' },
+    { number: '٣', value: 'intermediate', title: 'الفقه والحديث', text: 'انتقل إلى الفهم المنهجي والأدلة.' },
+    { number: '٤', value: 'advanced', title: 'التفسير وعلوم القرآن', text: 'اقرأ بوعي وتعرف على علوم الوحي.' },
+    { number: '٥', value: 'specialized', title: 'التخصص والدعوة', text: 'ابنِ مسارك في الفقه أو التعليم أو الدعوة.' },
+  ],
+  en: [
+    { number: '1', value: 'beginner', title: 'Islamic Foundations', text: 'Learn faith, worship, and the big ideas.' },
+    { number: '2', value: 'beginner', title: 'Aqeedah & Worship', text: 'Build the foundation for everyday practice.' },
+    { number: '3', value: 'intermediate', title: 'Fiqh & Hadith', text: 'Move into structured study and evidence.' },
+    { number: '4', value: 'advanced', title: 'Tafsir & Quran Sciences', text: 'Read with context and understand revelation.' },
+    { number: '5', value: 'specialized', title: 'Specialization & Dawah', text: 'Choose a path in fiqh, teaching, or dawah.' },
+  ],
+} as const;
+
 interface PageProps {
   params: Promise<{ lang: string }>;
   searchParams: Promise<Record<string, string | undefined>>;
@@ -125,6 +142,37 @@ export default async function LearnPage({ params, searchParams }: PageProps) {
                 <span aria-hidden="true">{renderDesignIcon(track.icon, 26)}</span>
                 <h3 className="mt-2 font-bold text-primary-950 dark:text-white">{track.title}</h3>
                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{track.text}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-10" aria-labelledby="learning-levels-title">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 id="learning-levels-title" className="text-lg font-bold text-primary-950 dark:text-white">
+                {currentLang === 'ar' ? 'مسار تعليمي متدرج' : 'A gradual learning path'}
+              </h2>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                {currentLang === 'ar' ? 'ابدأ من مستواك وانتقل خطوة بخطوة.' : 'Start at your level and grow step by step.'}
+              </p>
+            </div>
+            <span className="badge-gold">{currentLang === 'ar' ? '٥ مستويات' : '5 levels'}</span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {LEARNING_LEVELS[currentLang].map((level) => (
+              <Link
+                key={`${level.number}-${level.title}`}
+                href={`/${lang}/learn?level=${level.value}`}
+                className="card-interactive group p-4"
+              >
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 text-lg font-black text-primary-800 dark:bg-primary-900/50 dark:text-primary-200">
+                  {level.number}
+                </span>
+                <h3 className="mt-3 font-bold text-primary-950 group-hover:text-primary-700 dark:text-white dark:group-hover:text-primary-300">
+                  {level.title}
+                </h3>
+                <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{level.text}</p>
               </Link>
             ))}
           </div>

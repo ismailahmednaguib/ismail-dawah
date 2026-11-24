@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isValidLang, type Lang } from '@/lib/i18n';
 import { searchSurahs } from '@/lib/references/quran-search';
+import { mapQuranSearchResults, normalizeQuranSearchQuery } from '@/lib/quran/search';
 import { rateLimitGuard } from '@/lib/rate-limit';
 import { getPublicReadClient } from '@/lib/supabase/public-read';
 import type { Madhhab } from '@/lib/types/content';
@@ -26,6 +27,32 @@ function positiveInt(raw: string | null, fallback: number, max: number): number 
   const n = Number(raw);
   if (!Number.isFinite(n)) return fallback;
   return Math.min(max, Math.max(1, Math.floor(n)));
+}
+
+async function searchQuranText(query: string, lang: Lang) {
+  const normalized = normalizeQuranSearchQuery(query);
+  if (normalized.length < 2) return [];
+
+  try {
+    const response = await fetch(
+      `https://api.alquran.cloud/v1/search/${encodeURIComponent(normalized)}/all/${lang}`,
+      { next: { revalidate: 60 * 60 }, signal: AbortSignal.timeout(3500) },
+    );
+    if (!response.ok) return [];
+
+    const payload = (await response.json()) as {
+      data?: { matches?: Array<{
+        number?: number;
+        numberInSurah?: number;
+        text?: string;
+        surah?: { number?: number; name?: string; englishName?: string };
+      }> };
+    };
+
+    return mapQuranSearchResults(payload.data?.matches ?? [], lang, 10);
+  } catch {
+    return [];
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -138,19 +165,24 @@ export async function GET(req: NextRequest) {
     count = result.count ?? 0;
   }
 
-  // البحث في القرآن: أسماء السور وأرقامها ومعانيها الإنجليزية من بيانات محلية موثوقة.
-  // لا نعتمد على جدول quran_verses غير الموجود، ولا نبحث في نص الآيات هنا.
-  // نعرض أفضل ٥ سور؛ صفحة القرآن تتكفل بالتصفح الكامل. نحسب المطابقات دائمًا
-  // ليعرض مرشّح «السور» عدده حتى أثناء فلتر نوع آخر.
+  // البحث في القرآن: أسماء السور وأرقامها ومعانيها من البيانات المحلية،
+  // مع بحث نصي اختياري من AlQuran Cloud. لا نعتمد على جدول quran_verses
+  // غير الموجود؛ وإذا تعذر المصدر الخارجي تبقى نتائج السور متاحة.
   const quranMatches = searchSurahs(q, lang).slice(0, 5);
+  const quranTextResults = (!type || type === 'quran')
+    ? await searchQuranText(q, lang)
+    : [];
   const quranResults = (!type || type === 'quran')
-    ? quranMatches.map((match) => ({
+    ? [
+      ...quranTextResults,
+      ...quranMatches.map((match) => ({
         id: `quran-surah-${match.number}`,
         type: 'quran',
         title: match.title,
         summary: match.summary,
         url: `/${lang}/quran/${match.number}`,
-      }))
+      })),
+    ].slice(0, 20)
     : [];
 
   // لا نرجع لترجمة لغة أخرى عند غياب ترجمة اللغة المطلوبة؛ هذا كان يسرّب
@@ -192,8 +224,8 @@ export async function GET(req: NextRequest) {
       facets[row.content_type] = (facets[row.content_type] ?? 0) + 1;
     }
   }
-  if (quranMatches.length > 0) {
-    facets.quran = quranMatches.length;
+  if (quranResults.length > 0) {
+    facets.quran = quranResults.length;
   }
 
   return NextResponse.json({
