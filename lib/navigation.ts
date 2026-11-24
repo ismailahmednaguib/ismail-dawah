@@ -62,7 +62,7 @@ export const NAV_TREE: NavNode[] = [
       n("mushaf", "المصحف الكامل (تفسير وتجويد وقراءة)", "Full Quran (Tafsir/Tajweed)", "📖", "/quran"),
       n("asbab-nuzul", "أسباب النزول", "Reasons of Revelation", "📅", "/fields/asbab-nuzul", undefined, { taxonomy: "asbab-nuzul" }),
       n("nasikh", "الناسخ والمنسوخ", "Abrogation", "🔀"),
-      n("ijaz", "الإعجاز القرآني", "Quranic Inimitability", "🌟"),
+      n("ijaz", "الإعجاز القرآني", "Quranic Inimitability", "🌟", "/topic/ijaz-quran", undefined, { taxonomy: "ijaz-quran" }),
       n("hifz", "حفظ القرآن وتتبع التقدم", "Memorization & Progress", "💾", "/quran-memorization"),
     ]),
     n("hadith-sciences", "الحديث وعلومه", "Hadith & Its Sciences", "💬", "/hadith", [

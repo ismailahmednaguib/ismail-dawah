@@ -13,6 +13,8 @@ import { DEFAULT_PRAYER_TOOL_SETTINGS, PRAYER_METHOD_IDS } from '@/lib/prayer-se
 import { DEFAULT_TOOL_SETTINGS, type ToolKey } from '@/lib/tool-settings';
 import { DEFAULT_THEME_SETTINGS, normalizeThemeSettings } from '@/lib/theme-settings';
 import ManagedRedirectsEditor from '@/components/admin/ManagedRedirectsEditor';
+import { DEFAULT_CONTENT_GOVERNANCE } from '@/lib/content-governance';
+import { DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG } from '@/lib/new-muslim-journey';
 
 type SettingsRecord = Record<string, any>;
 type Message = { type: 'success' | 'error'; text: string } | null;
@@ -61,9 +63,11 @@ const DEFAULT_SETTINGS: SettingsRecord = {
   questions: DEFAULT_QUESTIONS_CONFIG,
   publicApiEnabled: false,
   dawahJourney: DEFAULT_DAWAH_JOURNEY_CONFIG,
+  newMuslimJourney: DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG,
   assistant: DEFAULT_ASSISTANT_CONFIG,
   theme: DEFAULT_THEME_SETTINGS,
   redirects: [],
+  contentGovernance: DEFAULT_CONTENT_GOVERNANCE,
 };
 
 function text(value: unknown): string {
@@ -273,6 +277,35 @@ export default function SiteSettingsClient() {
     });
   };
 
+  const setNewMuslimJourney = (patch: Record<string, unknown>) => {
+    setSettings((current) => ({
+      ...current,
+      newMuslimJourney: {
+        ...DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG,
+        ...(current.newMuslimJourney && typeof current.newMuslimJourney === 'object' ? current.newMuslimJourney : {}),
+        ...patch,
+      },
+    }));
+  };
+
+  const setNewMuslimJourneyDay = (index: number, field: 'subject' | 'body', lang: 'ar' | 'en', value: string) => {
+    setSettings((current) => {
+      const journey = current.newMuslimJourney && typeof current.newMuslimJourney === 'object'
+        ? current.newMuslimJourney
+        : DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG;
+      const days = Array.isArray(journey.days) ? [...journey.days] : [...DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG.days];
+      const day = days[index] && typeof days[index] === 'object' ? days[index] : DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG.days[index];
+      days[index] = {
+        ...day,
+        [field]: {
+          ...(day[field] && typeof day[field] === 'object' ? day[field] : {}),
+          [lang]: value,
+        },
+      };
+      return { ...current, newMuslimJourney: { ...journey, days } };
+    });
+  };
+
   const setTool = (key: ToolKey, patch: Record<string, unknown>) => {
     setSettings((current) => ({
       ...current,
@@ -286,6 +319,38 @@ export default function SiteSettingsClient() {
         },
       },
     }));
+  };
+
+  const setGovernance = (patch: Record<string, unknown>) => {
+    setSettings((current) => ({
+      ...current,
+      contentGovernance: {
+        ...DEFAULT_CONTENT_GOVERNANCE,
+        ...(current.contentGovernance && typeof current.contentGovernance === 'object' ? current.contentGovernance : {}),
+        ...patch,
+      },
+    }));
+  };
+
+  const setGovernanceLocalized = (key: 'methodology' | 'reviewPolicy' | 'sourcePolicy', lang: 'ar' | 'en', value: string) => {
+    const current = settings.contentGovernance?.[key];
+    setGovernance({
+      [key]: {
+        ...(current && typeof current === 'object' ? current : {}),
+        [lang]: value,
+      },
+    });
+  };
+
+  const setGovernanceChecklist = (key: keyof typeof DEFAULT_CONTENT_GOVERNANCE.checklist, value: boolean) => {
+    const checklist = settings.contentGovernance?.checklist;
+    setGovernance({
+      checklist: {
+        ...DEFAULT_CONTENT_GOVERNANCE.checklist,
+        ...(checklist && typeof checklist === 'object' ? checklist : {}),
+        [key]: value,
+      },
+    });
   };
 
   const save = async () => {
@@ -683,6 +748,84 @@ export default function SiteSettingsClient() {
                   <TextareaField label="Email body — English" value={text(settings.dawahJourney?.days?.[index]?.body?.en) || day.body.en} onChange={(value) => setJourneyDay(index, 'body', 'en', value)} rows={4} />
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      <Section title="رحلة المسلم الجديد البريدية — أول ٣٠ يومًا" description="فعّل رسائل اختيارية كل ٤٨ ساعة تقريبًا للمشترك الجديد، مع رابط إلغاء واضح. لا تبدأ الإرسال إلا بعد مراجعة النصوص وتطبيق migration وضبط مزود البريد.">
+        <div className="space-y-5">
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold-200 bg-gold-50/60 p-4">
+            <input
+              type="checkbox"
+              checked={Boolean(settings.newMuslimJourney?.enabled)}
+              onChange={(event) => setNewMuslimJourney({ enabled: event.target.checked })}
+              className="mt-1 h-4 w-4 accent-primary-700"
+            />
+            <span>
+              <span className="block text-sm font-black text-primary-950">تفعيل التسجيل والرسائل</span>
+              <span className="mt-1 block text-xs leading-6 text-stone-500">يظهر نموذج الاشتراك في صفحة «اعتناق الإسلام» عند تفعيل الخيار وتهيئة البريد.</span>
+            </span>
+          </label>
+          <InputField
+            label="الفاصل بين الرسائل بالساعات (الافتراضي ٤٨)"
+            value={String(settings.newMuslimJourney?.intervalHours ?? 48)}
+            onChange={(value) => setNewMuslimJourney({ intervalHours: Math.max(24, Math.min(168, Number(value) || 48)) })}
+            dir="ltr"
+          />
+          <div className="space-y-4">
+            {DEFAULT_NEW_MUSLIM_JOURNEY_CONFIG.days.map((day, index) => (
+              <div key={day.href + index} className="rounded-xl border border-cream-200 bg-cream-50 p-4">
+                <p className="mb-3 text-sm font-black text-primary-950">الرسالة {index + 1} — اليوم {index * 2 + 1} تقريبًا</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <TextareaField label="الموضوع — العربية" value={text(settings.newMuslimJourney?.days?.[index]?.subject?.ar) || day.subject.ar} onChange={(value) => setNewMuslimJourneyDay(index, 'subject', 'ar', value)} rows={2} />
+                  <TextareaField label="Subject — English" value={text(settings.newMuslimJourney?.days?.[index]?.subject?.en) || day.subject.en} onChange={(value) => setNewMuslimJourneyDay(index, 'subject', 'en', value)} rows={2} dir="ltr" />
+                  <TextareaField label="نص الرسالة — العربية" value={text(settings.newMuslimJourney?.days?.[index]?.body?.ar) || day.body.ar} onChange={(value) => setNewMuslimJourneyDay(index, 'body', 'ar', value)} rows={4} />
+                  <TextareaField label="Email body — English" value={text(settings.newMuslimJourney?.days?.[index]?.body?.en) || day.body.en} onChange={(value) => setNewMuslimJourneyDay(index, 'body', 'en', value)} rows={4} dir="ltr" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      <Section title="حوكمة المحتوى والمراجعة" description="هذه الإعدادات تجعل منهج النشر، المراجع المعلنين، وسياسة التعامل مع الأسئلة قابلة للإدارة من اللوحة. لا تضف اسمًا أو مؤهلًا قبل التحقق منه واعتماده.">
+        <div className="space-y-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <TextareaField label="منهجية النشر — العربية" value={String(settings.contentGovernance?.methodology?.ar || '')} onChange={(value) => setGovernanceLocalized('methodology', 'ar', value)} rows={4} />
+            <TextareaField label="Publishing methodology — English" value={String(settings.contentGovernance?.methodology?.en || '')} onChange={(value) => setGovernanceLocalized('methodology', 'en', value)} rows={4} dir="ltr" />
+            <TextareaField label="سياسة المراجعة — العربية" value={String(settings.contentGovernance?.reviewPolicy?.ar || '')} onChange={(value) => setGovernanceLocalized('reviewPolicy', 'ar', value)} rows={4} />
+            <TextareaField label="Review policy — English" value={String(settings.contentGovernance?.reviewPolicy?.en || '')} onChange={(value) => setGovernanceLocalized('reviewPolicy', 'en', value)} rows={4} dir="ltr" />
+            <TextareaField label="سياسة المصادر — العربية" value={String(settings.contentGovernance?.sourcePolicy?.ar || '')} onChange={(value) => setGovernanceLocalized('sourcePolicy', 'ar', value)} rows={4} />
+            <TextareaField label="Source policy — English" value={String(settings.contentGovernance?.sourcePolicy?.en || '')} onChange={(value) => setGovernanceLocalized('sourcePolicy', 'en', value)} rows={4} dir="ltr" />
+          </div>
+
+          <TextareaField
+            label="المراجع أو أعضاء اللجنة المعتمدون (اسم واحد في كل سطر)"
+            value={Array.isArray(settings.contentGovernance?.reviewers) ? settings.contentGovernance.reviewers.join('\n') : ''}
+            onChange={(value) => setGovernance({ reviewers: value.split('\n').map((item) => item.trim()).filter(Boolean).slice(0, 50) })}
+            rows={5}
+            placeholder="لن يظهر أي اسم هنا إلا إذا أدخلته واعتمدته يدويًا."
+          />
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <InputField label="الحد المستهدف للرد (بالساعات)" value={String(settings.contentGovernance?.responseSlaHours ?? DEFAULT_CONTENT_GOVERNANCE.responseSlaHours)} onChange={(value) => setGovernance({ responseSlaHours: Math.min(720, Math.max(1, Number(value) || DEFAULT_CONTENT_GOVERNANCE.responseSlaHours)) })} dir="ltr" />
+            <InputField label="مدة الاحتفاظ برسائل الأسئلة (بالأيام)" value={String(settings.contentGovernance?.inquiryRetentionDays ?? DEFAULT_CONTENT_GOVERNANCE.inquiryRetentionDays)} onChange={(value) => setGovernance({ inquiryRetentionDays: Math.min(730, Math.max(1, Number(value) || DEFAULT_CONTENT_GOVERNANCE.inquiryRetentionDays)) })} dir="ltr" />
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            {([
+              ['source', 'وجود مصدر قابل للتحقق'],
+              ['citation', 'توثيق الآية أو الحديث والمرجع'],
+              ['scholarlyReview', 'المراجعة العلمية للمحتوى الحساس'],
+              ['languageReview', 'المراجعة اللغوية والترجمة'],
+              ['limitations', 'بيان حدود المادة وعدم ادعاء ما لا نعلم'],
+              ['errorReports', 'تفعيل استقبال بلاغات أخطاء المحتوى'],
+            ] as const).map(([key, label]) => (
+              <label key={key} className="flex cursor-pointer items-start gap-3 rounded-xl border border-cream-200 bg-cream-50 p-4">
+                <input type="checkbox" checked={Boolean(settings.contentGovernance?.checklist?.[key] ?? DEFAULT_CONTENT_GOVERNANCE.checklist[key])} onChange={(event) => setGovernanceChecklist(key, event.target.checked)} className="mt-1 h-4 w-4 accent-primary-700" />
+                <span className="text-sm font-bold text-primary-950">{label}</span>
+              </label>
             ))}
           </div>
         </div>

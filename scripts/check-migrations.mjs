@@ -33,6 +33,11 @@ const checks = [
     migration: '20261016_dawah_journey.sql',
   },
   {
+    name: 'new_muslim_journey_subscribers',
+    query: 'new_muslim_journey_subscribers?select=id&limit=1',
+    migration: '20261124_new_muslim_journey.sql',
+  },
+  {
     name: 'dawah_request_assignments',
     query: 'dawah_request_assignments?select=id&limit=1',
     migration: '20261016_dawah_assignments.sql',

@@ -9,6 +9,7 @@
    - `20261016_content_review_metadata.sql`
    - `20261016_religions_foundation.sql`
    - `20261016_dawah_journey.sql` (اختياري، قبل تفعيل رحلة البريد)
+   - `20261124_new_muslim_journey.sql` (اختياري، قبل تفعيل رحلة المسلم الجديد البريدية)
    - `20261016_dawah_assignments.sql` (قبل استخدام توزيع طلبات الحوار في لوحة الأسئلة)
    - لا توجد migration للمساعد المقيّد؛ حدّه محفوظ ضمن `site_settings` ويستخدم المصادر المنشورة فقط.
    - `20261017_security_and_review.sql`

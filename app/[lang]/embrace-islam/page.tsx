@@ -3,7 +3,7 @@ import { safeJsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isValidLang, type Lang } from "@/lib/i18n";
+import { isValidLang, type Lang } from "@/lib/i18n";
 import { getSiteSettings } from "@/lib/content";
 import { buildPageControls, pageGate } from "@/lib/page-sections";
 import TopBar from "@/components/TopBar";
@@ -11,8 +11,13 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { renderDesignIcon } from "@/components/ui";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import NewMuslimJourneySignup from "@/components/embrace/NewMuslimJourneySignup";
+import { emailProviderConfigured } from "@/lib/email-verification-config";
+import { normalizeNewMuslimJourneyConfig } from "@/lib/new-muslim-journey";
 
-export const dynamic = "force-static";
+// الإعدادات البريدية تُحرَّر من لوحة التحكم؛ يجب أن تُقرأ في الطلب حتى يظهر
+// النموذج بعد التفعيل دون انتظار إعادة بناء كاملة للموقع.
+export const dynamic = "force-dynamic";
 
 type Localized = {
   ar: string;
@@ -552,6 +557,7 @@ export default async function EmbraceIslamPage({
   const gate = pageGate(buildPageControls(__pageSettings as Record<string, unknown>), "embrace-islam", l);
   const ui = UI[l];
   const isRTL = l === "ar";
+  const newMuslimJourney = normalizeNewMuslimJourneyConfig((__pageSettings as Record<string, unknown>).newMuslimJourney);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -713,6 +719,11 @@ export default async function EmbraceIslamPage({
             ))}
           </div>
         </div>
+
+        <NewMuslimJourneySignup
+          lang={l}
+          enabled={newMuslimJourney.enabled && emailProviderConfigured(process.env)}
+        />
 
         </>)}
         {/* ===== إحصائيات سريعة ===== */}

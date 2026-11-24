@@ -909,7 +909,7 @@ function AudiencePortalCard({
   return (
     <article className={`group relative overflow-hidden rounded-3xl border p-7 shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover md:p-9 ${
       isPrimary
-        ? "border-primary-200 bg-gradient-to-br from-primary-50 via-white to-cyan-50 dark:border-primary-800 dark:from-primary-950/50 dark:via-night-900 dark:to-cyan-950/30"
+        ? "border-primary-200 bg-gradient-to-br from-primary-50 via-white to-primary-50 dark:border-primary-800 dark:from-primary-950/50 dark:via-night-900 dark:to-primary-950/30"
         : "border-gold-200 bg-gradient-to-br from-gold-50 via-white to-amber-50 dark:border-gold-800 dark:from-gold-950/40 dark:via-night-900 dark:to-amber-950/20"
     }`}>
       <div className={`absolute inset-x-0 top-0 h-1.5 ${isPrimary ? "gradient-primary" : "gradient-gold"}`} aria-hidden="true" />

@@ -174,6 +174,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ? "A clear introduction to Islam, answers to common questions, and a respectful path for learning."
       : "تعريف واضح بالإسلام، وإجابات عن الأسئلة الشائعة، ومسار محترم للتعلم.",
     alternates: {
+      canonical: `/${lang}/dawah`,
       languages: {
         ar: "/ar/dawah",
         en: "/en/dawah",

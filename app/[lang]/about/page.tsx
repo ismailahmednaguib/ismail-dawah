@@ -14,6 +14,7 @@ import Footer from "@/components/Footer";
 import { PageHero, renderDesignIcon } from "@/components/ui";
 import { applyNavigationConfig, flattenNav, NAV_TREE } from "@/lib/navigation";
 import { SITE_NAME, SITE_NAME_EN } from "@/lib/site";
+import { governanceText, normalizeContentGovernance } from "@/lib/content-governance";
 
 // ============================================================
 // الأنواع
@@ -581,6 +582,10 @@ export default async function AboutPage({
   const cred2 = settingText("cred2");
   const portraitSrc = settingText("portraitSrc");
   const founderRole = settingText("jobTitle") || ui.founderRole;
+  const governance = normalizeContentGovernance((__pageSettings as Record<string, unknown>).contentGovernance);
+  const governanceMethodology = governanceText(governance.methodology, l);
+  const governanceReviewPolicy = governanceText(governance.reviewPolicy, l);
+  const governanceSourcePolicy = governanceText(governance.sourcePolicy, l);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -872,6 +877,14 @@ export default async function AboutPage({
                 {isRTL ? "يمكن الإبلاغ عن الخطأ من صفحة المادة، وتُراجع البلاغات قبل أي تعديل." : "Errors can be reported from the content page, and reports are reviewed before changes are made."}
               </li>
             </ul>
+            {(governanceMethodology || governanceReviewPolicy || governanceSourcePolicy || governance.reviewers.length > 0) && (
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                {governanceMethodology && <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-4 dark:border-night-700 dark:bg-night-800/50"><p className="font-black text-primary-900 dark:text-primary-100">{isRTL ? "منهجية النشر المعتمدة" : "Published editorial methodology"}</p><p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{governanceMethodology}</p></div>}
+                {governanceReviewPolicy && <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-4 dark:border-night-700 dark:bg-night-800/50"><p className="font-black text-primary-900 dark:text-primary-100">{isRTL ? "سياسة المراجعة" : "Review policy"}</p><p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{governanceReviewPolicy}</p></div>}
+                {governanceSourcePolicy && <div className="rounded-xl border border-gold-200 bg-gold-50/60 p-4 dark:border-gold-900/40 dark:bg-gold-950/20"><p className="font-black text-primary-900 dark:text-primary-100">{isRTL ? "سياسة المصادر" : "Source policy"}</p><p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">{governanceSourcePolicy}</p></div>}
+                {governance.reviewers.length > 0 && <div className="rounded-xl border border-gold-200 bg-gold-50/60 p-4 dark:border-gold-900/40 dark:bg-gold-950/20"><p className="font-black text-primary-900 dark:text-primary-100">{isRTL ? "المراجعون المعلنون" : "Published reviewers"}</p><ul className="mt-2 list-disc space-y-1 ps-5 text-sm leading-7 text-slate-600 dark:text-slate-300">{governance.reviewers.map((reviewer) => <li key={reviewer}>{reviewer}</li>)}</ul></div>}
+              </div>
+            )}
           </section>
         )}
         {/* ===== منهج المحتوى ===== */}

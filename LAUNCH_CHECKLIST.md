@@ -20,17 +20,18 @@
 - [x] فحص Supabase القراءة فقط أثبت وجود schema الخاص بـ 20261023_content_revisions.sql و20261026_scheduled_publishing.sql و20261027_admin_mfa.sql، إضافة إلى bucket النسخ الاحتياطية.
 - [x] تنفيذ `20261124_dawah_inquiries.sql` و`20261124_reference_source_urls.sql` في Supabase؛ `npm run qa:migrations` ناجح.
 - [x] تنفيذ `20261124_content_reports.sql` في Supabase؛ `npm run qa:migrations` يثبت وجود جدول البلاغات مع RLS الخاص.
+- [x] تنفيذ `20261124_new_muslim_journey.sql` في Supabase؛ `npm run qa:migrations` يثبت وجود جدول رحلة المسلم الجديد، و`npm run qa:rls` يثبت حجبه عن الزائر.
+- [x] رحلة المسلم الجديد البريدية: 15 رسالة اختيارية، اشتراك وإلغاء اشتراك، Cron محمي، إدارة المشتركين، تحرير الرسائل من اللوحة، والنسخ الاحتياطي.
 
 ## ⚠️ مراجعة بشرية وحسابات خارجية
 
 - [ ] مراجعة الفتاوى العشرين من مراجع علمي حقيقي واعتماد مراجعها.
 - [ ] ضبط ADMIN_MFA_ENCRYPTION_KEY في Vercel وتسجيل جهاز TOTP للمالك.
 - [ ] تنفيذ اختبار نسخة واسترجاع على Preview أو قاعدة بيانات منفصلة.
-- [x] schema الخاص بـ 20261023_content_revisions.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل الإطلاق النهائي.
-- [x] schema الخاص بـ 20261026_scheduled_publishing.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل استخدام الجدولة.
-- [x] schema جدول 20261027_admin_mfa.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي وتسجيل جهاز المالك.
-- [x] schema جدول `dawah_inquiries` وعمود `content_references.source_url` متحققان؛ يبقى فقط تأكيد سجل migration الرسمي في Dashboard.
-- [x] schema جدول `content_reports` منفّذ ومغلق عن `anon` و`authenticated`؛ يبقى فقط تأكيد سجل migration الرسمي في Dashboard.
+- [x] schema الخاص بـ `20261023_content_revisions.sql` و`20261026_scheduled_publishing.sql` متحقق، و`npm run qa:migrations -- --strict` يمر دون migration مطلوبة معلّقة.
+- [x] schema جدول `20261027_admin_mfa.sql` متحقق ومرحلته موجودة؛ يبقى فقط ضبط مفتاح MFA وتسجيل جهاز المالك.
+- [x] schema جدول `dawah_inquiries` وعمود `content_references.source_url` متحققان، ومرحلتهما مثبتة في فحص migrations.
+- [x] schema جدول `content_reports` منفّذ ومغلق عن `anon` و`authenticated`، ومرحلته مثبتة في فحص migrations.
 - [ ] إضافة Google Search Console إن أراد المالك ذلك.
 - [ ] اختيار نطاق مخصص أو الاستمرار على vercel.app.
 - [ ] امتلاك حساب Google Play ومفتاح توقيع Android ونشر التطبيق.
@@ -41,7 +42,7 @@
 - [ ] اختبار الموقع على أجهزة حقيقية وشبكات بطيئة وقارئات الشاشة.
 - [ ] اختبار القيم الحية للمواقيت والقبلة والأذان على أجهزة فعلية.
 - [ ] تشغيل npm run qa:review:strict بعد اعتماد الفتاوى.
-- [ ] تشغيل npm run qa:rls:strict بعد تسجيل MFA؛ يفشل حاليًا لأن جدول admin_mfa فارغ قبل تسجيل جهاز المالك.
+- [x] تشغيل `npm run qa:rls -- --strict`؛ يمر حاليًا ويثبت حجب جدول `admin_mfa` وكل الجداول الخاصة. تسجيل جهاز المالك يبقى مطلوبًا لتفعيل MFA نفسه.
 
 
 ## ⚠️ ملاحظة البناء المحلي

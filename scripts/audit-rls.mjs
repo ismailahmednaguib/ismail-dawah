@@ -27,7 +27,7 @@ if (!URL || !ANON) {
 const PRIVATE_TABLES = [
   'admin_users', 'admin_login_attempts', 'user_roles', 'users', 'audit_log',
   'activity_log', 'page_views', 'analytics_events', 'site_settings', 'review_queue',
-  'content_revisions', 'newsletter_subscribers', 'dawah_journey_subscribers',
+  'content_revisions', 'newsletter_subscribers', 'dawah_journey_subscribers', 'new_muslim_journey_subscribers',
   'dawah_request_assignments', 'learner_content_progress', 'user_favorites',
   'user_questions', 'dawah_inquiries', 'content_reports', 'media_library', 'rate_limits', 'push_subscriptions', 'admin_mfa',
 ];

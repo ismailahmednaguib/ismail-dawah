@@ -87,6 +87,7 @@ const PRIVATE_TABLES = [
   'content_revisions',
   'newsletter_subscribers',
   'dawah_journey_subscribers',
+  'new_muslim_journey_subscribers',
   'dawah_request_assignments',
   'learner_content_progress',
   'user_favorites',

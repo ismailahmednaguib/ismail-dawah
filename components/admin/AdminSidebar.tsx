@@ -81,6 +81,7 @@ export default function AdminSidebar({
     { section: "التواصل", href: "/admin/questions", label: "أسئلة الزوار", icon: HelpCircleIcon, show: can(roles, "questions.manage") },
     { section: "التواصل", href: "/admin/notifications", label: "الإشعارات", icon: BellIcon, show: can(roles, "notifications.manage") },
     { section: "التواصل", href: "/admin/newsletter", label: "النشرة البريدية", icon: MailIcon, show: can(roles, "notifications.manage") },
+    { section: "التواصل", href: "/admin/new-muslim", label: "رحلة المسلم الجديد", icon: MailIcon, show: can(roles, "notifications.manage") },
     { section: "الإدارة", href: "/admin/users", label: "المستخدمون والأدوار", icon: UsersIcon, show: can(roles, "users.manage") },
     { section: "الإدارة", href: "/admin/audit", label: "سجل التدقيق", icon: FileTextIcon, show: can(roles, "audit.read") },
     { section: "الإدارة", href: "/admin/security", label: "الأمان", icon: ShieldIcon, show: can(roles, "audit.read") },

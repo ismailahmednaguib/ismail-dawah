@@ -30,6 +30,7 @@ export const BACKUP_SETTINGS_TABLES: Record<string, string> = {
   site_settings: '*',
   newsletter_subscribers: '*',
   dawah_journey_subscribers: '*',
+  new_muslim_journey_subscribers: '*',
   dawah_request_assignments: '*',
   dawah_inquiries: '*',
   content_reports: '*',

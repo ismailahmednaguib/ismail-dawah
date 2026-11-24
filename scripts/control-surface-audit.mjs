@@ -209,6 +209,9 @@ function classifyElement(rel, route, translationSource) {
   if (rel === "lib/navigation.ts") {
     return { status: "catalogued", reason: "safe navigation defaults overridden by the navigation setting" };
   }
+  if (rel === "lib/new-muslim-journey.ts") {
+    return { status: "catalogued", reason: "new Muslim journey defaults are overridden by the newMuslimJourney setting" };
+  }
   if (rel === "lib/page-sections.ts") {
     return { status: "catalogued", reason: "safe page/section defaults overridden by page settings" };
   }
@@ -241,6 +244,7 @@ function adminKeyFor(rel, route) {
   if (rel === "lib/navigation.ts" || rel === "components/Header.tsx" || rel === "components/Footer.tsx") {
     return "navigation";
   }
+  if (rel === "lib/new-muslim-journey.ts") return "newMuslimJourney";
   if (rel === "lib/page-sections.ts") {
     return "pageSections/sectionTitles/hiddenPages";
   }

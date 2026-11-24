@@ -24,6 +24,8 @@ export const NON_LOCALIZED_SETTING_KEYS = new Set([
   'tools',
   'theme',
   'redirects',
+  'contentGovernance',
+  'newMuslimJourney',
   'publicApiEnabled',
 ]);
 

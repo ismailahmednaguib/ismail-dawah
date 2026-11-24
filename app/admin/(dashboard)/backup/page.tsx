@@ -29,6 +29,7 @@ const LABELS: Record<string, string> = {
   site_settings: 'إعدادات المنصة',
   newsletter_subscribers: 'مشتركو النشرة',
   dawah_journey_subscribers: 'مشتركو رحلة غير المسلمين',
+  new_muslim_journey_subscribers: 'مشتركو رحلة المسلم الجديد',
   dawah_request_assignments: 'توزيع طلبات الحوار',
 };
 

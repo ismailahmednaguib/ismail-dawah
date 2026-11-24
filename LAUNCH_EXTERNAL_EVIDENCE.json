@@ -13,9 +13,9 @@
     {
       "id": "migration-ledger",
       "required": true,
-      "status": "pending",
-      "evidence": "",
-      "completed_at": ""
+      "status": "passed",
+      "evidence": "npm run qa:migrations confirmed dawah_journey_subscribers, new_muslim_journey_subscribers, dawah_request_assignments, content_revisions, push_subscriptions, scheduled publishing, admin_mfa, dawah_inquiries, content_reports, reference source URLs, and the backup bucket are present in Supabase. npm run qa:rls confirmed 0 private tables exposed.",
+      "completed_at": "2026-11-24"
     },
     {
       "id": "production-performance",

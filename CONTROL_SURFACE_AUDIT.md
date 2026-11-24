@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-11-24T01:06:28.064Z
+> تاريخ التوليد: 2026-11-24T21:24:09.684Z
 
 ## الملخص
 
-- المسارات العامة: **58**
-- مسارات الإدارة: **20**
-- واجهات API: **81**
-- مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **7289**
+- المسارات العامة: **59**
+- مسارات الإدارة: **21**
+- واجهات API: **85**
+- مفاتيح إعدادات اللوحة المكتشفة: **35**
+- العناصر المفحوصة: **7430**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **1126** · `api-contract` = **603** · `catalogued` = **2996** · `curated-reference` = **1838** · `immutable-reference` = **726**
+- توزيع الحالات: `admin-ui` = **1175** · `api-contract` = **621** · `catalogued` = **3066** · `curated-reference` = **1842** · `immutable-reference` = **726**
 
 ## المسارات
 
@@ -21,6 +21,7 @@
 | public | `/{lang}/about` | `app/[lang]/about/page.tsx` | metadata |
 | public | `/{lang}/account` | `app/[lang]/account/page.tsx` | metadata |
 | public | `/{lang}/adhkar` | `app/[lang]/adhkar/page.tsx` | metadata |
+| public | `/{lang}/admin` | `app/[lang]/admin/page.tsx` | metadata |
 | public | `/{lang}/articles` | `app/[lang]/articles/page.tsx` | metadata |
 | public | `/{lang}/atheism-response` | `app/[lang]/atheism-response/page.tsx` | metadata |
 | public | `/{lang}/bookmarks` | `app/[lang]/bookmarks/page.tsx` | يحتاج فحص metadata |
@@ -85,6 +86,7 @@
 | admin | `/admin/content/type/{type}` | `app/admin/(dashboard)/content/type/[type]/page.tsx` | metadata |
 | admin | `/admin/control` | `app/admin/(dashboard)/control/page.tsx` | يحتاج فحص metadata |
 | admin | `/admin/login` | `app/admin/login/page.tsx` | يحتاج فحص metadata |
+| admin | `/admin/new-muslim` | `app/admin/(dashboard)/new-muslim/page.tsx` | metadata |
 | admin | `/admin/newsletter` | `app/admin/(dashboard)/newsletter/page.tsx` | metadata |
 | admin | `/admin/notifications` | `app/admin/(dashboard)/notifications/page.tsx` | metadata |
 | admin | `/admin/quality` | `app/admin/(dashboard)/quality/page.tsx` | metadata |
@@ -121,6 +123,7 @@
 | api | `/api/admin/media` | `app/api/admin/media/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/mfa` | `app/api/admin/mfa/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/mfa/verify` | `app/api/admin/mfa/verify/route.ts` | يحتاج فحص metadata |
+| api | `/api/admin/new-muslim-journey` | `app/api/admin/new-muslim-journey/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/newsletter` | `app/api/admin/newsletter/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/quality` | `app/api/admin/quality/route.ts` | يحتاج فحص metadata |
 | api | `/api/admin/review` | `app/api/admin/review/route.ts` | يحتاج فحص metadata |
@@ -144,6 +147,7 @@
 | api | `/api/cron/backup` | `app/api/cron/backup/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/dawah-journey` | `app/api/cron/dawah-journey/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/dawah-retention` | `app/api/cron/dawah-retention/route.ts` | يحتاج فحص metadata |
+| api | `/api/cron/new-muslim-journey` | `app/api/cron/new-muslim-journey/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/publish` | `app/api/cron/publish/route.ts` | يحتاج فحص metadata |
 | api | `/api/dawah/inquiries` | `app/api/dawah/inquiries/route.ts` | يحتاج فحص metadata |
 | api | `/api/dawah/journey/subscribe` | `app/api/dawah/journey/subscribe/route.ts` | يحتاج فحص metadata |
@@ -155,6 +159,8 @@
 | api | `/api/login` | `app/api/login/route.ts` | يحتاج فحص metadata |
 | api | `/api/logout` | `app/api/logout/route.ts` | يحتاج فحص metadata |
 | api | `/api/me` | `app/api/me/route.ts` | يحتاج فحص metadata |
+| api | `/api/new-muslim/journey/subscribe` | `app/api/new-muslim/journey/subscribe/route.ts` | يحتاج فحص metadata |
+| api | `/api/new-muslim/journey/unsubscribe` | `app/api/new-muslim/journey/unsubscribe/route.ts` | يحتاج فحص metadata |
 | api | `/api/newsletter/subscribe` | `app/api/newsletter/subscribe/route.ts` | يحتاج فحص metadata |
 | api | `/api/notifications/send` | `app/api/notifications/send/route.ts` | يحتاج فحص metadata |
 | api | `/api/notifications/subscribe` | `app/api/notifications/subscribe/route.ts` | يحتاج فحص metadata |
@@ -182,6 +188,7 @@
 - `address` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `assistant` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `bio` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
+- `contentGovernance` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `cred1` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `cred2` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `dawahJourney` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
@@ -196,6 +203,7 @@
 - `meetingLink` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `metaTitle` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `motto` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
+- `newMuslimJourney` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `ogImage` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `ownerName` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
 - `passwordChange` — مصدره الحالي: `components/admin/SiteSettingsClient.tsx`
