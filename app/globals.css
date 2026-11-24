@@ -335,11 +335,32 @@ body.dark {
 
   /* ---------- ترويسة الصفحات الداخلية ---------- */
   .page-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     border-color: rgb(15 118 110 / 0.13);
     background:
       radial-gradient(circle at 8% 18%, rgb(255 255 255 / 0.9), transparent 22rem),
       radial-gradient(circle at 92% 0%, rgb(212 175 55 / 0.1), transparent 20rem),
       linear-gradient(135deg, #edf8f6 0%, var(--color-cream-dark) 56%, #fffaf0 100%);
+  }
+
+  .page-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.34;
+    background-image:
+      linear-gradient(rgb(18 95 82 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(18 95 82 / 0.08) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: linear-gradient(180deg, black, transparent 90%);
+  }
+
+  .page-hero .container-page {
+    position: relative;
+    z-index: 1;
   }
 
   .dark .page-hero,
@@ -376,6 +397,8 @@ body.dark {
   .page-hero-stat {
     border-color: rgb(15 118 110 / 0.14);
     background: rgb(255 255 255 / 0.62);
+    box-shadow: 0 14px 30px -24px rgb(6 43 41 / 0.72);
+    backdrop-filter: blur(14px);
   }
 
   /* الصفحات الداخلية تستخدم نفس طبقات الهوية بدل إخفائها أو تسطيحها. */

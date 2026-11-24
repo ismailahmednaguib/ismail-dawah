@@ -78,9 +78,18 @@ export default function ContentCard({
   return (
     <Link
       href={href}
-      className="group card-interactive block"
+      className="group card-interactive block overflow-hidden"
     >
-      <div className={`h-1.5 ${config.accent}`} aria-hidden="true" />
+      <div className={`relative flex h-24 items-end justify-between overflow-hidden bg-gradient-to-br from-primary-950 via-primary-800 to-primary-600 p-4 ${config.accent}`} aria-hidden="true">
+        <div className="absolute -end-5 -top-8 h-28 w-28 rounded-full border border-white/20" />
+        <div className="absolute -bottom-12 -start-4 h-24 w-24 rounded-full border border-white/15" />
+        <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white shadow-lg backdrop-blur-sm">
+          <TypeIcon size={23} />
+        </span>
+        <span className="relative rounded-full border border-white/20 bg-black/10 px-2.5 py-1 text-[10px] font-black tracking-wide text-white/90 backdrop-blur-sm">
+          {isArabic ? "مادة منتقاة" : "Curated resource"}
+        </span>
+      </div>
 
       <div className="p-5">
         <div className="mb-3 flex items-center justify-between gap-3">
