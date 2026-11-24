@@ -293,12 +293,12 @@ export const DAWAH_PORTAL_PAGES: DawahPortalPage[] = [
       ar: [
         { heading: 'ماذا يحدث بعد الإرسال؟', body: 'يقرأ الفريق السؤال، وقد يطلب توضيحًا، أو يحيله إلى مختص عند الحاجة. الأسئلة المتكررة قد تتحول بعد تنقيتها إلى مادة عامة.' },
         { heading: 'ما الذي لا نعد به؟', body: 'لا نعد بفتوى شخصية فورية ولا نضمن وقتًا ثابتًا قبل تشغيل فريق الرد. المسائل العاجلة أو الخطرة تحتاج جهة محلية موثوقة.' },
-        { heading: 'احترام الخصوصية', body: 'اجعل سؤالك عامًا قدر الإمكان، ولا تكتب أسماء أو أرقامًا أو تفاصيل صحية ومالية إلا عند الضرورة القصوى.' },
+        { heading: 'احترام الخصوصية', body: 'اجعل سؤالك عامًا قدر الإمكان، ولا تكتب أسماء أو أرقامًا أو تفاصيل صحية ومالية إلا عند الضرورة القصوى. تُحذف رسائل الأسئلة دوريًا بعد 90 يومًا وفق سياسة الاحتفاظ.' },
       ],
       en: [
         { heading: 'What happens next?', body: 'The team reads the question, may ask for clarification, or route it to a specialist. Repeated questions may become public material after removing personal details.' },
         { heading: 'What we do not promise', body: 'We do not promise an immediate personal fatwa or a fixed response time before a response team is active. Urgent or dangerous situations need trusted local support.' },
-        { heading: 'Respecting privacy', body: 'Keep your question general and do not include names, phone numbers, health, or financial details unless truly necessary.' },
+        { heading: 'Respecting privacy', body: 'Keep your question general and do not include names, phone numbers, health, or financial details unless truly necessary. Inquiry messages are deleted after 90 days under the retention policy.' },
       ],
     },
     {

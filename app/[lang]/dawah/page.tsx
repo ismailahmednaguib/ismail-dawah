@@ -7,6 +7,7 @@ import { isValidLang, type Lang } from "@/lib/i18n";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PageHero, renderDesignIcon } from "@/components/ui";
+import { safeJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -20,7 +21,7 @@ const COPY: Record<string, {
 }> = {
   ar: {
     title: "بوابة غير المسلمين — تعريف بالإسلام",
-    subtitle: "عرِض الإسلام بصورته الصحيحة، بعيدًا عن التشويه والمفاهيم المغلوطة.",
+    subtitle: "اعرض الإسلام بصورته الصحيحة، بعيدًا عن التشويه والمفاهيم المغلوطة.",
     introTitle: "ما هو الإسلام؟",
     intro: "الإسلام دين الله الذي ارتضاه للبشرية، يدعو إلى توحيد الله وعبادته وحده، وتكريم الأنبياء والرسل، وتحقيق العدالة والمساواة بين الناس.",
     sections: [
@@ -77,9 +78,22 @@ export default async function DawahPage({ params }: { params: Promise<{ lang: st
   if (!isValidLang(lang)) notFound();
   const L = lang as Lang;
   const c = COPY[L];
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://ismailahmednaguib.vercel.app").replace(/\/+$/, "");
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "url": `${siteUrl}/${L}/dawah`,
+    "inLanguage": L,
+    "mainEntity": c.faq.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": { "@type": "Answer", "text": item.a },
+    })),
+  };
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }} />
       <Header lang={L} />
       <main id="main-content" tabIndex={-1} dir={L === "ar" ? "rtl" : "ltr"} className="site-page-shell">
         <PageHero

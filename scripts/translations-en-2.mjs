@@ -128,12 +128,12 @@ export const TRANSLATIONS = {
     summary: 'The qibla is the Sacred House in Mecca, and Muslims turn towards it in prayer…',
     body: 'The qibla is the Sacred House in Mecca, and Muslims turn towards it in prayer…',
   },
-  'fatwa-fiqh-حكم-ركوب-المرأة-السيارة-بدون-محرم-17': {
-    title: 'The ruling on a woman travelling by car without a mahram',
+  'fatwa-fiqh-حكم-سفر-المرأة-بدون-محرم-17': {
+    title: 'A Woman Travelling Without a Mahram',
     summary:
-      'A woman travelling without a mahram is forbidden in Islam, because the Prophet ﷺ said: “A woman shall not travel except with a mahram.”',
+      'A woman’s travel without a mahram is a matter of detail among scholars. The majority lean toward prohibition, while some scholars allow it when safety and a genuine need are established.',
     body:
-      'A woman travelling without a mahram is forbidden in Islam, because the Prophet ﷺ said: “A woman shall not travel except with a mahram.”',
+      'A woman’s travel without a mahram is a matter of detail among scholars. The majority lean toward prohibition based on the hadith that a woman should not travel except with a mahram, while some scholars allow it when safety is assured and a need or necessity is present. Specific cases should be referred to a qualified fatwa authority.',
   },
   'usul-definition': {
     title: 'The Definition and Subject of Usul al-Fiqh',

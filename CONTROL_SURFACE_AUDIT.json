@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-11-23T23:57:56.098Z",
+  "generated_at": "2026-11-24T00:24:44.718Z",
   "repository": "ismail-dawah",
   "commit": "local-working-tree",
   "summary": {
     "public_routes": 58,
     "admin_routes": 20,
-    "api_routes": 80,
+    "api_routes": 81,
     "settings_keys": 33,
-    "inventoried_elements": 7277,
+    "inventoried_elements": 7279,
     "unbound_static_elements": 0,
     "public_unbound_static_elements": 0,
     "status_counts": {
       "admin-ui": 1126,
-      "api-contract": 601,
+      "api-contract": 603,
       "catalogued": 2995,
       "curated-reference": 1838,
       "immutable-reference": 717
@@ -648,6 +648,11 @@
       "route": "/api/cron/dawah-journey",
       "kind": "api",
       "file": "app/api/cron/dawah-journey/route.ts"
+    },
+    {
+      "route": "/api/cron/dawah-retention",
+      "kind": "api",
+      "file": "app/api/cron/dawah-retention/route.ts"
     },
     {
       "route": "/api/cron/publish",
@@ -12303,6 +12308,38 @@
       "reason": "server/API contract message"
     },
     {
+      "element_key": "text:00861c46431a",
+      "page": "/api/cron/dawah-retention",
+      "kind": "text",
+      "source": "code",
+      "source_file": "app/api/cron/dawah-retention/route.ts",
+      "line": 10,
+      "value": "غير مصرح",
+      "admin_key": null,
+      "language": "system",
+      "mode": "api",
+      "permission": "server",
+      "test": "server contract tests",
+      "status": "api-contract",
+      "reason": "server/API contract message"
+    },
+    {
+      "element_key": "text:d68f840b5548",
+      "page": "/api/cron/dawah-retention",
+      "kind": "text",
+      "source": "code",
+      "source_file": "app/api/cron/dawah-retention/route.ts",
+      "line": 21,
+      "value": "تعذر تنفيذ سياسة الاحتفاظ.",
+      "admin_key": null,
+      "language": "system",
+      "mode": "api",
+      "permission": "server",
+      "test": "server contract tests",
+      "status": "api-contract",
+      "reason": "server/API contract message"
+    },
+    {
       "element_key": "text:2d7884cce980",
       "page": "/api/cron/publish",
       "kind": "text",
@@ -17295,13 +17332,13 @@
       "reason": "bilingual curated page; release and scholarly review are the change gate"
     },
     {
-      "element_key": "text:88f88fd75f0e",
+      "element_key": "text:645be3469206",
       "page": "/{lang}/about",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/about/page.tsx",
       "line": 322,
-      "value": "لا نُقدّم محتوى دينيًا إلا بعد مراجعة المصدر والضابط.",
+      "value": "نُظهر مصدر المادة وحالة مراجعتها، ولا ننشر المحتوى الحساس باسم المنصة قبل مروره بمراجعة بشرية مناسبة.",
       "admin_key": null,
       "language": "ar|en",
       "mode": "curated-static",
@@ -26415,12 +26452,12 @@
       "reason": "tool dailyWird client copy is governed by the tool source, settings, and local-device behavior"
     },
     {
-      "element_key": "text:8226ce6f9b46",
+      "element_key": "text:4fc8b1ea8068",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 22,
+      "line": 23,
       "value": "بوابة غير المسلمين — تعريف بالإسلام",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26431,13 +26468,13 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:d7269d6d975c",
+      "element_key": "text:b718b43b38f1",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 23,
-      "value": "عرِض الإسلام بصورته الصحيحة، بعيدًا عن التشويه والمفاهيم المغلوطة.",
+      "line": 24,
+      "value": "اعرض الإسلام بصورته الصحيحة، بعيدًا عن التشويه والمفاهيم المغلوطة.",
       "admin_key": "content.dawah",
       "language": "ar|en",
       "mode": "catalogued",
@@ -26447,12 +26484,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:c26bb73af300",
+      "element_key": "text:a4c87c85c291",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 24,
+      "line": 25,
       "value": "ما هو الإسلام؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26463,12 +26500,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:d90565d2aa79",
+      "element_key": "text:98cd6c73d412",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 25,
+      "line": 26,
       "value": "الإسلام دين الله الذي ارتضاه للبشرية، يدعو إلى توحيد الله وعبادته وحده، وتكريم الأنبياء والرسل، وتحقيق العدالة والمساواة بين الناس.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26479,12 +26516,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:755363ec5139",
+      "element_key": "text:fa64f48d0a24",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 27,
+      "line": 28,
       "value": "تعريف بالإسلام",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26495,12 +26532,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:fb91ab18fe62",
+      "element_key": "text:fe6e4ce3f182",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 27,
+      "line": 28,
       "value": "مقدمة مبسطة عن دين الإسلام، أركانه، ومبادئه الأساسية.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26511,12 +26548,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:1f9dcd658de4",
+      "element_key": "text:c17448a9fa4f",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 28,
+      "line": 29,
       "value": "من هو النبي محمد ﷺ؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26527,12 +26564,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:705d86f1764a",
+      "element_key": "text:13e5ce28d50d",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 28,
+      "line": 29,
       "value": "حياة الرسول الكريم، خلقه، رسالته، وأثره في التاريخ.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26543,12 +26580,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:de4151a0427f",
+      "element_key": "text:4dfc771ec8d0",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 29,
+      "line": 30,
       "value": "القرآن الكريم",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26559,12 +26596,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:3d26bcb138eb",
+      "element_key": "text:33abbf994031",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 29,
+      "line": 30,
       "value": "ما هو القرآن، وكيف يُقرأ ويُفهم ويُراجع.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26575,12 +26612,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:425aacc624e7",
+      "element_key": "text:2239c7fad6d6",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 30,
+      "line": 31,
       "value": "كيف يعيش المسلم يومه؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26591,12 +26628,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:bc14f2c7d80a",
+      "element_key": "text:655e287881b4",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 30,
+      "line": 31,
       "value": "الصلاة والذكر والعمل والأخلاق في الحياة اليومية.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26607,12 +26644,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:b73dfbb9fd44",
+      "element_key": "text:ab9102e1664f",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 31,
+      "line": 32,
       "value": "المرأة في الإسلام",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26623,12 +26660,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:5a3efcfc1d51",
+      "element_key": "text:ec1e7bd623be",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 31,
+      "line": 32,
       "value": "مكانة المرأة وحقوقها مع عرض منصف ومتزن.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26639,12 +26676,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:794d29538ab5",
+      "element_key": "text:f40b19843b52",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 32,
+      "line": 33,
       "value": "الإسلام والعنف والجهاد",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26655,12 +26692,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:055f390ab058",
+      "element_key": "text:5c3f4eb35515",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 32,
+      "line": 33,
       "value": "تفريق واضح بين الجهاد المشروع والعنف ضد الأبرياء.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26671,12 +26708,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:ccc7e552ae05",
+      "element_key": "text:41ccd0a79678",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 33,
+      "line": 34,
       "value": "المسيح في الإسلام",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26687,12 +26724,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:621d94eecf48",
+      "element_key": "text:36368cf8169f",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 33,
+      "line": 34,
       "value": "مكانة عيسى عليه السلام والحوار باحترام.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26703,12 +26740,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:5edc83b865ce",
+      "element_key": "text:7e048257f07d",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 34,
+      "line": 35,
       "value": "الله والمعاناة والشر",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26719,12 +26756,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:5a1f5aee8816",
+      "element_key": "text:9712313dc82c",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 34,
+      "line": 35,
       "value": "مدخل متواضع لسؤال الألم والمعنى والرجاء.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26735,12 +26772,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:d638063472cd",
+      "element_key": "text:a577080faf9a",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 35,
+      "line": 36,
       "value": "الإسلام والعقل والعلم",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26751,12 +26788,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:55e570bc6f44",
+      "element_key": "text:8e0ae2b3e143",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 35,
+      "line": 36,
       "value": "كيف نميز بين الوحي والتفسير والمعرفة التجريبية.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26767,12 +26804,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:e2bea661bc97",
+      "element_key": "text:e3edfd4d493c",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 36,
+      "line": 37,
       "value": "الموت وغاية الحياة",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26783,12 +26820,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:3973456e899b",
+      "element_key": "text:478c69226cc9",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 36,
+      "line": 37,
       "value": "الغاية والمسؤولية والآخرة في التصور الإسلامي.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26799,12 +26836,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:9b511fc1e3cc",
+      "element_key": "text:2e1bb71c9a1c",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 37,
+      "line": 38,
       "value": "كيف أعتنق الإسلام؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26815,12 +26852,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:6d10e2c77e34",
+      "element_key": "text:ac66c0bd7d98",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 37,
+      "line": 38,
       "value": "خطوات مبسطة وآمنة بعد الشهادتين.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26831,12 +26868,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:f602158ce08d",
+      "element_key": "text:a231de254042",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 38,
+      "line": 39,
       "value": "اسأل مسلمًا",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26847,12 +26884,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:8426b8383628",
+      "element_key": "text:3607d00f0ac6",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 38,
+      "line": 39,
       "value": "أرسل سؤالك العام دون ضغط أو تتبع غير ضروري.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26863,12 +26900,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:644618f4994f",
+      "element_key": "text:7eb0d8b017a4",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 41,
+      "line": 42,
       "value": "هل الإسلام عنيف؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26879,12 +26916,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:1f34d42e5c5c",
+      "element_key": "text:5ecd18b2e867",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 41,
+      "line": 42,
       "value": "فهم هذا السؤال يحتاج إلى التفريق بين الجهاد في سياقاته الفقهية والتاريخية وبين الاعتداء على المدنيين، وهو ما لا يجيزه الإسلام. اقرأ الصفحة ا",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26895,12 +26932,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:dea5e1aef90a",
+      "element_key": "text:3114994682f0",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 42,
+      "line": 43,
       "value": "لماذا ترتدي المرأة الحجاب؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26911,12 +26948,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:d58b9a0d99c3",
+      "element_key": "text:2299054dba64",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 42,
+      "line": 43,
       "value": "الحجاب موضوع ديني واجتماعي تتنوع فيه التجارب والتفاصيل الفقهية؛ لا تختصر المرأة في هذا السؤال، واقرأ العرض العام مع مراجعه.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26927,12 +26964,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:256b3262f5ab",
+      "element_key": "text:aeab97014d41",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 43,
+      "line": 44,
       "value": "ما هو الجهاد في الإسلام؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26943,12 +26980,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:d385d486875d",
+      "element_key": "text:8d599e30ba8e",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 43,
+      "line": 44,
       "value": "الجهاد أوسع من القتال، وفهم أحكام القتال يحتاج إلى سياق ومراجعة علمية، ولا يبرر استهداف الأبرياء أو تجاوز القانون.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26959,12 +26996,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:fd85d019215c",
+      "element_key": "text:d294d20999bb",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 44,
+      "line": 45,
       "value": "كيف اعتنق الإسلام؟",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26975,12 +27012,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:2bc3250eaa8b",
+      "element_key": "text:a618f3ca320a",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 44,
+      "line": 45,
       "value": "اعتناق الإسلام قرار شخصي؛ اقرأ الخطوات العامة، واحفظ سلامتك وخصوصيتك، واسأل شخصًا موثوقًا عند الحاجة.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -26991,12 +27028,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:a56e844f7ca0",
+      "element_key": "text:bbf40bc0e47d",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 87,
+      "line": 101,
       "value": "بوابة غير المسلمين",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -27007,12 +27044,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:4cd2e7d335f8",
+      "element_key": "text:896f9448e8db",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 91,
+      "line": 105,
       "value": "الرئيسية",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -27023,12 +27060,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:bca65d02fa15",
+      "element_key": "text:56d6697d54c8",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 102,
+      "line": 116,
       "value": "${c.sections.length} صفحة أساسية للبدء والبحث",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -27039,12 +27076,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:635b716b77ba",
+      "element_key": "text:2eee20108844",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 126,
+      "line": 140,
       "value": "أسئلة شائعة",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -27055,12 +27092,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:fe21edd3d45a",
+      "element_key": "text:54a8436a7b95",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 138,
+      "line": 152,
       "value": "اقرأ التفصيل والمراجع",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -27071,12 +27108,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:34543c83024f",
+      "element_key": "text:438c94c5caa1",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 158,
+      "line": 172,
       "value": "بوابة غير المسلمين",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -27087,12 +27124,12 @@
       "reason": "editorial payload comes from the published content catalogue; page shell is release-managed"
     },
     {
-      "element_key": "text:0fa6ca37a06b",
+      "element_key": "text:ac30e5d1dc05",
       "page": "/{lang}/dawah",
       "kind": "text",
       "source": "code",
       "source_file": "app/[lang]/dawah/page.tsx",
-      "line": 161,
+      "line": 175,
       "value": "تعريف واضح بالإسلام، وإجابات عن الأسئلة الشائعة، ومسار محترم للتعلم.",
       "admin_key": "content.dawah",
       "language": "ar|en",
@@ -96223,13 +96260,13 @@
       "reason": "bilingual dawah portal content released through scholarly review"
     },
     {
-      "element_key": "text:7f9b3adb7786",
+      "element_key": "text:61345fb5597e",
       "page": null,
       "kind": "text",
       "source": "code",
       "source_file": "lib/dawah-portal.ts",
       "line": 296,
-      "value": "اجعل سؤالك عامًا قدر الإمكان، ولا تكتب أسماء أو أرقامًا أو تفاصيل صحية ومالية إلا عند الضرورة القصوى.",
+      "value": "اجعل سؤالك عامًا قدر الإمكان، ولا تكتب أسماء أو أرقامًا أو تفاصيل صحية ومالية إلا عند الضرورة القصوى. تُحذف رسائل الأسئلة دوريًا بعد 90 يومً",
       "admin_key": null,
       "language": "system",
       "mode": "curated-static",

@@ -14,6 +14,9 @@
    - `20261017_security_and_review.sql`
    - `20261017_rls_hardening.sql` (إلزامي قبل الإنتاج)
    - `20261018_public_content_read_repair.sql` (إلزامي إذا حجبت سياسات RLS القراءة العامة)
+   - `20261124_dawah_inquiries.sql` و`20261124_dawah_assignments.sql` (صندوق «اسأل مسلمًا» وتوزيع الطلبات)
+   - `20261124_reference_source_urls.sql` (روابط المصادر الشرعية)
+   - `20261124_content_reports.sql` (بلاغات أخطاء المحتوى، جدول خاص مغلق عن الزوار)
 3. راجع سياسات RLS من لوحة Supabase بعد التنفيذ.
    ويمكن استخدام `supabase/APPLY_MISSING_TO_PRODUCTION.sql` كملف تشغيل واحد؛ فهو
    يتضمن الآن تحصين الجداول الخاصة أيضًا. بعده شغّل `npm run qa:rls:strict`.

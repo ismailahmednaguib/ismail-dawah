@@ -319,8 +319,8 @@ const VALUES: ValueItem[] = [
       en: "Knowledge",
     },
     description: {
-      ar: "لا نُقدّم محتوى دينيًا إلا بعد مراجعة المصدر والضابط.",
-      en: "We do not present religious content except after checking source and discipline.",
+      ar: "نُظهر مصدر المادة وحالة مراجعتها، ولا ننشر المحتوى الحساس باسم المنصة قبل مروره بمراجعة بشرية مناسبة.",
+      en: "We show each item's source and review status, and do not publish sensitive material under the platform name before suitable human review.",
     },
   },
   {

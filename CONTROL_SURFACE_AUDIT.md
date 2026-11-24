@@ -1,17 +1,17 @@
 # سجل سطح الإدارة والموقع
 
 > تقرير آلي ثابت؛ لا يتصل بقاعدة البيانات ولا يستبدل اختبار الطرف إلى الطرف.
-> تاريخ التوليد: 2026-11-23T23:57:56.098Z
+> تاريخ التوليد: 2026-11-24T00:24:44.718Z
 
 ## الملخص
 
 - المسارات العامة: **58**
 - مسارات الإدارة: **20**
-- واجهات API: **80**
+- واجهات API: **81**
 - مفاتيح إعدادات اللوحة المكتشفة: **33**
-- العناصر المفحوصة: **7277**
+- العناصر المفحوصة: **7279**
 - العناصر الثابتة التي تحتاج قرار ربط/استثناء: **0**
-- توزيع الحالات: `admin-ui` = **1126** · `api-contract` = **601** · `catalogued` = **2995** · `curated-reference` = **1838** · `immutable-reference` = **717**
+- توزيع الحالات: `admin-ui` = **1126** · `api-contract` = **603** · `catalogued` = **2995** · `curated-reference` = **1838** · `immutable-reference` = **717**
 
 ## المسارات
 
@@ -143,6 +143,7 @@
 | api | `/api/content/translate` | `app/api/content/translate/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/backup` | `app/api/cron/backup/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/dawah-journey` | `app/api/cron/dawah-journey/route.ts` | يحتاج فحص metadata |
+| api | `/api/cron/dawah-retention` | `app/api/cron/dawah-retention/route.ts` | يحتاج فحص metadata |
 | api | `/api/cron/publish` | `app/api/cron/publish/route.ts` | يحتاج فحص metadata |
 | api | `/api/dawah/inquiries` | `app/api/dawah/inquiries/route.ts` | يحتاج فحص metadata |
 | api | `/api/dawah/journey/subscribe` | `app/api/dawah/journey/subscribe/route.ts` | يحتاج فحص metadata |

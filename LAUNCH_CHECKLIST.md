@@ -19,7 +19,7 @@
 - [x] نجحت فحوص manifest وrobots وsitemap وتحويل الجذر حسب اللغة ورؤوس CSP وHSTS وX-Frame-Options وPermissions-Policy.
 - [x] فحص Supabase القراءة فقط أثبت وجود schema الخاص بـ 20261023_content_revisions.sql و20261026_scheduled_publishing.sql و20261027_admin_mfa.sql، إضافة إلى bucket النسخ الاحتياطية.
 - [x] تنفيذ `20261124_dawah_inquiries.sql` و`20261124_reference_source_urls.sql` في Supabase؛ `npm run qa:migrations` ناجح.
-- [ ] تنفيذ `20261124_content_reports.sql` في Supabase ثم إعادة `npm run qa:migrations -- --strict`؛ الهجرة موجودة ومحمية بـRLS لكنها لم تُشغّل على قاعدة الإنتاج بعد.
+- [x] تنفيذ `20261124_content_reports.sql` في Supabase؛ `npm run qa:migrations` يثبت وجود جدول البلاغات مع RLS الخاص.
 
 ## ⚠️ مراجعة بشرية وحسابات خارجية
 
@@ -30,7 +30,7 @@
 - [x] schema الخاص بـ 20261026_scheduled_publishing.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي قبل استخدام الجدولة.
 - [x] schema جدول 20261027_admin_mfa.sql متحقق بقراءة فقط؛ يبقى تأكيد سجل migration الرسمي وتسجيل جهاز المالك.
 - [x] schema جدول `dawah_inquiries` وعمود `content_references.source_url` متحققان؛ يبقى فقط تأكيد سجل migration الرسمي في Dashboard.
-- [x] schema جدول `content_reports` موصوف في migration الخاصة ومغلق عن `anon` و`authenticated`؛ يبقى تشغيل migration وتأكيد سجلها الرسمي في Dashboard.
+- [x] schema جدول `content_reports` منفّذ ومغلق عن `anon` و`authenticated`؛ يبقى فقط تأكيد سجل migration الرسمي في Dashboard.
 - [ ] إضافة Google Search Console إن أراد المالك ذلك.
 - [ ] اختيار نطاق مخصص أو الاستمرار على vercel.app.
 - [ ] امتلاك حساب Google Play ومفتاح توقيع Android ونشر التطبيق.
